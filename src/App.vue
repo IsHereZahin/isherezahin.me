@@ -177,14 +177,14 @@ import '../public/assets/js/main.js';
 // });
 </script>
 
-<!-- <script>
+<script>
     document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         const shape = document.querySelector('.shape-3');
         shape.style.opacity = '1';
       }, 1500); // 1.5 seconds delay
     });
-</script> -->
+</script>
 
 <style scoped>
 .active-link {
