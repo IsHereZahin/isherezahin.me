@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="Project Cover" src="https://github.com/IsHereZahin/isherezahin.me/blob/main/public/cover-img.png" width="600px">
+  <img alt="Project Cover" src="/public/cover-img.png">
 </p>
 
 <h1 align="center">
