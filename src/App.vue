@@ -4,7 +4,8 @@
     <header id="header" class="header d-flex align-items-center fixed-top">
         <div class="container-fluid d-flex align-items-center justify-content-between">
             <RouterLink to="/" class="logo d-flex align-items-center me-auto me-lg-0">
-                <img src="./assets/img/home/logo.png" alt="Zahin">
+                <img src="./assets/img/home/logo.png" alt="Zahin" class="logo-dark">
+                <img src="./assets/img/home/logo-light.png" alt="Zahin" class="logo-light">
             </RouterLink>
 
             <nav id="navbar" class="navbar">
@@ -99,6 +100,7 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
 import { SpeedInsights } from '@vercel/speed-insights/vue';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -115,6 +117,16 @@ import '../public/assets/vendor/glightbox/js/glightbox.min.js';
 import '../public/assets/vendor/php-email-form/validate.js';
 import '../public/assets/js/main.js';
 
+
+onMounted(() => {
+  const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+  if (prefersDarkMode) {
+    document.body.classList.add('dark-theme');
+  } else {
+    document.body.classList.remove('dark-theme');
+  }
+});
 // document.addEventListener('DOMContentLoaded', () => {
 //     // Show SweetAlert message with custom content
 //     Swal.fire({
@@ -197,5 +209,17 @@ import '../public/assets/js/main.js';
     gap: 16px;
     justify-content: center;
     margin: 10px 0;
+}
+/* Default - Light Mode */
+.logo-dark {
+    display: none;
+}
+
+body.dark-theme .logo-light {
+    display: none;
+}
+
+body.dark-theme .logo-dark {
+    display: block;
 }
 </style>
