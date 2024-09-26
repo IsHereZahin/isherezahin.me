@@ -21,15 +21,6 @@
                                         <a :href="blog.link" target="blank">{{ truncate(blog.title, 50) }}</a>
                                     </h3>
                                     <p>{{ truncate(blog.excerpt, 100) }}</p>
-                                    <div class="d-flex author align-items-center">
-                                        <div class="pic">
-                                            <img :src="blog.writerimage" alt="Writer Image" class="img-fluid rounded-circle">
-                                        </div>
-                                        <div class="author-name">
-                                            <strong class="d-block">{{ blog.writername }}</strong>
-                                            <span>{{ blog.writerdesignation }}</span>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -47,13 +38,8 @@
 
 <script>
 import blogImage1 from '../../assets/img/blog/blog1.jpg';
-import writerImage1 from '../../assets/img/me/profile-img.jpg';
-
 import blogImage2 from '../../assets/img/blog/blog2.jpg';
-import writerImage2 from '../../assets/img/me/profile-img.jpg';
-
 import blogImage3 from '../../assets/img/blog/blog3.jpg';
-import writerImage3 from '../../assets/img/me/profile-img.jpg';
 
 export default {
     name: 'BlogSection',
@@ -69,9 +55,6 @@ export default {
                     link: '/bd-anti-discrimination-student-movement',
                     type: 'Article',
                     categories: ['Movement', 'Students', 'power', 'Article'],
-                    writerimage: writerImage1,
-                    writername: 'Abu Zahin',
-                    writerdesignation: 'SQA Engineer',
                 },
                 {
                     id: 2,
@@ -82,9 +65,6 @@ export default {
                     link: 'https://www.linkedin.com/pulse/how-unlock-your-web-development-superpowers-mastering-abu-zahin-sycic/',
                     type: 'Article',
                     categories: ['laravel', 'Vue', 'Article'],
-                    writerimage: writerImage2,
-                    writername: 'Abu Zahin',
-                    writerdesignation: 'SQA Engineer',
                 },
                 {
                     id: 3,
@@ -95,9 +75,6 @@ export default {
                     link: 'https://www.linkedin.com/pulse/beginners-guide-laravel-project-testing-zahin--m31sc/',
                     type: 'Article',
                     categories: ['testing', 'Article'],
-                    writerimage: writerImage3,
-                    writername: 'Abu Zahin',
-                    writerdesignation: 'SQA Engineer',
                 },
             ]
         };
@@ -161,24 +138,5 @@ export default {
   color: var(--color-background-soft);
   padding-left: 5px;
   padding-right: 5px;
-}
-
-.blog-posts .author .pic {
-  flex: 0 0 50px;
-  margin-right: 20px;
-}
-
-.blog-posts .author .author-name {
-  line-height: 1.3;
-}
-
-.blog-posts .author .author-name strong {
-  color: var(--color-text);
-  font-weight: normal;
-}
-
-.blog-posts .author .author-name span {
-  font-size: 14px;
-  color: color-mix(in srgb, var(--color-text), transparent 25%);
 }
 </style>

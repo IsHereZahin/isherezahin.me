@@ -4,13 +4,13 @@
       <!-- Page Head -->
       <div class="row page-head gap-2">
         <h1 class="white-head fw-bold text-green-800">Blog</h1>
-        <p>On my personal website and blog, I share notes, articles, and various thoughts on different subjects, including personal experiences.</p>
+        <p>On my personal website and blog, I share notes, blogs, and various thoughts on different subjects, including personal experiences.</p>
       </div>
 
       <!-- Search and Filters -->
       <div class="row filters mt-4">
         <div class="col-md-9">
-          <p>{{ filteredBlogs.length }} out of {{ blogs.length }} blogs displayed</p>
+          <p>{{ filteredblogs.length }} out of {{ blogs.length }} blogs displayed</p>
         </div>
         <div class="col-md-3">
           <div class="text-end input-group custom-input-group">
@@ -19,7 +19,7 @@
             </span>
             <input type="text"
                   v-model="searchQuery"
-                  placeholder="Search articles"
+                  placeholder="Search blogs"
                   class="form-control"
                   data-bs-toggle="tooltip"
                   title="Search by title, category, type, date, month..."
@@ -28,14 +28,14 @@
         </div>
       </div>
       <img src="../assets/img/home/about-shape-3.svg" loading="lazy" alt="" class="shape shape-3">
-      <!-- Blog Cards -->
+      <!-- blog Cards -->
       <div class="row blog-posts">
         <div class="container">
             <div class="row gy-4">
-              <div class="col-md-6 col-lg-4" v-for="blog in paginatedBlogs" :key="blog.id">
+              <div class="col-md-6 col-lg-4" v-for="blog in paginatedblogs" :key="blog.id">
                     <div class="post-entry" data-aos-delay="100">
                         <a href="#" class="thumb d-block">
-                            <img :src="blog.image" alt="Blog Image" class="img-fluid rounded">
+                            <img :src="blog.image" alt="blog" class="img-fluid rounded">
                         </a>
                         <div class="post-content">
                             <div class="meta">
@@ -46,23 +46,14 @@
                               <a :href="blog.link" target="blank">{{ truncate(blog.title, 50) }}</a>
                             </h3>
                             <p>{{ truncate(blog.excerpt, 100) }}</p>
-                            <div class="d-flex author align-items-center">
-                                <div class="pic">
-                                    <img :src="blog.writerimage" alt="Writer Image" class="img-fluid rounded-circle">
-                                </div>
-                                <div class="author-name">
-                                    <strong class="d-block">{{ blog.writername }}</strong>
-                                    <span>{{ blog.writerdesignation }}</span>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
-                <div v-if="filteredBlogs.length === 0" class="col-12 text-center mt-5">
+                <div v-if="filteredblogs.length === 0" class="col-12 text-center mt-5">
                   <p>
                     <span :style="{ color: 'var(--rad)' }">{{ searchQuery }}</span> not found. 
-                    You can read my old page article 
-                    <RouterLink to="/article" exact-active-class="active-link">Article</RouterLink>
+                    You can read my old page blog 
+                    <RouterLink to="/blog" exact-active-class="active-link">blog</RouterLink>
                   </p>
                 </div>
                 <!-- Not Found Message -->
@@ -71,7 +62,7 @@
       </div>
 
       <!-- Pagination Section -->
-      <div class="row" v-if="filteredBlogs.length > 0">
+      <div class="row" v-if="filteredblogs.length > 0">
         <div class="page-pagination">
           <button :disabled="currentPage === 1" @click="currentPage--" class="pagination-btn">Previous</button>
           <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</span>
@@ -91,22 +82,13 @@
 
 <script>
 import blogImage1 from '../assets/img/blog/blog1.jpg';
-import writerImage1 from '../assets/img/me/profile-img.jpg';
-
 import blogImage2 from '../assets/img/blog/blog2.jpg';
-import writerImage2 from '../assets/img/me/profile-img.jpg';
-
 import blogImage3 from '../assets/img/blog/blog3.jpg';
-import writerImage3 from '../assets/img/me/profile-img.jpg';
-
 import blogImage4 from '../assets/img/blog/blog4.jpg';
-import writerImage4 from '../../public/manavatar.jpg';
-
 import blogImage5 from '../assets/img/blog/blog5.jpg';
-import writerImage5 from '../assets/img/me/profile-img.jpg';
 
 export default {
-  name: 'BlogSection',
+  name: 'blogSection',
   data() {
     return {
       blogs: [
@@ -117,11 +99,8 @@ export default {
             excerpt: 'The Anti-discrimination Students Movement is a student organization in Bangladesh that was formed during the 2024 Bangladesh quota reform movement. The group led the movement advocating for anti-discrimination policies.',
             image: blogImage1,
             link: '/bd-anti-discrimination-student-movement',
-            type: 'Article',
-            categories: ['Movement', 'Students', 'power', 'Article'],
-            writerimage: writerImage1,
-            writername: 'Abu Zahin',
-            writerdesignation: 'SQA Engineer',
+            type: 'blog',
+            categories: ['Movement', 'Students', 'power', 'blog'],
         },
         {
             id: 2,
@@ -130,11 +109,8 @@ export default {
             excerpt: 'The web development landscape is constantly evolving, and developers need to adapt to stay ahead of the curve. Two powerful frameworks, Laravel (backend) and Vue.js (frontend), have emerged as popular choices for building dynamic and interactive web applications. Mastering this combination can significantly enhance your full-stack development skills and open doors to exciting job opportunities.',
             image: blogImage2,
             link: 'https://www.linkedin.com/pulse/how-unlock-your-web-development-superpowers-mastering-abu-zahin-sycic/',
-            type: 'Article',
-            categories: ['laravel', 'Vue', 'Article'],
-            writerimage: writerImage2,
-            writername: 'Abu Zahin',
-            writerdesignation: 'SQA Engineer',
+            type: 'blog',
+            categories: ['laravel', 'Vue', 'blog'],
         },
         {
             id: 3,
@@ -143,11 +119,8 @@ export default {
             excerpt: 'As a budding Laravel developer, diving into the world of testing might seem daunting. But fear not! Robust testing practices are the cornerstone of any successful Laravel project, and this guide will equip you with the essentials to get started.',
             image: blogImage3,
             link: 'https://www.linkedin.com/pulse/beginners-guide-laravel-project-testing-zahin--m31sc/',
-            type: 'Article',
-            categories: ['testing', 'Article'],
-            writerimage: writerImage3,
-            writername: 'Abu Zahin',
-            writerdesignation: 'SQA Engineer',
+            type: 'blog',
+            categories: ['testing', 'blog'],
         },
         {
             id: 4,
@@ -156,11 +129,8 @@ export default {
             excerpt: 'যেসব পুরুষেরা কোনো নারীর নোংরা অতীতকে ভুলে গিয়ে তাকে মেনে নেওয়ার মন মানসিকতা রাখে সেসব পুরুষেরা সুস্পষ্টভাবে ক্ষমাশীল হলেও নিঃসন্দেহে তাদের মধ্যে গায়রত আর আত্মসম্মানবোধের অভাব আছে।',
             image: blogImage4,
             link: '#',
-            type: 'Article',
-            categories: ['Purity', 'Integrity', 'Article'],
-            writerimage: writerImage4,
-            writername: 'Be Real Man',
-            writerdesignation: 'Social Writer',
+            type: 'blog',
+            categories: ['Purity', 'Integrity', 'blog'],
         },
         {
             id: 5,
@@ -170,10 +140,7 @@ export default {
             image: blogImage5,
             link: '#',
             type: 'Video',
-            categories: ['Life', 'Blog'],
-            writerimage: writerImage5,
-            writername: 'Abu Zahin',
-            writerdesignation: 'SQA Engineer',
+            categories: ['Life', 'blog'],
         },
         // Add more blog data as needed
       ],
@@ -183,7 +150,7 @@ export default {
     };
   },
   computed: {
-    filteredBlogs() {
+    filteredblogs() {
       if (!this.searchQuery) {
         return this.blogs;
       }
@@ -195,13 +162,13 @@ export default {
               blog.date.toLowerCase().includes(query);
       });
     },
-    paginatedBlogs() {
+    paginatedblogs() {
       const start = (this.currentPage - 1) * this.blogsPerPage;
       const end = this.currentPage * this.blogsPerPage;
-      return this.filteredBlogs.slice(start, end);
+      return this.filteredblogs.slice(start, end);
     },
     totalPages() {
-      return Math.ceil(this.filteredBlogs.length / this.blogsPerPage);
+      return Math.ceil(this.filteredblogs.length / this.blogsPerPage);
     }
   },
   methods: {
@@ -311,25 +278,6 @@ export default {
   padding-right: 5px;
 }
 
-.blog-posts .author .pic {
-  flex: 0 0 50px;
-  margin-right: 20px;
-}
-
-.blog-posts .author .author-name {
-  line-height: 1.3;
-}
-
-.blog-posts .author .author-name strong {
-  color: var(--color-text);
-  font-weight: normal;
-}
-
-.blog-posts .author .author-name span {
-  font-size: 14px;
-  color: color-mix(in srgb, var(--color-text), transparent 25%);
-}
-
 .page-pagination {
   display: flex;
   justify-content: space-between;
@@ -365,6 +313,12 @@ export default {
 .pagination-info {
   font-size: 0.9em;
   color: var(--grey);
+}
+
+@media (max-width: 575px) {
+  .pagination-info {
+    display: none;
+  }
 }
 
 .pagination-select .form-control {
