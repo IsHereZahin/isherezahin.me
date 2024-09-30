@@ -2,7 +2,7 @@
     <SpeedInsights />
     <Navbar/>
     <RouterView />
-
+    <Footer />
     <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
     <div id="preloader">
         <div class="line"></div>
@@ -13,7 +13,8 @@
 import { onMounted } from 'vue';
 import { RouterView } from 'vue-router';
 import { SpeedInsights } from '@vercel/speed-insights/vue';
-import Navbar from './components/layout/nav-bar.vue'
+import Navbar from './components/layout/nav-bar.vue';
+import Footer from './components/layout/foo-ter.vue'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../public/assets/vendor/swiper/swiper-bundle.min.css';
@@ -108,13 +109,3 @@ document.addEventListener('keydown', function(e) {
       }, 1500); // 1.5 seconds delay
     });
 </script>
-
-<style scoped>
-.tech-stack {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    justify-content: center;
-    margin: 10px 0;
-}
-</style>
