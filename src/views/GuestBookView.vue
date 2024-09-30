@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import PostMessage from '../components/PostMessage.vue';
+import PostMessage from '../components/GuestBook.vue';
 
 export default {
   components: { PostMessage}

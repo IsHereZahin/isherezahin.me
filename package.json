@@ -18,6 +18,7 @@
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "cobe": "^0.6.3",
+    "dompurify": "^3.1.7",
     "firebase": "^10.13.1",
     "pinia": "^2.1.7",
     "sweetalert2": "^11.14.0",

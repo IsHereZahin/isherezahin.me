@@ -10,7 +10,7 @@
                         <div class="col-md-6 col-lg-4" v-for="blog in blogs" :key="blog.id">
                             <div class="post-entry" data-aos-delay="100">
                                 <a href="#" class="thumb d-block">
-                                    <img :src="blog.image" alt="Blog Image" class="img-fluid rounded">
+                                    <img :src="blog.image" alt="Blog" class="img-fluid rounded">
                                 </a>
                                 <div class="post-content">
                                     <div class="meta">
