@@ -1,7 +1,7 @@
 <template>
   <footer class="footer" ref="footer">
     <div class="container">
-        <div class="tech-stack footer-nav">
+        <div class="tech-stack footer-nav" style="justify-content: center;">
             <div class="tech">
                 <a href="https://github.com/IsHereZahin/isherezahin.me" target="_blank" exact class="link-a">Source Code</a>
                 <div class="tooltip"><span class="tech-name">Source Code:</span> Access the open-source code for this website.</div>
