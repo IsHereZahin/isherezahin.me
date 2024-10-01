@@ -350,4 +350,10 @@ export default {
   background: var(--color-bg);
   color: var(--text);
 }
+
+@media (max-width: 575px) {
+  .pagination-info {
+    display: none;
+  }
+}
 </style>
