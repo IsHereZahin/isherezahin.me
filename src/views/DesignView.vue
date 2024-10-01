@@ -116,6 +116,9 @@
 </template>
 
 <style>
+.tech-stack {
+    justify-content: left;
+}
 .mt-8 {
     margin-top: 2rem;
 }
