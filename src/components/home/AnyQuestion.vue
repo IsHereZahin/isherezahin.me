@@ -324,7 +324,13 @@ export default {
 }
 
 .bg-email-button {
+    border: 1px solid #ef4444;
     background-color: #ef4444;
+}
+
+.bg-email-button:hover {
+    border: 1px solid var(--text);
+    background-color: #2F415E;
 }
 
 .rounded-full {
