@@ -9,8 +9,8 @@
             <div class="container mt-5">
               <div class="row flex-column-reverse flex-md-row justify-content-between gap-4">
                 <div class="col-12">
-                    <a :href="project.link" class="visit" target="_blank">
-                        <article class="project-card">
+                    <div class="visit">
+                        <div class="project-card">
                             <div class="project-card__background">
                             <div class="card__background--wrapper">
                                 <div class="card__background--main" :style="{ backgroundImage: `url(${project.image})` }">
@@ -18,17 +18,19 @@
                             </div>
                             </div>
                             <div class="project-card__info">
-                            <h2 class="white-head">{{ truncate(project.title, 50) }}</h2>
-                            <span class="white-head mb-2">{{project.date}}</span>                            
-                            <p>{{ truncate(project.excerpt, 100) }}</p>
-                            <p>
-                                <a :href="project.link" class="language" target="_blank">
-                                <span v-for="language in project.categories" :key="language">{{ language }}</span>
-                                </a>
-                            </p>
+                              <a :href="project.link" target="_blank">
+                                <h2 class="white-head">{{ truncate(project.title, 50) }}</h2>
+                              </a>
+                              <span class="white-head mb-2">{{project.date}}</span>                            
+                              <p>{{ truncate(project.excerpt, 100) }}</p>
+                              <p>
+                                <span class="language">
+                                  <span v-for="language in project.categories" :key="language">{{ language }}</span>
+                                </span>
+                              </p>
                             </div>
-                        </article>
-                    </a>
+                        </div>
+                    </div>
                 </div>
               </div>
             </div>
@@ -68,7 +70,7 @@ export default {
           title: 'E-commerce website',
           excerpt: "I enjoy working on e-commerce websites; this is my favorite project too.",
           image: appImage2,
-          link: 'https://food-ecommerce-website-dev-zahin.netlify.app/',
+          link: 'https://food-e-commerce-v1.netlify.app/',
           categories: ['Website', 'UI/UX'],
           type: ['ui', 'ux', 'e-commerce']
         }
@@ -151,12 +153,14 @@ export default {
 
 .language {
   display: inline-block;
+  cursor: pointer;
 }
 
 .language span {
   font-size: 1rem;
   display: inline-block;
   color: var(--white);
+  border: 1px solid transparent;
   background-color: var(--border);
   padding: .5rem 1rem;
   margin-right: 5px;
