@@ -1,6 +1,5 @@
 <template>
     <section id="testimonials">
-      <div class="container">
         <div class="row justify-content-center">
           <h1 class="headline">Latest Testimonials</h1>
         </div>
@@ -24,7 +23,6 @@
             <RouterLink to="/testimonial" class="custom-button">See all testimonials</RouterLink>
           </div>
         </div>
-      </div>
     </section>
   </template>
   
