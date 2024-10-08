@@ -131,7 +131,6 @@ h2 {
     height: auto;
     justify-content: flex-start;
     overflow: visible;
-    padding: 32px;
     position: relative;
     width: 100%;
 }
