@@ -45,7 +45,7 @@
     --grey: rgb(185, 185, 185);
     --blackly: #303133;
     --border: #1e1e1e;
-    --color-bg: #101010;
+    --color-bg: #040615;
     --rad: red;
   }
 }
@@ -139,6 +139,7 @@ section {
   text-align: center;
   padding: 30px;
   color: var(--text);
+  font-size: 1.5rem;
 }
 .page-head {
   border-bottom: 1px solid var(--border);
