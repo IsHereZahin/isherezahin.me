@@ -44,17 +44,8 @@
         </div>
 
         <div class="row">
-          <div class="col-xs-12 col-sm-6 col-md-7 col-lg-8 branding">
-            <div class="icon-container">
-              <i class="bi bi-palette-fill"></i>
-            </div>
-            <h1>Enhance Brand Identity</h1>
-            <p>
-              I focus on enhancing the brand identity of your product by creating seamless designs that are both functional and aesthetically pleasing.
-            </p>
-          </div>
 
-          <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4">
+          <div class="col-xs-12 col-md-6 col-lg-7">
             <div class="mvp-container">
               <div class="icon-section mt-2">
                 <div class="icon-item">
@@ -84,6 +75,17 @@
               </div>
             </div>
           </div>
+
+          <div class="col-xs-12 col-md-6 col-lg-5 branding">
+            <div class="icon-container">
+              <i class="bi bi-palette-fill"></i>
+            </div>
+            <h1>Enhance Brand Identity</h1>
+            <p>
+              I focus on enhancing the brand identity of your product by creating seamless designs that are both functional and aesthetically pleasing.
+            </p>
+          </div>
+
         </div>
 
         <div class="row">
@@ -99,16 +101,14 @@
             </div>
           </div>
 
-          <div class="col-xs-12 col-md-7">
-            <div class="conversion-rates">
-              <div class="icon-container">
-                <i class="bi bi-graph-up-arrow"></i>
-              </div>
-              <h1>Optimize Conversion Rates</h1>
-              <p>
-                My designs are built with conversion in mind. I aim to create a user-friendly experience that enhances engagement and drives results.
-              </p>
+          <div class="col-xs-12 col-md-7 conversion-rates">
+            <div class="icon-container">
+              <i class="bi bi-graph-up-arrow"></i>
             </div>
+            <h1>Optimize Conversion Rates</h1>
+            <p>
+              My designs are built with conversion in mind. I aim to create a user-friendly experience that enhances engagement and drives results.
+            </p>
           </div>
         </div>
 
