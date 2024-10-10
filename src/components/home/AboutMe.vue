@@ -1,8 +1,9 @@
 <template>
-  <section class="about">
-    <h1 class="headline">About Me</h1>
-    <div class="row" style="border-top: 1px solid var(--border)">
-      <div class="col-md-6">
+  <h1 class="headline">About Me</h1>
+  <div class="row">
+
+    <div class="col-md-6">
+      <div class="row borderli">
         <div class="location">
           <div class="row">
             <div class="location-title">
@@ -16,29 +17,8 @@
           </div>
         </div>
       </div>
-      <div class="col-md-6">
-        <div class="connect">
-          <div class="d-flex align-items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;" class="lucide lucide-link">
-              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>Connect
-            </svg>
-            <h2 style="color: var(--white); font-size: 15px; margin-top: 10px;">Connect</h2>
-          </div>
-          <ul style="padding: 20px;">
-            <li><a href="https://www.github.com/IsHereZahin/" target="_blank"><i class="bi bi-github"></i> Github</a></li>
-            <li><a href="https://www.linkedin.com/in/isherezahin/" target="_blank"><i class="bi bi-linkedin"></i> LinkedIn</a></li>
-            <li><a href="https://www.youtube.com/@IsHereZahin" target="_blank"><i class="bi bi-youtube"></i> YouTube</a></li>
-            <li><a href="https://www.twitter.com/IsHereZahin/" target="_blank"><i class="bi bi-twitter"></i> X</a></li>
-            <li><a href="https://join.skype.com/invite/xeu3lGYMM8So" target="_blank"><i class="bi bi-skype"></i> Skype</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section class="tools">
-    <div class="row">
-      <div class="col-lg-6">
+
+      <div class="row borderli">
         <div class="stacks">
             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap size-[18px]">
                 <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path>
@@ -47,7 +27,7 @@
         </div>
 
         <div class="icon-marquee">
-          <div class="borderli flex flex-col overflow-hidden p-4">
+          <div class="flex flex-col overflow-hidden p-4">
             <!-- Left Marquee Container -->
             <div class="flex justify-around gap-3 mb-3 first-marquee-container move-left-to-right">
               <img v-for="(icon, index) in firstMarqueeIcons" :key="index" :src="icon.src" :alt="icon.alt" class="size-10 icon">
@@ -59,12 +39,33 @@
             </div>
           </div>
         </div>
-
       </div>
-      <div class="col-lg-6">
-        <div class="row">
-          <div class="col-sm-6">
-            <div class="borderli dark:-dark flex flex-col gap-6  p-4 lg:p-6">
+    </div>
+
+    <div class="col-md-6">
+
+      <div class="row">
+          <div class="connect borderli">
+            <div class="d-flex align-items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;" class="lucide lucide-link">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>Connect
+              </svg>
+              <h2 style="color: var(--white); font-size: 15px; margin-top: 10px;">Connect</h2>
+            </div>
+            <ul style="padding: 20px;">
+              <li><a href="https://www.github.com/IsHereZahin/" target="_blank"><i class="bi bi-github"></i> Github</a></li>
+              <li><a href="https://www.linkedin.com/in/isherezahin/" target="_blank"><i class="bi bi-linkedin"></i> LinkedIn</a></li>
+              <li><a href="https://www.youtube.com/@IsHereZahin" target="_blank"><i class="bi bi-youtube"></i> YouTube</a></li>
+              <li><a href="https://www.twitter.com/IsHereZahin/" target="_blank"><i class="bi bi-twitter"></i> X</a></li>
+              <li><a href="https://join.skype.com/invite/xeu3lGYMM8So" target="_blank"><i class="bi bi-skype"></i> Skype</a></li>
+            </ul>
+          </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-6">
+            <div class="borderli flex flex-col gap-6">
               <div class="d-flex align-items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock size-[60px]"> <!-- Adjusted size here -->
                   <circle cx="12" cy="12" r="10"></circle>
@@ -72,10 +73,11 @@
                 </svg>
                 <h2 class="text-sm font-light m-0">Coding hours</h2>
               </div>
-              <div class="hours text-center">3283hrs</div>
+              <div class="hours text-center">3583hrs</div>
             </div>
-          </div>
-          <div class="col-sm-6">
+        </div>
+
+        <div class="col-sm-6">
             <div class="borderli flex flex-col gap-6">
               <div class="d-flex align-items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart size-[18px]">
@@ -94,16 +96,18 @@
                 </div>
               </div>
             </div>
-          </div>
         </div>
       </div>
+
     </div>
-    <div class="row">
-      <div class="custom-btn">
-        <RouterLink to="/about" class="custom-button">Know more about me</RouterLink>
-      </div>
+
+  </div>
+
+  <div class="row">
+    <div class="custom-btn">
+      <RouterLink to="/about" class="custom-button">Know more about me</RouterLink>
     </div>
-  </section>
+  </div>
 </template>
 
 <script>
@@ -733,11 +737,6 @@ export default {
   display: flex;
 }
 
-.col-md-6 {
-  margin: auto;
-  padding: 1.6rem;
-}
-
 .borderli {
   margin-top: 10px;
   padding: 20px;
@@ -749,7 +748,6 @@ export default {
 .location {
   align-items: left;
   color: var(--grey);
-  border-bottom: 1px solid var(--blackly);
 }
 
 .location-title {
@@ -830,7 +828,7 @@ svg {
 
 .hours {
   font-size: 40px;
-  padding: 25px;
+  padding: 33px 25px;
   font-weight: 600;
   color: var(--white);
 }
@@ -859,7 +857,7 @@ svg {
   width: 100%;
   overflow: hidden;
   background-color: transparent;
-  padding: 20px;
+  padding: 10px 0;
 }
 
 .size-10 {
@@ -904,9 +902,6 @@ svg {
   .about {
     padding: 0 20px;
   }
-  .col-md-6 {
-    width: 100%;
-  }
   .location {
     text-align: center;
   }
@@ -933,6 +928,6 @@ svg {
 }
 
 .custom-btn {
-  margin-top: -50px;
+  margin-top: -30px;
 }
 </style>
