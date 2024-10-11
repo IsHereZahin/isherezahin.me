@@ -147,6 +147,20 @@
           <p class="name">skype</p>
           <p class="subname">Communication</p>
         </div>
+        <div class="product-item">
+          <div class="image">
+            <img src="../assets/img/uses/testing-tools/JMeter_Logo.png" alt="JMeter" />
+          </div>
+          <p class="name">JMeter</p>
+          <p class="subname">Performance Testing</p>
+        </div>
+        <div class="product-item">
+          <div class="image">
+            <img src="../assets/img/uses/testing-tools/blazemeter.png" alt="Blazemeter" />
+          </div>
+          <p class="name">Blazemeter</p>
+          <p class="subname">Testing Extension</p>
+        </div>
 
       </div>
     </section>
