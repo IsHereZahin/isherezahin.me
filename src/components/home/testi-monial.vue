@@ -39,7 +39,7 @@
             link: "https://github.com/developernajib"
           },
           {
-            img: "https://scontent.fdac5-1.fna.fbcdn.net/v/t39.30808-6/310999414_2040491229674452_112112446647755116_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=05_MyzxPXIoQ7kNvgEzJC2k&_nc_ht=scontent.fdac5-1.fna&_nc_gid=AVW1Ev5XSHUJZX-QoPrpjed&oh=00_AYCFuQDum-NrAzE1Wpyt3Ihf_wVKvxKPP78d-NcTv00lsQ&oe=670AC29F",
+            img: "https://avatars.githubusercontent.com/u/135975917?v=4",
             text: "Zahin excels in Figma design and software testing, ensuring that every aspect of the product is user-friendly and visually appealing. His meticulous attention to detail and thorough testing processes guarantee high-quality results. Collaborating with him enhances project outcomes and fosters a culture of excellence.",
             name: "Tawsif Tamim",
             designation: "UI/UX Designer, Iconic Solutions (Pvt.) Ltd",
