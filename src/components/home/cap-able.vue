@@ -149,6 +149,10 @@
   border: 1px solid var(--border);
 }
 
+.research-strategy {
+  background: #225c92;
+}
+
 .design-system-card {
   border-radius: 15px;
   padding: 40px;
@@ -333,7 +337,7 @@ h1 {
 }
 
 .conversion-rates {
-  background: #03111f;
+  background: transparent;
   color: white;
 }
 
