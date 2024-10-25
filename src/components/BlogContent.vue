@@ -86,6 +86,7 @@ import blogImage2 from '../assets/img/blog/blog2.jpg';
 import blogImage3 from '../assets/img/blog/blog3.jpg';
 import blogImage4 from '../assets/img/blog/blog4.jpg';
 import blogImage5 from '../assets/img/blog/blog5.jpg';
+import blogImage6 from '../assets/img/blog/blog6.jpg';
 
 export default {
   name: 'blogSection',
@@ -141,6 +142,16 @@ export default {
             link: '#',
             type: 'Video',
             categories: ['Life', 'blog'],
+        },
+        {
+            id: 6,
+            date: 'Oct 14, 2024',
+            title: "Building a To-Do List Application with Flask",
+            excerpt: 'Flask is a micro web framework for Python that allows developers to build web applications quickly and efficiently. It’s designed to be simple and easy to use, making it a great choice for beginners and experienced developers alike. Flask supports various extensions to add functionalities such as database integration, user authentication, and form validation.',
+            image: blogImage6,
+            link: 'https://medium.com/@isherezahin/building-a-to-do-list-application-with-flask-e65b6d88ea5d',
+            type: 'Article',
+            categories: ['Flask', 'Python'],
         },
         // Add more blog data as needed
       ],
