@@ -51,9 +51,9 @@
                 </div>
                 <div v-if="filteredblogs.length === 0" class="col-12 text-center mt-5">
                   <p>
-                    <span :style="{ color: 'var(--rad)' }">{{ searchQuery }}</span> not found. 
-                    You can read my old page blog 
-                    <RouterLink to="/blog" exact-active-class="active-link">blog</RouterLink>
+                    <span :style="{ color: 'var(--rad)' }">{{ searchQuery }}</span> not found.<br>
+                    You can read my old page 
+                    <RouterLink to="/article" exact-active-class="active-link">article</RouterLink>
                   </p>
                 </div>
                 <!-- Not Found Message -->
