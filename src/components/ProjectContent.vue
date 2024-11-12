@@ -89,6 +89,7 @@
 <script>
 import appImage1 from '../assets/img/project/project1.jpg';
 import appImage2 from '../assets/img/project/project2.jpg';
+import image3 from '../assets/img/project/project-3.jpg';
 
 export default {
   name: 'ProjectSection',
@@ -113,6 +114,16 @@ export default {
           image: appImage2,
           link: 'https://food-e-commerce-v1.netlify.app/',
           categories: ['Website', 'UI/UX'],
+          tags: ['ui', 'ux', 'e-commerce']
+        },
+        {
+          id: 2,
+          date: 'Jun 7, 2024',
+          title: 'Food Commerce UI',
+          excerpt: "Crafted a seamless and intuitive UI/UX for a food e-commerce service, prioritizing user experience and visual appeal through Figma.",
+          image: image3,
+          link: 'https://www.figma.com/proto/ANTQk9PrZb2LYm2eRZ0qEZ/FOOD-CO?node-id=32-2&node-type=frame&t=FSHaCu0HiJvstuuc-0&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1',
+          categories: ['Figma', 'UI/UX'],
           tags: ['ui', 'ux', 'e-commerce']
         }
       ],
