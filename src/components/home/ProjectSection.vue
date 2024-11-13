@@ -25,7 +25,7 @@
                               <p>{{ truncate(project.excerpt, 100) }}</p>
                               <p>
                                 <span class="language">
-                                  <span v-for="language in project.categories" :key="language">{{ language }}</span>
+                                  <span v-for="language in project.categories" :key="language" class="mt-2">{{ language }}</span>
                                 </span>
                               </p>
                             </div>
