@@ -29,8 +29,8 @@
       </div>
 
       <!-- Project Cards -->
-      <div class="row mt-4">
-        <div class="col-md-6" v-for="project in paginatedProjects" :key="project.id">
+      <div class="row">
+        <div class="col-md-6 mt-4" v-for="project in paginatedProjects" :key="project.id">
           <div class="container mt-5">
             <div class="row flex-column-reverse flex-md-row justify-content-between gap-4">
               <div class="col-12">
@@ -90,6 +90,9 @@
 import appImage1 from '../assets/img/project/project1.jpg';
 import appImage2 from '../assets/img/project/project2.jpg';
 import image3 from '../assets/img/project/project-3.jpg';
+import image4 from '../assets/img/project/project-4.jpg';
+import image5 from '../assets/img/project/project-5.jpg';
+import image6 from '../assets/img/project/project-6.jpg';
 
 export default {
   name: 'ProjectSection',
@@ -117,15 +120,45 @@ export default {
           tags: ['ui', 'ux', 'e-commerce']
         },
         {
-          id: 2,
+          id: 3,
           date: 'Jun 7, 2024',
-          title: 'Food Commerce UI',
+          title: 'Food E-Commerce UI',
           excerpt: "Crafted a seamless and intuitive UI/UX for a food e-commerce service, prioritizing user experience and visual appeal through Figma.",
           image: image3,
           link: 'https://www.figma.com/proto/ANTQk9PrZb2LYm2eRZ0qEZ/FOOD-CO?node-id=32-2&node-type=frame&t=FSHaCu0HiJvstuuc-0&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1',
           categories: ['Figma', 'UI/UX'],
           tags: ['ui', 'ux', 'e-commerce']
-        }
+        },
+        {
+          id: 4,
+          date: 'Mar 19, 2024 - In Progress',
+          title: 'Multi-Vendor E-Com Platform',
+          excerpt: "This multi-vendor e-commerce platform allows vendors to efficiently manage and sell products in a unified online marketplace.",
+          image: image4,
+          link: 'https://github.com/IsHereZahin/Multi-Vendor-Ecommerce-Application',
+          categories: ['Laravel', 'E-Commerce'],
+          tags: ['E-Commerce', 'Laravel', 'Multi-Vendor', 'Marketplace', 'Web Application']
+        },
+        {
+          id: 5,
+          date: 'Oct 30, 2023',
+          title: 'Mentor Website',
+          excerpt: "Built a dynamic website for an educational institute with Laravel 10, providing seamless content management.",
+          image: image5,
+          link: 'https://github.com/IsHereZahin/Mentor-app',
+          categories: ['Laravel', 'Web Development'],
+          tags: ['Laravel', 'Web Application', 'Dynamic Website', 'PHP', 'Education Technology']
+        },
+        {
+          id: 6,
+          date: 'Dec 17, 2023',
+          title: 'Personal Portfolio Website',
+          excerpt: "Developed a personal portfolio using Laravel 10, with an integrated admin backend for content management.",
+          image: image6,
+          link: 'https://github.com/IsHereZahin/Protfolio-App',
+          categories: ['Portfolio', 'Laravel'],
+          tags: ['Laravel', 'Portfolio Website', 'Personal Branding', 'Web Application', 'Admin Panel']
+        },
       ],
       searchQuery: '',
       currentPage: 1,
@@ -135,10 +168,10 @@ export default {
   computed: {
     filteredProjects() {
       if (!this.searchQuery.trim()) {
-        return this.projects; // Return all projects if searchQuery is empty
+        return this.sortProjects([...this.projects]); // Return all projects if searchQuery is empty
       }
       const keywords = this.searchQuery.toLowerCase().trim().split(' ');
-      return this.projects.filter(project => {
+      const filtered = this.projects.filter(project => {
         return keywords.every(keyword => {
           const titleMatch = project.title.toLowerCase().includes(keyword);
           const categoryMatch = project.categories.some(category => category.toLowerCase().includes(keyword));
@@ -147,6 +180,7 @@ export default {
           return titleMatch || categoryMatch || dateMatch || tagMatch;
         });
       });
+      return this.sortProjects(filtered); // Return sorted filtered projects
     },
     paginatedProjects() {
       const start = (this.currentPage - 1) * this.projectsPerPage;
@@ -160,6 +194,19 @@ export default {
   methods: {
     truncate(text, length) {
       return text.length > length ? text.substring(0, length) + '...' : text;
+    },
+    // Sorting function to prioritize "In Progress" projects and then sort by date in descending order
+    sortProjects(projects) {
+      return projects.sort((a, b) => {
+        // Prioritize "In Progress" projects
+        if (a.date.includes('In Progress') && !b.date.includes('In Progress')) return -1;
+        if (!a.date.includes('In Progress') && b.date.includes('In Progress')) return 1;
+
+        // Otherwise, sort by date (latest first)
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return dateB - dateA;
+      });
     }
   }
 };

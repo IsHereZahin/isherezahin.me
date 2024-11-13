@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import appImage1 from '../../assets/img/project/project1.jpg';
+import appImage1 from '../../assets/img/project/project-4.jpg';
 import appImage2 from '../../assets/img/project/project2.jpg';
 
 export default {
@@ -54,15 +54,15 @@ export default {
   data() {
     return {
       projects: [
-        {
-          id: 1,
-          date: 'April 23, 2024',
-          title: 'Git Analyzer',
-          excerpt: 'This application helps you Discover the value your Github code brings to the world.',
+      {
+          id: 4,
+          date: 'Mar 19, 2024 - In Progress',
+          title: 'Multi-Vendor E-Com Platform',
+          excerpt: "This multi-vendor e-commerce platform allows vendors to efficiently manage and sell products in a unified online marketplace.",
           image: appImage1,
-          link: 'https://git-analyzer.netlify.app/',
-          categories: ['Vue', 'Github'],
-          type: ['software', 'git']
+          link: 'https://github.com/IsHereZahin/Multi-Vendor-Ecommerce-Application',
+          categories: ['Laravel', 'E-Commerce'],
+          tags: ['E-Commerce', 'Laravel', 'Multi-Vendor', 'Marketplace', 'Web Application']
         },
         {
           id: 2,
