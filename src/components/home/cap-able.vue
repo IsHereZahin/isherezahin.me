@@ -116,7 +116,7 @@
 
       <div class="row" style="margin-top: -30px;">
         <div class="custom-btn">
-          <RouterLink to="/service" class="custom-button">See all services</RouterLink>
+          <RouterLink to="/services" class="custom-button">See all services</RouterLink>
         </div>
       </div>
 
