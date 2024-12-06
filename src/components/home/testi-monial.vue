@@ -32,13 +32,6 @@
       return {
         testimonials: [
           {
-            img: "https://media.licdn.com/dms/image/v2/D5603AQFrBLZl3QYUVg/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1664544255834?e=1733961600&v=beta&t=o2DtKXZCZ9XtwFhnftkPBCv5NjFGWMjcKR2mDK0iDhs",
-            text: "I highly recommend Zahin for his outstanding quality assurance. He approaches challenges creatively and is always looking for effective solutions. Zahin's friendly nature and active involvement make a pleasure to work with him. His dedication to quality and collaboration truly sets him apart. Any organization would be happy to have him!",
-            name: "Md. Najib Islam",
-            designation: "Senior Full Stack Developer, Iconic Solutions (Pvt.) Ltd",
-            link: "https://github.com/developernajib"
-          },
-          {
             img: "https://avatars.githubusercontent.com/u/135975917?v=4",
             text: "Zahin excels in Figma design and software testing, ensuring that every aspect of the product is user-friendly and visually appealing. His meticulous attention to detail and thorough testing processes guarantee high-quality results. Collaborating with him enhances project outcomes and fosters a culture of excellence.",
             name: "Tawsif Tamim",

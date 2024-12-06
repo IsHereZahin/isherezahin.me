@@ -12,7 +12,7 @@
           </div>
           <div class="row">
             <div class="map">
-              <img src="../../assets/img/Bangladesh_(orthographic_projection).svg.png" alt="Bangladesh" height="200px" class="img-fluid">
+              <img src="../../assets/img/Bangladesh_(orthographic_projection).svg.png" alt="Bangladesh - Orthographic Projection Map" title="Bangladesh" height="200px" class="img-fluid">
             </div>
           </div>
         </div>

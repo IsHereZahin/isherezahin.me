@@ -14,7 +14,7 @@
       <div class="row">
         <!-- Image Column -->
         <div class="col-md-4 d-flex justify-content-center align-items-center order-1 order-md-2">
-          <img src="../assets/img/me/home-image.jpg" loading="lazy" alt="Zahin" class="img-fluid shadow-sm">
+          <img src="../assets/img/me/home-image.jpg" loading="lazy" title="Zahin" alt="Zahin" class="img-fluid shadow-sm">
         </div>
 
         <!-- Text Column -->
