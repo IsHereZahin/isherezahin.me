@@ -24,32 +24,51 @@
   --font-secondary: "Cardo", sans-serif;
 }
 
-/* Light Colors */
 :root {
+  /* Light Mode */
   --theme: #0ecc96;
   --white: rgb(0, 0, 0);
-  --text: #272727;
+  --text-color: #272727;
   --grey: rgb(97, 97, 97);
   --blackly: #b7bbc2;
   --border: #e2e2e2;
   --color-bg: #F0F4F6;
-  --rad: red;
+
+  /* Highlight Colors */
+  --highlight-blue: #cfeaff;
+  --highlight-yellow: #fef9c3;
+  --highlight-pink: #fee4e7;
+  --highlight-green: #a7f3d0;
+  --highlight-gray: #e8e8e8;
+  --cut: #545c6b;
+  
+  --button-bg: #374151;
+  --button-bg-hover: #1f2937;
 }
 
-/* Dark Colors */
+/* Dark Mode */
 @media (prefers-color-scheme: dark) {
   :root {
     --theme: #00E6A5;
     --white: white;
-    --text: #e6e6e6;
+    --text-color: #e6e6e6;
     --grey: rgb(185, 185, 185);
     --blackly: #303133;
     --border: #1e1e1e;
     --color-bg: #000000;
-    --rad: red;
+
+    /* Highlight Colors */
+    --highlight-blue: transparent;
+    --highlight-yellow: transparent;
+    --highlight-pink: transparent;
+    --highlight-green: transparent;
+    --highlight-gray: transparent;
+    --cut: #babec0;
+
+    --button-bg: #374151;
+    --button-bg-hover: #1f2937;
   }
 }
-
 /* semantic color variables for this project */
 :root {
   --color-background: var(--color-bg);

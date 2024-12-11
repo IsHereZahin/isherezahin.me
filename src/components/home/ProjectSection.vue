@@ -175,7 +175,11 @@ export default {
   
 @media (max-width: 768px) {
   .project-card__info {
-    padding: 15px;
+    padding: 0px;
+  }
+  .project-card {
+    padding: 10px;
+    margin-top: 3px;
   }
 }
 </style>
