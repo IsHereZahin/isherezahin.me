@@ -37,10 +37,10 @@
     <h4 class="titlebar white-head text-decoration-none">Social links</h4>
     <ul>
       <li class="text-gray-400"><a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://github.com/isherezahin">GitHub</a></li>
-      <li class="text-gray-400"><a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/isherejahin/">Facebook</a></li>
       <li class="text-gray-400"><a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://instagram.com/isherezahin">Instagram</a></li>
       <li class="text-gray-400"><a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://x.com/isherezahin">X</a></li>
       <li class="text-gray-400"><a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://youtube.com/@isherezahin">YouTube</a></li>
+      <li class="text-gray-400"><a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://join.skype.com/invite/xeu3lGYMM8So">Skype</a></li>
     </ul>
     
     <h4 class="titlebar white-head text-decoration-none">Tech Stack</h4>

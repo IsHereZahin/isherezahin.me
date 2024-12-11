@@ -3,93 +3,94 @@
     <div class="container">
       <div class="row g-5 align-items-center">
         <div class="col-lg-7">
-  <header class="animate-fade-in">
-    Hello! I’m Zahin, a 
-    <span class="highlighted-text-developer">developer</span> based in 
-    Bangladesh.
-  </header>
-  <div class="mt-4">
-    <p>
-      I love building tools that are 
-      <span class="highlighted-text-user-friendly">user-friendly</span>, 
-      <span class="highlighted-text-user-friendly">simple</span>, and 
-      <span class="highlighted-text-user-friendly">delightful</span>.
-    </p>
-    <p>
-      I began my software journey at the age of 15 and pursued formal education in computer science since 2019. Since then, I have gained experience in  
-      <span class="highlighted-text-front-end">front-end</span> and 
-      <span class="highlighted-text-back-end">back-end web development</span>.
-    </p>
-    <p>
-      I am currently employed as an SQA Engineer at <a href="https://www.iconicsolutionsbd.com/" target="blank" class="highlighted-text-developer">Iconic Solutions Pvt. Ltd.</a>, where I focus on software testing. <span class="text-decoration-line-through">In addition, I contribute to UI/UX design using Figma and development in my spare time.</span>
-    </p>
-    <p>
-      Through my experiences, I’ve had the opportunity to work with diverse teams and developed a working style focused on 
-      <span class="highlighted-text-flexibility">flexibility</span>, 
-      <span class="highlighted-text-flexibility">clarity</span>, and 
-      <span class="highlighted-text-flexibility">collaboration</span>.
-    </p>
-    <p>
-      I’m currently looking for a new role in full-stack development. 
-      <a href="mailto:isherezahin@gmail.com" class="highlighted-text-hire-me" style="background-color: #fef9c3; color: #272727;">Hire me?</a>
-    </p>
-  </div>
-  <div class="mt-4 d-flex flex-wrap gap-3 animate-fade-in">
-    <a href="#" class="custom-btn">View Resume</a>
-    <a href="#" class="custom-btn">View LinkedIn</a>
-  </div>
-</div>
+          <header class="animate-fade-in">
+            Hello! I’m Zahin, a
+            <span class="highlighted-text-developer">developer</span> based in
+            Bangladesh.
+          </header>
+          <div class="mt-4">
+            <p>
+              I love building tools that are
+              <span class="highlighted-text-user-friendly">user-friendly</span>,
+              <span class="highlighted-text-user-friendly">simple</span>, and
+              <span class="highlighted-text-user-friendly">delightful</span>.
+            </p>
+            <p>
+              I began my software journey at the age of 15 and pursued formal education in computer science since 2019.
+              Since then, I have gained experience in
+              <span class="highlighted-text-front-end">front-end</span> and
+              <span class="highlighted-text-back-end">back-end web development</span>.
+            </p>
+            <p>
+              I am currently employed as an SQA Engineer at <a href="https://www.iconicsolutionsbd.com/" target="_blank"
+                class="highlighted-text-developer">Iconic Solutions Pvt. Ltd.</a>, where I focus on software testing.
+              <span class="text-decoration-line-through">In addition, I contribute to UI/UX design using Figma and
+                development in my spare time.</span>
+            </p>
+            <p>
+              Through my experiences, I’ve had the opportunity to work with diverse teams and developed a working style
+              focused on
+              <span class="highlighted-text-flexibility">flexibility</span>,
+              <span class="highlighted-text-flexibility">clarity</span>, and
+              <span class="highlighted-text-flexibility">collaboration</span>.
+            </p>
+            <p>
+              Don't forget to visit my
+              <RouterLink to="/guestbook" exact-active-class="active-link" class="highlighted-text-hire-me"
+                style="background-color: #fef9c3; color: #272727;">GuestBook</RouterLink>.
+            </p>
+          </div>
+          <div class="mt-4 d-flex flex-wrap gap-3 animate-fade-in">
+            <RouterLink to="/about" exact-active-class="active-link" class="custom-btn">View Resume</RouterLink>.
+            <a href="https://www.linkedin.com/in/isherezahin/" target="_blank" class="custom-btn">View LinkedIn</a>
+          </div>
+        </div>
         <div class="col-lg-5 text-center">
-          <img 
-            src="../../assets/img/me/home-image.jpg" 
-            alt="Profile" 
-            class="img-fluid rounded-3" 
-            style="width: 50%; height: auto; object-position: center;"
-          />
+          <img src="../../assets/img/me/home-image.jpg" alt="Profile" class="img-fluid rounded-3"
+            style="width: 70%; height: auto; object-position: center;" />
         </div>
       </div>
     </div>
+    <img src="../../assets/img/home/about-shape-3.svg" loading="lazy" alt="" class="shape shape-3">
   </section>
 </template>
 
 <style scoped>
-/* Global Font Size, Header, and Style */
 header {
   font-size: 2.25rem;
   line-height: 2.5rem;
   font-weight: 700;
 }
 
-/* Highlighted Text Styles */
 .highlighted-text-developer {
-  background-color: var(--highlight-blue); /* Light blue */
+  background-color: var(--highlight-blue);
   padding: 0 0.25rem;
   font-weight: 700;
 }
 
 .highlighted-text-user-friendly {
-  background-color: var(--highlight-yellow); /* Yellow */
+  background-color: var(--highlight-yellow);
   padding: 0 0.25rem;
 }
 
 .highlighted-text-front-end {
-  background-color: var(--highlight-pink); /* Pink */
+  background-color: var(--highlight-pink);
   padding: 0 0.25rem;
 }
 
 .highlighted-text-back-end {
-  background-color: var(--highlight-green); /* Green */
+  background-color: var(--highlight-green);
   padding: 0 0.25rem;
 }
 
 .highlighted-text-flexibility {
-  background-color: var(--highlight-gray); /* Light gray */
+  background-color: var(--highlight-gray);
   color: var(--text-color);
   padding: 0 0.25rem;
 }
 
 .highlighted-text-hire-me {
-  background-color: var(--highlight-yellow); /* Yellow */
+  background-color: var(--highlight-yellow);
   padding: 0 0.25rem;
 }
 
@@ -133,6 +134,7 @@ header {
     opacity: 0;
     transform: translateX(20px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0px);
@@ -145,6 +147,7 @@ header {
     width: 60% !important;
     height: auto;
   }
+
   header {
     font-size: 1.5rem;
     line-height: 1.5rem;
