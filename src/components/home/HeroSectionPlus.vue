@@ -41,13 +41,13 @@
             </p>
           </div>
           <div class="mt-4 d-flex flex-wrap gap-3 animate-fade-in">
-            <RouterLink to="/about" exact-active-class="active-link" class="custom-btn">View Resume</RouterLink>.
+            <RouterLink to="/about" exact-active-class="active-link" class="custom-btn">View Resume</RouterLink>
             <a href="https://www.linkedin.com/in/isherezahin/" target="_blank" class="custom-btn">View LinkedIn</a>
           </div>
         </div>
         <div class="col-lg-5 text-center">
           <img src="../../assets/img/me/home-image.jpg" alt="Profile" class="img-fluid rounded-3"
-            style="width: 70%; height: auto; object-position: center;" />
+            style="width: 70%; height: auto; object-position: center;"/>
         </div>
       </div>
     </div>
@@ -125,7 +125,8 @@ header {
 }
 
 .img-fluid:hover {
-  transform: scale(1.01);
+  cursor: pointer;
+  transform: scale(1.05);
 }
 
 /* Animation Keyframes */
