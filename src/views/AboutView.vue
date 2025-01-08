@@ -1,38 +1,43 @@
 <template>
   <section id="project" style="margin-top: 70px">
-  <div class="container">
-    <!-- Page Head -->
-    <div class="row page-head gap-2">
-      <h1 class="white-head fw-bold text-green-800">About</h1>
+    <div class="container">
+      <!-- Page Head -->
+      <div class="row page-head gap-2">
+        <h1 class="white-head fw-bold text-green-800">About</h1>
       <p>👋 Hello! Assalamualikum; I'm Zahin, a passionate programmer who loves coding and tea.</p>
     </div>
     <img src="../assets/img/home/about-shape-3.svg" loading="lazy" alt="" class="shape shape-3">
 
-    <h3 class="titlebar white-head text-decoration-none theme-color">WHO AM I</h3>
+      <h3 class="titlebar white-head text-decoration-none theme-color">WHO AM I</h3>
 
-    <div class="container">
-      <div class="row">
-        <!-- Image Column -->
-        <div class="col-md-4 d-flex justify-content-center align-items-center order-1 order-md-2">
-          <img src="../assets/img/me/home-image.jpg" loading="lazy" alt="Zahin" class="img-fluid shadow-sm">
-        </div>
-
-        <!-- Text Column -->
-        <div class="col-md-8 order-2 order-md-1">
-          <div class="w-100">
-            <p class="text-gray-400">I’m an enthusiastic QA professional with a solid foundation in functional and automated testing. My expertise extends to working with tools and technologies such as <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://laravel.org/">Laravel</a>, <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://vuejs.org/">Vue.js</a>, <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://www.selenium.dev/">Selenium</a>, <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://pptr.dev/">Puppeteer</a>, <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://pestphp.com/">Pest</a>, and <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://www.figma.com/">Figma</a>.</p>
-            <p class="text-gray-400">My journey in software began at the age of 15 with a keen interest in programming, which led me to pursue formal education in computer science starting in 2019. Through extensive self-learning on platforms like YouTube, particularly on channels like <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/@edurekaIN">edureka!</a>, I have developed a strong proficiency in various programming languages and technologies.</p>
+      <div class="container">
+        <div class="row">
+          <!-- Image Column -->
+          <div class="col-md-4 d-flex justify-content-center align-items-center order-1 order-md-2">
+            <img src="../assets/img/me/home-image.jpg" loading="lazy" alt="Zahin" class="img-fluid shadow-sm">
           </div>
 
-          <h5 class="titlebar white-head text-decoration-none">What I'm Up To?</h5>
-          <ul>
-            <li class="text-gray-400">SQA Engineer at <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://github.com/isherezahin">Iconic Solutions Pvt. Ltd.</a></li>
-            <li class="text-gray-400">Traveling and enjoying time with friends when possible.</li>
-            <li class="text-gray-400">Continuously learning and staying updated with new technology trends.</li>
-          </ul>
+          <!-- Text Column -->
+          <div class="col-md-8 order-2 order-md-1">
+            <div class="w-100">
+              <p class="text-gray-400">
+                I’m a full-stack developer passionate about creating impactful, user-friendly, and scalable web applications. I work with tools like <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://laravel.org/">Laravel</a>, <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://vuejs.org/">Vue.js</a>, and <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://reactjs.org/">React.js</a> to bring ideas to life, focusing on both the back-end and front-end to create seamless, functional experiences.
+              </p>
+              <p class="text-gray-400">
+                My journey in development began at 15, when I was first captivated by programming. Since then, I’ve evolved from a self-taught coder to a professional developer, expanding my knowledge through formal computer science education and online resources like <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/@edurekaIN">edureka!</a>.
+              </p>
+            </div>
+
+            <h5 class="titlebar white-head text-decoration-none">What I'm Up To?</h5>
+            <ul>
+              <li class="text-gray-400">Currently, I’m a Full-Stack Developer at <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://www.iconicsolutionsbd.com/">Iconic Solutions Pvt. Ltd.</a>, where I work on exciting, impactful projects every day.</li>
+              <li class="text-gray-400">Outside of coding, I’m passionate about traveling, keeping up with the latest tech trends, and spending time with friends.</li>
+              <li class="text-gray-400">I’m always eager to expand my knowledge, learn new technologies, and collaborate on meaningful, innovative projects.</li>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
+
 
     <h4 class="titlebar white-head text-decoration-none">Social links</h4>
     <ul>
@@ -66,6 +71,10 @@
           <div class="tooltip"><span class="tech-name">Vue.js:</span> A progressive framework for building user interfaces.</div>
       </div>
       <div class="tech">
+        <img src="https://skillicons.dev/icons?i=react" alt="React.js"/>
+        <div class="tooltip"><span class="tech-name">React.js:</span> A JavaScript library for building user interfaces.</div>
+    </div>
+      <div class="tech">
           <img src="https://skillicons.dev/icons?i=figma" alt="Figma"/>
           <div class="tooltip"><span class="tech-name">Figma:</span> A collaborative interface design tool.</div>
       </div>
@@ -82,8 +91,11 @@
           <div class="tooltip"><span class="tech-name">Windows:</span> A group of several proprietary graphical operating system families developed by Microsoft.</div>
       </div>
     </div>
-    <h4 class="titlebar white-head text-decoration-none" style="margin-bottom: 4px;">Contact</h4>
-    <p  class="text-gray-400">Do contact me if you need my opinion about software testing, web development, especially frontend works. <br>I’ll be happy to help! (find my Skype ID in the footer)</p>
+    <h4 class="titlebar white-head text-decoration-none" style="margin-bottom: 4px;">Let’s Chat!</h4>
+<p class="text-gray-400">
+  Need help with your project or have questions? I’m happy to assist with anything—front-end or back-end! <br>
+  Drop me a message anytime. (My Skype ID is in the footer.)
+</p>
   </div>
   </section>
 </template>

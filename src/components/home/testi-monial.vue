@@ -31,20 +31,27 @@
     data() {
       return {
         testimonials: [
-          {
-            img: "https://avatars.githubusercontent.com/u/135975917?v=4",
-            text: "Zahin excels in Figma design and software testing, ensuring that every aspect of the product is user-friendly and visually appealing. His meticulous attention to detail and thorough testing processes guarantee high-quality results. Collaborating with him enhances project outcomes and fosters a culture of excellence.",
-            name: "Tawsif Tamim",
-            designation: "UI/UX Designer, Iconic Solutions (Pvt.) Ltd",
-            link: "https://github.com/developer-tamim"
-          },
-          {
-            img: "https://avatars.githubusercontent.com/u/148049184?v=4",
-            text: "I am impressed by Zahin's adaptability and problem-solving skills. He approaches each project with a fresh perspective, quickly mastering new technologies. His passion for learning and sharing insights fosters an innovative work environment, making him a standout team member.",
-            name: "Putul Sen Tongchangya",
-            designation: "Full-Stack Laravel Developer",
-            link: "https://github.com/developerputul"
-          },
+        {
+          img: "https://avatars.githubusercontent.com/u/135975917?v=4",
+          text: "It’s been a true pleasure working alongside Zahin. As a junior developer, he consistently brings fresh ideas and a proactive approach to every project. His adaptability and strong work ethic, paired with his willingness to assist others, make him a dependable teammate. I’ve witnessed his growth firsthand, and I’m excited to see how he continues to evolve as a developer.",
+          name: "Tawsif Tamim",
+          designation: "UI/UX Designer, Iconic Solutions (Pvt.) Ltd",
+          link: "https://github.com/developer-tamim"
+        },
+        {
+          img: "https://avatars.githubusercontent.com/u/107980740?v=4",
+          text: "Zahin is not only a talented developer, but also a fantastic individual to work with. His passion for coding is evident in everything he does, and he’s always eager to help others when needed. His positive attitude and strong work ethic make him a joy to collaborate with, and I’ve had the pleasure of watching him grow into an even better developer over time.",
+          name: "Salman Faruk",
+          designation: "BSc CSE Student, East Delta University",
+          link: "https://github.com/sfsalmanfaruk"
+        },
+        {
+          img: "https://avatars.githubusercontent.com/u/148049184?v=4",
+          text: "Working alongside Zahin during my internship has been an incredibly valuable experience. He is a skilled and knowledgeable developer who is always willing to lend a helping hand. His patience and collaborative spirit make him an excellent mentor, and I’ve learned a great deal from his guidance. I truly appreciate his support throughout my learning journey.",
+          name: "Putul Sen Tongchangya",
+          designation: "Full-Stack Laravel Developer",
+          link: "https://github.com/developerputul"
+        },
         ]
       };
     }

@@ -5,49 +5,40 @@
         <div class="col-lg-7">
           <header class="animate-fade-in">
             Hello! I’m Zahin, a
-            <span class="highlighted-text-developer">developer</span> based in
+            <span class="sky-bg">developer</span> based in
             Bangladesh.
           </header>
           <div class="mt-4">
             <p>
-              I love building tools that are
-              <span class="highlighted-text-user-friendly">user-friendly</span>,
-              <span class="highlighted-text-user-friendly">simple</span>, and
-              <span class="highlighted-text-user-friendly">delightful</span>.
+              I’m all about creating <span class="text-user-bg">user-friendly</span>,
+              <span class="text-user-bg">efficient</span>, and
+              <span class="text-user-bg">scalable</span> web applications. Why? Because I believe technology
+              should make life simpler, not harder.
             </p>
             <p>
-              I began my software journey at the age of 15 and pursued formal education in computer science since 2019.
-              Since then, I have gained experience in
-              <span class="highlighted-text-front-end">front-end</span> and
-              <span class="highlighted-text-back-end">back-end web development</span>.
+              My coding journey began at <span class="soft-bg">15</span>, where I was exploring and dreaming. By <span class="soft-bg">2019</span>, I took the leap into professional development, transforming my passion into a career. These days, I’m immersed in tools like 
+              <span class="highlighted-text-front-end">Laravel</span>, <span class="green-bg">Vue.js</span>, and <span class="sky-bg" style="font-weight: 500;">React.js</span>—<span class="text-decoration-line-through">bringing ideas to life every day.</span>
             </p>
             <p>
-              I am currently employed as an SQA Engineer at <a href="https://www.iconicsolutionsbd.com/" target="_blank"
-                class="highlighted-text-developer">Iconic Solutions Pvt. Ltd.</a>, where I focus on software testing.
-              <span class="text-decoration-line-through">In addition, I contribute to UI/UX design using Figma and
-                development in my spare time.</span>
+              Right now, I’m a proud Full-Stack Developer at
+              <a href="https://www.iconicsolutionsbd.com/" target="_blank" class="sky-bg">
+                Iconic Solutions Pvt. Ltd.</a>.
             </p>
             <p>
-              Through my experiences, I’ve had the opportunity to work with diverse teams and developed a working style
-              focused on
-              <span class="highlighted-text-flexibility">flexibility</span>,
-              <span class="highlighted-text-flexibility">clarity</span>, and
-              <span class="highlighted-text-flexibility">collaboration</span>.
+              Drop me a note or say hi at my 
+              <RouterLink to="/guestbook" exact-active-class="active-link" class="guestbook-bg"
+                style="background-color: #fef9c3; color: #272727;">GuestBook</RouterLink>. I’d love to hear from you!
             </p>
-            <p>
-              Don't forget to visit my
-              <RouterLink to="/guestbook" exact-active-class="active-link" class="highlighted-text-hire-me"
-                style="background-color: #fef9c3; color: #272727;">GuestBook</RouterLink>.
-            </p>
+
           </div>
           <div class="mt-4 d-flex flex-wrap gap-3 animate-fade-in">
-            <RouterLink to="/about" exact-active-class="active-link" class="custom-btn">View Resume</RouterLink>
-            <a href="https://www.linkedin.com/in/isherezahin/" target="_blank" class="custom-btn">View LinkedIn</a>
+            <a href="/src/assets/zahin_resume.pdf" download class="custom-btn">View Resume</a>
+            <a href="https://github.com/isherezahin" target="_blank" class="custom-btn">View GitHub</a>
           </div>
         </div>
         <div class="col-lg-5 text-center">
           <img src="../../assets/img/me/home-image.jpg" alt="Profile" class="img-fluid rounded-3"
-            style="width: 70%; height: auto; object-position: center;"/>
+            style="width: 70%; height: auto; object-position: center;" />
         </div>
       </div>
     </div>
@@ -62,13 +53,13 @@ header {
   font-weight: 700;
 }
 
-.highlighted-text-developer {
+.sky-bg {
   background-color: var(--highlight-blue);
   padding: 0 0.25rem;
   font-weight: 700;
 }
 
-.highlighted-text-user-friendly {
+.text-user-bg {
   background-color: var(--highlight-yellow);
   padding: 0 0.25rem;
 }
@@ -78,18 +69,18 @@ header {
   padding: 0 0.25rem;
 }
 
-.highlighted-text-back-end {
+.green-bg {
   background-color: var(--highlight-green);
   padding: 0 0.25rem;
 }
 
-.highlighted-text-flexibility {
+.soft-bg {
   background-color: var(--highlight-gray);
   color: var(--text-color);
   padding: 0 0.25rem;
 }
 
-.highlighted-text-hire-me {
+.guestbook-bg {
   background-color: var(--highlight-yellow);
   padding: 0 0.25rem;
 }
