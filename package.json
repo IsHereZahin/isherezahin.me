@@ -19,7 +19,7 @@
     "bootstrap-icons": "^1.11.3",
     "cobe": "^0.6.3",
     "dompurify": "^3.1.7",
-    "firebase": "^10.13.1",
+    "firebase": "^11.2.0",
     "pinia": "^2.1.7",
     "sweetalert2": "^11.14.0",
     "vue": "^3.4.26",
