@@ -59,10 +59,6 @@
           <div class="tooltip"><span class="tech-name">Git:</span> A distributed version control system for tracking changes in source code.</div>
       </div>
       <div class="tech">
-          <img src="https://skillicons.dev/icons?i=cs" alt="C#"/>
-          <div class="tooltip"><span class="tech-name">C#:</span> A modern, object-oriented programming language developed by Microsoft.</div>
-      </div>
-      <div class="tech">
           <img src="https://skillicons.dev/icons?i=laravel" alt="Laravel"/>
           <div class="tooltip"><span class="tech-name">Laravel:</span> A PHP framework for web artisans.</div>
       </div>
@@ -82,6 +78,41 @@
           <img src="https://skillicons.dev/icons?i=selenium" alt="Selenium"/>
           <div class="tooltip"><span class="tech-name">Selenium:</span> A portable framework for testing web applications.</div>
       </div>
+      <div class="tech">
+          <img src="https://skillicons.dev/icons?i=docker" alt="Docker"/>
+          <div class="tooltip">
+              <span class="tech-name">Docker:</span> A platform that allows developers to package applications and dependencies into lightweight, portable containers for consistent deployment across different environments.
+          </div>
+      </div>
+
+      <div class="tech">
+          <img src="https://skillicons.dev/icons?i=tailwind" alt="Tailwind CSS"/>
+          <div class="tooltip">
+              <span class="tech-name">Tailwind CSS:</span> A utility-first CSS framework for creating custom designs without writing custom CSS.
+          </div>
+      </div>
+
+      <div class="tech">
+          <img src="https://skillicons.dev/icons?i=bootstrap" alt="Bootstrap"/>
+          <div class="tooltip">
+              <span class="tech-name">Bootstrap:</span> A front-end framework for building responsive and mobile-first websites quickly using pre-built components and utilities.
+          </div>
+      </div>
+
+      <div class="tech">
+          <img src="https://skillicons.dev/icons?i=mysql" alt="MySQL"/>
+          <div class="tooltip">
+              <span class="tech-name">MySQL:</span> A popular open-source relational database management system used for storing and managing data.
+          </div>
+      </div>
+
+      <div class="tech">
+          <img src="https://skillicons.dev/icons?i=postman" alt="Postman"/>
+          <div class="tooltip">
+              <span class="tech-name">Postman:</span> An API testing tool that simplifies the process of developing and testing APIs with a user-friendly interface.
+          </div>
+      </div>
+
       <div class="tech">
           <img src="https://skillicons.dev/icons?i=linux" alt="Linux"/>
           <div class="tooltip"><span class="tech-name">Linux:</span> An open-source Unix-like operating system.</div>

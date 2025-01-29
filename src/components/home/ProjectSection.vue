@@ -47,32 +47,32 @@
 
 <script>
 import appImage1 from '../../assets/img/project/project-4.jpg';
-import appImage2 from '../../assets/img/project/project2.jpg';
+import appImage2 from '../../assets/img/project/project-7.png';
 
 export default {
   name: 'projectSection',
   data() {
     return {
       projects: [
-      {
-          id: 4,
-          date: 'Mar 19, 2024 - In Progress',
+        {
+          id: 1,
+          date: 'January 27, 2025 - In Progress',
+          title: 'Simple Ride Share App',
+          excerpt: 'A simple ride-sharing application built with Laravel and Vue.js, currently in progress.',
+          image: appImage2,
+          link: 'https://github.com/IsHereZahin/Ride-Share-App',
+          categories: ['Laravel', 'Vue.js'],
+          tags: ['Laravel', 'Web Application']
+        },
+        {
+          id: 2,
+          date: 'January 10, 2025',
           title: 'Multi-Vendor E-Com Platform',
           excerpt: "This multi-vendor e-commerce platform allows vendors to efficiently manage and sell products in a unified online marketplace.",
           image: appImage1,
           link: 'https://github.com/IsHereZahin/Multi-Vendor-Ecommerce-Application',
           categories: ['Laravel', 'E-Commerce'],
           tags: ['E-Commerce', 'Laravel', 'Multi-Vendor', 'Marketplace', 'Web Application']
-        },
-        {
-          id: 2,
-          date: 'October 7, 2023',
-          title: 'E-commerce website',
-          excerpt: "I enjoy working on e-commerce websites; this is my favorite project too.",
-          image: appImage2,
-          link: 'https://food-e-commerce-v1.netlify.app/',
-          categories: ['Website', 'UI/UX'],
-          type: ['ui', 'ux', 'e-commerce']
         }
       ]
     };

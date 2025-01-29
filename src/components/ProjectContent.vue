@@ -5,6 +5,7 @@
       <div class="row page-head gap-2">
         <h1 class="white-head fw-bold text-green-800">Project</h1>
         <p>The list of my projects. Everything was made with <span style="color: var(--rad);">❤️</span>.</p>
+        <p>Note: I’ve only shared the project that I personally developed from start to finish.</p>
       </div>
       <img src="../assets/img/home/about-shape-3.svg" loading="lazy" alt="" class="shape shape-3">
       <!-- Search and Filters -->
@@ -93,6 +94,8 @@ import image3 from '../assets/img/project/project-3.jpg';
 import image4 from '../assets/img/project/project-4.jpg';
 import image5 from '../assets/img/project/project-5.jpg';
 import image6 from '../assets/img/project/project-6.jpg';
+import image7 from '../assets/img/project/project-7.png';
+import image8 from '../assets/img/project/project-8.png';
 
 export default {
   name: 'ProjectSection',
@@ -131,7 +134,7 @@ export default {
         },
         {
           id: 4,
-          date: 'Mar 19, 2024 - In Progress',
+          date: 'January 10, 2025',
           title: 'Multi-Vendor E-Com Platform',
           excerpt: "This multi-vendor e-commerce platform allows vendors to efficiently manage and sell products in a unified online marketplace.",
           image: image4,
@@ -158,6 +161,26 @@ export default {
           link: 'https://github.com/IsHereZahin/Protfolio-App',
           categories: ['Portfolio', 'Laravel'],
           tags: ['Laravel', 'Portfolio Website', 'Personal Branding', 'Web Application', 'Admin Panel']
+        },
+        {
+          id: 7,
+          date: 'January 27, 2025 - In Progress',
+          title: 'Simple Ride Share App',
+          excerpt: 'A simple ride-sharing application built with Laravel and Vue.js, currently in progress.',
+          image: image7,
+          link: 'https://github.com/IsHereZahin/Ride-Share-App',
+          categories: ['Laravel', 'Vue.js'],
+          tags: ['Laravel', 'Web Application']
+        },
+        {
+          id: 8,
+          date: 'Dec 12, 2024 - In Progress',
+          title: 'Testing Management System',
+          excerpt: 'A testing management tool to organize test steps, manage projects, and export data in Excel or CSV.',
+          image: image8,
+          link: 'https://github.com/IsHereZahin/testing-management-system',
+          categories: ['Laravel', 'Testing Tool'],
+          tags: ['Laravel', 'Web Application']
         },
       ],
       searchQuery: '',
