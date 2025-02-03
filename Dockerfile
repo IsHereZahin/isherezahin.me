@@ -18,3 +18,6 @@ EXPOSE 5173
 
 # Start the Vite development server
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+
+# pull repository // docker pull isherezahin/isherezahin_me:235
+# run cmd // docker run -p 5173:5173 --name isherezahin_container --rm -v "$(Get-Location):/app" -v "/app/node_modules" isherezahin/isherezahin_me:235
