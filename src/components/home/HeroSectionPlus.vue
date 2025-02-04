@@ -4,35 +4,39 @@
       <div class="row g-5 align-items-center">
         <div class="col-lg-7">
           <header class="animate-fade-in">
-            Hello! I’m Zahin, a
-            <span class="sky-bg">developer</span> based in
+            Hello! I’m Zahin, a  
+            <span class="sky-bg">developer</span> based in  
             Bangladesh.
           </header>
           <div class="mt-4">
             <p>
-              I’m all about creating <span class="text-user-bg">user-friendly</span>,
-              <span class="text-user-bg">efficient</span>, and
-              <span class="text-user-bg">scalable</span> web applications. Why? Because I believe technology
-              should make life simpler, not harder.
+              I specialize in building <span class="text-user-bg">user-friendly</span>,  
+              <span class="text-user-bg">efficient</span>, and  
+              <span class="text-user-bg">scalable</span> web applications.  
+              My philosophy? Technology should simplify life, not complicate it.
             </p>
             <p>
-              My coding journey began at <span class="soft-bg">15</span>, where I was exploring and dreaming. By <span class="soft-bg">2019</span>, I took the leap into professional development, transforming my passion into a career. These days, I’m immersed in tools like 
-              <span class="highlighted-text-front-end">Laravel</span>, <span class="green-bg">Vue.js</span>, and <span class="sky-bg" style="font-weight: 500;">React.js</span>—<span class="text-decoration-line-through">bringing ideas to life every day.</span>
+              I started learning to code in <span class="soft-bg">2019</span> when I was  
+              <span class="soft-bg">16</span>. Over time, I turned it into a career. Today, I work extensively with  
+              <span class="highlighted-text-front-end">Laravel</span>,  
+              <span class="green-bg">Vue.js</span>, and  
+              <span class="sky-bg" style="font-weight: 500;">Docker</span>
+              <span class="text-decoration-line-through">—bringing ideas to life every day.</span>
             </p>
             <p>
-              Right now, I’m a proud Full-Stack Developer at
+              I’m currently working as a Junior SQA Engineer at  
               <a href="https://www.iconicsolutionsbd.com/" target="_blank" class="sky-bg">
-                Iconic Solutions Pvt. Ltd.</a>.
+                Iconic Solutions Pvt. Ltd.</a>
             </p>
             <p>
-              Drop me a note or say hi at my 
+              Feel free to drop me a message or say hello on my  
               <RouterLink to="/guestbook" exact-active-class="active-link" class="guestbook-bg"
-                style="background-color: #fef9c3; color: #272727;">GuestBook</RouterLink>. I’d love to hear from you!
+                style="background-color: #fef9c3; color: #272727;">GuestBook</RouterLink>.  
+              I’d love to connect!
             </p>
-
           </div>
           <div class="mt-4 d-flex flex-wrap gap-3 animate-fade-in">
-            <a href="/src/assets/zahin_resume.pdf" download class="custom-btn">View Resume</a>
+            <a href="https://drive.google.com/file/d/1Q56yq9Kvszi9Mc9vCUyyeSovTJ90RbLX/view?usp=drive_link" download class="custom-btn">View Resume</a>
             <a href="https://github.com/isherezahin" target="_blank" class="custom-btn">View GitHub</a>
           </div>
         </div>
