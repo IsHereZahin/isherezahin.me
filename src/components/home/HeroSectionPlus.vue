@@ -24,7 +24,7 @@
               <span class="text-decoration-line-through">—bringing ideas to life every day.</span>
             </p>
             <p>
-              I’m currently working as a Junior SQA Engineer at  
+              I’m currently working as a Junior SQA at  
               <a href="https://www.iconicsolutionsbd.com/" target="_blank" class="sky-bg">
                 Iconic Solutions Pvt. Ltd.</a>
             </p>
@@ -36,7 +36,7 @@
             </p>
           </div>
           <div class="mt-4 d-flex flex-wrap gap-3 animate-fade-in">
-            <a href="https://drive.google.com/file/d/1Q56yq9Kvszi9Mc9vCUyyeSovTJ90RbLX/view?usp=drive_link" download class="custom-btn">View Resume</a>
+            <a href="https://drive.google.com/uc?export=download&id=1BKimrEZ4-U5x-n52vnIiTmtvIv-_-fzn" class="custom-btn">Download Resume</a>
             <a href="https://github.com/isherezahin" target="_blank" class="custom-btn">View GitHub</a>
           </div>
         </div>

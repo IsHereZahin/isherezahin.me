@@ -30,7 +30,7 @@
 
             <h5 class="titlebar white-head text-decoration-none">What I'm Up To?</h5>
             <ul>
-              <li class="text-gray-400">Currently, I’m a Junior SQA Engineer at <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://www.iconicsolutionsbd.com/">Iconic Solutions Pvt. Ltd.</a>, where I work on quality assurance while also contributing to development and UI/UX design.</li>
+              <li class="text-gray-400">Currently, I’m a Junior SQA at <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://www.iconicsolutionsbd.com/">Iconic Solutions Pvt. Ltd.</a>, where I work on quality assurance while also contributing to development and UI/UX design.</li>
               <li class="text-gray-400">Outside of coding, I’m passionate about traveling, keeping up with the latest tech trends, and spending time with friends.</li>
               <li class="text-gray-400">I’m always eager to expand my knowledge, learn new technologies, and collaborate on meaningful, innovative projects.</li>
             </ul>

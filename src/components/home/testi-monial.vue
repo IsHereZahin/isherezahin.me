@@ -33,7 +33,7 @@
         testimonials: [
         {
           img: "https://avatars.githubusercontent.com/u/135975917?v=4",
-          text: "It’s been a true pleasure working alongside Zahin. As a Junior SQA Engineer, he consistently brings a keen eye for quality and a proactive approach to every project. His adaptability and strong work ethic, combined with his willingness to help others, make him a reliable team member. I’ve seen his growth firsthand and am excited to see how he continues to evolve in his role.",
+          text: "It’s been a true pleasure working alongside Zahin. As a Junior SQA, he consistently brings a keen eye for quality and a proactive approach to every project. His adaptability and strong work ethic, combined with his willingness to help others, make him a reliable team member. I’ve seen his growth firsthand and am excited to see how he continues to evolve in his role.",
           name: "Tawsif Tamim",
           designation: "UI/UX Designer, Iconic Solutions (Pvt.) Ltd",
           link: "https://github.com/developer-tamim"

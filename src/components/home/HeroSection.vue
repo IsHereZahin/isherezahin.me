@@ -7,7 +7,7 @@
             <span class="tooltip"><span class="tooltip-text">Zahin:</span> This is my nickname.</span>
           </span> Mohammad Nowsin <br>
         </h2>
-        <span class="user-title">SQA Engineer at 
+        <span class="user-title">SQA at 
           <a href="https://iconicsolutionsbd.com/" target="blank">
             <span class="information-color" style="font-size: 1rem; margin-top: -200px;" color="var(--theme)">ICONIC
               <span class="tooltip"><span class="tooltip-text">ICONIC SOLUTIONS PVT. LTD </span>is a premier IT firm in Chittagong, Bangladesh, offering software, IT consulting, and financial services (USA-Boston Appraisal Services).</span></span>
