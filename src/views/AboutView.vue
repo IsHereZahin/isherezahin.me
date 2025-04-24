@@ -21,7 +21,7 @@
           <div class="col-md-8 order-2 order-md-1">
             <div class="w-100">
               <p class="text-gray-400">
-                I’m a full-stack developer passionate about creating impactful, user-friendly, and scalable web applications. I work with tools like <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://laravel.org/">Laravel</a>, <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://vuejs.org/">Vue.js</a>, and <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://reactjs.org/">React.js</a> to bring ideas to life, focusing on both the back-end and front-end to create seamless, functional experiences.
+                I’m a web developer passionate about creating impactful, user-friendly, and scalable web applications. I work with tools like <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://laravel.org/">Laravel</a>, <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://vuejs.org/">Vue.js</a>, <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://nextjs.org/">Next.js</a>, and <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://reactjs.org/">React.js</a> to bring ideas to life, focusing on both the back-end and front-end to create seamless, functional experiences.
               </p>
               <p class="text-gray-400">
                 My journey in development began at 15, when I was first captivated by programming. Since then, I’ve evolved from a self-taught coder to a professional developer, expanding my knowledge through formal computer science education and online resources like <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/@edurekaIN">edureka!</a>.
@@ -30,9 +30,9 @@
 
             <h5 class="titlebar white-head text-decoration-none">What I'm Up To?</h5>
             <ul>
-              <li class="text-gray-400">Currently, I’m a Junior SQA at <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://www.iconicsolutionsbd.com/">Iconic Solutions Pvt. Ltd.</a>, where I work on quality assurance while also contributing to development and UI/UX design.</li>
-              <li class="text-gray-400">Outside of coding, I’m passionate about traveling, keeping up with the latest tech trends, and spending time with friends.</li>
-              <li class="text-gray-400">I’m always eager to expand my knowledge, learn new technologies, and collaborate on meaningful, innovative projects.</li>
+              <li class="text-gray-400">Currently, I’m at <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://www.iconicsolutionsbd.com/">Iconic Solutions Pvt. Ltd.</a></li>
+              <li class="text-gray-400">When I'm not coding, I’m probably exploring new places, geeking out over the latest tech, or just hanging out with friends.</li>
+              <li class="text-gray-400">I’m always up for learning new tools, picking up fresh skills, and building cool stuff with others.</li>
             </ul>
           </div>
         </div>
@@ -65,6 +65,10 @@
       <div class="tech">
           <img src="https://skillicons.dev/icons?i=vue" alt="Vue.js"/>
           <div class="tooltip"><span class="tech-name">Vue.js:</span> A progressive framework for building user interfaces.</div>
+      </div>
+      <div class="tech">
+        <img src="https://skillicons.dev/icons?i=nextjs" alt="Next.js"/>
+        <div class="tooltip"><span class="tech-name">Next.js:</span> A React framework for building fast, SEO-friendly web applications.</div>
       </div>
       <div class="tech">
         <img src="https://skillicons.dev/icons?i=react" alt="React.js"/>
@@ -124,8 +128,8 @@
     </div>
     <h4 class="titlebar white-head text-decoration-none" style="margin-bottom: 4px;">Let’s Chat!</h4>
 <p class="text-gray-400">
-  Need help with your project or have questions? I’m happy to assist with anything—front-end or back-end! <br>
-  Drop me a message anytime. (My Skype ID is in the footer.)
+  Need help with your project or have questions?<br>
+  Drop me a message anytime.
 </p>
   </div>
   </section>

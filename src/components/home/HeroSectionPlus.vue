@@ -19,12 +19,13 @@
               I started learning to code in <span class="soft-bg">2019</span> when I was  
               <span class="soft-bg">16</span>. Over time, I turned it into a career. Today, I work extensively with  
               <span class="highlighted-text-front-end">Laravel</span>,  
-              <span class="green-bg">Vue.js</span>, and  
-              <span class="sky-bg" style="font-weight: 500;">Docker</span>
-              <span class="text-decoration-line-through">—bringing ideas to life every day.</span>
+              <span class="green-bg">Vue.js</span>,  
+              <span class="sky-bg" style="font-weight: 500;">Docker</span>,  
+              <span class="sky-bg" style="font-weight: 500;">Next.js</span>, and  
+              <span class="sky-bg" style="font-weight: 500;">React.js</span>.
             </p>
             <p>
-              I’m currently working as a Junior SQA at  
+              I’m currently working at  
               <a href="https://www.iconicsolutionsbd.com/" target="_blank" class="sky-bg">
                 Iconic Solutions Pvt. Ltd.</a>
             </p>

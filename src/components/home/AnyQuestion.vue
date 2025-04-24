@@ -4,10 +4,10 @@
             <div class="row gap-4">
                 <div class="col-md-6 position-relative custom-size mx-auto">
                     <img src="../../assets/img/qu.jpg" alt="Me sit in front of my desk and coding" class="image">
-                    <div id="selenium" class="selenium tool">Selenium</div>
+                    <div id="next-js" class="next-js tool">Next.js</div>
                     <div id="vue-js" class="vue-js tool">Vue.js</div>
                     <div id="laravel" class="laravel tool">Laravel</div>
-                    <div id="ui-ux" class="ui-ux tool">UI/UX</div>
+                    <div id="react-js" class="react-js tool">React.js</div>
 
                     <div id="pointer" class="pointer">
                         <svg width="16.8" height="18.2" viewBox="0 0 12 13" xmlns="http://www.w3.org/2000/svg">
@@ -75,10 +75,10 @@
     background-color: rgba(179, 182, 181, 0.2);
 }
 
-.selenium {
+.next-js {
     bottom: 48px;
     left: 56px;
-    color: #00bb00;
+    color: var(--white);
     background-color: rgba(0, 187, 0, 0.1);
 }
 
@@ -96,10 +96,10 @@
     background-color: rgba(255, 45, 32, 0.1);
 }
 
-.ui-ux {
+.react-js {
     top: 40px;
     right: 32px;
-    color: #1d4ed8;
+    color: #61dafb;
     background-color: rgba(29, 78, 216, 0.1);
 }
 

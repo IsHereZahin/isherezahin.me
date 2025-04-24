@@ -96,6 +96,7 @@ import image5 from '../assets/img/project/project-5.jpg';
 import image6 from '../assets/img/project/project-6.jpg';
 import image7 from '../assets/img/project/project-7.png';
 import image8 from '../assets/img/project/project-8.png';
+import image9 from '../assets/img/project/project-9.png';
 
 export default {
   name: 'ProjectSection',
@@ -181,6 +182,16 @@ export default {
           link: 'https://github.com/IsHereZahin/testing-management-system',
           categories: ['Laravel', 'Testing Tool'],
           tags: ['Laravel', 'Web Application']
+        },
+        {
+          id: 9,
+          date: 'April 15, 2025',
+          title: 'RefrigiX-Global',
+          excerpt: 'RefrigiX Global is a modern brand shop website built with Laravel 12, Vue 3, and Inertia.js. It offers a seamless shopping experience for customers and a robust admin dashboard.',
+          image: image9,
+          link: 'https://github.com/IsHereZahin/testing-management-system',
+          categories: ['Laravel', 'Vue.js'],
+          tags: ['Laravel', 'Vue.js', 'Inertia.js', 'Web Application']
         },
       ],
       searchQuery: '',

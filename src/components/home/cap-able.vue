@@ -11,7 +11,7 @@
             <div class="design-system-card">
               <h1>Build Scalable Web Applications</h1>
               <p>
-                I create highly efficient and scalable web applications, leveraging my expertise in Laravel, Vue.js, and database management to deliver robust solutions.
+                I build fast, scalable web apps using Laravel, Vue.js, React.js, and Next.js, with a solid handle on database management to keep everything running smoothly.
               </p>
 
               <div class="control-buttons">
