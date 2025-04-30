@@ -36,6 +36,7 @@
 
   /* Highlight Colors */
   --highlight-blue: #cfeaff;
+  --highlight-bluer: #b9defa;
   --highlight-yellow: #fef9c3;
   --highlight-pink: #fee4e7;
   --highlight-green: #a7f3d0;
@@ -59,6 +60,7 @@
 
     /* Highlight Colors */
     --highlight-blue: transparent;
+    --highlight-bluer: transparent;
     --highlight-yellow: transparent;
     --highlight-pink: transparent;
     --highlight-green: transparent;

@@ -189,7 +189,7 @@ export default {
           title: 'RefrigiX-Global',
           excerpt: 'RefrigiX Global is a modern brand shop website built with Laravel 12, Vue 3, and Inertia.js. It offers a seamless shopping experience for customers and a robust admin dashboard.',
           image: image9,
-          link: 'https://github.com/IsHereZahin/testing-management-system',
+          link: 'https://github.com/IsHereZahin',
           categories: ['Laravel', 'Vue.js'],
           tags: ['Laravel', 'Vue.js', 'Inertia.js', 'Web Application']
         },

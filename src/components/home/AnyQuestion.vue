@@ -79,7 +79,7 @@
     bottom: 48px;
     left: 56px;
     color: var(--white);
-    background-color: rgba(0, 187, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.062);
 }
 
 .vue-js {
@@ -93,14 +93,14 @@
     bottom: 80px;
     right: 4px;
     color: #ff2d20;
-    background-color: rgba(255, 45, 32, 0.1);
+    background-color: rgba(184, 9, 0, 0.1);
 }
 
 .react-js {
     top: 40px;
     right: 32px;
     color: #61dafb;
-    background-color: rgba(29, 78, 216, 0.1);
+    background-color: rgba(0, 50, 187, 0.1);
 }
 
 .pointer {
