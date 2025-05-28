@@ -30,14 +30,13 @@
 
             <h5 class="titlebar white-head text-decoration-none">What I'm Up To?</h5>
             <ul>
-              <li class="text-gray-400">Currently, I’m at <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://www.iconicsolutionsbd.com/">Iconic Solutions Pvt. Ltd.</a></li>
+              <li class="text-gray-400">Currently, I’m working at <a class="tech-color" target="_blank" rel="noopener noreferrer" href="https://www.iconicsolutionsbd.com/">Iconic Solutions Pvt. Ltd.</a></li>
               <li class="text-gray-400">When I'm not coding, I’m probably exploring new places, geeking out over the latest tech, or just hanging out with friends.</li>
               <li class="text-gray-400">I’m always up for learning new tools, picking up fresh skills, and building cool stuff with others.</li>
             </ul>
           </div>
         </div>
       </div>
-
 
     <h4 class="titlebar white-head text-decoration-none">Social links</h4>
     <ul>
