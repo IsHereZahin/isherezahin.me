@@ -39,7 +39,7 @@
               </p>
             </div>
             <div class="mt-4 d-flex flex-wrap gap-3 animate-fade-in">
-              <a href="https://drive.google.com/uc?export=download&id=1BKimrEZ4-U5x-n52vnIiTmtvIv-_-fzn"
+              <a href="https://drive.google.com/file/d/1eyATMUtOFCjnTeAWKQi_H7VylCTrloQC/view?usp=sharing"
                 class="custom-btn">Download Resume</a>
               <a href="https://github.com/isherezahin" target="_blank" class="custom-btn">View GitHub</a>
             </div>
