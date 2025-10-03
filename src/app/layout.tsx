@@ -1,3 +1,4 @@
+import { DecorativeBlobBottom, DecorativeBlobTop } from "@/components/ui/DecorativeBlob";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -24,10 +25,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <div className="min-h-screen bg-background relative">
+          <DecorativeBlobTop />
+          {children}
+          <DecorativeBlobBottom className="absolute bottom-0 left-1/2 -translate-x-1/2" />
+        </div>
       </body>
     </html>
   );

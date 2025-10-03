@@ -1,0 +1,34 @@
+import { getRandomTheme } from "@/utils";
+import { Project } from "@/utils/types";
+import Frame from "./ui/Frame";
+import StylishLink from "./ui/StylishLink";
+
+export default function Project({ project }: Readonly<Project>) {
+    const theme = getRandomTheme(project.title);
+    const gradientClass = `bg-gradient-to-br from-${theme.name}-500 to-${theme.name}-400`;
+
+    return (
+        <article className={`space-y-4 group relative rounded-lg overflow-hidden p-6 ${gradientClass}`}>
+            {/* Image Wrapper */}
+            <Frame project={project} />
+
+            {/* Content */}
+            <div>
+                <header className="flex items-center gap-2 mb-2">
+                    <h3 className="text-lg font-semibold text-foreground">{project.title}</h3>
+                    {project.status && (
+                        <span className="text-base text-secondary-foreground">
+                            {project.status}
+                        </span>
+                    )}
+                </header>
+
+                <p className="text-font-base text-foreground leading-relaxed">
+                    {project.description}
+                </p>
+
+                <StylishLink slug={project.slug} label="View Project" color={theme.lightPrimary} seed={project.title} />
+            </div>
+        </article>
+    )
+}
