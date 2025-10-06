@@ -8,7 +8,7 @@ export default function Contact() {
             <SectionHeader title="Contact" />
 
             <p className="text-[15px] text-muted-foreground leading-relaxed mb-2">
-                Do you have a job opportunity or idea you'd like to discuss? Feel free to reach me at{" "}
+                Do you have a job opportunity or idea you&apos;d like to discuss? Feel free to reach me at{" "}
                 <a href="mailto:hello@delba.dev" className="underline hover:opacity-70 transition-opacity text-foreground">
                     hello@delba.dev
                 </a>

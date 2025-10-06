@@ -1,4 +1,5 @@
-import { Testimonial, ThemeColor } from "@/utils/types";
+import { TestimonialType } from "@/components/Testimonial";
+import { ThemeColor } from "@/utils";
 
 const projects = [
     {
@@ -84,7 +85,7 @@ const languages = [
     { code: "de", name: "Deutsch", flag: "🇩🇪" },
 ];
 
-const testimonials: Testimonial[] = [
+const testimonials: TestimonialType[] = [
     {
         id: 1,
         quote: "I had no college of watching more web posts today while trying to sift to I create progress with the biggest of digital content. It was horrible and totally messy, and it worked so well I could move from one end of the web to the other in hours rather than days...Instead, it was fine all the year. Is there an info or filter on these tags? I see she has more time than to see at lower tier once there has compensated me ever since I signed up with here how is there good and how I like it. Oh such good time is truly more than the time just to be sure. How much it to good there has more.",
@@ -99,4 +100,4 @@ const testimonials: Testimonial[] = [
     },
 ];
 
-export { projects, blogs, availableThemes, languages, testimonials };
+export { availableThemes, blogs, languages, projects, testimonials };

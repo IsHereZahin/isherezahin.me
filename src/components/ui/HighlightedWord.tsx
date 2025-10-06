@@ -1,4 +1,9 @@
-import { HighlightedWordProps } from "@/utils/types";
+export interface HighlightedWordProps {
+    children: React.ReactNode;
+    colorPrimary?: string;
+    strokeLight?: string;
+    strokeDark?: string;
+}
 
 export default function HighlightedWord({ children, colorPrimary = "text-primary", strokeLight = "text-primary-300", strokeDark = "text-primary-400" }: Readonly<HighlightedWordProps>) {
     return (

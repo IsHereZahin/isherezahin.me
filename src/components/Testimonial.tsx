@@ -1,7 +1,11 @@
-import { Testimonial } from "@/utils/types";
+export interface TestimonialType {
+    id: number;
+    quote: string;
+    name: string;
+    role: string;
+}
 
-export default function TestimonialItem({ testimonial }: Readonly<Testimonial>) {
-    const { quote, name, role } = testimonial;
+export default function Testimonial({ quote, name, role }: Readonly<TestimonialType>) {
     return (
         <blockquote className="pl-12 mt-10">
             <div className="relative">
@@ -21,7 +25,8 @@ export default function TestimonialItem({ testimonial }: Readonly<Testimonial>) 
 
             {/* Footer */}
             <footer className="mt-1 font-bold text-gray-500">
-                <span className="font-semibold">{name}</span> <span className="font-normal">· {role}</span>
+                <span className="font-semibold">{name}</span>{" "}
+                <span className="font-normal">· {role}</span>
             </footer>
         </blockquote>
     );

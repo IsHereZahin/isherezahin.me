@@ -1,17 +1,31 @@
-import { CustomLinkProps } from "@/utils/types";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { forwardRef } from "react";
 
+export interface CustomLinkProps {
+    href: string;
+    children: React.ReactNode;
+    className?: string;
+    target?: string;
+    rel?: string;
+    onClick?: React.MouseEventHandler<HTMLAnchorElement>;
+    variant?: "primary" | "secondary" | "underline" | "button";
+}
+
 const CustomLink = forwardRef<HTMLAnchorElement, CustomLinkProps>(
-    ({ href, children, className = "", target = "_self", rel = "", onClick, variant = "underline" }, ref) => {
+    (
+        { href, children, className = "", target = "_self", rel = "", onClick, variant = "underline" },
+        ref
+    ) => {
         const baseClasses = "relative group inline-block transition-colors focus:outline-none";
 
         const variantClasses = {
             primary: "text-primary hover:text-primary/80 font-medium",
             secondary: "text-muted-foreground hover:text-foreground",
-            underline: "text-muted-foreground hover:text-foreground underline decoration-[color-mix(in_srgb,_currentColor_30%,var(--background))] hover:decoration-current",
-            button: "px-6 py-3 rounded-xl bg-primary/80 dark:bg-primary/90 text-primary-foreground font-medium inline-flex items-center gap-3 hover:bg-primary/90 dark:hover:bg-primary focus:outline-none"
+            underline:
+                "text-muted-foreground hover:text-foreground underline decoration-[color-mix(in_srgb,_currentColor_30%,var(--background))] hover:decoration-current",
+            button:
+                "px-6 py-3 rounded-xl bg-primary/80 dark:bg-primary/90 text-primary-foreground font-medium inline-flex items-center gap-3 hover:bg-primary/90 dark:hover:bg-primary focus:outline-none",
         };
 
         const combinedClasses = `${baseClasses} ${variantClasses[variant]} ${className}`;

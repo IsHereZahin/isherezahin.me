@@ -1,4 +1,7 @@
-import { SectionHeaderProps } from "@/utils/types";
+export interface SectionHeaderProps {
+    title: string;
+    subtitle?: string;
+}
 
 export default function SectionHeader({ title, subtitle }: Readonly<SectionHeaderProps>) {
     return (

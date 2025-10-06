@@ -1,4 +1,6 @@
-import { DecorativeBlobProps } from "@/utils/types";
+export interface DecorativeBlobProps {
+    className?: string;
+}
 
 // Top blob (always at top)
 export function DecorativeBlobTop({ className = "" }: Readonly<DecorativeBlobProps>) {

@@ -1,10 +1,15 @@
 "use client"
 
-import type React from "react"
+import Image from "next/image";
+import type React from "react";
 
-import { useState } from "react"
+import { useState } from "react";
+import { ProjectType } from "../Project";
+export interface FrameProps {
+    project: Readonly<ProjectType>;
+}
 
-export default function Frame({ project }: Readonly<{ project: Project }>) {
+export default function Frame({ project }: Readonly<FrameProps>) {
     const [transform, setTransform] = useState("")
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -38,7 +43,9 @@ export default function Frame({ project }: Readonly<{ project: Project }>) {
                 transition: transform ? "transform 0.3s ease-out" : "transform 0.5s ease-out",
             }} className="flex items-center rounded-xl justify-center bg-frame-background py-6 px-8 shadow-feature-card">
             <div className="aspect-[16/10] rounded-lg overflow-hidden shadow-sm bg-muted">
-                <img
+                <Image
+                    height={300}
+                    width={200}
                     src={project.image}
                     alt={project.title}
                     className="w-full h-full object-cover"

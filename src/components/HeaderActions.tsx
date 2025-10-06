@@ -101,6 +101,7 @@ export default function HeaderActions() {
     const handleLanguageSelect = (code: string) => {
         // Handle language change logic here
         setIsLanguageOpen(false);
+        console.log(`Selected language: ${code}`);
     };
 
     const resetToDefault = () => {
@@ -150,18 +151,18 @@ export default function HeaderActions() {
             const savedCustom = localStorage.getItem("custom-primary") || defaultHex;
             setCustomColor(savedCustom);
             setColorTheme("custom");
-            applyCustom(savedCustom, mode);
+            applyCustom(savedCustom, savedMode || mode);
         } else {
             setColorTheme(savedColor);
             root.setAttribute("data-theme", savedColor);
         }
-    }, []);
+    }, [mode]);
 
     useEffect(() => {
         if (colorTheme === "custom") {
             applyCustom(customColor, mode);
         }
-    }, [mode]);
+    }, [mode, colorTheme, customColor]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {

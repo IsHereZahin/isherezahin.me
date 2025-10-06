@@ -1,7 +1,23 @@
 "use client";
 
-import { StyledImageProps } from "@/utils/types";
 import Image from "next/image";
+
+export interface StyledImageProps {
+    src: string;
+    alt: string;
+    width: number;
+    height: number;
+    className?: string;
+    overlayColor?: string;
+    overlayRotation?: string;
+    overlayBorderRadius?: string;
+    overlayPosition?: {
+        bottom?: string;
+        left?: string;
+        width?: string;
+        height?: string;
+    };
+}
 
 export default function StyledImage({
     src,
@@ -40,7 +56,7 @@ export default function StyledImage({
                 height={height}
                 alt={alt}
                 className="img-cover w-full h-full object-cover"
-                priority={className.includes("hero-banner")} // Prioritize for hero-like usage
+                priority={className.includes("hero-banner")}
             />
         </figure>
     );

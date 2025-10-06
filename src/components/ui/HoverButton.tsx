@@ -3,7 +3,12 @@
 import { ArrowDown } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export default function HoverButton({ href, title }) {
+export interface HoverButtonProps {
+    href: string;
+    title: string;
+}
+
+export default function HoverButton({ href, title }: Readonly<HoverButtonProps>) {
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
     const [isDark, setIsDark] = useState(false);
 
@@ -20,7 +25,7 @@ export default function HoverButton({ href, title }) {
         return () => observer.disconnect();
     }, []);
 
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
         const rect = e.currentTarget.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
@@ -39,7 +44,10 @@ export default function HoverButton({ href, title }) {
         <a
             href={href}
             className="shadow-feature-card relative group px-6 py-3 rounded-xl backdrop-blur-sm border border-transparent inline-flex items-center gap-3 supports-safari:[&_.glass-icon]:backdrop-blur-[0px] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-            style={{ "--cursorX": `${cursorPos.x}px`, "--cursorY": `${cursorPos.y}px` }}
+            style={{
+                "--cursorX": `${cursorPos.x}px`,
+                "--cursorY": `${cursorPos.y}px`
+            } as React.CSSProperties}
             onMouseMove={handleMouseMove}
         >
             <div className="pointer-events-none select-none isolate absolute inset-0 z-[-1] overflow-hidden rounded-[inherit] group-active:opacity-80 transition-opacity">
@@ -71,7 +79,7 @@ export default function HoverButton({ href, title }) {
                     "--borderWidth": 1,
                     "--background": gradientBg,
                     border: "1px solid transparent",
-                }}
+                } as React.CSSProperties}
             >
                 <ArrowDown className="lucide lucide-arrow-down size-[70%] transition-transform group-hover:translate-y-0.5 text-foreground" />
             </div>

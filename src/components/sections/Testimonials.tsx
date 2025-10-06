@@ -1,6 +1,10 @@
-import Testimonial from "../Testimonial";
+import Testimonial, { TestimonialType } from "../Testimonial";
 import Section from "../ui/Section";
 import SectionHeader from "../ui/SectionHeader";
+
+export type TestimonialsProps = {
+    testimonials: TestimonialType[];
+}
 
 export default function Testimonials({ testimonials }: Readonly<TestimonialsProps>) {
     return (
@@ -11,7 +15,7 @@ export default function Testimonials({ testimonials }: Readonly<TestimonialsProp
             />
             <div className="space-y-8">
                 {testimonials.map((testimonial) => (
-                    <Testimonial key={testimonial.id} testimonial={testimonial} />
+                    <Testimonial key={testimonial.id} {...testimonial} />
                 ))}
             </div>
         </Section>

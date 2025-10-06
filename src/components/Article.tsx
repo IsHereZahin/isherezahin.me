@@ -2,7 +2,20 @@ import { Clock, Eye } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Article({ date, readTime, views, title, href, excerpt, imageSrc, alt }) {
+export interface Blog {
+    id: number;
+    date: string;
+    readTime: number;
+    views: number;
+    title: string;
+    href: string;
+    excerpt: string;
+    tags: string[];
+    imageSrc: string;
+    alt: string;
+};
+
+export default function Article({ date, readTime, views, title, href, excerpt, imageSrc, alt }: Readonly<Blog>) {
     return (
         <article className="group/article relative rounded-lg p-6 transition-colors duration-200 shadow-feature-card overflow-hidden">
             <header className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-1">

@@ -1,8 +1,14 @@
 import { generateProfessionalUnderline } from "@/utils";
-import { StylishLinkProps } from "@/utils/types";
 import Link from "next/link";
 
-export default function StylishLink({ slug, label = "View Project", color = "#22c55e", seed = label }: Readonly<StylishLinkProps & { seed?: string }>) {
+export interface StylishLinkProps {
+    slug: string;
+    label?: string;
+    color?: string;
+    seed?: string;
+}
+
+export default function StylishLink({ slug, label = "View Project", color = "#22c55e", seed = label }: Readonly<StylishLinkProps>) {
     const pathD = generateProfessionalUnderline(seed);
 
     return (

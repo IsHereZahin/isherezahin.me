@@ -1,5 +1,14 @@
 import { availableThemes } from "@/data";
 
+export interface ThemeColor {
+    name: string;
+    lightPrimary: string;
+    darkPrimary: string;
+    lightPrimaryRgb: string;
+    darkPrimaryRgb: string;
+    textColorClass: string;
+}
+
 function getRandomTheme(title: string): ThemeColor {
     let hash = 0;
     for (let i = 0; i < title.length; i++) {
@@ -28,4 +37,4 @@ function generateProfessionalUnderline(seed: string, height = 10, width = 100): 
     return `M 0 ${height / 2} Q ${controlX} ${controlY} ${width} ${height / 2}`;
 }
 
-export { getRandomTheme, generateProfessionalUnderline };
+export { generateProfessionalUnderline, getRandomTheme };

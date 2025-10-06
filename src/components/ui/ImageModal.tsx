@@ -1,16 +1,16 @@
 "use client";
 
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 import { useEffect } from 'react';
 
 interface ImageModalProps {
-    readonly isOpen: boolean;
-    readonly onClose: () => void;
-    readonly src: string;
-    readonly alt: string;
+    isOpen: boolean;
+    onClose: () => void;
+    src: string | StaticImageData;
+    alt: string;
 }
 
-export default function ImageModal({ isOpen, onClose, src, alt }: ImageModalProps) {
+export default function ImageModal({ isOpen, onClose, src, alt }: Readonly<ImageModalProps>) {
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => {
             if (e.key === 'Escape') {

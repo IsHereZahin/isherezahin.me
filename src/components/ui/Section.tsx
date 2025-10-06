@@ -1,4 +1,9 @@
-import { SectionProps } from '@/utils/types';
+import { ReactNode } from "react";
+
+export interface SectionProps {
+    id: string;
+    children: ReactNode;
+}
 
 export default function Section({ id, children }: Readonly<SectionProps>) {
     return (

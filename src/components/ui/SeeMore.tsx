@@ -1,6 +1,11 @@
-import { SeeMoreProps } from "@/utils/types";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
+
+export interface SeeMoreProps {
+    href: string;
+    text?: string;
+    className?: string;
+}
 
 export default function SeeMore({ href, text = "See more", className = "" }: Readonly<SeeMoreProps>) {
     return (
@@ -18,7 +23,7 @@ export default function SeeMore({ href, text = "See more", className = "" }: Rea
                     "--background":
                         "linear-gradient(to bottom right, rgba(23, 23, 23, 70%) 0%, #525252 62%, rgba(23, 23, 23, 70%) 100%)",
                     border: "1px solid transparent",
-                }}
+                } as React.CSSProperties}
             >
                 <ChevronRight className="size-[70%]" strokeWidth={1.3} />
             </div>

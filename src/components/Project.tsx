@@ -1,9 +1,18 @@
 import { getRandomTheme } from "@/utils";
-import { Project } from "@/utils/types";
 import Frame from "./ui/Frame";
 import StylishLink from "./ui/StylishLink";
 
-export default function Project({ project }: Readonly<Project>) {
+export interface ProjectType {
+    id: string;
+    title: string;
+    slug: string;
+    status: string;
+    description: string;
+    image: string;
+    url: string | null;
+}
+
+export default function Project(project: Readonly<ProjectType>) {
     const theme = getRandomTheme(project.title);
     const gradientClass = `bg-gradient-to-br from-${theme.name}-500 to-${theme.name}-400`;
 
@@ -27,8 +36,13 @@ export default function Project({ project }: Readonly<Project>) {
                     {project.description}
                 </p>
 
-                <StylishLink slug={project.slug} label="View Project" color={theme.lightPrimary} seed={project.title} />
+                <StylishLink
+                    slug={project.slug}
+                    label="View Project"
+                    color={theme.lightPrimary}
+                    seed={project.title}
+                />
             </div>
         </article>
-    )
+    );
 }

@@ -1,9 +1,16 @@
 "use client";
 
-import { HeroBannerProps } from '@/utils/types';
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 import { useState } from 'react';
 import ImageModal from './ui/ImageModal';
+
+export interface HeroBannerProps {
+  src: string | StaticImageData;
+  alt: string;
+  width: number;
+  height: number;
+  className?: string;
+}
 
 export default function HeroBanner({ src, alt, width, height, className = '' }: Readonly<HeroBannerProps>) {
 

@@ -1,8 +1,11 @@
-import { BlogsProps } from "@/utils/types";
+import Article, { Blog } from "../Article";
 import Section from "../ui/Section";
 import SectionHeader from "../ui/SectionHeader";
 import SeeMore from "../ui/SeeMore";
-import Article from "../Article";
+
+export interface BlogsProps {
+    blogs: Blog[];
+}
 
 export default function Blogs({ blogs }: Readonly<BlogsProps>) {
     return (
