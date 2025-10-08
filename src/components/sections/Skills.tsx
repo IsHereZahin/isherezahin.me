@@ -80,7 +80,7 @@ export default function Skills() {
         : `${hoverPosition.transform} scale(0.95)`;
 
     return (
-        <Section id="skills">
+        <Section id="skills" animate={true}>
             <div onMouseEnter={() => setIsSectionHovered(true)}
                 onMouseLeave={() => setIsSectionHovered(false)}
             >

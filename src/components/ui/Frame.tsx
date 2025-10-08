@@ -1,15 +1,10 @@
 "use client"
 
-import Image from "next/image";
 import type React from "react";
 
 import { useState } from "react";
-import { ProjectType } from "../Project";
-export interface FrameProps {
-    project: Readonly<ProjectType>;
-}
 
-export default function Frame({ project }: Readonly<FrameProps>) {
+export default function Frame({ children }: Readonly<React.PropsWithChildren>) {
     const [transform, setTransform] = useState("")
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -36,20 +31,17 @@ export default function Frame({ project }: Readonly<FrameProps>) {
     }
 
     return (
-        <div onMouseMove={handleMouseMove}
+        <div
+            onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
             style={{
                 transform: transform,
                 transition: transform ? "transform 0.3s ease-out" : "transform 0.5s ease-out",
-            }} className="flex items-center rounded-xl justify-center bg-frame-background py-6 px-8 shadow-feature-card">
-            <div className="aspect-[16/10] rounded-lg overflow-hidden shadow-sm bg-muted">
-                <Image
-                    height={300}
-                    width={200}
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover"
-                />
+            }}
+            className="flex items-center rounded-xl justify-center bg-frame-background py-3 sm:py-6 px-4 sm:px-8 shadow-feature-card"
+        >
+            <div className="relative aspect-[16/10] w-full max-w-sm rounded-lg overflow-hidden shadow-sm bg-muted">
+                {children}
             </div>
         </div>
     )

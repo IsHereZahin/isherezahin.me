@@ -37,4 +37,10 @@ function generateProfessionalUnderline(seed: string, height = 10, width = 100): 
     return `M 0 ${height / 2} Q ${controlX} ${controlY} ${width} ${height / 2}`;
 }
 
-export { generateProfessionalUnderline, getRandomTheme };
+function truncateWords(text: string, wordLimit: number): string {
+    const words = text.split(' ');
+    if (words.length <= wordLimit) return text;
+    return words.slice(0, wordLimit).join(' ') + '...';
+}
+
+export { generateProfessionalUnderline, getRandomTheme, truncateWords };

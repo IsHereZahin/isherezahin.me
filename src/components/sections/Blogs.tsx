@@ -9,7 +9,7 @@ export interface BlogsProps {
 
 export default function Blogs({ blogs }: Readonly<BlogsProps>) {
     return (
-        <Section id="blogs">
+        <Section id="blogs" animate={true}>
             <SectionHeader title="Blogs" subtitle="Thoughts on what I'm learning and building in web development" />
             <div className="space-y-8">
                 {blogs.map((blog) => (

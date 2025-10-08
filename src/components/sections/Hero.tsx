@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import iconicLogo from "../../../public/assets/iconic.png";
@@ -7,15 +9,70 @@ import CustomLink from "../ui/CustomLink";
 import HighlightedWord from "../ui/HighlightedWord";
 import HoverButton from "../ui/HoverButton";
 import Section from "../ui/Section";
+import { motion, useInView } from 'motion/react';
+import { useRef } from 'react';
+
+const containerVariants = {
+    hidden: { opacity: 1 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.2,
+        },
+    },
+} as const;
+
+const itemVariants = {
+    hidden: { x: 50, opacity: 0 },
+    visible: { 
+        x: 0, 
+        opacity: 1,
+        transition: { duration: 0.6, ease: "easeOut" as const },
+    },
+} as const;
+
+const imageVariants = {
+    hidden: { scale: 0.8, opacity: 0, rotate: -5 },
+    visible: { 
+        scale: 1, 
+        opacity: 1,
+        rotate: 0,
+        transition: { 
+            duration: 0.7, 
+            ease: "easeOut" as const,
+            type: "spring",
+            stiffness: 100,
+            damping: 12,
+        },
+    },
+} as const;
 
 export default function Hero() {
+    const ref = useRef(null);
+    const isInView = useInView(ref, { once: true, margin: '-100px' });
+
     return (
-        <Section id="hero">
-            <div className="flex flex-row items-center gap-8 sm:gap-12">
-                <div className="flex-1 min-w-0">
-                    <div className="rounded-l-full p-3 inline-flex bg-gradient-to-r from-primary/10 dark:from-primary/20 to-transparent -ml-3 mb-4 sm:mb-6">
+        <Section 
+            id="hero"
+            animate={true}
+        >
+            <motion.div
+                ref={ref}
+                variants={containerVariants}
+                initial="hidden"
+                animate={isInView ? "visible" : "hidden"}
+                className="flex flex-row items-center gap-8 sm:gap-12"
+            >
+                <motion.div 
+                    variants={itemVariants}
+                    className="flex-1 min-w-0"
+                >
+                    <motion.div 
+                        variants={itemVariants}
+                        className="rounded-l-full p-3 inline-flex bg-gradient-to-r from-primary/10 dark:from-primary/20 to-transparent -ml-3 mb-4 sm:mb-6"
+                    >
                         <div className="rounded-l-full px-4 py-2.5 sm:px-6 sm:py-3.5 inline-flex items-center gap-4 bg-gradient-to-r from-primary to-transparent">
-                            <span className="shrink-0 rounded-full block size-2 bg-primary shadow-[0_0_5px_rgba(var(--primary-rgb),0.4),0_0_10px_rgba(var(--primary-rgb),0.3)]"></span>
+                            <span className="shrink-0 rounded-full block size-2 bg-foreground shadow-[0_0_5px_rgba(var(--primary-rgb),0.4),0_0_10px_rgba(var(--primary-rgb),0.3)]"></span>
                             <div className="text-sm sm:text-base text-foreground flex gap-1.5 flex-wrap items-center">
                                 <span className="shrink-0">Crafting Experiences at</span>
                                 <CustomLink
@@ -37,38 +94,59 @@ export default function Hero() {
                                 />
                             </div>
                         </div>
-                    </div>
-                    <h1 className="text-5xl lg:text-6xl font-bold leading-tight mb-2 sm:mb-4 text-foreground flex">
+                    </motion.div>
+                    <motion.h1 
+                        variants={itemVariants}
+                        className="text-5xl lg:text-6xl font-bold leading-tight mb-2 sm:mb-4 text-foreground flex"
+                    >
                         <span className="mr-2">Hi! I&apos;m</span><HighlightedWord>Zahin</HighlightedWord>
-                    </h1>
-                    <div className="space-y-3 sm:space-y-4 text-sm sm:text-[15px] leading-relaxed text-muted-foreground">
-                        <p className="text-xl md:text-md">
+                    </motion.h1>
+                    <motion.div 
+                        variants={itemVariants}
+                        className="space-y-3 sm:space-y-4 text-sm sm:text-[15px] leading-relaxed text-muted-foreground"
+                    >
+                        <motion.p 
+                            variants={itemVariants}
+                            className="text-xl md:text-md"
+                            style={{ marginBottom: '1rem' }} // Ensures proper spacing in stagger
+                        >
                             I work with <span className="text-primary font-medium">React</span> & <span className="text-primary font-medium">Laravel</span> Ecosystem, and write to teach people how to rebuild and redefine fundamental concepts through mental models.
-                        </p>
-                        <div className="text-muted-foreground text-lg md:text-md ">
+                        </motion.p>
+                        <motion.div 
+                            variants={itemVariants}
+                            className="text-muted-foreground text-lg md:text-md"
+                        >
                             Need a modern web app that stands out?{' '}
                             <span className="relative inline-block">
                                 <CustomLink href="/contact">
                                     Hire me?
                                 </CustomLink>
                             </span>
-                        </div>
-                    </div>
-                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-8">
-                        <div className="mt-10 flex gap-2" data-fade="3">
-                            {/* First Button */}
+                        </motion.div>
+                    </motion.div>
+                    <motion.div 
+                        variants={itemVariants}
+                        className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-8"
+                    >
+                        <motion.div 
+                            variants={itemVariants}
+                            className="mt-6 sm:mt-10 flex gap-2 sm:gap-4" 
+                            data-fade="3"
+                        >
                             <HoverButton href="/blog-intro" title="Resume" />
-                            {/* Second Button */}
                             <Link
                                 href="/about"
-                                className="inline-flex items-center justify-center px-6 py-3 shadow-feature-card rounded-xl bg-black dark:bg-[#FFFFFF]  text-white dark:text-black font-medium transition-colors hover:bg-gray-800 dark:hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:ring-offset-2"
+                                className="inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-3 shadow-feature-card rounded-xl bg-foreground text-background font-medium transition-all duration-200 hover:bg-foreground/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                             >
                                 More about me
                             </Link>
-                        </div>
-                    </div>
-                </div>
-                <div className="hidden md:flex items-center justify-center w-full max-w-[150px] sm:max-w-[1800px] md:max-w-[200px] lg:max-w-[250px] flex-shrink-0">
+                        </motion.div>
+                    </motion.div>
+                </motion.div>
+                <motion.div 
+                    variants={imageVariants}
+                    className="hidden md:flex items-center justify-center w-full max-w-[150px] sm:max-w-[1800px] md:max-w-[200px] lg:max-w-[250px] flex-shrink-0"
+                >
                     <HeroBanner
                         src={src}
                         alt="Zahin"
@@ -76,8 +154,8 @@ export default function Hero() {
                         height={300}
                         className="w-full h-auto rounded-full object-cover shadow-lg ring-1 ring-border dark:ring-border/50"
                     />
-                </div>
-            </div>
+                </motion.div>
+            </motion.div>
         </Section>
     );
 }

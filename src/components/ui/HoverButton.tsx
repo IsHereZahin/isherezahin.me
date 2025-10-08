@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export interface HoverButtonProps {
     href: string;
@@ -10,7 +10,9 @@ export interface HoverButtonProps {
 
 export default function HoverButton({ href, title }: Readonly<HoverButtonProps>) {
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+    const [buttonRect, setButtonRect] = useState({ width: 0, height: 0 });
     const [isDark, setIsDark] = useState(false);
+    const buttonRef = useRef<HTMLAnchorElement>(null);
 
     useEffect(() => {
         const updateTheme = () => {
@@ -30,6 +32,7 @@ export default function HoverButton({ href, title }: Readonly<HoverButtonProps>)
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
         setCursorPos({ x, y });
+        setButtonRect({ width: rect.width, height: rect.height });
     };
 
     const buttonBgColor = isDark ? '#242424' : '#f8f9fa';
@@ -40,10 +43,14 @@ export default function HoverButton({ href, title }: Readonly<HoverButtonProps>)
         ? "linear-gradient(to bottom right, rgba(23, 23, 23, 0.7) 0%, #525252 62%, rgba(23, 23, 23, 0.7) 100%)"
         : "linear-gradient(to bottom right, rgba(255, 255, 255, 0.7) 0%, #e5e7eb 62%, rgba(255, 255, 255, 0.7) 100%)";
 
+    const effectWidth = buttonRect.width * 1.25;
+    const effectHeight = buttonRect.height * 13;
+
     return (
         <a
+            ref={buttonRef}
             href={href}
-            className="shadow-feature-card relative group px-6 py-3 rounded-xl backdrop-blur-sm border border-transparent inline-flex items-center gap-3 supports-safari:[&_.glass-icon]:backdrop-blur-[0px] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            className="shadow-feature-card relative group px-4 sm:px-6 py-2 sm:py-3 rounded-xl backdrop-blur-sm border border-transparent inline-flex items-center gap-2 sm:gap-3 supports-safari:[&_.glass-icon]:backdrop-blur-[0px] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             style={{
                 "--cursorX": `${cursorPos.x}px`,
                 "--cursorY": `${cursorPos.y}px`
@@ -65,8 +72,10 @@ export default function HoverButton({ href, title }: Readonly<HoverButtonProps>)
                 style={{ borderRadius: "13px" }}
             >
                 <div
-                    className="w-[250px] h-[650px]"
+                    className="absolute"
                     style={{
+                        width: `${effectWidth}px`,
+                        height: `${effectHeight}px`,
                         transform: `translate(calc(var(--cursorX) - 50%), calc(var(--cursorY) - 50%)) rotate(80deg)`,
                         background: `${buttonBgColor} radial-gradient(ellipse at center center, ${radialStart}, ${radialEnd} 22%)`,
                     }}
@@ -74,7 +83,7 @@ export default function HoverButton({ href, title }: Readonly<HoverButtonProps>)
             </div>
             <span className="relative z-10 text-foreground font-medium">{title}</span>
             <div
-                className="isolate before:transition-opacity glass-icon size-6 rounded-lg flex items-center justify-center relative bg-white/5 dark:bg-black/5 backdrop-blur-sm z-10"
+                className="isolate before:transition-opacity glass-icon size-5 sm:size-6 rounded-lg flex items-center justify-center relative bg-white/5 dark:bg-black/5 backdrop-blur-sm z-10"
                 style={{
                     "--borderWidth": 1,
                     "--background": gradientBg,

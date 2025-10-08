@@ -8,7 +8,7 @@ export type TestimonialsProps = {
 
 export default function Testimonials({ testimonials }: Readonly<TestimonialsProps>) {
     return (
-        <Section id="testimonials">
+        <Section id="testimonials" animate={true}>
             <SectionHeader
                 title="Nice words"
                 subtitle="Some feedback from people that I've had the privilege of working with."
