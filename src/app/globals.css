@@ -3,11 +3,11 @@
     :root {
         --font-size: 16px;
         --background: #FFFFFF;
-        --foreground: #1F2937;
+        --foreground: #1b1d1f;
         --primary: #14B8A6;
         --primary-foreground: #FFFFFF;
         --secondary: #F3F4F6;
-        --secondary-foreground: #374151;
+        --secondary-foreground: #72767c;
         --muted: #F9FAFB;
         --muted-foreground: #6B7280;
         --border: #E5E7EB;
@@ -19,8 +19,8 @@
 
         /* Blob colors for light mode (default teal) */
         --blob1: #5EEAD4;
-        --blob2: #10B981;
-        --blob3: #06B6D4;
+        --blob2: #14B8A6;
+        --blob3: #0F766E;
 
         /* Text size variables for base typography */
         --text-xs: 0.75rem;
@@ -44,7 +44,7 @@
         --primary: #5EEAD4;
         --primary-foreground: #111827;
         --secondary: #1F2937;
-        --secondary-foreground: #D1D5DB;
+        --secondary-foreground: #95999e;
         --muted: #1d1e1f;
         --muted-foreground: #9CA3AF;
         --border: #374151;
@@ -55,9 +55,9 @@
         --feature-card: 0 0 0 1px rgb(255 255 255 / 0.06), 0 -1px rgb(255 255 255 / 0.1);
 
         /* Blob colors for dark mode (default teal) */
-        --blob1: #34D399;
-        --blob2: #059669;
-        --blob3: #0E7490;
+        --blob1: #CCFBF1;
+        --blob2: #14B8A6;
+        --blob3: #0F766E;
 
         /* Text size variables remain unchanged in dark mode */
         --text-xs: 0.75rem;
@@ -112,16 +112,16 @@
         --primary: #14B8A6;
         --primary-rgb: 20, 184, 166;
         --blob1: #5EEAD4;
-        --blob2: #10B981;
-        --blob3: #06B6D4;
+        --blob2: #14B8A6;
+        --blob3: #0F766E;
     }
 
     :root[data-theme="teal"].dark {
         --primary: #5EEAD4;
         --primary-rgb: 94, 234, 212;
-        --blob1: #34D399;
-        --blob2: #059669;
-        --blob3: #0E7490;
+        --blob1: #CCFBF1;
+        --blob2: #14B8A6;
+        --blob3: #0F766E;
     }
 
     :root[data-theme="orange"] {

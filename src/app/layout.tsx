@@ -1,9 +1,10 @@
+import Footer from "@/components/layouts/Footer";
+import Header from "@/components/layouts/Header";
 import { DecorativeBlobBottom, DecorativeBlobTop } from "@/components/ui/DecorativeBlob";
+import { MY_NAME } from "@/lib/constants";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/layouts/Header";
-import Footer from "@/components/layouts/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,9 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Zahin Mohammad — Software Developer",
+  title: `${MY_NAME} | Software Developer`,
   description:
-    "Zahin Mohammad is a Software Developer from Cox's Bazar, Bangladesh, specializing in building high-performance and elegant web applications using React, Node.js, Laravel, and other modern web technologies.",
+    `${MY_NAME} is a Software Developer from Cox's Bazar, Bangladesh, specializing in building high-performance and elegant web applications using React, Node.js, Laravel, and other modern web technologies.`,
 };
 
 export default function RootLayout({

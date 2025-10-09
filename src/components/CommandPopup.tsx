@@ -4,11 +4,12 @@ import Image from "next/image";
 import AdventureImg from "../../public/assets/CommandPopup/Adventure.jpg";
 import StudyImg from "../../public/assets/CommandPopup/Desktop Setup.jpg";
 import TravelImg from "../../public/assets/CommandPopup/Travel.jpg";
+import Link from "next/link";
 
 export default function CommandPopup() {
     return (
         <div className="z-50 rounded-xl bg-background/85 shadow-2xl outline-none backdrop-blur-sm border border-border p-3 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2">
-            <a className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden md:col-span-1 lg:col-span-1" href="/uses">
+            <Link className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden md:col-span-1 lg:col-span-1" href="/uses">
                 <div className="absolute inset-0 z-[-1] rounded-xl overflow-hidden">
                     <figure className="rounded shadow-lg dark:shadow-none isolate absolute inset-0 z-[-1] overflow-hidden select-none pointer-events-none">
                         <Image
@@ -27,8 +28,8 @@ export default function CommandPopup() {
                     <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-foreground/50 transition-colors text-foreground">Uses</p>
                     <p className="text-xs text-muted-foreground">A peek into my digital workspace</p>
                 </div>
-            </a>
-            <a className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden md:col-span-1 lg:col-span-1" href="/bucket-list">
+            </Link>
+            <Link className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden md:col-span-1 lg:col-span-1" href="/bucket-list">
                 <div className="absolute inset-0 z-[-1] rounded-xl overflow-hidden">
                     <figure className="rounded shadow-lg dark:shadow-none isolate absolute inset-0 z-[-1] overflow-hidden select-none pointer-events-none">
                         <Image
@@ -47,9 +48,9 @@ export default function CommandPopup() {
                     <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-foreground/50 transition-colors text-foreground">Bucket List</p>
                     <p className="text-xs text-muted-foreground">Things to do at least once in life</p>
                 </div>
-            </a>
+            </Link>
             <div className="md:col-span-1 lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <a className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden" href="/side-quests">
+                <Link className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden" href="/side-quests">
                     <div className="absolute inset-0 z-[-1] rounded-xl overflow-hidden">
                         <figure className="rounded shadow-lg dark:shadow-none isolate absolute inset-0 z-[-1] overflow-hidden select-none pointer-events-none">
                             <Image
@@ -68,9 +69,9 @@ export default function CommandPopup() {
                         <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-foreground/50 transition-colors text-foreground">Side Quests</p>
                         <p className="text-xs text-muted-foreground">New skills and adventures</p>
                     </div>
-                </a>
+                </Link>
                 <div className="flex flex-col gap-2 justify-between h-full">
-                    <a className="group/header-link p-3 rounded-xl bg-muted/70 w-full flex items-start gap-3 transition-colors hover:bg-muted flex-1" href="/guestbook">
+                    <Link className="group/header-link p-3 rounded-xl bg-muted/70 w-full flex items-start gap-3 transition-colors hover:bg-muted flex-1" href="/guestbook">
                         <div className="mt-0.5 p-3 bg-muted text-muted-foreground rounded-xl [&>svg]:size-4 [&>svg]:stroke-1">
                             <BookOpen className="size-4 stroke-1" />
                         </div>
@@ -80,8 +81,8 @@ export default function CommandPopup() {
                             </div>
                             <p className="text-xs text-muted-foreground mt-0.5">Leave me a message</p>
                         </div>
-                    </a>
-                    <a className="group/header-link p-3 rounded-xl bg-muted/70 w-full flex items-start gap-3 transition-colors hover:bg-muted flex-1" href="/statistics">
+                    </Link>
+                    <Link className="group/header-link p-3 rounded-xl bg-muted/70 w-full flex items-start gap-3 transition-colors hover:bg-muted flex-1" href="/statistics">
                         <div className="mt-0.5 p-3 bg-muted text-muted-foreground rounded-xl [&>svg]:size-4 [&>svg]:stroke-1">
                             <BarChart3 className="size-4 stroke-1" />
                         </div>
@@ -91,8 +92,8 @@ export default function CommandPopup() {
                             </div>
                             <p className="text-xs text-muted-foreground mt-0.5">Crunched up numbers</p>
                         </div>
-                    </a>
-                    <a className="group/header-link p-3 rounded-xl bg-muted/70 w-full flex items-start gap-3 transition-colors hover:bg-muted flex-1" href="/attribution">
+                    </Link>
+                    <Link className="group/header-link p-3 rounded-xl bg-muted/70 w-full flex items-start gap-3 transition-colors hover:bg-muted flex-1" href="/attribution">
                         <div className="mt-0.5 p-3 bg-muted text-muted-foreground rounded-xl [&>svg]:size-4 [&>svg]:stroke-1">
                             <Info className="size-4 stroke-1" />
                         </div>
@@ -102,7 +103,7 @@ export default function CommandPopup() {
                             </div>
                             <p className="text-xs text-muted-foreground mt-0.5">Journey to create this site</p>
                         </div>
-                    </a>
+                    </Link>
                 </div>
             </div>
         </div>
