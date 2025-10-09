@@ -71,15 +71,15 @@ export default function Hero() {
                         variants={itemVariants}
                         className="rounded-l-full p-3 inline-flex bg-gradient-to-r from-primary/10 dark:from-primary/20 to-transparent -ml-3 mb-4 sm:mb-6"
                     >
-                        <div className="rounded-l-full px-4 py-2.5 sm:px-6 sm:py-3.5 inline-flex items-center gap-4 bg-gradient-to-r from-primary to-transparent">
-                            <span className="shrink-0 rounded-full block size-2 bg-foreground shadow-[0_0_5px_rgba(var(--primary-rgb),0.4),0_0_10px_rgba(var(--primary-rgb),0.3)]"></span>
-                            <div className="text-sm sm:text-base text-foreground flex gap-1.5 flex-wrap items-center">
+                        <div className="rounded-l-full px-4 py-2.5 sm:px-6 sm:py-3.5 inline-flex items-center gap-4 bg-gradient-to-r from-primary/70 to-transparent">
+                            <span className="shrink-0 rounded-full block size-2 bg-white shadow-[0_0_5px_rgba(var(--primary-rgb),0.4),0_0_10px_rgba(var(--primary-rgb),0.3)]"></span>
+                            <div className="text-sm sm:text-base text-white flex gap-1.5 flex-wrap items-center">
                                 <span className="shrink-0">Crafting Experiences at</span>
                                 <CustomLink
                                     href="http://www.iconicsolutionsbd.com/"
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="font-medium text-foreground hover:text-primary"
+                                    className="font-medium text-white hover:text-primary"
                                 >
                                     Iconic
                                 </CustomLink>

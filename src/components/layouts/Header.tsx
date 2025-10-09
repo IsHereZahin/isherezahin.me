@@ -3,23 +3,49 @@
 import { HEADER_LINKS } from '@/config/links';
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import HeaderActions from "../HeaderActions";
 import Logo from '../ui/Logo';
 
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false);
+    const [isVisible, setIsVisible] = useState(true);
+    const lastScrollY = useRef(0);
+
     const toggleMenu = () => setIsOpen(!isOpen);
+
+    const controlHeader = useCallback(() => {
+        if (typeof window !== 'undefined') {
+            const currentScrollY = window.scrollY;
+            if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
+                setIsVisible(false);
+            } else {
+                setIsVisible(true);
+            }
+            lastScrollY.current = currentScrollY;
+        }
+    }, []);
+
+    useEffect(() => {
+        window.addEventListener('scroll', controlHeader, { passive: true });
+        return () => window.removeEventListener('scroll', controlHeader);
+    }, [controlHeader]);
 
     return (
         <>
-            <header className="fixed inset-x-0 top-4 z-40 mx-auto flex h-[60px] max-w-5xl items-center justify-between rounded-2xl bg-background/30 px-4 sm:px-8 shadow-xs saturate-100 backdrop-blur-[10px] transition-colors">
+            <header 
+                className={`fixed inset-x-0 top-4 z-40 mx-auto flex h-[60px] max-w-5xl items-center justify-between rounded-2xl bg-background/30 px-4 sm:px-8 shadow-xs saturate-100 backdrop-blur-[10px] transition-all duration-300 ease-in-out ${
+                    isVisible 
+                        ? 'translate-y-0 opacity-100' 
+                        : '-translate-y-full opacity-0 pointer-events-none'
+                }`}
+            >
                 <Link
                     href="/"
                     className="flex items-center justify-center gap-1 text-foreground font-medium"
                     aria-label="Home"
                 >
-                    <Logo size={30} type="header" />
+                    <Logo size={20} type="header" />
                 </Link>
 
                 <div className="flex items-center gap-2">
@@ -45,7 +71,7 @@ export default function Header() {
                     {/* Mobile menu button */}
                     <button
                         onClick={toggleMenu}
-                        className="shrink-0 gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 flex size-9 items-center justify-center p-0 md:hidden"
+                        className="text-foreground cursor-pointer shrink-0 gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 flex size-9 items-center justify-center p-0 md:hidden"
                         aria-label="Toggle menu"
                     >
                         {isOpen ? <X className="size-4" /> : <Menu className="size-4" />}

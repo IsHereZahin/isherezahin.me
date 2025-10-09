@@ -74,8 +74,7 @@ const availableThemes: ThemeColor[] = [
     { name: "orange", lightPrimary: "#F97316", darkPrimary: "#FDBA74", lightPrimaryRgb: "249,115,22", darkPrimaryRgb: "253,186,116", textColorClass: "text-orange-500 dark:text-orange-400" },
     { name: "red", lightPrimary: "#EF4444", darkPrimary: "#FCA5A5", lightPrimaryRgb: "239,68,68", darkPrimaryRgb: "252,165,165", textColorClass: "text-red-500 dark:text-red-400" },
     { name: "blue", lightPrimary: "#3B82F6", darkPrimary: "#60A5FA", lightPrimaryRgb: "59,130,246", darkPrimaryRgb: "96,165,250", textColorClass: "text-blue-500 dark:text-blue-400" },
-    { name: "yellow", lightPrimary: "#FBBF24", darkPrimary: "#FFD64D", lightPrimaryRgb: "251,191,36", darkPrimaryRgb: "255,214,77", textColorClass: "text-yellow-500 dark:text-yellow-400" },
-    { name: "pink", lightPrimary: "#FC95A4", darkPrimary: "#FFAEBB", lightPrimaryRgb: "252,149,164", darkPrimaryRgb: "255,174,187", textColorClass: "text-pink-500 dark:text-pink-400" },
+    { name: "black-white", lightPrimary: "#000000", darkPrimary: "#FFFFFF", lightPrimaryRgb: "0,0,0", darkPrimaryRgb: "255,255,255", textColorClass: "text-black dark:text-white" },
 ];
 
 const languages = [

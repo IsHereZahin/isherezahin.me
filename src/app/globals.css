@@ -1,276 +1,293 @@
-    @import "tailwindcss";
+@import "tailwindcss";
 
-    :root {
-        --font-size: 16px;
-        --background: #FFFFFF;
-        --foreground: #1b1d1f;
-        --primary: #14B8A6;
-        --primary-foreground: #FFFFFF;
-        --secondary: #F3F4F6;
-        --secondary-foreground: #72767c;
-        --muted: #F9FAFB;
-        --muted-foreground: #6B7280;
-        --border: #E5E7EB;
-        --font-weight-medium: 500;
-        --font-weight-normal: 400;
-        --primary-rgb: 20, 184, 166;
-        --frame-background: #EAEAEA;
-        --feature-card: 0 -1px 3px 0 rgb(0 0 0 / 0.05);
+:root {
+    --font-size: 16px;
+    --background: #FFFFFF;
+    --foreground: #1b1d1f;
+    --primary: #14B8A6;
+    --primary-foreground: #FFFFFF;
+    --secondary: #F3F4F6;
+    --secondary-foreground: #72767c;
+    --muted: #F9FAFB;
+    --muted-foreground: #6B7280;
+    --border: #E5E7EB;
+    --font-weight-medium: 500;
+    --font-weight-normal: 400;
+    --primary-rgb: 20, 184, 166;
+    --frame-background: #EAEAEA;
+    --feature-card: 0 -1px 3px 0 rgb(0 0 0 / 0.05);
 
-        /* Blob colors for light mode (default teal) */
-        --blob1: #5EEAD4;
-        --blob2: #14B8A6;
-        --blob3: #0F766E;
+    /* Blob colors for light mode (default teal) */
+    --blob1: #5EEAD4;
+    --blob2: #14B8A6;
+    --blob3: #0F766E;
 
-        /* Text size variables for base typography */
-        --text-xs: 0.75rem;
-        --text-sm: 0.875rem;
-        --text-base: 1rem;
-        --text-lg: 1.125rem;
-        --text-xl: 1.25rem;
-        --text-2xl: 1.5rem;
-        --text-3xl: 1.875rem;
-        --text-4xl: 2.25rem;
-        --text-5xl: 3rem;
-        --text-6xl: 3.75rem;
-        --text-7xl: 4.5rem;
-        --text-8xl: 6rem;
-        --text-9xl: 8rem;
+    /* Text size variables for base typography */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: 1.875rem;
+    --text-4xl: 2.25rem;
+    --text-5xl: 3rem;
+    --text-6xl: 3.75rem;
+    --text-7xl: 4.5rem;
+    --text-8xl: 6rem;
+    --text-9xl: 8rem;
+}
+
+:root.dark {
+    --background: #000000;
+    --foreground: #F9FAFB;
+    --primary: #5EEAD4;
+    --primary-foreground: #111827;
+    --secondary: #1F2937;
+    --secondary-foreground: #95999e;
+    --muted: #1d1e1f;
+    --muted-foreground: #9CA3AF;
+    --border: #374151;
+    --font-weight-medium: 500;
+    --font-weight-normal: 400;
+    --primary-rgb: 94, 234, 212;
+    --frame-background: #000000;
+    --feature-card: 0 0 0 1px rgb(255 255 255 / 0.06), 0 -1px rgb(255 255 255 / 0.1);
+
+    /* Blob colors for dark mode (default teal) */
+    --blob1: #CCFBF1;
+    --blob2: #14B8A6;
+    --blob3: #0F766E;
+
+    /* Text size variables remain unchanged in dark mode */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: 1.875rem;
+    --text-4xl: 2.25rem;
+    --text-5xl: 3rem;
+    --text-6xl: 3.75rem;
+    --text-7xl: 4.5rem;
+    --text-8xl: 6rem;
+    --text-9xl: 8rem;
+}
+
+/* Theme overrides */
+:root[data-theme="blue"] {
+    --primary: #3B82F6;
+    --primary-rgb: 59, 130, 246;
+    --blob1: #60A5FA;
+    --blob2: #3B82F6;
+    --blob3: #3F64E9;
+}
+
+:root[data-theme="blue"].dark {
+    --primary: #60A5FA;
+    --primary-rgb: 96, 165, 250;
+    --blob1: #93C5FD;
+    --blob2: #2563EB;
+    --blob3: #3F64E9;
+}
+
+:root[data-theme="violet"] {
+    --primary: #8B5CF6;
+    --primary-rgb: 139, 92, 246;
+    --blob1: #FFB800;
+    --blob2: #8B5CF6;
+    --blob3: #3F64E9;
+}
+
+:root[data-theme="violet"].dark {
+    --primary: #A78BFA;
+    --primary-rgb: 167, 139, 250;
+    --blob1: #FFB800;
+    --blob2: #7C3AED;
+    --blob3: #3F64E9;
+}
+
+:root[data-theme="teal"] {
+    --primary: #14B8A6;
+    --primary-rgb: 20, 184, 166;
+    --blob1: #5EEAD4;
+    --blob2: #14B8A6;
+    --blob3: #0F766E;
+}
+
+:root[data-theme="teal"].dark {
+    --primary: #4acfc0;
+    --primary-rgb: 94, 234, 212;
+    --blob1: #CCFBF1;
+    --blob2: #14B8A6;
+    --blob3: #0F766E;
+}
+
+:root[data-theme="orange"] {
+    --primary: #F97316;
+    --primary-rgb: 249, 115, 22;
+    --blob1: #FFB800;
+    --blob2: #FB923C;
+    --blob3: #3F64E9;
+}
+
+:root[data-theme="orange"].dark {
+    --primary: #FDBA74;
+    --primary-rgb: 253, 186, 116;
+    --blob1: #FFB800;
+    --blob2: #F97316;
+    --blob3: #3F64E9;
+}
+
+:root[data-theme="red"] {
+    --primary: #EF4444;
+    --primary-rgb: 239, 68, 68;
+    --blob1: #FFB800;
+    --blob2: #EF4444;
+    --blob3: #3F64E9;
+}
+
+:root[data-theme="red"].dark {
+    --primary: #FCA5A5;
+    --primary-rgb: 252, 165, 165;
+    --blob1: #FFB800;
+    --blob2: #F87171;
+    --blob3: #3F64E9;
+}
+
+/* Yellow Theme */
+:root[data-theme="yellow"] {
+    --primary: #FBBF24;
+    --primary-rgb: 251, 191, 36;
+    --blob1: #FFB800;
+    --blob2: #FBBF24;
+    --blob3: #3F64E9;
+}
+
+:root[data-theme="yellow"].dark {
+    --primary: #FFD64D;
+    --primary-rgb: 255, 214, 77;
+    --blob1: #FFB800;
+    --blob2: #D97706;
+    --blob3: #3F64E9;
+}
+
+/* Pink Theme */
+:root[data-theme="pink"] {
+    --primary: #FC95A4;
+    --primary-rgb: 252, 149, 164;
+    --blob1: #FFB800;
+    --blob2: #FC95A4;
+    --blob3: #3F64E9;
+}
+
+:root[data-theme="pink"].dark {
+    --primary: #FFAEBB;
+    --primary-rgb: 255, 174, 187;
+    --blob1: #FFB800;
+    --blob2: #F43F5E;
+    --blob3: #3F64E9;
+}
+
+/* Black-White Theme */
+:root[data-theme="black-white"] {
+    --primary: #000000;
+    --primary-rgb: 0, 0, 0;
+    --blob1: #FFB800;
+    --blob2: #E93F3F;
+    --blob3: #3F64E9;
+}
+
+:root[data-theme="black-white"].dark {
+    --primary: #FFFFFF;
+    --primary-rgb: 255, 255, 255;
+    --blob1: #FFB800;
+    --blob2: #E93F3F;
+    --blob3: #3F64E9;
+}
+
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-border: var(--border);
+    --color-frame-background: var(--frame-background);
+    --font-weight-medium: var(--font-weight-medium);
+    --font-weight-normal: var(--font-weight-normal);
+    --shadow-feature-card: var(--feature-card);
+}
+
+@layer base {
+    *:not(svg):not(svg *) {
+        @apply border-border;
     }
 
-    :root.dark {
-        --background: #000000;
-        --foreground: #F9FAFB;
-        --primary: #5EEAD4;
-        --primary-foreground: #111827;
-        --secondary: #1F2937;
-        --secondary-foreground: #95999e;
-        --muted: #1d1e1f;
-        --muted-foreground: #9CA3AF;
-        --border: #374151;
-        --font-weight-medium: 500;
-        --font-weight-normal: 400;
-        --primary-rgb: 94, 234, 212;
-        --frame-background: #000000;
-        --feature-card: 0 0 0 1px rgb(255 255 255 / 0.06), 0 -1px rgb(255 255 255 / 0.1);
-
-        /* Blob colors for dark mode (default teal) */
-        --blob1: #CCFBF1;
-        --blob2: #14B8A6;
-        --blob3: #0F766E;
-
-        /* Text size variables remain unchanged in dark mode */
-        --text-xs: 0.75rem;
-        --text-sm: 0.875rem;
-        --text-base: 1rem;
-        --text-lg: 1.125rem;
-        --text-xl: 1.25rem;
-        --text-2xl: 1.5rem;
-        --text-3xl: 1.875rem;
-        --text-4xl: 2.25rem;
-        --text-5xl: 3rem;
-        --text-6xl: 3.75rem;
-        --text-7xl: 4.5rem;
-        --text-8xl: 6rem;
-        --text-9xl: 8rem;
+    body {
+        @apply bg-background text-foreground;
     }
+}
 
-    /* Theme overrides */
-    :root[data-theme="blue"] {
-        --primary: #3B82F6;
-        --primary-rgb: 59, 130, 246;
-        --blob1: #60A5FA;
-        --blob2: #3B82F6;
-        --blob3: #1D4ED8;
-    }
-
-    :root[data-theme="blue"].dark {
-        --primary: #60A5FA;
-        --primary-rgb: 96, 165, 250;
-        --blob1: #93C5FD;
-        --blob2: #2563EB;
-        --blob3: #1E40AF;
-    }
-
-    :root[data-theme="violet"] {
-        --primary: #8B5CF6;
-        --primary-rgb: 139, 92, 246;
-        --blob1: #A78BFA;
-        --blob2: #8B5CF6;
-        --blob3: #6366F1;
-    }
-
-    :root[data-theme="violet"].dark {
-        --primary: #A78BFA;
-        --primary-rgb: 167, 139, 250;
-        --blob1: #C4B5FD;
-        --blob2: #7C3AED;
-        --blob3: #4F46E5;
-    }
-
-    :root[data-theme="teal"] {
-        --primary: #14B8A6;
-        --primary-rgb: 20, 184, 166;
-        --blob1: #5EEAD4;
-        --blob2: #14B8A6;
-        --blob3: #0F766E;
-    }
-
-    :root[data-theme="teal"].dark {
-        --primary: #5EEAD4;
-        --primary-rgb: 94, 234, 212;
-        --blob1: #CCFBF1;
-        --blob2: #14B8A6;
-        --blob3: #0F766E;
-    }
-
-    :root[data-theme="orange"] {
-        --primary: #F97316;
-        --primary-rgb: 249, 115, 22;
-        --blob1: #FDBA74;
-        --blob2: #FB923C;
-        --blob3: #EA580C;
-    }
-
-    :root[data-theme="orange"].dark {
-        --primary: #FDBA74;
-        --primary-rgb: 253, 186, 116;
-        --blob1: #FCD34D;
-        --blob2: #F97316;
-        --blob3: #C2410C;
-    }
-
-    :root[data-theme="red"] {
-        --primary: #EF4444;
-        --primary-rgb: 239, 68, 68;
-        --blob1: #FCA5A5;
-        --blob2: #EF4444;
-        --blob3: #DC2626;
-    }
-
-    :root[data-theme="red"].dark {
-        --primary: #FCA5A5;
-        --primary-rgb: 252, 165, 165;
-        --blob1: #FECACA;
-        --blob2: #F87171;
-        --blob3: #B91C1C;
-    }
-
-    /* Yellow Theme */
-    :root[data-theme="yellow"] {
-        --primary: #FBBF24;
-        --primary-rgb: 251, 191, 36;
-        --blob1: #FFD64D;
-        --blob2: #FBBF24;
-        --blob3: #B45309;
-    }
-
-    :root[data-theme="yellow"].dark {
-        --primary: #FFD64D;
-        --primary-rgb: 255, 214, 77;
-        --blob1: #FFE066;
-        --blob2: #D97706;
-        --blob3: #92400E;
-    }
-
-    /* Pink Theme */
-    :root[data-theme="pink"] {
-        --primary: #FC95A4;
-        --primary-rgb: 252, 149, 164;
-        --blob1: #FFAEBB;
-        --blob2: #FC95A4;
-        --blob3: #EC4899;
-    }
-
-    :root[data-theme="pink"].dark {
-        --primary: #FFAEBB;
-        --primary-rgb: 255, 174, 187;
-        --blob1: #FFC1CC;
-        --blob2: #F43F5E;
-        --blob3: #9D174D;
-    }
-
-    @theme inline {
-        --color-background: var(--background);
-        --color-foreground: var(--foreground);
-        --color-primary: var(--primary);
-        --color-primary-foreground: var(--primary-foreground);
-        --color-secondary: var(--secondary);
-        --color-secondary-foreground: var(--secondary-foreground);
-        --color-muted: var(--muted);
-        --color-muted-foreground: var(--muted-foreground);
-        --color-border: var(--border);
-        --color-frame-background: var(--frame-background);
-        --font-weight-medium: var(--font-weight-medium);
-        --font-weight-normal: var(--font-weight-normal);
-        --shadow-feature-card: var(--feature-card);
-    }
-
-    @layer base {
-        *:not(svg):not(svg *) {
-            @apply border-border;
-        }
-
-        body {
-            @apply bg-background text-foreground;
-        }
-    }
-
-    /**
+/**
     * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
     */
-    @layer base {
-        :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
-            h1 {
-                font-size: var(--text-2xl);
-                font-weight: var(--font-weight-medium);
-                line-height: 1.5;
-            }
+@layer base {
+    :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
+        h1 {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-weight-medium);
+            line-height: 1.5;
+        }
 
-            h2 {
-                font-size: var(--text-xl);
-                font-weight: var(--font-weight-medium);
-                line-height: 1.5;
-            }
+        h2 {
+            font-size: var(--text-xl);
+            font-weight: var(--font-weight-medium);
+            line-height: 1.5;
+        }
 
-            h3 {
-                font-size: var(--text-lg);
-                font-weight: var(--font-weight-medium);
-                line-height: 1.5;
-            }
+        h3 {
+            font-size: var(--text-lg);
+            font-weight: var(--font-weight-medium);
+            line-height: 1.5;
+        }
 
-            h4 {
-                font-size: var(--text-base);
-                font-weight: var(--font-weight-medium);
-                line-height: 1.5;
-            }
+        h4 {
+            font-size: var(--text-base);
+            font-weight: var(--font-weight-medium);
+            line-height: 1.5;
+        }
 
-            p {
-                font-size: var(--text-base);
-                font-weight: var(--font-weight-normal);
-                line-height: 1.5;
-            }
+        p {
+            font-size: var(--text-base);
+            font-weight: var(--font-weight-normal);
+            line-height: 1.5;
+        }
 
-            label {
-                font-size: var(--text-base);
-                font-weight: var(--font-weight-medium);
-                line-height: 1.5;
-            }
+        label {
+            font-size: var(--text-base);
+            font-weight: var(--font-weight-medium);
+            line-height: 1.5;
+        }
 
-            button {
-                font-size: var(--text-base);
-                font-weight: var(--font-weight-medium);
-                line-height: 1.5;
-            }
+        button {
+            font-size: var(--text-base);
+            font-weight: var(--font-weight-medium);
+            line-height: 1.5;
+        }
 
-            input {
-                font-size: var(--text-base);
-                font-weight: var(--font-weight-normal);
-                line-height: 1.5;
-            }
+        input {
+            font-size: var(--text-base);
+            font-weight: var(--font-weight-normal);
+            line-height: 1.5;
         }
     }
+}
 
-    html {
-        font-size: var(--font-size);
-    }
+html {
+    font-size: var(--font-size);
+}

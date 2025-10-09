@@ -14,11 +14,10 @@ export interface ProjectType {
 }
 
 export default function Project(project: Readonly<ProjectType>) {
-    const theme = getRandomTheme(project.title);
-    const gradientClass = `bg-gradient-to-br from-${theme.name}-500 to-${theme.name}-400`;
+    const theme = getRandomTheme();
 
     return (
-        <article className={`space-y-4 group relative rounded-lg overflow-hidden p-6 ${gradientClass}`}>
+        <article className="space-y-4 group relative rounded-lg overflow-hidden p-6">
             {/* Image Wrapper */}
             <Frame>
                 <Image
@@ -40,7 +39,7 @@ export default function Project(project: Readonly<ProjectType>) {
                     )}
                 </header>
 
-                <p className="text-font-base text-foreground leading-relaxed">
+                <p className="text-font-base text-muted-foreground leading-relaxed">
                     {project.description}
                 </p>
 

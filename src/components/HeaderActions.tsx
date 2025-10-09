@@ -201,7 +201,7 @@ export default function HeaderActions() {
         };
     }, [isLanguageOpen]);
 
-    const buttonBaseClass = "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 hover:text-accent-foreground dark:hover:text-accent-foreground has-[>svg]:px-3 size-9 p-0";
+    const buttonBaseClass = "text-foreground cursor-pointer inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 hover:text-accent-foreground dark:hover:text-accent-foreground has-[>svg]:px-3 size-9 p-0";
 
     const hoverGradientClass = "hover:bg-gradient-to-b hover:from-primary/20 hover:to-primary/10 dark:hover:from-primary/30 dark:hover:to-primary/20";
 
@@ -211,7 +211,7 @@ export default function HeaderActions() {
                 <div className="text-xs text-muted-foreground">Primary Color</div>
                 <button
                     onClick={() => setIsColorOpen(false)}
-                    className="text-foreground hover:text-primary"
+                    className="text-foreground cursor-pointer hover:text-primary"
                 >
                     <X className="size-4" />
                 </button>
@@ -223,7 +223,7 @@ export default function HeaderActions() {
                         <button
                             key={theme.name}
                             onClick={() => changeColorTheme(theme.name)}
-                            className={`w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center ${colorTheme === theme.name
+                            className={`w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center cursor-pointer ${colorTheme === theme.name
                                 ? "border-primary ring-2 ring-primary/50 scale-110"
                                 : "border-border hover:border-primary/50 hover:scale-105"
                                 }`}
@@ -263,7 +263,7 @@ export default function HeaderActions() {
             )}
             <button
                 onClick={resetToDefault}
-                className="w-full mt-2 p-1 hover:bg-muted rounded transition-colors flex items-center justify-center gap-1 text-sm"
+                className="w-full mt-2 p-1 hover:bg-muted cursor-pointer rounded transition-colors flex items-center justify-center gap-1 text-sm"
                 title="Reset to default"
             >
                 <RefreshCw className="w-3 h-3" />

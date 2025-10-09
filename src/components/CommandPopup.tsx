@@ -1,10 +1,10 @@
 import { BarChart3, BookOpen, Info } from "lucide-react";
 import Image from "next/image";
 
+import Link from "next/link";
 import AdventureImg from "../../public/assets/CommandPopup/Adventure.jpg";
 import StudyImg from "../../public/assets/CommandPopup/Desktop Setup.jpg";
 import TravelImg from "../../public/assets/CommandPopup/Travel.jpg";
-import Link from "next/link";
 
 export default function CommandPopup() {
     return (
@@ -23,10 +23,10 @@ export default function CommandPopup() {
                         />
                     </figure>
                 </div>
-                <div className="rounded-[11px] bg-gradient-to-b from-muted/30 to-muted/50 absolute inset-0 z-[-1] group-hover/header-link:opacity-0 opacity-100 transition-opacity duration-300"></div>
-                <div className="group-hover/header-link:bg-background/80 group-hover/header-link:backdrop-blur-sm rounded-md p-2 transition-all duration-300 z-10 relative">
-                    <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-foreground/50 transition-colors text-foreground">Uses</p>
-                    <p className="text-xs text-muted-foreground">A peek into my digital workspace</p>
+                <div className="rounded-[11px] bg-gradient-to-b from-black/30 to-black/50 absolute inset-0 z-[-1] group-hover/header-link:opacity-0 opacity-100 transition-opacity duration-300"></div>
+                <div className="rounded-md p-2 transition-all duration-300 z-10 relative">
+                    <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-white/50 transition-colors text-white">Uses</p>
+                    <p className="text-xs text-white/80">A peek into my digital workspace</p>
                 </div>
             </Link>
             <Link className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden md:col-span-1 lg:col-span-1" href="/bucket-list">
@@ -43,10 +43,10 @@ export default function CommandPopup() {
                         />
                     </figure>
                 </div>
-                <div className="rounded-[11px] bg-gradient-to-b from-muted/30 to-muted/50 absolute inset-0 z-[-1] group-hover/header-link:opacity-0 opacity-100 transition-opacity duration-300"></div>
-                <div className="group-hover/header-link:bg-background/80 group-hover/header-link:backdrop-blur-sm rounded-md p-2 transition-all duration-300 z-10 relative">
-                    <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-foreground/50 transition-colors text-foreground">Bucket List</p>
-                    <p className="text-xs text-muted-foreground">Things to do at least once in life</p>
+                <div className="rounded-[11px] bg-gradient-to-b from-black/30 to-black/50 absolute inset-0 z-[-1] group-hover/header-link:opacity-0 opacity-100 transition-opacity duration-300"></div>
+                <div className="rounded-md p-2 transition-all duration-300 z-10 relative">
+                    <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-white/50 transition-colors text-white">Bucket List</p>
+                    <p className="text-xs text-white/80">Things to do at least once in life</p>
                 </div>
             </Link>
             <div className="md:col-span-1 lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -64,10 +64,10 @@ export default function CommandPopup() {
                             />
                         </figure>
                     </div>
-                    <div className="rounded-[11px] bg-gradient-to-b from-muted/30 to-muted/50 absolute inset-0 z-[-1] group-hover/header-link:opacity-0 opacity-100 transition-opacity duration-300"></div>
-                    <div className="group-hover/header-link:bg-background/80 group-hover/header-link:backdrop-blur-sm rounded-md p-2 transition-all duration-300 z-10 relative">
-                        <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-foreground/50 transition-colors text-foreground">Side Quests</p>
-                        <p className="text-xs text-muted-foreground">New skills and adventures</p>
+                    <div className="rounded-[11px] bg-gradient-to-b from-black/30 to-black/50 absolute inset-0 z-[-1] group-hover/header-link:opacity-0 opacity-100 transition-opacity duration-300"></div>
+                    <div className="rounded-md p-2 transition-all duration-300 z-10 relative">
+                        <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-white/50 transition-colors text-white">Side Quests</p>
+                        <p className="text-xs text-white/80">New skills and adventures</p>
                     </div>
                 </Link>
                 <div className="flex flex-col gap-2 justify-between h-full">

@@ -9,14 +9,8 @@ export interface ThemeColor {
     textColorClass: string;
 }
 
-function getRandomTheme(title: string): ThemeColor {
-    let hash = 0;
-    for (let i = 0; i < title.length; i++) {
-        const char = title.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash;
-    }
-    const index = Math.abs(hash) % availableThemes.length;
+function getRandomTheme(): ThemeColor {
+    const index = Math.floor(Math.random() * availableThemes.length);
     return availableThemes[index];
 }
 
