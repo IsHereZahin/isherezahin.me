@@ -290,4 +290,9 @@
 
 html {
     font-size: var(--font-size);
+    scroll-behavior: smooth;
+}
+
+article h3 {
+    scroll-margin-top: 100px;
 }

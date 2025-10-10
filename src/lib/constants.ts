@@ -3,6 +3,7 @@ export const IS_SERVER = typeof window === 'undefined';
 
 export const MY_NAME = process.env.NEXT_PUBLIC_MY_NAME;
 export const MY_USERNAME = process.env.NEXT_PUBLIC_MY_USERNAME;
+export const SITE_USER_LOGO = process.env.NEXT_PUBLIC_SITE_USER_LOGO;
 
 export const MY_MAIL = `${MY_USERNAME}@gmail.com`;
 

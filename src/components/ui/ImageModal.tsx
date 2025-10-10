@@ -1,7 +1,8 @@
 "use client";
 
-import Image, { StaticImageData } from 'next/image';
+import { StaticImageData } from 'next/image';
 import { useEffect } from 'react';
+import BlurImage from './BlurImage';
 
 interface ImageModalProps {
     isOpen: boolean;
@@ -47,10 +48,9 @@ export default function ImageModal({ isOpen, onClose, src, alt }: Readonly<Image
 
             {/* Image container */}
             <div className="relative w-full h-full max-w-4xl max-h-4xl" onClick={onClose}>
-                <Image
+                <BlurImage
                     src={src}
                     alt={alt}
-                    fill
                     className="object-contain cursor-zoom-out"
                 />
             </div>

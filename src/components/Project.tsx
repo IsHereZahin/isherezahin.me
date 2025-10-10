@@ -1,5 +1,5 @@
 import { getRandomTheme } from "@/utils";
-import Image from "next/image";
+import BlurImage from "./ui/BlurImage";
 import Frame from "./ui/Frame";
 import StylishLink from "./ui/StylishLink";
 
@@ -20,8 +20,7 @@ export default function Project(project: Readonly<ProjectType>) {
         <article className="space-y-4 group relative rounded-lg overflow-hidden p-6">
             {/* Image Wrapper */}
             <Frame>
-                <Image
-                    fill
+                <BlurImage
                     src={project.image}
                     alt={project.title}
                     className="object-cover"

@@ -1,57 +1,53 @@
 'use client'
 
-import { ReactNode, useRef, RefObject } from "react";
 import { motion, useInView } from 'motion/react';
+import { ReactNode, RefObject, useRef } from "react";
 
 export interface SectionProps {
     id: string;
     children: ReactNode;
     animate?: boolean;
+    className?: string;
     variants?: {
         initial: { y: number; opacity: number };
         animate: { y: number; opacity: number };
     };
     cardsRef?: RefObject<HTMLDivElement>;
-    transition?: { duration: number };
+    transition?: { duration: number; delay?: number };
+    delay?: number;
 }
 
-export default function Section({ 
-    id, 
-    children, 
-    animate = false, 
+export default function Section({
+    id,
+    children,
+    animate = false,
+    className = "px-6 py-16 max-w-[1000px]",
     variants: customVariants,
     cardsRef: customCardsRef,
-    transition: customTransition 
+    transition: customTransition,
+    delay = 0
 }: Readonly<SectionProps>) {
-    // Default variants for fade-in animation
     const defaultVariants = {
-        initial: {
-            y: 40,
-            opacity: 0
-        },
-        animate: {
-            y: 0,
-            opacity: 1
-        }
+        initial: { y: 40, opacity: 0 },
+        animate: { y: 0, opacity: 1 }
     };
 
-    // Use custom or default variants
     const variants = customVariants || defaultVariants;
 
-    // Create internal ref if not provided
     const internalRef = useRef<HTMLDivElement>(null);
     const finalRef = customCardsRef || internalRef;
 
     const isInView = useInView(finalRef, { once: true, margin: '-100px' });
 
-    // Default transition
-    const defaultTransition = { duration: 0.5 };
-    const finalTransition = customTransition || defaultTransition;
+    const defaultTransition = { duration: 0.5, delay };
+    const finalTransition = { ...defaultTransition, ...customTransition };
 
     if (!animate) {
-        // Plain section if animation is disabled
         return (
-            <section id={id} className="max-w-[1000px] mx-auto px-6 py-16 relative">
+            <section
+                id={id}
+                className={`${className} mx-auto relative`}
+            >
                 {children}
             </section>
         );
@@ -66,7 +62,10 @@ export default function Section({
             ref={finalRef}
             transition={finalTransition}
         >
-            <section id={id} className="max-w-[1000px] mx-auto px-6 py-16 relative">
+            <section
+                id={id}
+                className={`${className} mx-auto relative`}
+            >
                 {children}
             </section>
         </motion.div>

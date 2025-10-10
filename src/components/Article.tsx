@@ -1,6 +1,7 @@
-import { Clock, Eye } from "lucide-react";
-import { ImageWithFallback } from "./ImageWithFallback";
 import { truncateWords } from "@/utils";
+import { Clock, Eye } from "lucide-react";
+import Link from "next/link";
+import BlurImage from "./ui/BlurImage";
 
 export interface Blog {
     id: number;
@@ -8,14 +9,14 @@ export interface Blog {
     readTime: number;
     views: number;
     title: string;
-    href: string;
+    slug: string;
     excerpt: string;
     tags: string[];
     imageSrc: string;
     alt: string;
 }
 
-export default function Article({ date, readTime, views, title, href, excerpt, imageSrc, alt, tags }: Readonly<Blog>) {
+export default function Article({ date, readTime, views, title, slug, excerpt, imageSrc, alt, tags }: Readonly<Blog>) {
     const truncatedExcerpt = truncateWords(excerpt, 35);
 
     return (
@@ -29,11 +30,11 @@ export default function Article({ date, readTime, views, title, href, excerpt, i
                     </time>
 
                     {/* Title with link */}
-                    <a href={href} className="group/link block mb-3">
+                    <Link href={`/blogs/${slug}`} className="group/link block mb-3">
                         <h3 className="text-xl font-semibold text-foreground group-hover/link:text-primary transition-colors duration-300">
                             {title}
                         </h3>
-                    </a>
+                    </Link>
 
                     {/* Excerpt */}
                     <p className="text-muted-foreground mb-6 leading-relaxed text-base">
@@ -43,7 +44,7 @@ export default function Article({ date, readTime, views, title, href, excerpt, i
 
                 {/* Image Section - Top on xs screens, right on sm and up, responsive sizing */}
                 <div className="relative flex-shrink-0 w-full sm:w-48 lg:w-56 xl:w-64 h-48 sm:h-32 lg:h-40 xl:h-48 rounded-lg overflow-hidden transition-all duration-300 ease-out group-hover/article:scale-105 order-first sm:order-none">
-                    <ImageWithFallback
+                    <BlurImage
                         src={imageSrc}
                         alt={alt}
                         className="w-full h-full object-cover"

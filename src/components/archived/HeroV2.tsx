@@ -1,8 +1,7 @@
 "use client";
 import { motion } from "motion/react";
-import Image from "next/image";
 import { useEffect, useState } from "react";
-import { ImageWithFallback } from "../ImageWithFallback";
+import BlurImage from "../ui/BlurImage";
 
 export default function HeroV2() {
     const [dark, setDark] = useState(false);
@@ -26,7 +25,7 @@ export default function HeroV2() {
     return (
         <section className="relative min-h-screen flex items-center justify-center px-6 py-20 overflow-hidden mt-[-5rem]">
             <div className="absolute inset-0 z-0">
-                <ImageWithFallback
+                <BlurImage
                     src="https://images.unsplash.com/photo-1681662410751-0b6382f135c1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtaW5pbWFsJTIwZ3JhZGllbnQlMjBiYWNrZ3JvdW5kfGVufDF8fHx8MTc1OTkxMTA0OXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
                     alt="Background"
                     className="w-full h-full object-cover opacity-10 mask-[linear-gradient(to_bottom,transparent_0%,black_20%,black_80%,transparent_100%)]"
@@ -55,7 +54,7 @@ export default function HeroV2() {
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         transition={{ duration: 0.3 }}
                     >
-                        <Image
+                        <BlurImage
                             width={1080}
                             height={1080}
                             src="https://images.unsplash.com/photo-1576558656222-ba66febe3dec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBoZWFkc2hvdCUyMHBvcnRyYWl0fGVufDF8fHx8MTc1OTg1NTEyNHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"

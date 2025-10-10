@@ -1,7 +1,7 @@
 "use client";
 
-import Image from 'next/image';
 import { useState } from 'react';
+import BlurImage from '../ui/BlurImage';
 import Section from "../ui/Section";
 import SectionHeader from "../ui/SectionHeader";
 
@@ -100,8 +100,8 @@ export default function Skills() {
                                     <li
                                         key={skill}
                                         className={`cursor-pointer transition-colors ${isSectionHovered && specialSkills.includes(skill)
-                                                ? 'text-primary'
-                                                : 'text-foreground/70 hover:text-foreground'
+                                            ? 'text-primary'
+                                            : 'text-foreground/70 hover:text-foreground'
                                             }`}
                                         onMouseEnter={(e) => handleSkillHover(skill, e)}
                                         onMouseLeave={() => setHoveredSkill(null)}
@@ -126,7 +126,7 @@ export default function Skills() {
                 >
                     {hoveredSkill && skillImages[hoveredSkill] && (
                         <div className="relative bg-background/95 backdrop-blur-sm rounded-2xl shadow-feature-card">
-                            <Image
+                            <BlurImage
                                 src={skillImages[hoveredSkill]}
                                 alt={hoveredSkill}
                                 width={256}

@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import darkLogo from "../../../public/assets/darkLogo.png";
 import lightLogo from "../../../public/assets/lightLogo.png";
+import BlurImage from "./BlurImage";
 
 interface LogoProps {
     size?: number;
@@ -51,7 +51,7 @@ export default function Logo({
 
     return (
         <div className={`flex items-center justify-center gap-1 font-medium ${className}`}>
-            <Image src={logoSrc} alt="logo" width={size} height={size} />
+            <BlurImage src={logoSrc} alt="logo" width={size} height={size} />
         </div>
     );
 }

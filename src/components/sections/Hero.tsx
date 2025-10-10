@@ -1,16 +1,16 @@
 "use client";
 
-import Image from "next/image";
+import { motion, useInView } from 'motion/react';
 import Link from "next/link";
+import { useRef } from 'react';
 import iconicLogo from "../../../public/assets/iconic.png";
 import src from "../../../public/assets/profile.png";
 import HeroBanner from "../HeroBanner";
+import BlurImage from "../ui/BlurImage";
 import CustomLink from "../ui/CustomLink";
 import HighlightedWord from "../ui/HighlightedWord";
 import HoverButton from "../ui/HoverButton";
 import Section from "../ui/Section";
-import { motion, useInView } from 'motion/react';
-import { useRef } from 'react';
 
 const containerVariants = {
     hidden: { opacity: 1 },
@@ -24,8 +24,8 @@ const containerVariants = {
 
 const itemVariants = {
     hidden: { x: 50, opacity: 0 },
-    visible: { 
-        x: 0, 
+    visible: {
+        x: 0,
         opacity: 1,
         transition: { duration: 0.6, ease: "easeOut" as const },
     },
@@ -33,12 +33,12 @@ const itemVariants = {
 
 const imageVariants = {
     hidden: { scale: 0.8, opacity: 0, rotate: -5 },
-    visible: { 
-        scale: 1, 
+    visible: {
+        scale: 1,
         opacity: 1,
         rotate: 0,
-        transition: { 
-            duration: 0.7, 
+        transition: {
+            duration: 0.7,
             ease: "easeOut" as const,
             type: "spring",
             stiffness: 100,
@@ -52,7 +52,7 @@ export default function Hero() {
     const isInView = useInView(ref, { once: true, margin: '-100px' });
 
     return (
-        <Section 
+        <Section
             id="hero"
             animate={true}
         >
@@ -63,11 +63,11 @@ export default function Hero() {
                 animate={isInView ? "visible" : "hidden"}
                 className="flex flex-row items-center gap-8 sm:gap-12"
             >
-                <motion.div 
+                <motion.div
                     variants={itemVariants}
                     className="flex-1 min-w-0"
                 >
-                    <motion.div 
+                    <motion.div
                         variants={itemVariants}
                         className="rounded-l-full p-3 inline-flex bg-gradient-to-r from-primary/10 dark:from-primary/20 to-transparent -ml-3 mb-4 sm:mb-6"
                     >
@@ -83,7 +83,7 @@ export default function Hero() {
                                 >
                                     Iconic
                                 </CustomLink>
-                                <Image
+                                <BlurImage
                                     alt="Iconic Logo"
                                     loading="lazy"
                                     width={20}
@@ -95,24 +95,24 @@ export default function Hero() {
                             </div>
                         </div>
                     </motion.div>
-                    <motion.h1 
+                    <motion.h1
                         variants={itemVariants}
                         className="text-5xl lg:text-6xl font-bold leading-tight mb-2 sm:mb-4 text-foreground flex"
                     >
                         <span className="mr-2">Hi! I&apos;m</span><HighlightedWord>Zahin</HighlightedWord>
                     </motion.h1>
-                    <motion.div 
+                    <motion.div
                         variants={itemVariants}
                         className="space-y-3 sm:space-y-4 text-sm sm:text-[15px] leading-relaxed text-muted-foreground"
                     >
-                        <motion.p 
+                        <motion.p
                             variants={itemVariants}
                             className="text-xl md:text-md"
                             style={{ marginBottom: '1rem' }} // Ensures proper spacing in stagger
                         >
                             I work with <span className="text-primary font-medium">React</span> & <span className="text-primary font-medium">Laravel</span> Ecosystem, and write to teach people how to rebuild and redefine fundamental concepts through mental models.
                         </motion.p>
-                        <motion.div 
+                        <motion.div
                             variants={itemVariants}
                             className="text-muted-foreground text-lg md:text-md"
                         >
@@ -124,13 +124,13 @@ export default function Hero() {
                             </span>
                         </motion.div>
                     </motion.div>
-                    <motion.div 
+                    <motion.div
                         variants={itemVariants}
                         className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-8"
                     >
-                        <motion.div 
+                        <motion.div
                             variants={itemVariants}
-                            className="mt-6 sm:mt-10 flex gap-2 sm:gap-4" 
+                            className="mt-6 sm:mt-10 flex gap-2 sm:gap-4"
                             data-fade="3"
                         >
                             <HoverButton href="/blog-intro" title="Resume" />
@@ -143,7 +143,7 @@ export default function Hero() {
                         </motion.div>
                     </motion.div>
                 </motion.div>
-                <motion.div 
+                <motion.div
                     variants={imageVariants}
                     className="hidden md:flex items-center justify-center w-full max-w-[150px] sm:max-w-[1800px] md:max-w-[200px] lg:max-w-[250px] flex-shrink-0"
                 >

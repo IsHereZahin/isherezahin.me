@@ -1,7 +1,9 @@
 "use client";
 
-import Image, { StaticImageData } from 'next/image';
+import { StaticImageData } from 'next/image';
 import { useState } from 'react';
+
+import BlurImage from './ui/BlurImage';
 import ImageModal from './ui/ImageModal';
 
 export interface HeroBannerProps {
@@ -12,7 +14,7 @@ export interface HeroBannerProps {
   className?: string;
 }
 
-export default function HeroBanner({ src, alt, width, height, className = '' }: Readonly<HeroBannerProps>) {
+export default function HeroBanner({ src, alt, className = '' }: Readonly<HeroBannerProps>) {
 
   const [transform, setTransform] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,11 +64,9 @@ export default function HeroBanner({ src, alt, width, height, className = '' }: 
         onMouseLeave={handleMouseLeave}
       >
         <div className={decorativeClasses} />
-        <Image
+        <BlurImage
           src={src}
           alt={alt}
-          width={width}
-          height={height}
           className={imageClasses}
           style={transform ? { transform } : undefined}
           onClick={openModal}

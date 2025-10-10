@@ -12,8 +12,8 @@ type SocialLinks = Array<{
 export const HEADER_LINKS = [
   {
     icon: <PencilIcon className='size-3.5' />,
-    href: '/blog',
-    key: 'blog'
+    href: '/blogs',
+    key: 'blogs'
   },
   {
     icon: <MessageCircleIcon className='size-3.5' />,

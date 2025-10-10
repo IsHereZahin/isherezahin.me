@@ -1,10 +1,11 @@
 import { BarChart3, BookOpen, Info } from "lucide-react";
-import Image from "next/image";
 
 import Link from "next/link";
+
 import AdventureImg from "../../public/assets/CommandPopup/Adventure.jpg";
 import StudyImg from "../../public/assets/CommandPopup/Desktop Setup.jpg";
 import TravelImg from "../../public/assets/CommandPopup/Travel.jpg";
+import BlurImage from "./ui/BlurImage";
 
 export default function CommandPopup() {
     return (
@@ -12,12 +13,11 @@ export default function CommandPopup() {
             <Link className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden md:col-span-1 lg:col-span-1" href="/uses">
                 <div className="absolute inset-0 z-[-1] rounded-xl overflow-hidden">
                     <figure className="rounded shadow-lg dark:shadow-none isolate absolute inset-0 z-[-1] overflow-hidden select-none pointer-events-none">
-                        <Image
+                        <BlurImage
                             alt="A photo of my workspace"
                             title="A photo of my workspace"
                             loading="lazy"
                             src={StudyImg}
-                            fill
                             className="absolute left-0 top-0 object-cover group-hover/header-link:scale-110 transition-transform duration-300 ease-in-out"
                             style={{ color: "transparent" }}
                         />
@@ -32,12 +32,11 @@ export default function CommandPopup() {
             <Link className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden md:col-span-1 lg:col-span-1" href="/bucket-list">
                 <div className="absolute inset-0 z-[-1] rounded-xl overflow-hidden">
                     <figure className="rounded shadow-lg dark:shadow-none isolate absolute inset-0 z-[-1] overflow-hidden select-none pointer-events-none">
-                        <Image
+                        <BlurImage
                             alt="A photo of me skydiving"
                             title="A photo of me skydiving"
                             loading="lazy"
                             src={TravelImg}
-                            fill
                             className="absolute left-0 top-0 object-cover group-hover/header-link:scale-110 transition-transform duration-300 ease-in-out"
                             style={{ color: "transparent" }}
                         />
@@ -53,12 +52,11 @@ export default function CommandPopup() {
                 <Link className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden" href="/side-quests">
                     <div className="absolute inset-0 z-[-1] rounded-xl overflow-hidden">
                         <figure className="rounded shadow-lg dark:shadow-none isolate absolute inset-0 z-[-1] overflow-hidden select-none pointer-events-none">
-                            <Image
+                            <BlurImage
                                 alt="A photo of me freediving"
                                 title="A photo of me freediving"
                                 loading="lazy"
                                 src={AdventureImg}
-                                fill
                                 className="absolute left-0 top-0 object-cover group-hover/header-link:scale-110 transition-transform duration-300 ease-in-out"
                                 style={{ color: "transparent" }}
                             />

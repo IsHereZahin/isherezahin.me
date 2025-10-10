@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import BlurImage from "./BlurImage";
 
 export interface StyledImageProps {
     src: string;
@@ -50,7 +50,7 @@ export default function StyledImage({
                 "--overlay-height": overlayPosition.height,
             } as React.CSSProperties}
         >
-            <Image
+            <BlurImage
                 src={src}
                 width={width}
                 height={height}

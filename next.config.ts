@@ -2,10 +2,26 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: [
-      "avatars.githubusercontent.com",
-      "images.theodorusclarence.com",
-      "images.unsplash.com",
+    // Define allowed image qualities
+    qualities: [75, 80, 90, 100],
+
+    // Replace domains with remotePatterns
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images.theodorusclarence.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        pathname: "/**",
+      },
     ],
   },
 };
