@@ -3,11 +3,11 @@
 import type { PopupState, ThemeMode } from "@/utils/types";
 import { Command, Languages, Moon, Palette, Sun } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import CommandPopup from "./CommandPopup";
 import LanguageDropdown from "./LanguageDropdown";
 import ThemeColorPicker from "./ThemeColorPicker";
-import CommandPopup from "./CommandPopup";
 
-const defaultHex = "#14B8A6";
+const defaultHex = "#000000";
 
 function hexToRgb(hex: string): string {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -36,7 +36,7 @@ export default function HeaderActions() {
         activePopup: PopupState;
     }>({
         mode: "light",
-        colorTheme: "teal",
+        colorTheme: "black-white",
         customColor: defaultHex,
         activePopup: null,
     });
@@ -91,7 +91,7 @@ export default function HeaderActions() {
     };
 
     const handleReset = () => {
-        handleThemeChange("teal");
+        handleThemeChange("black-white");
         setState((prev) => ({ ...prev, customColor: defaultHex }));
         localStorage.setItem("custom-primary", defaultHex);
     };
@@ -111,9 +111,10 @@ export default function HeaderActions() {
     useEffect(() => {
         const root = document.documentElement;
         const savedMode = (localStorage.getItem("mode") as ThemeMode) || null;
-        const savedColor = localStorage.getItem("color-theme") || "teal";
+        const savedColor = localStorage.getItem("color-theme") || "black-white";
 
         const initialMode = savedMode || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+
         setState((prev) => ({
             ...prev,
             mode: initialMode,
@@ -122,6 +123,7 @@ export default function HeaderActions() {
         }));
 
         root.classList.toggle("dark", initialMode === "dark");
+
         localStorage.setItem("mode", initialMode);
 
         if (savedColor === "custom") {

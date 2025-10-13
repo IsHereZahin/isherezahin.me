@@ -3,8 +3,8 @@
 :root {
     --font-size: 16px;
     --background: #FFFFFF;
-    --foreground: #1b1d1f;
-    --primary: #14B8A6;
+    --foreground: #000000;
+    --primary: #000000;
     --primary-foreground: #FFFFFF;
     --secondary: #F3F4F6;
     --secondary-foreground: #72767c;
@@ -40,8 +40,8 @@
 
 :root.dark {
     --background: #000000;
-    --foreground: #F9FAFB;
-    --primary: #5EEAD4;
+    --foreground: #FFFFFF;
+    --primary: #FFFFFF;
     --primary-foreground: #111827;
     --secondary: #1F2937;
     --secondary-foreground: #95999e;
