@@ -13,9 +13,10 @@ import ArticleContent from '@/components/content/ArticleContent';
 import ArticleInfo from '@/components/content/ArticleInfo';
 import TableOfContents from '@/components/content/TableOfContents';
 import BlurImage from '@/components/ui/BlurImage';
-import Section from '@/components/ui/Section';
-import ImageZoom from '@/components/ui/ImageZoom';
 import Heading from '@/components/ui/Heading';
+import ImageZoom from '@/components/ui/ImageZoom';
+import Section from '@/components/ui/Section';
+import TextGradient from '@/components/ui/TextGradient';
 
 export default function BlogDetailsIndex() {
     const [showTOC, setShowTOC] = useState(false);
@@ -33,13 +34,11 @@ export default function BlogDetailsIndex() {
             <Section id="blog_header" animate className="px-6 pt-16 max-w-[1000px]">
                 <div className="text-center mb-6 sm:mb-8">
                     <span className="inline-block px-4 py-1 border border-foreground/10 rounded-full text-xs tracking-wider uppercase text-foreground/70">
-                        DESIGN
+                        BLOG
                     </span>
                 </div>
                 <Heading size='lg' className="mb-4 sm:mb-6" text="Modern Architecture Buildings" />
-                <p className="text-center text-muted-foreground mb-8 sm:mb-10 max-w-2xl mx-auto px-4">
-                    Nibh sed pulvinar proin gravida hendrerit lectus a. Consequat mauris nunc congue nisi vitae suscipit tellus mauris a. Cursus metus aliquam.
-                </p>
+                <TextGradient text="Nibh sed pulvinar proin gravida hendrerit lectus a. Consequat mauris nunc congue nisi vitae suscipit tellus mauris a. Cursus metus aliquam." />
                 <ArticleInfo viewCount={1} commentCount={0} formattedDate="23 Nov 2022" />
                 <ImageZoom>
                     <BlurImage

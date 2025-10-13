@@ -1,6 +1,6 @@
 "use client";
 
-import Article from "@/components/content/Article";
+import Article from "@/components/Article";
 import PageTitle from "@/components/layouts/PageTitle";
 import Tags from "@/components/ui/Tags";
 import { blogs } from "@/data";

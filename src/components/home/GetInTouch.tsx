@@ -87,16 +87,16 @@ const GetInTouch = () => {
                     </div>
 
                     <div className='flex flex-col justify-center px-4'>
-                        <p className="font-bold text-3xl leading-snug
-                            bg-gradient-to-r from-foreground to-muted-foreground
-                            bg-clip-text text-transparent"
+                        <p
+                            className="font-bold text-3xl leading-snug
+                                bg-gradient-to-r from-foreground/90 to-foreground/60
+                                bg-clip-text text-transparent"
                         >
                             Any questions about software?
                         </p>
-
                         <p className="text-foreground">
                             Feel free to reach out to me!{' '}
-                            <span className="text-gray-500">I&apos;m available for collaboration.</span>
+                            <span className="text-primary">I&apos;m available for collaboration.</span>
                         </p>
                         <div className="my-4">
                             <a

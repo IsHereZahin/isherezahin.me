@@ -1,12 +1,17 @@
-import { ComponentType, SVGProps } from 'react';
 import { SITE_GITHUB_URL, SITE_INSTAGRAM_URL, SITE_LINKEDIN_URL, SITE_X_URL, SITE_YOUTUBE_URL } from '@/lib/constants';
 import { SiGithub, SiInstagram, SiX, SiYoutube } from '@icons-pack/react-simple-icons';
 import { FlameIcon, LinkedinIcon, MessageCircleIcon, MonitorIcon, PencilIcon, UserCircleIcon } from 'lucide-react';
+import { ComponentType, SVGProps } from 'react';
 
 type SocialLinks = Array<{
   href: string
   title: string
   icon: ComponentType<SVGProps<SVGSVGElement>>;
+}>
+
+type FooterMenuItems = Array<{
+  category: string
+  items: Array<{ href: string; label: string }>
 }>
 
 export const HEADER_LINKS = [
@@ -37,40 +42,34 @@ export const HEADER_LINKS = [
   }
 ] as const
 
-export const FOOTER_LINKS = [
+export const FOOTER_MENU_ITEMS: FooterMenuItems = [
   {
-    id: 1,
-    links: [
-      { href: '/', key: 'home' },
-      { href: '/blog', key: 'blog' },
-      { href: '/about', key: 'about' },
-    ]
+    category: 'General',
+    items: [
+      { href: '/home', label: 'Home' },
+      { href: '/blog', label: 'Blog' },
+      { href: '/projects', label: 'Projects' },
+      { href: '/about', label: 'About' },
+    ],
   },
   {
-    id: 2,
-    links: [
-      { href: '/guestbook', key: 'guestbook' },
-      { href: '/uses', key: 'uses' },
-      { href: '/projects', key: 'projects' },
-      { href: 'https://nelsonlai.link', key: 'links' }
-    ]
+    category: 'The Website',
+    items: [
+      { href: '/bucket-list', label: 'Bucket List' },
+      { href: '/uses', label: 'Uses' },
+      { href: '/attribution', label: 'Attribution' },
+      { href: '/guest-book', label: 'Guest Book' },
+    ],
   },
   {
-    id: 3,
-    links: [
-      { href: SITE_LINKEDIN_URL, key: 'linkedin' },
-      { href: SITE_INSTAGRAM_URL, key: 'instagram' },
-      { href: SITE_GITHUB_URL, key: 'github' },
-      { href: SITE_YOUTUBE_URL, key: 'youtube' }
-    ]
+    category: 'Resources',
+    items: [
+      { href: '/book-notes', label: 'Book Notes' },
+      { href: '/analytics', label: 'Analytics' },
+      { href: '/resume', label: 'Resume' },
+      { href: '/tools', label: 'Tools' },
+    ],
   },
-  {
-    id: 4,
-    links: [
-      { href: '/terms', key: 'terms' },
-      { href: '/privacy', key: 'privacy' }
-    ]
-  }
 ] as const
 
 export const SOCIAL_LINKS: SocialLinks = [

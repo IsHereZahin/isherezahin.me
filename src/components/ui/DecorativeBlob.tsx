@@ -25,7 +25,7 @@ export function DecorativeBlobTop(props: DecorativeBlobProps) {
             xmlns='http://www.w3.org/2000/svg'
             viewBox='0 0 1440 550'
             preserveAspectRatio='xMidYMid meet'
-            className={`absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[250px] sm:max-w-[400px] md:max-w-[600px] lg:max-w-[800px] xl:max-w-[1000px] ${className || ''}`}
+            className={`absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[500px] sm:max-w-[400px] md:max-w-[600px] lg:max-w-[800px] xl:max-w-[1000px] ${className || ''}`}
             {...rest}
         >
             <g filter={`url(#${blob1})`}>
@@ -80,7 +80,7 @@ export function DecorativeBlobBottom(props: DecorativeBlobProps) {
             xmlns='http://www.w3.org/2000/svg'
             viewBox='0 0 1440 550'
             preserveAspectRatio='xMidYMid meet'
-            className={`w-full max-w-[250px] sm:max-w-[400px] md:max-w-[600px] lg:max-w-[800px] xl:max-w-[1000px] rotate-180 ${className || ''}`}
+            className={`w-full max-w-[500px] sm:max-w-[400px] md:max-w-[600px] lg:max-w-[800px] xl:max-w-[1000px] rotate-180 ${className || ''}`}
             {...rest}
         >
             <g filter={`url(#${blob1})`}>

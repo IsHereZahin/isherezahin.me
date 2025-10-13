@@ -2,7 +2,7 @@ import BlurImage from "@/components/ui/BlurImage";
 import { truncateWords } from "@/utils";
 import { Clock, Eye } from "lucide-react";
 import Link from "next/link";
-import MotionWrapper from "../motion/MotionWrapper";
+import MotionWrapper from "./motion/MotionWrapper";
 
 export interface Blog {
     id: number;
