@@ -1,4 +1,4 @@
-import Article, { Blog } from "../Article";
+import Article, { Blog } from "../content/Article";
 import Section from "../ui/Section";
 import SectionHeader from "../ui/SectionHeader";
 import SeeMore from "../ui/SeeMore";

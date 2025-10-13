@@ -6,16 +6,18 @@
 
 "use client";
 
-import Section from '@/components/ui/Section';
 import { AlignLeftIcon, Facebook, Instagram, Twitter } from 'lucide-react';
 import { useState } from 'react';
 
+import ArticleContent from '@/components/content/ArticleContent';
 import ArticleInfo from '@/components/content/ArticleInfo';
+import TableOfContents from '@/components/content/TableOfContents';
 import BlurImage from '@/components/ui/BlurImage';
-import ArticleContent from '../../../components/content/ArticleContent';
-import TableOfContents from '../../../components/content/TableOfContents';
+import Section from '@/components/ui/Section';
+import ImageZoom from '@/components/ui/ImageZoom';
+import Heading from '@/components/ui/Heading';
 
-export default function BlogPostPage() {
+export default function BlogDetailsIndex() {
     const [showTOC, setShowTOC] = useState(false);
 
     const tocItems = [
@@ -28,30 +30,26 @@ export default function BlogPostPage() {
     return (
         <>
             {/* --- Blog Header Section --- */}
-            <Section id="blog_header" animate>
+            <Section id="blog_header" animate className="px-6 pt-16 max-w-[1000px]">
                 <div className="text-center mb-6 sm:mb-8">
                     <span className="inline-block px-4 py-1 border border-foreground/10 rounded-full text-xs tracking-wider uppercase text-foreground/70">
                         DESIGN
                     </span>
                 </div>
-                <h1 className='bg-linear-to-b from-foreground via-foreground/90 to-foreground/70 to-90% bg-clip-text text-center text-4xl font-bold text-transparent md:text-5xl md:leading-[64px] mb-3 sm:mb-8 px-4'>
-                    The influence of modern architecture
-                </h1>
+                <Heading size='lg' className="mb-4 sm:mb-6" text="Modern Architecture Buildings" />
                 <p className="text-center text-muted-foreground mb-8 sm:mb-10 max-w-2xl mx-auto px-4">
                     Nibh sed pulvinar proin gravida hendrerit lectus a. Consequat mauris nunc congue nisi vitae suscipit tellus mauris a. Cursus metus aliquam.
                 </p>
                 <ArticleInfo viewCount={1} commentCount={0} formattedDate="23 Nov 2022" />
-            </Section>
-
-            {/* --- Hero Image --- */}
-            <Section id="blog_Image" animate className="max-w-5xl">
-                <div className="mb-12 sm:mb-16">
+                <ImageZoom>
                     <BlurImage
                         src="https://images.unsplash.com/photo-1745750747043-da33e463f361?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                         alt="Modern architecture buildings"
-                        className="w-full rounded-3xl object-cover p-1 shadow-feature-card"
+                        width={1170}
+                        height={700}
+                        className="w-full h-auto object-cover mt-10 sm:mt-12 rounded-lg"
                     />
-                </div>
+                </ImageZoom>
             </Section>
 
             {/* --- Blog Content Section --- */}

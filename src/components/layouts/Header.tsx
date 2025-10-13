@@ -1,57 +1,49 @@
 "use client";
 
-import { HEADER_LINKS } from '@/config/links';
+import { HEADER_LINKS } from "@/config/links";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect, useRef, useCallback } from "react";
-import HeaderActions from "../HeaderActions";
-import Logo from '../ui/Logo';
+import { useCallback, useEffect, useRef, useState } from "react";
+import Logo from "../ui/Logo";
+import HeaderActions from "../header/HeaderActions";
+import MobileNav from "../header/MobileNav";
 
 export default function Header() {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isVisible, setIsVisible] = useState(true);
     const lastScrollY = useRef(0);
-
-    const toggleMenu = () => setIsOpen(!isOpen);
+    const buttonRef = useRef<HTMLButtonElement>(null);
 
     const controlHeader = useCallback(() => {
-        if (typeof window !== 'undefined') {
+        if (typeof window !== "undefined") {
             const currentScrollY = window.scrollY;
-            if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
+            if (currentScrollY > lastScrollY.current && currentScrollY > 50 && !isMenuOpen) {
                 setIsVisible(false);
             } else {
                 setIsVisible(true);
             }
             lastScrollY.current = currentScrollY;
         }
-    }, []);
+    }, [isMenuOpen]);
 
     useEffect(() => {
-        window.addEventListener('scroll', controlHeader, { passive: true });
-        return () => window.removeEventListener('scroll', controlHeader);
+        window.addEventListener("scroll", controlHeader, { passive: true });
+        return () => window.removeEventListener("scroll", controlHeader);
     }, [controlHeader]);
 
     return (
         <>
-            <header 
-                className={`fixed inset-x-0 top-4 z-40 mx-auto flex h-[60px] max-w-5xl items-center justify-between rounded-2xl bg-background/30 px-4 sm:px-8 shadow-xs saturate-100 backdrop-blur-[10px] transition-all duration-300 ease-in-out ${
-                    isVisible 
-                        ? 'translate-y-0 opacity-100' 
-                        : '-translate-y-full opacity-0 pointer-events-none'
-                }`}
+            <header
+                className={`fixed inset-x-0 top-4 z-40 mx-auto flex h-[60px] max-w-5xl items-center justify-between rounded-2xl bg-background/30 px-4 sm:px-8 shadow-xs saturate-100 backdrop-blur-[10px] transition-all duration-300 ease-in-out ${isVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
+                    }`}
             >
-                <Link
-                    href="/"
-                    className="flex items-center justify-center gap-1 text-foreground font-medium"
-                    aria-label="Home"
-                >
+                <Link href="/" className="flex items-center justify-center gap-1 text-foreground font-medium" aria-label="Home">
                     <Logo size={20} type="header" />
                 </Link>
 
                 <div className="flex items-center gap-2">
-                    {/* Desktop Navigation */}
                     <nav className="hidden md:block">
-                        <ul className="flex gap-2">
+                        <ul className="flex gap-1">
                             {HEADER_LINKS.map((link) => (
                                 <li key={link.href}>
                                     <Link
@@ -65,44 +57,26 @@ export default function Header() {
                         </ul>
                     </nav>
 
-                    {/* Header Actions */}
                     <HeaderActions />
 
-                    {/* Mobile menu button */}
                     <button
-                        onClick={toggleMenu}
+                        ref={buttonRef}
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
                         className="text-foreground cursor-pointer shrink-0 gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 flex size-9 items-center justify-center p-0 md:hidden"
                         aria-label="Toggle menu"
+                        aria-expanded={isMenuOpen}
                     >
-                        {isOpen ? <X className="size-4" /> : <Menu className="size-4" />}
+                        {isMenuOpen ? <X className="size-4" /> : <Menu className="size-4" />}
                     </button>
                 </div>
+
+                <MobileNav 
+                    isOpen={isMenuOpen} 
+                    onClose={() => setIsMenuOpen(false)} 
+                    buttonRef={buttonRef}
+                />
             </header>
 
-            {/* Mobile Navigation Menu */}
-            {isOpen && (
-                <div className="md:hidden fixed inset-x-0 top-[84px] z-30 bg-background/95 backdrop-blur-sm border-b border-border/50">
-                    <nav className="max-w-5xl mx-auto px-4 sm:px-8 py-4">
-                        <ul className="flex flex-col gap-2">
-                            {HEADER_LINKS.map((link) => (
-                                <li key={link.href}>
-                                    <Link
-                                        href={link.href}
-                                        className="rounded-sm px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:text-foreground capitalize"
-                                    >
-                                        {link.key}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                        <div className="mt-4 pt-2 border-t border-border">
-                            🚀 Ready to collaborate? <a href="https://github.com/IsHereZahin/isherezahin.dev" target='_blank' className="text-primary font-medium hover:underline">Get in touch</a>
-                        </div>
-                    </nav>
-                </div>
-            )}
-
-            {/* Spacer for fixed header */}
             <div className="pt-20" id="skip-nav" />
         </>
     );

@@ -1,20 +1,16 @@
 'use client'
 
-import { motion, useInView } from 'motion/react';
-import { ReactNode, RefObject, useRef } from "react";
+import { ReactNode } from "react";
+import MotionWrapper from '@/components/motion/MotionWrapper';
 
 export interface SectionProps {
     id: string;
     children: ReactNode;
     animate?: boolean;
     className?: string;
-    variants?: {
-        initial: { y: number; opacity: number };
-        animate: { y: number; opacity: number };
-    };
-    cardsRef?: RefObject<HTMLDivElement>;
-    transition?: { duration: number; delay?: number };
-    delay?: number;
+    direction?: "top" | "bottom" | "left" | "right";
+    distance?: number;
+    duration?: number;
 }
 
 export default function Section({
@@ -22,52 +18,21 @@ export default function Section({
     children,
     animate = false,
     className = "px-6 py-16 max-w-[1000px]",
-    variants: customVariants,
-    cardsRef: customCardsRef,
-    transition: customTransition,
-    delay = 0
+    direction = "bottom",
+    distance = 20,
+    duration = 0.5,
 }: Readonly<SectionProps>) {
-    const defaultVariants = {
-        initial: { y: 40, opacity: 0 },
-        animate: { y: 0, opacity: 1 }
-    };
+    const sectionContent = (
+        <section id={id} className={`${className} mx-auto relative`}>
+            {children}
+        </section>
+    );
 
-    const variants = customVariants || defaultVariants;
-
-    const internalRef = useRef<HTMLDivElement>(null);
-    const finalRef = customCardsRef || internalRef;
-
-    const isInView = useInView(finalRef, { once: true, margin: '-100px' });
-
-    const defaultTransition = { duration: 0.5, delay };
-    const finalTransition = { ...defaultTransition, ...customTransition };
-
-    if (!animate) {
-        return (
-            <section
-                id={id}
-                className={`${className} mx-auto relative`}
-            >
-                {children}
-            </section>
-        );
-    }
+    if (!animate) return sectionContent;
 
     return (
-        <motion.div
-            className='relative'
-            initial='initial'
-            animate={isInView ? 'animate' : 'initial'}
-            variants={variants}
-            ref={finalRef}
-            transition={finalTransition}
-        >
-            <section
-                id={id}
-                className={`${className} mx-auto relative`}
-            >
-                {children}
-            </section>
-        </motion.div>
+        <MotionWrapper direction={direction} distance={distance} duration={duration}>
+            {sectionContent}
+        </MotionWrapper>
     );
 }

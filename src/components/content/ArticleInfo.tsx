@@ -4,9 +4,9 @@
 //
 // Modified by: Zahin Mohammad
 
+import BlurImage from "@/components/ui/BlurImage";
 import { MY_NAME, SITE_GITHUB_URL, SITE_USER_LOGO } from "@/lib/constants";
 import Link from "next/link";
-import BlurImage from "../ui/BlurImage";
 
 interface ArticleInfoProps {
   viewCount: number;
@@ -21,7 +21,7 @@ const NumberFlow = ({ value }: { value: number }) => (
 
 export default function BlogHeaderDemo({ viewCount = 1, commentCount = 0, formattedDate = "23 Nov 2022" }: Readonly<ArticleInfoProps>) {
   return (
-    <div className="grid grid-cols-2 text-sm max-md:gap-4 md:grid-cols-4">
+    <div className="max-w-3xl mx-auto mt-16 px-4 sm:px-8 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
       <div className="space-y-1 md:mx-auto">
         <div className="text-muted-foreground">Written by</div>
         <Link

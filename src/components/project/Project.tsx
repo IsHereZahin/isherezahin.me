@@ -1,7 +1,7 @@
 import { getRandomTheme } from "@/utils";
-import BlurImage from "./ui/BlurImage";
-import Frame from "./ui/Frame";
-import StylishLink from "./ui/StylishLink";
+import BlurImage from "../ui/BlurImage";
+import Frame from "../ui/Frame";
+import StylishLink from "../ui/StylishLink";
 
 export interface ProjectType {
     id: string;

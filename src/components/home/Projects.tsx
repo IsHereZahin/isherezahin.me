@@ -1,4 +1,4 @@
-import Project, { ProjectType } from "../Project";
+import Project, { ProjectType } from "../project/Project";
 import Section from "../ui/Section";
 import SectionHeader from "../ui/SectionHeader";
 import SeeMore from "../ui/SeeMore";

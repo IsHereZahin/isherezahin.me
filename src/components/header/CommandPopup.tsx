@@ -2,14 +2,15 @@ import { BarChart3, BookOpen, Info } from "lucide-react";
 
 import Link from "next/link";
 
-import AdventureImg from "../../public/assets/CommandPopup/Adventure.jpg";
-import StudyImg from "../../public/assets/CommandPopup/Desktop Setup.jpg";
-import TravelImg from "../../public/assets/CommandPopup/Travel.jpg";
-import BlurImage from "./ui/BlurImage";
+import MotionPopup from "@/components/motion/MotionPopup";
+import AdventureImg from "../../../public/assets/CommandPopup/Adventure.jpg";
+import StudyImg from "../../../public/assets/CommandPopup/Desktop Setup.jpg";
+import TravelImg from "../../../public/assets/CommandPopup/Travel.jpg";
+import BlurImage from "../ui/BlurImage";
 
 export default function CommandPopup() {
     return (
-        <div className="z-50 rounded-xl bg-background/85 shadow-2xl outline-none backdrop-blur-sm border border-border p-3 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2">
+        <MotionPopup isOpen={true} className="z-50 rounded-xl bg-background/85 shadow-2xl outline-none backdrop-blur-sm border border-border p-3 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2">
             <Link className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden md:col-span-1 lg:col-span-1" href="/uses">
                 <div className="absolute inset-0 z-[-1] rounded-xl overflow-hidden">
                     <figure className="rounded shadow-lg dark:shadow-none isolate absolute inset-0 z-[-1] overflow-hidden select-none pointer-events-none">
@@ -104,6 +105,6 @@ export default function CommandPopup() {
                     </Link>
                 </div>
             </div>
-        </div>
+        </MotionPopup>
     );
 }

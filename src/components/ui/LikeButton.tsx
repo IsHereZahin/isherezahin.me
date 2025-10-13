@@ -3,7 +3,7 @@
 import confetti from 'canvas-confetti'
 import { motion } from 'framer-motion'
 import { useRef, useState } from 'react'
-import AnimatedNumber from '../ui/AnimatedNumber'
+import AnimatedNumber from '@/components/ui/AnimatedNumber'
 
 interface LikeButtonProps {
   readonly likes?: number
