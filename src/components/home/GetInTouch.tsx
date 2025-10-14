@@ -6,7 +6,7 @@ import { useEffect } from 'react'
 import Logo from '../ui/Logo'
 import Section from '../ui/Section'
 
-const GetInTouch = () => {
+export default function GetInTouch() {
     const [scope, animate] = useAnimate()
 
     useEffect(() => {
@@ -101,6 +101,7 @@ const GetInTouch = () => {
                         <div className="my-4">
                             <a
                                 href={`mailto:${MY_MAIL}`}
+                                target="_blank"
                                 className="inline-block text-white px-4 py-2 rounded-full text-sm bg-gradient-to-b from-red-600 to-red-400 hover:from-red-700 hover:to-red-400 transition-all duration-300"
                             >
                                 {MY_MAIL}
@@ -112,5 +113,3 @@ const GetInTouch = () => {
         </Section>
     )
 }
-
-export default GetInTouch

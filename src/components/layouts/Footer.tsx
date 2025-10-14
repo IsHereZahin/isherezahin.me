@@ -1,10 +1,11 @@
 import { FOOTER_MENU_ITEMS, SOCIAL_LINKS } from '@/config/links';
 import { MY_NAME } from '@/lib/constants';
-import Link from 'next/link';
-import Section from '../ui/Section';
 import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import ReferralLink from '../ui/ReferralLink';
+import Section from '../ui/Section';
 
-const Footer: React.FC = () => {
+export default function Footer() {
     const currentYear = new Date().getFullYear();
     return (
         <Section id="footer" animate={true}>
@@ -23,16 +24,9 @@ const Footer: React.FC = () => {
                             {SOCIAL_LINKS.map((link) => {
                                 const Icon = link.icon;
                                 return (
-                                    <Link
-                                        key={link.href}
-                                        href={link.href}
-                                        aria-label={link.title}
-                                        className="hover:text-primary transition-colors"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
+                                    <ReferralLink key={link.href} href={link.href} className="hover:text-primary transition-colors">
                                         <Icon className="w-5 h-5" />
-                                    </Link>
+                                    </ReferralLink>
                                 );
                             })}
                         </div>
@@ -85,6 +79,4 @@ const Footer: React.FC = () => {
             </footer>
         </Section>
     );
-};
-
-export default Footer;
+}

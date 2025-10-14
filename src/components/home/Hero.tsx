@@ -1,10 +1,11 @@
 import HeroBanner from "@/components/home/HeroBanner";
 import MotionWrapper from "@/components/motion/MotionWrapper";
 import BlurImage from "@/components/ui/BlurImage";
-import CustomLink from "@/components/ui/CustomLink";
 import HighlightedWord from "@/components/ui/HighlightedWord";
-import HoverButton from "@/components/ui/HoverButton";
+import ReferralLink from "@/components/ui/ReferralLink";
 import Section from "@/components/ui/Section";
+import { MY_NAME } from "@/lib/constants";
+import { ArrowDown } from "lucide-react";
 import Link from "next/link";
 import iconicLogo from "../../../public/assets/iconic.png";
 import src from "../../../public/assets/profile.png";
@@ -18,17 +19,15 @@ export default function Hero() {
                     <MotionWrapper direction="left" distance={10} duration={0.5}>
                         <div className="rounded-l-full p-3 inline-flex bg-gradient-to-r from-primary/10 dark:from-primary/20 to-transparent -ml-3 mb-4 sm:mb-6">
                             <div className="rounded-l-full px-4 py-2.5 sm:px-6 sm:py-3.5 inline-flex items-center gap-4 bg-gradient-to-r from-primary/70 to-transparent">
-                                <span className="shrink-0 rounded-full block size-2 bg-white shadow-[0_0_5px_rgba(var(--primary-rgb),0.4),0_0_10px_rgba(var(--primary-rgb),0.3)]"></span>
-                                <div className="text-sm sm:text-base text-white flex gap-1.5 flex-wrap items-center">
+                                <span className="shrink-0 rounded-full block size-2 bg-background shadow-[0_0_5px_rgba(var(--primary-rgb),0.4),0_0_10px_rgba(var(--primary-rgb),0.3)]"></span>
+                                <div className="text-sm sm:text-base text-background flex gap-1.5 flex-wrap items-center">
                                     <span className="shrink-0">Crafting Experiences at</span>
-                                    <CustomLink
-                                        href="http://www.iconicsolutionsbd.com/"
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="font-medium text-white hover:text-primary"
+                                    <ReferralLink
+                                        href="http://www.iconicsolutionsbd.com"
+                                        className="font-medium text-primary"
                                     >
                                         Iconic
-                                    </CustomLink>
+                                    </ReferralLink>
                                     <BlurImage
                                         alt="Iconic Logo"
                                         loading="lazy"
@@ -47,7 +46,7 @@ export default function Hero() {
                     <MotionWrapper direction="left" distance={20} duration={0.6}>
                         <h1 className="text-5xl lg:text-6xl font-bold leading-tight mb-2 sm:mb-4 text-foreground flex">
                             <span className="mr-2">Hi! I&apos;m</span>
-                            <HighlightedWord>Zahin</HighlightedWord>
+                            <HighlightedWord>{MY_NAME}</HighlightedWord>
                         </h1>
                     </MotionWrapper>
 
@@ -60,7 +59,7 @@ export default function Hero() {
                             <div className="text-muted-foreground text-lg md:text-md">
                                 Need a modern web app that stands out?{' '}
                                 <span className="relative inline-block">
-                                    <CustomLink href="/contact">Hire me?</CustomLink>
+                                    <Link href="/contact" className="text-primary hover:underline">Hire me?</Link>
                                 </span>
                             </div>
                         </div>
@@ -68,12 +67,21 @@ export default function Hero() {
 
                     {/* Buttons */}
                     <MotionWrapper direction="left" distance={20} duration={0.6} delay={0.2}>
-                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-8">
+                        <div className="mt-6 sm:mt-8">
                             <div className="mt-6 sm:mt-10 flex gap-2 sm:gap-4">
-                                <HoverButton href="/blog-intro" title="Resume" />
+                                <a
+                                    href="#about-me"
+                                    className="inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-background text-foreground font-medium shadow-feature-card border border-foreground/5 transition-all duration-200 hover:translate-y-0.5 hover:border-foreground/20"
+                                >
+                                    Learn How
+                                    <div className="size-6 rounded-lg bg-background/80 flex items-center justify-center shadow-inner shadow-foreground/20">
+                                        <ArrowDown className="size-[70%] text-foreground" />
+                                    </div>
+                                </a>
+
                                 <Link
                                     href="/about"
-                                    className="inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-3 shadow-feature-card rounded-xl bg-foreground text-background font-medium transition-all duration-200 hover:bg-foreground/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                                    className="px-6 py-3 rounded-xl bg-background text-foreground font-medium shadow-feature-card border border-foreground/10 transition-all duration-200 hover:translate-y-0.5 hover:border-foreground/20"
                                 >
                                     More about me
                                 </Link>

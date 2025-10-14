@@ -2,6 +2,7 @@
 
 import { Lock } from "lucide-react"
 import type React from "react"
+import ReferralLink from "./ReferralLink"
 
 interface BrowserMockupProps {
     readonly children: React.ReactNode
@@ -13,13 +14,13 @@ interface BrowserMockupProps {
 
 export function BrowserMockup({
     children,
-    url = "https://example.com",
+    url,
     className,
     showAddressBar = true,
     urlNotFoundReason = "URL not found or not provided",
 }: BrowserMockupProps) {
     const isUrlMissing = !url || url.trim() === ""
-    const displayUrl = isUrlMissing ? "http://localhost:xxxx" : url
+    const displayUrl = isUrlMissing ? "http://********.***" : url
 
     const handleUrlClick = (e: React.MouseEvent) => {
         if (isUrlMissing) {
@@ -54,14 +55,12 @@ export function BrowserMockup({
                                 {displayUrl}
                             </button>
                         ) : (
-                            <a
+                            <ReferralLink
                                 href={url}
-                                target="_blank"
-                                rel="noopener noreferrer"
                                 className="flex-1 truncate text-sm text-muted-foreground hover:text-foreground transition-colors"
                             >
                                 {displayUrl}
-                            </a>
+                            </ReferralLink>
                         )}
                     </div>
                 )}

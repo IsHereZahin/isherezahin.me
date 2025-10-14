@@ -6,12 +6,15 @@ import StylishLink from "./ui/StylishLink";
 
 export interface ProjectType {
     id: string;
+    date: string;
     title: string;
     slug: string;
-    status: string;
-    description: string;
+    status: boolean;
+    shortDescription: string;
     image: string;
-    url: string | null;
+    url: string;
+    categories: string;
+    tags: string[];
 }
 
 export default function Project(project: Readonly<ProjectType>) {
@@ -35,13 +38,13 @@ export default function Project(project: Readonly<ProjectType>) {
                         <h3 className="text-lg font-semibold text-foreground">{project.title}</h3>
                         {project.status && (
                             <span className="text-base text-secondary-foreground">
-                                {project.status}
+                                {project.status ? "In Progress" : ""}
                             </span>
                         )}
                     </header>
 
                     <p className="text-font-base text-muted-foreground leading-relaxed">
-                        {project.description}
+                        {project.shortDescription}
                     </p>
 
                     <StylishLink

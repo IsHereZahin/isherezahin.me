@@ -1,3 +1,10 @@
+// Most of the code is from @nelsonlaidev
+// ui concept | component - Thanks to @nelsonlaidev
+// Copyright (c) 2023 Nelson Lai
+// Source: https://github.com/nelsonlaidev
+//
+// Modified by: Zahin Mohammad
+
 import Section from '../ui/Section'
 import SeeMore from '../ui/SeeMore'
 import CodingHours from './CodingHours'

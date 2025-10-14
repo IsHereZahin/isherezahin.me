@@ -1,7 +1,7 @@
+// Most of the design is from @nelsonlaidev
 // ui concept | component - Thanks to @nelsonlaidev
 // Copyright (c) 2023 Nelson Lai
 // Source: https://github.com/nelsonlaidev
-//
 // Modified by: Zahin Mohammad
 
 "use client";
@@ -17,6 +17,7 @@ import Heading from '@/components/ui/Heading';
 import ImageZoom from '@/components/ui/ImageZoom';
 import Section from '@/components/ui/Section';
 import TextGradient from '@/components/ui/TextGradient';
+import ReferralLink from '../ui/ReferralLink';
 
 export default function BlogDetailsIndex() {
     const [showTOC, setShowTOC] = useState(false);
@@ -31,7 +32,7 @@ export default function BlogDetailsIndex() {
     return (
         <>
             {/* --- Blog Header Section --- */}
-            <Section id="blog_header" animate className="px-6 pt-16 max-w-[1000px]">
+            <Section id="blog_header" className="px-6 pt-16 max-w-[1000px]">
                 <div className="text-center mb-6 sm:mb-8">
                     <span className="inline-block px-4 py-1 border border-foreground/10 rounded-full text-xs tracking-wider uppercase text-foreground/70">
                         BLOG
@@ -52,34 +53,34 @@ export default function BlogDetailsIndex() {
             </Section>
 
             {/* --- Blog Content Section --- */}
-            <Section id="blog_content" animate>
+            <Section id="blog_content">
                 <div className="relative flex flex-col lg:flex-row">
                     {/* --- LEFT: Social Icons (Desktop) --- */}
                     <div className="hidden lg:block absolute -left-16 xl:-left-20 top-0">
                         <div className="sticky top-24 flex flex-col gap-4">
-                            <a href="#" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors" aria-label="Share on Twitter">
+                            <ReferralLink href="#" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors" aria-label="Share on Twitter">
                                 <Twitter className="w-5 h-5 text-muted-foreground/80" />
-                            </a>
-                            <a href="#" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors" aria-label="Share on Instagram">
+                            </ReferralLink>
+                            <ReferralLink href="#" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors" aria-label="Share on Instagram">
                                 <Instagram className="w-5 h-5 text-muted-foreground/80" />
-                            </a>
-                            <a href="#" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors" aria-label="Share on Facebook">
+                            </ReferralLink>
+                            <ReferralLink href="#" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors" aria-label="Share on Facebook">
                                 <Facebook className="w-5 h-5 text-muted-foreground/80" />
-                            </a>
+                            </ReferralLink>
                         </div>
                     </div>
 
                     {/* --- MOBILE Social Icons --- */}
                     <div className="lg:hidden flex justify-center gap-4 mb-8">
-                        <a href="#" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors" aria-label="Share on Twitter">
+                        <ReferralLink href="#" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors" aria-label="Share on Twitter">
                             <Twitter className="w-5 h-5 text-muted-foreground/80" />
-                        </a>
-                        <a href="#" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors" aria-label="Share on Instagram">
+                        </ReferralLink>
+                        <ReferralLink href="#" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors" aria-label="Share on Instagram">
                             <Instagram className="w-5 h-5 text-muted-foreground/80" />
-                        </a>
-                        <a href="#" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors" aria-label="Share on Facebook">
+                        </ReferralLink>
+                        <ReferralLink href="#" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors" aria-label="Share on Facebook">
                             <Facebook className="w-5 h-5 text-muted-foreground/80" />
-                        </a>
+                        </ReferralLink>
                     </div>
 
                     {/* --- MAIN ARTICLE + Sidebar --- */}

@@ -1,3 +1,8 @@
+// Most of the design is from @nelsonlaidev and @theodorusclarence
+// ui concept | component - Thanks to @nelsonlaidev and @theodorusclarence
+// Source: https://github.com/nelsonlaidev & https://theodorusclarence.com
+// Modified by: Zahin Mohammad
+
 "use client";
 
 import { HEADER_LINKS } from "@/config/links";

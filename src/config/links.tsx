@@ -74,14 +74,14 @@ export const FOOTER_MENU_ITEMS: FooterMenuItems = [
 
 export const SOCIAL_LINKS: SocialLinks = [
   {
-    href: SITE_GITHUB_URL,
-    title: 'GitHub',
-    icon: SiGithub
-  },
-  {
     href: SITE_LINKEDIN_URL,
     title: 'LinkedIn',
     icon: LinkedinIcon
+  },
+  {
+    href: SITE_GITHUB_URL,
+    title: 'GitHub',
+    icon: SiGithub
   },
   {
     href: SITE_INSTAGRAM_URL,

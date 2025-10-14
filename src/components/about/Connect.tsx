@@ -1,6 +1,6 @@
 import { SOCIAL_LINKS } from '@/config/links'
 import { LinkIcon } from 'lucide-react'
-import Link from 'next/link'
+import ReferralLink from '../ui/ReferralLink'
 
 export default function Connect() {
   return (
@@ -16,14 +16,12 @@ export default function Connect() {
           const Icon = icon
 
           return (
-            <Link
-              key={href}
-              href={href}
-              className='flex w-fit items-center gap-3 text-muted-foreground transition-colors hover:text-foreground'
-            >
-              <Icon className='size-[18px]' />
-              <h3>{title}</h3>
-            </Link>
+            <ReferralLink key={href} href={href}>
+              <div className='flex w-fit items-center gap-3 text-muted-foreground transition-colors hover:text-primary'>
+                <Icon className='size-[18px]' />
+                <h3>{title}</h3>
+              </div>
+            </ReferralLink>
           )
         })}
       </div>
