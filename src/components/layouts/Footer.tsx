@@ -9,7 +9,7 @@ import Section from '../ui/Section';
 export default function Footer() {
     const currentYear = new Date().getFullYear();
     return (
-        <Section id="footer" animate={true}>
+        <Section id="footer" animate={true} delay={0.4}>
             <footer className="bg-background/10 text-foreground shadow-feature-card rounded-lg px-6 py-8 md:px-12 lg:px-16">
                 {/* Top Section */}
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 mb-12">
@@ -19,7 +19,7 @@ export default function Footer() {
                             <span className="text-2xl font-bold">{MY_NAME}</span>
                         </div>
                         <p className="text-sm text-secondary-foreground max-w-md">
-                            Help you rebuild and redefine fundamental concepts through mental models.
+                            Have a project in mind? I’ll respond within 6 hours.
                         </p>
                         <div className="flex space-x-4">
                             {SOCIAL_LINKS.map((link) => {

@@ -16,7 +16,7 @@ export default function MotionWrapper({
     direction = "bottom",
     distance = 30,
     duration = 0.5,
-    delay = 0,
+    delay = 0.2,
     children,
     ...props
 }: Readonly<MotionWrapperProps>) {

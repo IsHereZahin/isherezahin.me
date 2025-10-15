@@ -9,9 +9,10 @@ import { HEADER_LINKS } from "@/config/links";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import Logo from "../ui/Logo";
 import HeaderActions from "../header/HeaderActions";
 import MobileNav from "../header/MobileNav";
+import MotionWrapper from "../motion/MotionWrapper";
+import Logo from "../ui/Logo";
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -37,7 +38,7 @@ export default function Header() {
     }, [controlHeader]);
 
     return (
-        <>
+        <MotionWrapper direction="top" delay={0.3}>
             <header
                 className={`fixed inset-x-0 top-4 z-40 mx-auto flex h-[60px] max-w-5xl items-center justify-between rounded-2xl bg-background/30 px-4 sm:px-8 shadow-xs saturate-100 backdrop-blur-[10px] transition-all duration-300 ease-in-out ${isVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
                     }`}
@@ -75,14 +76,14 @@ export default function Header() {
                     </button>
                 </div>
 
-                <MobileNav 
-                    isOpen={isMenuOpen} 
-                    onClose={() => setIsMenuOpen(false)} 
+                <MobileNav
+                    isOpen={isMenuOpen}
+                    onClose={() => setIsMenuOpen(false)}
                     buttonRef={buttonRef}
                 />
             </header>
 
             <div className="pt-20" id="skip-nav" />
-        </>
+        </MotionWrapper>
     );
 }

@@ -11,6 +11,7 @@ export interface SectionProps {
     direction?: "top" | "bottom" | "left" | "right";
     distance?: number;
     duration?: number;
+    delay?: number;
 }
 
 export default function Section({
@@ -21,6 +22,7 @@ export default function Section({
     direction = "bottom",
     distance = 20,
     duration = 0.5,
+    delay = 0,
 }: Readonly<SectionProps>) {
     const sectionContent = (
         <section id={id} className={`${className} mx-auto relative`}>
@@ -31,7 +33,7 @@ export default function Section({
     if (!animate) return sectionContent;
 
     return (
-        <MotionWrapper direction={direction} distance={distance} duration={duration}>
+        <MotionWrapper direction={direction} distance={distance} duration={duration} delay={delay}>
             {sectionContent}
         </MotionWrapper>
     );

@@ -1,17 +1,17 @@
 "use client";
 
-import MotionWrapper from "@/components/motion/MotionWrapper";
 import Project from "@/components/Project";
 import PageTitle from "@/components/ui/PageTitle";
 import Section from "@/components/ui/Section";
 import Tags from "@/components/ui/Tags";
 import { projects } from "@/data";
+import MotionWrapper from "../motion/MotionWrapper";
 
 export default function ProjectsIndex() {
     return (
         <Section id="projects">
-            <MotionWrapper direction="left" distance={20}>
-                <PageTitle title="The Projects" subtitle="These projects showcase my journey as a developer, blending innovative ideas with practical implementation using modern technologies." />
+            <PageTitle title="Projects I've worked on" subtitle="Nothing too fancy, just solid websites that do their job." />
+            <MotionWrapper direction="left" delay={0.2}>
                 <Tags
                     tags={["nextjs", "react", "css", "tailwind", "javascript", "typescript", "css"]}
                     selected={["nextjs", "css", "react"]}

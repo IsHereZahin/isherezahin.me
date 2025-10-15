@@ -10,8 +10,8 @@ import Section from "../ui/Section";
 export default function BlogIndex() {
     return (
         <Section id="blogs">
-            <MotionWrapper direction="left">
-                <PageTitle title="The Blogs" subtitle="Discover my website and blog, where I share tutorials, notes, and experiences as a full-stack engineer based in Hong Kong. I began web dev as a hobby in Dec 2020. Explore my journey!" />
+            <PageTitle title="Ideas, insights, & inspiration" subtitle="Thoughts on web design, freelancing, and creative growth, shared to inform, encourage, and spark new perspectives" />
+            <MotionWrapper direction="left" delay={0.2}>
                 <Tags
                     tags={["nextjs", "react", "css", "tailwind", "javascript", "typescript", "css"]}
                     selected={["nextjs", "css", "react"]}

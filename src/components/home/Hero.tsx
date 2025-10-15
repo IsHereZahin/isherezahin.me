@@ -17,7 +17,7 @@ export default function Hero() {
             <div className="flex flex-row items-center gap-8 sm:gap-12">
                 <div className="flex-1 min-w-0">
                     {/* Badge */}
-                    <MotionWrapper direction="left" distance={10} duration={0.5}>
+                    <MotionWrapper direction="top" delay={0.2}>
                         <div className="rounded-l-full p-3 inline-flex bg-gradient-to-r from-primary/10 dark:from-primary/20 to-transparent -ml-3 mb-4 sm:mb-6">
                             <div className="rounded-l-full px-4 py-2.5 sm:px-6 sm:py-3.5 inline-flex items-center gap-4 bg-gradient-to-r from-primary/70 to-transparent">
                                 <span className="shrink-0 rounded-full block size-2 bg-background shadow-[0_0_5px_rgba(var(--primary-rgb),0.4),0_0_10px_rgba(var(--primary-rgb),0.3)]"></span>
@@ -44,7 +44,7 @@ export default function Hero() {
                     </MotionWrapper>
 
                     {/* Heading */}
-                    <MotionWrapper direction="left" distance={20} duration={0.6}>
+                    <MotionWrapper direction="top" delay={0.4}>
                         <h1 className="text-5xl lg:text-6xl font-bold leading-tight mb-2 sm:mb-4 text-foreground flex">
                             <span className="mr-2">Hi! I&apos;m</span>
                             <HighlightedWord>{MY_NAME}</HighlightedWord>
@@ -52,7 +52,7 @@ export default function Hero() {
                     </MotionWrapper>
 
                     {/* Description */}
-                    <MotionWrapper direction="left" distance={20} duration={0.6} delay={0.1}>
+                    <MotionWrapper direction="top" delay={0.6}>
                         <div className="space-y-3 sm:space-y-4 text-sm sm:text-[15px] leading-relaxed text-secondary-foreground">
                             <p className="text-xl md:text-md mb-4">
                                 I work with <span className="text-primary font-medium">React</span> & <span className="text-primary font-medium">Laravel</span> Ecosystem, and write to teach people how to rebuild and redefine fundamental concepts through mental models.
@@ -67,7 +67,7 @@ export default function Hero() {
                     </MotionWrapper>
 
                     {/* Buttons */}
-                    <MotionWrapper direction="left" distance={20} duration={0.6} delay={0.2}>
+                    <MotionWrapper direction="top" delay={0.8}>
                         <div className="mt-6 sm:mt-8">
                             <div className="mt-6 sm:mt-10 flex gap-2 sm:gap-4">
                                 <Button href="#about-me" text="Learn More" icon={<ArrowDown className="size-[70%] text-foreground" />} />
@@ -78,7 +78,7 @@ export default function Hero() {
                 </div>
 
                 {/* Profile Image */}
-                <MotionWrapper direction="right" distance={20} duration={0.7} delay={0.3}>
+                <MotionWrapper direction="right" delay={0.2}>
                     <div className="hidden md:flex items-center justify-center w-full max-w-[150px] sm:max-w-[1800px] md:max-w-[200px] lg:max-w-[250px] flex-shrink-0">
                         <HeroBanner
                             src={src}

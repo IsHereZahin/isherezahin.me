@@ -21,7 +21,7 @@ export default function Project(project: Readonly<ProjectType>) {
     const theme = getRandomTheme();
 
     return (
-        <MotionWrapper direction="bottom">
+        <MotionWrapper direction="bottom" delay={0.1}>
             <article className="space-y-4 group relative rounded-lg overflow-hidden p-6">
                 {/* Image Wrapper */}
                 <Frame>

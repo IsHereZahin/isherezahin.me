@@ -15,7 +15,7 @@ import StacksCard from './StacksCard'
 
 export default function AboutMe() {
   return (
-    <Section id='about-me' animate={true}>
+    <Section id='about-me' animate={true} delay={1}>
       <div className='mt-12 grid gap-4 md:grid-cols-2'>
         <div className='grid gap-4'>
           <LocationCard />

@@ -2,10 +2,10 @@
 
 :root {
     --font-size: 16px;
-    --background: #FFFFFF;
+    --background: #FCFCFC;
     --foreground: #000000;
     --primary: #000000;
-    --primary-foreground: #FFFFFF;
+    --primary-foreground: #FCFCFC;
     --secondary: #F3F4F6;
     --secondary-foreground: #72767c;
     --muted: #F9FAFB;
@@ -40,8 +40,8 @@
 
 :root.dark {
     --background: #000000;
-    --foreground: #FFFFFF;
-    --primary: #FFFFFF;
+    --foreground: #FCFCFC;
+    --primary: #FCFCFC;
     --primary-foreground: #111827;
     --secondary: #1F2937;
     --secondary-foreground: #95999e;
@@ -200,7 +200,7 @@
 }
 
 :root[data-theme="black-white"].dark {
-    --primary: #FFFFFF;
+    --primary: #FCFCFC;
     --primary-rgb: 255, 255, 255;
     --blob1: #FFB800;
     --blob2: #E93F3F;

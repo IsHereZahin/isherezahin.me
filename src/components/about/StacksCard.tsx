@@ -1,5 +1,3 @@
-'use client'
-
 import {
   SiBootstrap,
   SiCloudflare,
@@ -41,21 +39,45 @@ export default function StacksCard() {
           gradient={true}
           gradientColor={[200, 200, 200] as unknown as string}
           pauseOnHover={true}
-          className='py-4 overflow-hidden'
+          className="py-4 overflow-hidden flex w-full h-full max-w-full max-h-full place-items-center m-0 p-2 list-none opacity-100 mask-[linear-gradient(to_right,_rgba(0,0,0,0)_0%,_rgb(0,0,0)_12.5%,_rgb(0,0,0)_87.5%,_rgba(0,0,0,0)_100%)]"
         >
           <div className='flex gap-6'>
-            <SiReact className='size-10 flex-shrink-0' title='React' />
-            <SiRedux className='size-10 flex-shrink-0' title='Redux' />
-            <SiNextdotjs className='size-10 flex-shrink-0' title='Next.js' />
-            <SiMongodb className='size-10 flex-shrink-0' title='MongoDB' />
-            <SiLaravel className='size-10 flex-shrink-0' title='Laravel' />
-            <SiVuedotjs className='size-10 flex-shrink-0' title='Vue.js' />
-            <SiJavascript className='size-10 flex-shrink-0' title='JavaScript' />
-            <SiTypescript className='size-10 flex-shrink-0' title='TypeScript' />
-            <SiDocker className='size-10 flex-shrink-0' title='Docker' />
-            <SiLinux className='size-10 flex-shrink-0' title='Linux' />
-            <SiGit className='size-10 flex-shrink-0' title='Git' />
-            <SiFigma className='size-10 flex-shrink-0 mr-6' title='Figma' />
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiReact className='size-9' title='React' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiRedux className='size-9' title='Redux' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiNextdotjs className='size-9' title='Next.js' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiMongodb className='size-9' title='MongoDB' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiLaravel className='size-9' title='Laravel' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiVuedotjs className='size-9' title='Vue.js' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiJavascript className='size-9' title='JavaScript' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiTypescript className='size-9' title='TypeScript' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiDocker className='size-9' title='Docker' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiLinux className='size-9' title='Linux' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiGit className='size-9' title='Git' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0 mr-5">
+              <SiFigma className='size-9' title='Figma' />
+            </div>
           </div>
         </Marquee>
       </div>
@@ -66,24 +88,45 @@ export default function StacksCard() {
           gradient={true}
           gradientColor={[200, 200, 200] as unknown as string}
           pauseOnHover={true}
-          className='py-4 overflow-hidden'
+          className="py-4 overflow-hidden flex w-full h-full max-w-full max-h-full place-items-center m-0 p-2 list-none opacity-100 mask-[linear-gradient(to_right,_rgba(0,0,0,0)_0%,_rgb(0,0,0)_12.5%,_rgb(0,0,0)_87.5%,_rgba(0,0,0,0)_100%)]"
         >
           <div className='flex gap-6'>
-            <SiTailwindcss className='size-10 flex-shrink-0' title='Tailwind CSS' />
-            <SiBootstrap className='size-10 flex-shrink-0' title='Bootstrap' />
-            <SiPython className='size-10 flex-shrink-0' title='Python' />
-            <SiPhp className='size-10 flex-shrink-0' title='PHP' />
-            <SiMysql className='size-10 flex-shrink-0' title='MySQL' />
-            <SiFirebase className='size-10 flex-shrink-0' title='Firebase' />
-            <SiVite className='size-10 flex-shrink-0' title='Vite' />
-            <SiCloudflare className='size-10 flex-shrink-0' title='Cloudflare' />
-            <SiMarkdown className='size-10 flex-shrink-0' title='Markdown' />
-            <SiPostman className='size-10 flex-shrink-0' title='Postman' />
-            <SiNodedotjs className='size-10 flex-shrink-0 mr-6' title='Node.js' />
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiTailwindcss className='size-9' title='Tailwind CSS' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiBootstrap className='size-9' title='Bootstrap' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiPython className='size-9' title='Python' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiPhp className='size-9' title='PHP' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiMysql className='size-9' title='MySQL' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiFirebase className='size-9' title='Firebase' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiVite className='size-9' title='Vite' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiCloudflare className='size-9' title='Cloudflare' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiMarkdown className='size-9' title='Markdown' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0">
+              <SiPostman className='size-9' title='Postman' />
+            </div>
+            <div className="flex items-center justify-center size-14 bg-background shadow-feature-card rounded-[12px] flex-shrink-0 mr-5">
+              <SiNodedotjs className='size-9' title='Node.js' />
+            </div>
           </div>
         </Marquee>
       </div>
     </div>
   )
 }
-
