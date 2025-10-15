@@ -39,7 +39,7 @@ export default function Article({ date, readTime, views, title, slug, excerpt, i
                         </Link>
 
                         {/* Excerpt */}
-                        <p className="text-muted-foreground mb-6 leading-relaxed text-base">
+                        <p className="text-secondary-foreground mb-6 leading-relaxed text-base">
                             {truncatedExcerpt}
                         </p>
                     </div>
@@ -59,13 +59,13 @@ export default function Article({ date, readTime, views, title, slug, excerpt, i
                     <div className="flex items-center gap-3 sm:gap-6 flex-1">
                         {/* Read Time */}
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Clock size={16} className="text-primary" />
+                            <Clock size={16} className="text-primary/60" />
                             <span>{readTime} min read</span>
                         </div>
 
                         {/* Views */}
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Eye size={16} className="text-primary" />
+                            <Eye size={16} className="text-primary/60" />
                             <span>{views.toLocaleString()} views</span>
                         </div>
                     </div>

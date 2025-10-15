@@ -11,19 +11,13 @@ export default function SeeMore({ href, text = "See more", className = "" }: Rea
     return (
         <Link
             href={href}
-            className={`self-center flex items-center gap-2 hover:text-foreground transition-colors text-muted-foreground ${className}`}
+            className={`self-center flex items-center gap-1 hover:text-foreground transform duration-300 transition-colors text-secondary-foreground ${className}`}
             data-fade="3"
         >
             <span className="leading-none">{text}</span>
 
             <div
-                className="flex items-center justify-center size-6 rounded-[10px] isolate backdrop-blur-sm relative"
-                style={{
-                    "--borderWidth": "1",
-                    "--background":
-                        "linear-gradient(to bottom right, rgba(23, 23, 23, 70%) 0%, #525252 62%, rgba(23, 23, 23, 70%) 100%)",
-                    border: "1px solid transparent",
-                } as React.CSSProperties}
+                className="flex items-center mb-[-2px] justify-center size-6 rounded-[10px] isolate backdrop-blur-sm relative"
             >
                 <ChevronRight className="size-[70%]" strokeWidth={1.3} />
             </div>

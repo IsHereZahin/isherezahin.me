@@ -7,7 +7,7 @@ export default function SectionHeader({ title, subtitle }: Readonly<SectionHeade
     return (
         <div className="mb-8">
             <h2 className="text-2xl text-foreground font-bold">{title}</h2>
-            {subtitle && <p className="text-foreground text-lg">{subtitle}</p>}
+            {subtitle && <p className="text-secondary-foreground text-lg">{subtitle}</p>}
         </div>
     );
 }

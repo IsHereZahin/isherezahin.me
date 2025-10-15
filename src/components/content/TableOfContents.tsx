@@ -154,7 +154,7 @@ export default function TableOfContents({
                                         data-id={item.id}
                                         className={`block px-3 py-1.5 rounded-md cursor-pointer font-medium transition-colors ${isActive(item.id)
                                             ? "text-foreground"
-                                            : "text-muted-foreground hover:text-accent-foreground"
+                                            : "text-secondary-foreground hover:text-accent-foreground"
                                             }`}
                                         style={{ paddingLeft: `${(item.indent || 0) + 8}px` }}
                                     >
@@ -210,7 +210,7 @@ export default function TableOfContents({
                                             style={{ marginLeft: `${item.indent || 0}px` }}
                                             className={`block py-1 px-2 rounded-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ring-offset-1 ${isActive(item.id)
                                                 ? "text-foreground bg-accent/10 font-semibold bg-muted/20"
-                                                : "text-muted-foreground hover:text-foreground hover:bg-muted/15"
+                                                : "text-secondary-foreground hover:text-foreground hover:bg-muted/15"
                                                 }`}
                                         >
                                             {item.title}

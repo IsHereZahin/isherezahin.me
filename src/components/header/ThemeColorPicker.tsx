@@ -35,7 +35,7 @@ export default function ThemeColorPicker({
     return (
         <MotionPopup isOpen={true} className="p-3 min-w-[220px]">
             <div className="flex justify-between items-center mb-3">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                <span className="text-xs font-medium text-secondary-foreground uppercase tracking-wide">
                     Primary Color
                 </span>
                 <button
@@ -81,7 +81,7 @@ export default function ThemeColorPicker({
 
             {showCustomPicker && (
                 <div className="mt-3 p-3 bg-muted rounded-lg flex items-center gap-2 animate-in fade-in-50 slide-in-from-top-1">
-                    <span className="text-xs font-medium text-muted-foreground">Custom:</span>
+                    <span className="text-xs font-medium text-secondary-foreground">Custom:</span>
                     <input
                         type="color"
                         value={customColor}
@@ -100,7 +100,7 @@ export default function ThemeColorPicker({
 
             <button
                 onClick={onReset}
-                className="w-full mt-3 p-2 hover:bg-muted cursor-pointer rounded-md transition-colors flex items-center justify-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
+                className="w-full mt-3 p-2 hover:bg-muted cursor-pointer rounded-md transition-colors flex items-center justify-center gap-1.5 text-sm font-medium text-secondary-foreground hover:text-foreground"
                 title="Reset to default"
             >
                 <RefreshCw className="w-3.5 h-3.5" />

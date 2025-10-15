@@ -1,8 +1,8 @@
 "use client";
 
-import PageTitle from "@/components/layouts/PageTitle";
 import MotionWrapper from "@/components/motion/MotionWrapper";
 import Project from "@/components/Project";
+import PageTitle from "@/components/ui/PageTitle";
 import Section from "@/components/ui/Section";
 import Tags from "@/components/ui/Tags";
 import { projects } from "@/data";

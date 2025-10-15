@@ -19,7 +19,7 @@ export default function Heading({
 
     return (
         <h1
-            className={`${sizeClasses} mb-3 bg-linear-to-b from-foreground via-foreground/90 to-foreground/70 to-90% bg-clip-text text-center font-bold text-transparent md:leading-[64px] ${className}`}
+            className={`${sizeClasses} bg-linear-to-b from-foreground via-foreground/90 to-foreground/70 to-90% bg-clip-text text-center font-bold text-transparent md:leading-[64px] ${className}`}
         >
             {text}
         </h1>

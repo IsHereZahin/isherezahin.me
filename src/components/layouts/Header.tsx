@@ -53,7 +53,7 @@ export default function Header() {
                                 <li key={link.href}>
                                     <Link
                                         href={link.href}
-                                        className="rounded-sm px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:text-foreground capitalize"
+                                        className="rounded-sm px-3 py-2 text-sm font-medium transition-colors text-secondary-foreground hover:text-foreground capitalize"
                                     >
                                         {link.key}
                                     </Link>

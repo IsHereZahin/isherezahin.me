@@ -2,6 +2,7 @@ import { FOOTER_MENU_ITEMS, SOCIAL_LINKS } from '@/config/links';
 import { MY_NAME } from '@/lib/constants';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import Button from '../ui/Button';
 import ReferralLink from '../ui/ReferralLink';
 import Section from '../ui/Section';
 
@@ -17,7 +18,7 @@ export default function Footer() {
                         <div className="flex items-center space-x-2">
                             <span className="text-2xl font-bold">{MY_NAME}</span>
                         </div>
-                        <p className="text-sm text-muted-foreground max-w-md">
+                        <p className="text-sm text-secondary-foreground max-w-md">
                             Help you rebuild and redefine fundamental concepts through mental models.
                         </p>
                         <div className="flex space-x-4">
@@ -25,7 +26,7 @@ export default function Footer() {
                                 const Icon = link.icon;
                                 return (
                                     <ReferralLink key={link.href} href={link.href} className="hover:text-primary transition-colors">
-                                        <Icon className="w-5 h-5" />
+                                        <Icon className="w-5 h-5 text-secondary-foreground hover:text-primary" />
                                     </ReferralLink>
                                 );
                             })}
@@ -33,7 +34,7 @@ export default function Footer() {
                     </div>
 
                     {/* Menu */}
-                    <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-8">
                         {FOOTER_MENU_ITEMS.map((menuItem) => (
                             <div key={menuItem.category}>
                                 <h3 className="text-base font-medium mb-4">{menuItem.category}</h3>
@@ -42,7 +43,7 @@ export default function Footer() {
                                         <li key={item.href}>
                                             <Link
                                                 href={item.href}
-                                                className="text-muted-foreground hover:text-primary transition-colors block"
+                                                className="text-secondary-foreground hover:text-primary transition-colors block"
                                             >
                                                 {item.label}
                                             </Link>
@@ -56,20 +57,15 @@ export default function Footer() {
                     {/* Newsletter */}
                     <div className="space-y-4 lg:col-span-1">
                         <h3 className="text-base font-medium mb-4">Subscribe to {MY_NAME}’s blog newsletter</h3>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-secondary-foreground">
                             Get the latest news and updates delivered straight to your inbox.
                         </p>
-                        <Link
-                            href="#"
-                            className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-md hover:bg-primary/90 transition-colors"
-                        >
-                            Subscribe Now <ArrowRight className="w-4 h-4 ml-2" />
-                        </Link>
+                        <Button href="#" text="Subscribe" icon={<ArrowRight className="w-4 h-4" />} />
                     </div>
                 </div>
 
                 {/* Bottom Section */}
-                <div className="border-t border-border pt-6 text-center flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
+                <div className="border-t border-border pt-6 text-center flex flex-col md:flex-row justify-between items-center text-sm text-secondary-foreground">
                     <p>&copy; {currentYear} {MY_NAME}, all rights reserved.</p>
                     <div className="flex space-x-6 mt-4 md:mt-0">
                         <Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link>

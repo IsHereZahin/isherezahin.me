@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 import MainLayout from "@/components/layouts/MainLayout";
+import Button from "@/components/ui/Button";
 import Heading from "@/components/ui/Heading";
+import { Home } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "404 | Page Not Found",
@@ -16,17 +17,12 @@ export default function NotFound() {
         <Heading text="404" size="2xl" />
 
         {/* Message */}
-        <h2 className="text-2xl sm:text-3xl font-semibold text-muted-foreground mb-4">
+        <h2 className="text-2xl sm:text-3xl font-semibold text-secondary-foreground mb-4">
           Oops! Page Not Found
         </h2>
 
         {/* Go Home Button */}
-        <Link
-          href="/"
-          className="inline-block px-6 py-2 text-background font-medium rounded-lg shadow-feature-card bg-foreground hover:bg-foreground/90 transition"
-        >
-          Go Back Home
-        </Link>
+        <Button href="/" text="Go Back Home" icon={<Home className="h-4 w-4" />} />
       </div>
     </MainLayout>
   );

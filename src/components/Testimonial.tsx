@@ -20,7 +20,7 @@ export default function Testimonial({ quote, name, role }: Readonly<TestimonialT
                 </svg>
 
                 {/* Quote text */}
-                <div className="text-muted-foreground">{quote}</div>
+                <div className="text-secondary-foreground">{quote}</div>
             </div>
 
             {/* Footer */}

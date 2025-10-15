@@ -94,7 +94,7 @@ export default function GetInTouch() {
                         >
                             Any questions about software?
                         </p>
-                        <p className="text-foreground">
+                        <p className="text-secondary-foreground">
                             Feel free to reach out to me!{' '}
                             <span className="text-primary">I&apos;m available for collaboration.</span>
                         </p>

@@ -291,6 +291,7 @@
 html {
     font-size: var(--font-size);
     scroll-behavior: smooth;
+    color: var(--color-secondary-foreground);
 }
 
 article h3 {

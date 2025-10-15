@@ -1,7 +1,7 @@
 "use client";
 
 import Article from "@/components/Article";
-import PageTitle from "@/components/layouts/PageTitle";
+import PageTitle from "@/components/ui/PageTitle";
 import Tags from "@/components/ui/Tags";
 import { blogs } from "@/data";
 import MotionWrapper from "../motion/MotionWrapper";

@@ -45,19 +45,19 @@ export function BrowserMockup({
                 {/* Address Bar */}
                 {showAddressBar && (
                     <div className="ml-4 flex flex-1 items-center gap-2 rounded-md bg-background px-3 py-1.5 border border-border">
-                        <Lock className="h-4 w-4 text-muted-foreground" />
+                        <Lock className="h-4 w-4 text-secondary-foreground" />
                         {isUrlMissing ? (
                             <button
                                 type="button"
                                 onClick={handleUrlClick}
-                                className="flex-1 truncate text-sm text-muted-foreground hover:text-foreground transition-colors text-left"
+                                className="flex-1 truncate text-sm text-secondary-foreground hover:text-foreground transition-colors text-left"
                             >
                                 {displayUrl}
                             </button>
                         ) : (
                             <ReferralLink
                                 href={url}
-                                className="flex-1 truncate text-sm text-muted-foreground hover:text-foreground transition-colors"
+                                className="flex-1 truncate text-sm text-secondary-foreground hover:text-foreground transition-colors"
                             >
                                 {displayUrl}
                             </ReferralLink>

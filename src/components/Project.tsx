@@ -5,7 +5,7 @@ import Frame from "./ui/Frame";
 import StylishLink from "./ui/StylishLink";
 
 export interface ProjectType {
-    id: string;
+    id: number;
     date: string;
     title: string;
     slug: string;
@@ -43,7 +43,7 @@ export default function Project(project: Readonly<ProjectType>) {
                         )}
                     </header>
 
-                    <p className="text-font-base text-muted-foreground leading-relaxed">
+                    <p className="text-font-base leading-relaxed text-secondary-foreground">
                         {project.shortDescription}
                     </p>
 

@@ -59,13 +59,13 @@ export default function BlogDetailsIndex() {
                     <div className="hidden lg:block absolute -left-16 xl:-left-20 top-0">
                         <div className="sticky top-24 flex flex-col gap-4">
                             <ReferralLink href="#" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors" aria-label="Share on Twitter">
-                                <Twitter className="w-5 h-5 text-muted-foreground/80" />
+                                <Twitter className="w-5 h-5 text-secondary-foreground hover:text-primary" />
                             </ReferralLink>
                             <ReferralLink href="#" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors" aria-label="Share on Instagram">
-                                <Instagram className="w-5 h-5 text-muted-foreground/80" />
+                                <Instagram className="w-5 h-5 text-secondary-foreground hover:text-primary" />
                             </ReferralLink>
                             <ReferralLink href="#" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors" aria-label="Share on Facebook">
-                                <Facebook className="w-5 h-5 text-muted-foreground/80" />
+                                <Facebook className="w-5 h-5 text-secondary-foreground hover:text-primary" />
                             </ReferralLink>
                         </div>
                     </div>
@@ -73,13 +73,13 @@ export default function BlogDetailsIndex() {
                     {/* --- MOBILE Social Icons --- */}
                     <div className="lg:hidden flex justify-center gap-4 mb-8">
                         <ReferralLink href="#" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors" aria-label="Share on Twitter">
-                            <Twitter className="w-5 h-5 text-muted-foreground/80" />
+                            <Twitter className="w-5 h-5 text-secondary-foreground hover:text-primary" />
                         </ReferralLink>
                         <ReferralLink href="#" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors" aria-label="Share on Instagram">
-                            <Instagram className="w-5 h-5 text-muted-foreground/80" />
+                            <Instagram className="w-5 h-5 text-secondary-foreground hover:text-primary" />
                         </ReferralLink>
                         <ReferralLink href="#" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors" aria-label="Share on Facebook">
-                            <Facebook className="w-5 h-5 text-muted-foreground/80" />
+                            <Facebook className="w-5 h-5 text-secondary-foreground hover:text-primary" />
                         </ReferralLink>
                     </div>
 

@@ -9,6 +9,7 @@ import { ArrowDown } from "lucide-react";
 import Link from "next/link";
 import iconicLogo from "../../../public/assets/iconic.png";
 import src from "../../../public/assets/profile.png";
+import Button from "../ui/Button";
 
 export default function Hero() {
     return (
@@ -52,11 +53,11 @@ export default function Hero() {
 
                     {/* Description */}
                     <MotionWrapper direction="left" distance={20} duration={0.6} delay={0.1}>
-                        <div className="space-y-3 sm:space-y-4 text-sm sm:text-[15px] leading-relaxed text-muted-foreground">
+                        <div className="space-y-3 sm:space-y-4 text-sm sm:text-[15px] leading-relaxed text-secondary-foreground">
                             <p className="text-xl md:text-md mb-4">
                                 I work with <span className="text-primary font-medium">React</span> & <span className="text-primary font-medium">Laravel</span> Ecosystem, and write to teach people how to rebuild and redefine fundamental concepts through mental models.
                             </p>
-                            <div className="text-muted-foreground text-lg md:text-md">
+                            <div className="text-lg md:text-md">
                                 Need a modern web app that stands out?{' '}
                                 <span className="relative inline-block">
                                     <Link href="/contact" className="text-primary hover:underline">Hire me?</Link>
@@ -69,22 +70,8 @@ export default function Hero() {
                     <MotionWrapper direction="left" distance={20} duration={0.6} delay={0.2}>
                         <div className="mt-6 sm:mt-8">
                             <div className="mt-6 sm:mt-10 flex gap-2 sm:gap-4">
-                                <a
-                                    href="#about-me"
-                                    className="inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-background text-foreground font-medium shadow-feature-card border border-foreground/5 transition-all duration-200 hover:translate-y-0.5 hover:border-foreground/20"
-                                >
-                                    Learn How
-                                    <div className="size-6 rounded-lg bg-background/80 flex items-center justify-center shadow-inner shadow-foreground/20">
-                                        <ArrowDown className="size-[70%] text-foreground" />
-                                    </div>
-                                </a>
-
-                                <Link
-                                    href="/about"
-                                    className="px-6 py-3 rounded-xl bg-background text-foreground font-medium shadow-feature-card border border-foreground/10 transition-all duration-200 hover:translate-y-0.5 hover:border-foreground/20"
-                                >
-                                    More about me
-                                </Link>
+                                <Button href="#about-me" text="Learn More" icon={<ArrowDown className="size-[70%] text-foreground" />} />
+                                <Button href="/about" text="More about me" />
                             </div>
                         </div>
                     </MotionWrapper>
