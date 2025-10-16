@@ -31,8 +31,9 @@ export default function HeroBanner({ src, alt, className = "" }: Readonly<HeroBa
         <BlurImage
           src={src}
           alt={alt}
-          priority
-          className="rounded-lg"
+          width={400}
+          height={400}
+          className="w-full h-full object-cover rounded-lg"
         />
       </ImageZoom>
     </figure>

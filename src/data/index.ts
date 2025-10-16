@@ -92,7 +92,7 @@ const blogs = [
         slug: "tools-im-currently-enjoying",
         excerpt: "Are you stuck in a rut? Not a tool rut mind you, but one of those actual life ruts?! There's a wealth of apps and books and apps that could solve all of your problems. Or if you're just looking for ways to power your way to greatness in an easier less uncomfortable way--you came to the right place.",
         tags: ["Tools", "Productivity"],
-        imageSrc: "/assets/CommandPopup/Travel.jpg",
+        imageSrc: "https://images.unsplash.com/photo-1745750747043-da33e463f361?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         alt: "Related to tools and productivity"
     },
     {
@@ -104,7 +104,7 @@ const blogs = [
         slug: "mental-models",
         excerpt: "Mental models are frameworks that help us understand and interpret the world around us. They are simplified representations of complex concepts, systems, or processes that allow us to make better decisions and solve problems more effectively. By using mental models, we can improve our critical thinking skills and enhance our ability to learn and adapt to new situations.",
         tags: ["Mental Models", "Decision Making"],
-        imageSrc: "/assets/CommandPopup/Adventure.jpg",
+        imageSrc: "https://images.unsplash.com/photo-1745750747043-da33e463f361?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         alt: "Related to mental models and decision-making"
     }
 ];

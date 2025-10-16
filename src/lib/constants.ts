@@ -13,6 +13,9 @@ export const SITE_X_URL = `https://x.com/${MY_USERNAME}`;
 export const SITE_YOUTUBE_URL = `https://www.youtube.com/@${MY_USERNAME}`;
 export const SITE_LINKEDIN_URL = `https://www.linkedin.com/in/${MY_USERNAME}`;
 
+// Section IDs
+export const HERO_SECTION_ID = process.env.NEXT_PUBLIC_HERO_SECTION_ID || '1';
+
 export const OG_IMAGE_WIDTH = 1200;
 export const OG_IMAGE_HEIGHT = 630;
 export const OG_IMAGE_TYPE = 'image/png';

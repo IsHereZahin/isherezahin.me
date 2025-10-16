@@ -6,6 +6,7 @@
 // Modified by: Zahin Mohammad
 
 import Section from '../ui/Section'
+import SectionHeader from '../ui/SectionHeader'
 import SeeMore from '../ui/SeeMore'
 import CodingHours from './CodingHours'
 import Connect from './Connect'
@@ -15,7 +16,8 @@ import StacksCard from './StacksCard'
 
 export default function AboutMe() {
   return (
-    <Section id='about-me' animate={true} delay={1}>
+    <Section id='about-me' animate={true} delay={0.2}>
+      <SectionHeader title="About me" subtitle="A little bit about myself" />
       <div className='mt-12 grid gap-4 md:grid-cols-2'>
         <div className='grid gap-4'>
           <LocationCard />

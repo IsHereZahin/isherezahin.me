@@ -1,7 +1,7 @@
-import ComingSoon from '@/components/ComingSoon'
+import AboutIndex from '@/components/pages/AboutIndex'
 
 export default function AboutPage() {
     return (
-        <ComingSoon />
+        <AboutIndex />
     )
 }
