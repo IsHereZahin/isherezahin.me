@@ -2,6 +2,7 @@ export const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 export const IS_SERVER = typeof window === 'undefined';
 
 export const MY_NAME = process.env.NEXT_PUBLIC_MY_NAME;
+export const MY_FULL_NAME = process.env.NEXT_PUBLIC_MY_FULL_NAME || "Zahin Mohammad";
 export const MY_USERNAME = process.env.NEXT_PUBLIC_MY_USERNAME;
 export const SITE_USER_LOGO = process.env.NEXT_PUBLIC_SITE_USER_LOGO;
 

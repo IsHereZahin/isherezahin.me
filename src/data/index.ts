@@ -1,6 +1,40 @@
 import { TestimonialType } from "@/components/Testimonial";
 import { ThemeColor } from "@/utils";
 
+interface WorkExperienceType {
+    start: string;
+    end?: string;
+    title: string;
+    company: string;
+    companyUrl: string;
+    location: string;
+    description: string;
+    highlights: string[];
+    logo: string;
+}
+
+export const workExperience: WorkExperienceType[] = [
+    {
+        start: "Sep 2023",
+        end: "Present",
+        title: "Frontend Developer & SQA",
+        company: "Iconic Solutions (Pvt) Ltd",
+        companyUrl: "http://www.iconicsolutionsbd.com",
+        location: "Chittagong, BD",
+        logo: "/assets/iconic.png",
+        description:
+            "Progressed from Web Developer Intern to Software Quality Assurance Engineer, and now Frontend Developer, contributing to SaaS applications and real-world projects by combining development and testing expertise.",
+        highlights: [
+            "Developed responsive frontend interfaces using React.js, Next.js, Vue.js, and integrated APIs via Postman and Inertia.js.",
+            "Collaborated with backend teams on Laravel for API development, CRUD operations, and feature integration.",
+            "Performed manual and automated testing using Postman, Puppeteer, Selenium, and Pest.",
+            "Reviewed and enhanced UI/UX in Figma to improve user experience across platforms.",
+            "Built dynamic web projects during internship, practiced API integration, responsive design, and version control (Git).",
+            "Contributed to deploying production-ready SaaS applications and gained full-stack development experience."
+        ]
+    }
+];
+
 const projects = [
         {
         id: 1,

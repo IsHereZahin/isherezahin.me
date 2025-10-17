@@ -1,57 +1,94 @@
+import { workExperience } from "@/data";
 import Image from "next/image";
-import Section from "../ui/Section";
+import MotionWrapper from "@/components/motion/MotionWrapper";
+import ReferralLink from "@/components/ui/ReferralLink";
+import Section from "@/components/ui/Section";
+import SectionHeader from "@/components/ui/SectionHeader";
 
-export default function WorkExperience() {
-    const experiences = [
-        {
-            period: "2024 - Present",
-            role: "Lead Designer at",
-            company: "Aura",
-            bgColor: "bg-blue-100",
-            textColor: "text-blue-600",
-            icon: "https://framerusercontent.com/images/q0xdE2yYRgZ8hX3M8z7ERx1WVZI.svg"
-        },
-        {
-            period: "2022 - 2024",
-            role: "Senior UI/UX Designer at",
-            company: "Apple",
-            bgColor: "bg-gray-200",
-            textColor: "text-black",
-            icon: "https://framerusercontent.com/images/I38nFLqsNFTrWk7rKoaRpGXyN08.svg"
-        },
-        {
-            period: "2020 - 2022",
-            role: "Product Designer at",
-            company: "Shopify",
-            bgColor: "bg-green-100",
-            textColor: "text-green-700",
-            icon: "https://framerusercontent.com/images/Ocriu0NV3XWqyUahRxH3A8RgE.svg"
-        }
-    ];
+interface WorkExperienceItemProps {
+    start: string;
+    end?: string;
+    title: string;
+    company: string;
+    companyUrl: string;
+    location: string;
+    description: string;
+    highlights: string[];
+    logo: string;
+}
 
+export function WorkExperienceItem({
+    start,
+    end = "Present",
+    title,
+    company,
+    companyUrl,
+    location,
+    description,
+    highlights,
+    logo,
+}: Readonly<WorkExperienceItemProps>) {
     return (
-        <Section id="work-experience" animate={true} delay={0.2}>
-            <h2 className="text-4xl font-bold mb-12">Work Experience</h2>
-
-            <div className="space-y-8">
-                {experiences.map((exp, index) => (
-                    <div key={index + 1} className="flex flex-col sm:flex-row gap-4 sm:gap-8">
-                        <div className="sm:w-32 flex-shrink-0">
-                            <p className="text-gray-400 text-sm">{exp.period}</p>
-                        </div>
-
-                        <div className="flex-1 flex flex-col sm:flex-row items-start gap-3">
-                            <p className="text-gray-600 text-sm whitespace-nowrap">{exp.role}</p>
-
-                            <div className={`${exp.bgColor} ${exp.textColor} px-3 py-1.5 rounded-lg border border-gray-200 flex items-center gap-2`}>
-                                <Image src={exp.icon} alt={exp.company} width={16} height={16} className="w-4 h-4" />
-                                <span className="font-medium text-sm tracking-tight">{exp.company}</span>
-                            </div>
-                        </div>
-                    </div>
-                ))}
+        <MotionWrapper delay={0.2} className="grid md:grid-cols-[120px,1fr] gap-6 p-6 md:p-8 rounded-2xl shadow-feature-card bg-background hover:bg-muted/40 transition-shadow duration-300">
+            {/* Timeline / Date */}
+            <div className="flex flex-col items-center md:items-start text-center md:text-left">
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                    {start} <span className="mx-1 text-primary">—</span> {end}
+                </p>
             </div>
-            <p className="mt-8 text-secondary-foreground">This section is under construction. Will be updated soon...</p>
+
+            {/* Details */}
+            <div className="flex flex-col gap-3">
+                {/* Company + Logo */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                        <Image
+                            src={logo}
+                            alt={`${company} logo`}
+                            width={32}
+                            height={32}
+                            className="w-8 h-8 rounded-md object-contain"
+                        />
+                        <ReferralLink
+                            href={companyUrl}
+                            className="text-lg font-semibold text-foreground hover:text-primary transition-colors"
+                        >
+                            {company}
+                        </ReferralLink>
+                    </div>
+                    <span className="text-sm text-muted-foreground">{location}</span>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-xl font-semibold text-foreground">{title}</h3>
+
+                {/* Description */}
+                <p className="text-muted-foreground leading-relaxed">{description}</p>
+
+                {/* Highlights */}
+                <ul className="list-disc pl-0 sm:ml-20 mt-2 sm:mt-5 space-y-2 text-muted-foreground marker:text-primary">
+                    {highlights.map((point, index) => (
+                        <li
+                            key={index + 1}
+                            className="hover:text-foreground transition-colors"
+                            dangerouslySetInnerHTML={{ __html: point }}
+                        />
+                    ))}
+                </ul>
+            </div>
+        </MotionWrapper>
+    );
+}
+
+// Example WorkExperience Section
+export default function WorkExperience() {
+    return (
+        <Section id="work-experience" animate delay={0.2} className="px-6 py-10 max-w-[1000px]">
+            <SectionHeader title="Work Experience" />
+
+            {workExperience.map((item, index) => (
+                <WorkExperienceItem key={index + 1} {...item} />
+            ))}
         </Section>
     );
 }

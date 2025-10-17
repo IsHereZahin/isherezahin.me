@@ -17,10 +17,7 @@ export default function CommandPopup() {
                         <BlurImage
                             alt="A photo of my workspace"
                             title="A photo of my workspace"
-                            loading="lazy"
                             src={StudyImg}
-                            className="absolute left-0 top-0 object-cover group-hover/header-link:scale-110 transition-transform duration-300 ease-in-out"
-                            style={{ color: "transparent" }}
                         />
                     </figure>
                 </div>
@@ -36,10 +33,7 @@ export default function CommandPopup() {
                         <BlurImage
                             alt="A photo of me skydiving"
                             title="A photo of me skydiving"
-                            loading="lazy"
                             src={TravelImg}
-                            className="absolute left-0 top-0 object-cover group-hover/header-link:scale-110 transition-transform duration-300 ease-in-out"
-                            style={{ color: "transparent" }}
                         />
                     </figure>
                 </div>
@@ -56,10 +50,7 @@ export default function CommandPopup() {
                             <BlurImage
                                 alt="A photo of me freediving"
                                 title="A photo of me freediving"
-                                loading="lazy"
                                 src={AdventureImg}
-                                className="absolute left-0 top-0 object-cover group-hover/header-link:scale-110 transition-transform duration-300 ease-in-out"
-                                style={{ color: "transparent" }}
                             />
                         </figure>
                     </div>
