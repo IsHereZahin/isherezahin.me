@@ -38,7 +38,7 @@ export default function Header() {
     }, [controlHeader]);
 
     return (
-        <MotionWrapper direction="top" delay={0.3}>
+        <MotionWrapper direction="top" delay={0.2}>
             <header
                 className={`fixed inset-x-0 top-4 z-40 mx-auto flex h-[60px] max-w-5xl items-center justify-between rounded-2xl bg-background/30 px-4 sm:px-8 shadow-xs saturate-100 backdrop-blur-[10px] transition-all duration-300 ease-in-out ${isVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
                     }`}

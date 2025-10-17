@@ -21,7 +21,7 @@ export default function Article({ date, readTime, views, title, slug, excerpt, i
     const truncatedExcerpt = truncateWords(excerpt, 35);
 
     return (
-        <MotionWrapper direction="bottom" delay={0.1}>
+        <MotionWrapper direction="bottom" delay={0.2}>
             <article className="group/article relative py-8 border-t border-border/30 last:border-b-0 transition-all duration-500 ease-out hover:-translate-y-1 hover:bg-accent/30">
                 <div className="flex flex-col sm:flex-row gap-8 items-start sm:items-center">
                     {/* Content Section - Below image on xs screens, left on sm and up */}

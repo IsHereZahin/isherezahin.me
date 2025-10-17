@@ -33,7 +33,7 @@ export default function ProfileHero() {
                 {/* Heading: Slide from top */}
                 <MotionWrapper
                     direction="top"
-                    delay={0.3}
+                    delay={0.2}
                     initial={{ y: -20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.6, ease: "easeOut" }}
@@ -47,7 +47,7 @@ export default function ProfileHero() {
                 {/* Description: Fade + slight top */}
                 <MotionWrapper
                     direction="top"
-                    delay={0.5}
+                    delay={0.3}
                     initial={{ y: -10, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.6, ease: "easeOut" }}
@@ -61,7 +61,7 @@ export default function ProfileHero() {
                 {/* Buttons: Slide from bottom */}
                 <MotionWrapper
                     direction="bottom"
-                    delay={0.7}
+                    delay={0.4}
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.6, ease: "easeOut" }}
