@@ -1,4 +1,5 @@
 import { MY_NAME } from "@/lib/constants";
+import AuthProvider from "@/providers/AuthProvider";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,7 +12,9 @@ export default function MainRootLayout({ children }: { readonly children: React.
   return (
     <html lang="en">
       <body className="bg-background">
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

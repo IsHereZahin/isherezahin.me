@@ -39,7 +39,7 @@ export default function GetInTouch() {
                     <div className='relative size-64 max-md:mx-auto' ref={scope}>
                         <Logo
                             size={40}
-                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-2xl p-4 bg-foreground"
+                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-3xl p-4 bg-foreground"
                         />
                         <div
                             id='next-js'

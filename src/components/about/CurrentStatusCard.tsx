@@ -23,32 +23,41 @@ export default function CurrentStatusCard() {
 
                 {/* Right Section — Content */}
                 <article className="text-left">
-                    <ul className="list-disc list-outside space-y-2 text-secondary-foreground leading-relaxed pl-5 marker:text-foreground break-words">
-                        <li>
-                            At <ReferralLink
+                    <ul className="list-disc list-outside space-y-2 text-secondary-foreground leading-relaxed pl-5 marker:text-secondary-foreground break-words">
+                        <li className="hover:text-foreground transition-colors">
+                            At{" "}
+                            <ReferralLink
                                 href="http://www.iconicsolutionsbd.com"
                                 className="text-primary font-semibold hover:text-primary transition-colors"
                             >
                                 Iconic
-                            </ReferralLink>, I’m working on a File Manager web application.
+                            </ReferralLink>
+                            , I’m working on a File Manager web application.
                         </li>
-                        <li>
+
+                        <li className="hover:text-foreground transition-colors">
                             I also work on the frontend of a SaaS platform that will help real estate appraisers, making it simple and easy to use.
                         </li>
-                        <li>
-                            On the backend, I’m learning <ReferralLink
+
+                        <li className="hover:text-foreground transition-colors">
+                            On the backend, I’m learning{" "}
+                            <ReferralLink
                                 href="https://www.w3schools.com/nodejs/default.asp"
                                 className="text-primary font-semibold hover:text-primary transition-colors"
                             >
                                 Node.js
-                            </ReferralLink> and <ReferralLink
+                            </ReferralLink>{" "}
+                            and{" "}
+                            <ReferralLink
                                 href="https://expressjs.com/"
                                 className="text-primary font-semibold hover:text-primary transition-colors"
                             >
                                 Express.js
-                            </ReferralLink>.
+                            </ReferralLink>
+                            .
                         </li>
-                        <li>
+
+                        <li className="hover:text-foreground transition-colors">
                             I also keep improving this website so it’s smooth, fast, and easy to use.
                         </li>
                     </ul>

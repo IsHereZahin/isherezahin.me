@@ -25,7 +25,13 @@ export default function AboutContent() {
 
                 <div className="flex flex-col md:flex-row gap-6 md:gap-10">
                     {/* Left Column - Profile */}
-                    <MotionWrapper direction="left" distance={50} duration={0.6} delay={0.2} className="md:w-2/5 flex justify-center md:justify-start">
+                    <MotionWrapper
+                        delay={0.2}
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        className="md:w-2/5 flex justify-center md:justify-start"
+                    >
                         <div className="space-y-8">
                             {/* Profile Card */}
                             <div className="relative">

@@ -66,7 +66,7 @@ export function WorkExperienceItem({
                 <p className="text-muted-foreground leading-relaxed">{description}</p>
 
                 {/* Highlights */}
-                <ul className="list-disc pl-0 sm:ml-20 mt-2 sm:mt-5 space-y-2 text-muted-foreground marker:text-primary">
+                <ul className="list-disc pl-0 sm:ml-20 mt-2 sm:mt-5 space-y-2 text-muted-foreground marker:text-secondary-foreground">
                     {highlights.map((point, index) => (
                         <li
                             key={index + 1}

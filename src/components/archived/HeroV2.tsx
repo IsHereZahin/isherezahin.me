@@ -1,26 +1,11 @@
 "use client";
 
 import MotionWrapper from "@/components/motion/MotionWrapper";
-import { useEffect, useState } from "react";
 import BlurImage from "../ui/BlurImage";
+import useTheme from "@/lib/hooks/useTheme";
 
 export default function HeroV2() {
-    const [dark, setDark] = useState(false);
-
-    useEffect(() => {
-        const observer = new MutationObserver(() => {
-            setDark(document.documentElement.classList.contains("dark"));
-        });
-
-        observer.observe(document.documentElement, {
-            attributes: true,
-            attributeFilter: ["class"],
-        });
-
-        setDark(document.documentElement.classList.contains("dark"));
-
-        return () => observer.disconnect();
-    }, []);
+    const theme = useTheme();
 
     return (
         <section className="relative min-h-screen flex items-center justify-center px-6 py-20 overflow-hidden mt-[-5rem]">
@@ -34,7 +19,7 @@ export default function HeroV2() {
                 <div
                     className={`
             absolute inset-0 mask-[linear-gradient(to_bottom,transparent_0%,black_20%,black_80%,transparent_100%)]
-            ${dark
+            ${theme === "dark"
                             ? "bg-gradient-to-b from-[#111111]/80 via-[#111111]/90 to-[#111111]"
                             : "bg-gradient-to-b from-[#f5f5f5]/80 via-[#f5f5f5]/90 to-[#f5f5f5]"
                         }

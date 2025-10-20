@@ -24,6 +24,10 @@ export default function ProfileHero() {
                                 <BlurImage
                                     src={SITE_USER_LOGO}
                                     alt="Profile Photo"
+                                    className="w-full h-full object-cover"
+                                    width={500}
+                                    height={500}
+                                    
                                 />
                             </ImageZoom>
                         </div>

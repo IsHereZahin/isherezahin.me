@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import useTheme from "@/lib/hooks/useTheme";
 import darkLogo from "../../../public/assets/images/darkLogo.png";
 import lightLogo from "../../../public/assets/images/lightLogo.png";
 import BlurImage from "./BlurImage";
@@ -16,36 +16,21 @@ export default function Logo({
     className = "",
     type = "normal",
 }: Readonly<LogoProps>) {
-    const [dark, setDark] = useState(false);
+    const theme = useTheme();
 
-    useEffect(() => {
-        const observer = new MutationObserver(() => {
-            setDark(document.documentElement.classList.contains("dark"));
-        });
-
-        observer.observe(document.documentElement, {
-            attributes: true,
-            attributeFilter: ["class"],
-        });
-
-        // initial check
-        setDark(document.documentElement.classList.contains("dark"));
-
-        return () => observer.disconnect();
-    }, []);
-
-    // Based on dark mode state, choose the correct logo
+    // Choose the correct logo based on theme and type
     let logoSrc;
+    const isDark = theme === "dark";
 
     switch (type) {
         case "header":
-            logoSrc = dark ? lightLogo : darkLogo;
+            logoSrc = isDark ? lightLogo : darkLogo;
             break;
         case "footer":
-            logoSrc = dark ? lightLogo : darkLogo;
+            logoSrc = isDark ? lightLogo : darkLogo;
             break;
         default:
-            logoSrc = dark ? darkLogo : lightLogo;
+            logoSrc = isDark ? darkLogo : lightLogo;
             break;
     }
 

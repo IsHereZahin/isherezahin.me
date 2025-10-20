@@ -21,7 +21,7 @@ export const workExperience: WorkExperienceType[] = [
         company: "Iconic Solutions (Pvt) Ltd",
         companyUrl: "http://www.iconicsolutionsbd.com",
         location: "Chittagong, BD",
-        logo: "/assets/iconic.png",
+        logo: "/assets/images/iconic.png",
         description:
             "Progressed from Web Developer Intern to Software Quality Assurance Engineer, and now Frontend Developer, contributing to SaaS applications and real-world projects by combining development and testing expertise.",
         highlights: [

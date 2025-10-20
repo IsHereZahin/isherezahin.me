@@ -12,7 +12,7 @@ export default function PageTitle({ title, subtitle }: Readonly<PageTitleProps>)
         <h1 className="my-4 font-semibold text-4xl sm:text-5xl">{title}</h1>
       </MotionWrapper>
       <MotionWrapper direction="top" delay={0.1}>
-        <h2 className="mb-8 text-secondary-foreground">{subtitle}</h2>
+        <h2 className="mb-8 transition-colors bg-gradient-to-r from-foreground/[35%] via-foreground/90 to-foreground/[35%] bg-clip-text text-transparent">{subtitle}</h2>
       </MotionWrapper>
     </div>
   );

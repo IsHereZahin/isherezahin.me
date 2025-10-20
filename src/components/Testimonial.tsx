@@ -7,7 +7,7 @@ export interface TestimonialType {
 
 export default function Testimonial({ quote, name, role }: Readonly<TestimonialType>) {
     return (
-        <blockquote className="pl-12 mt-10">
+        <blockquote className="pl-12 mt-10 group">
             <div className="relative">
                 {/* Quote Icon */}
                 <svg
@@ -24,7 +24,7 @@ export default function Testimonial({ quote, name, role }: Readonly<TestimonialT
             </div>
 
             {/* Footer */}
-            <footer className="mt-1 font-bold text-gray-500">
+            <footer className="mt-1 font-bold text-secondary-foreground group-hover:text-primary transition-colors duration-200 ease-in-out">
                 <span className="font-semibold">{name}</span>{" "}
                 <span className="font-normal">· {role}</span>
             </footer>

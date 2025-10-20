@@ -12,24 +12,59 @@ type ImageProps = {
   alt?: string
   src: string | StaticImageData
   className?: string
+  sizes?: string
 } & React.ComponentProps<typeof NextImage>
 
 export default function BlurImage(props: ImageProps) {
-  const { alt, src, className, imageClassName, lazy = true, fill, width, height, ...rest } = props
+  const { 
+    alt, 
+    src, 
+    className, 
+    imageClassName, 
+    lazy = true, 
+    fill, 
+    width, 
+    height,
+    sizes,
+    ...rest 
+  } = props
+  
   const [isLoading, setIsLoading] = useState(true)
   const [didError, setDidError] = useState(false)
 
+  // Determine if we should use fill mode
   const useFill = fill || (!width && !height)
+  
+  // Prepare layout props
   const layoutProps = useFill
-    ? { fill: true }
+    ? { fill: true as const }
     : { width, height }
 
+  // Determine appropriate sizes prop
+  const getSizes = () => {
+    if (sizes) return sizes
+    if (!useFill) return undefined
+    
+    // Default responsive sizes for better performance
+    return '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
+  }
+
   return (
-    <div className={`overflow-hidden ${isLoading ? 'animate-pulse' : ''} ${className || ''}`}>
+    <div 
+      className={`overflow-hidden ${isLoading ? 'animate-pulse' : ''} ${className || ''}`}
+      style={{ 
+        position: useFill ? 'relative' : undefined,
+        ...(useFill && !className?.includes('h-') && !className?.includes('aspect-') && { height: '100%', width: '100%' })
+      }}
+    >
       <NextImage
-        className={`${isLoading ? 'scale-[1.02] blur-xl grayscale' : ''} ${imageClassName || ''}`}
+        className={`
+          ${isLoading ? 'scale-[1.02] blur-xl grayscale' : ''} 
+          ${useFill ? 'object-cover' : ''}
+          ${imageClassName || ''}
+        `.trim()}
         style={{
-          transition: 'filter 700ms ease, scale 150ms ease'
+          transition: 'filter 700ms ease, transform 150ms ease'
         }}
         src={didError ? ERROR_IMG_SRC : src}
         alt={alt || (didError ? 'Image failed to load' : '')}
@@ -37,9 +72,13 @@ export default function BlurImage(props: ImageProps) {
         priority={!lazy}
         quality={100}
         onLoad={() => setIsLoading(false)}
-        onError={() => setDidError(true)}
-        {...rest}
+        onError={() => {
+          setDidError(true)
+          setIsLoading(false)
+        }}
+        sizes={getSizes()}
         {...layoutProps}
+        {...rest}
       />
     </div>
   )

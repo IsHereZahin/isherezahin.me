@@ -1,11 +1,11 @@
 "use client";
 
 import Article from "@/components/Article";
+import MotionWrapper from "@/components/motion/MotionWrapper";
 import PageTitle from "@/components/ui/PageTitle";
+import Section from "@/components/ui/Section";
 import Tags from "@/components/ui/Tags";
 import { blogs } from "@/data";
-import MotionWrapper from "../motion/MotionWrapper";
-import Section from "../ui/Section";
 
 export default function BlogIndex() {
     return (

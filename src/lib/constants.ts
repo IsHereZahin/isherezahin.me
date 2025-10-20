@@ -20,3 +20,7 @@ export const HERO_SECTION_ID = process.env.NEXT_PUBLIC_HERO_SECTION_ID || '1';
 export const OG_IMAGE_WIDTH = 1200;
 export const OG_IMAGE_HEIGHT = 630;
 export const OG_IMAGE_TYPE = 'image/png';
+
+// Giscus
+export const commentFlag = IS_PRODUCTION || process.env.NEXT_PUBLIC_FLAG_COMMENT === "true";
+export const AMA_DISCUSSION_URL  = process.env.NEXT_PUBLIC_AMA_DISCUSSION_URL || '';
