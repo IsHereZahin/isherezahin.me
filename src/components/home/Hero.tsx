@@ -7,8 +7,8 @@ import Section from "@/components/ui/Section";
 import { MY_NAME } from "@/lib/constants";
 import { ArrowDown } from "lucide-react";
 import Link from "next/link";
-import iconicLogo from "../../../public/assets/iconic.png";
-import src from "../../../public/assets/profile.png";
+import iconicLogo from "../../../public/assets/images/iconic.png";
+import src from "../../../public/assets/images/profile.png";
 import Button from "../ui/Button";
 
 export default function Hero() {

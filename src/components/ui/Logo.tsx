@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import darkLogo from "../../../public/assets/darkLogo.png";
-import lightLogo from "../../../public/assets/lightLogo.png";
+import darkLogo from "../../../public/assets/images/darkLogo.png";
+import lightLogo from "../../../public/assets/images/lightLogo.png";
 import BlurImage from "./BlurImage";
 
 interface LogoProps {

@@ -5,7 +5,7 @@ import ImageZoom from "@/components/ui/ImageZoom";
 import Section from "@/components/ui/Section";
 import { MY_FULL_NAME, SITE_GITHUB_URL, SITE_LINKEDIN_URL, SITE_YOUTUBE_URL } from "@/lib/constants";
 import { GithubIcon, LinkedinIcon, YoutubeIcon } from "lucide-react";
-import profileImage from "../../../public/assets/profile.png";
+import profileImage from "../../../public/assets/images/profile.png";
 import MotionWrapper from "../motion/MotionWrapper";
 import ReferralLink from "../ui/ReferralLink";
 import Signature from "../ui/Signature";

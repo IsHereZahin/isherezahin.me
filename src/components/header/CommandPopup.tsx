@@ -3,9 +3,9 @@ import { BarChart3, BookOpen, Info } from "lucide-react";
 import Link from "next/link";
 
 import MotionPopup from "@/components/motion/MotionPopup";
-import AdventureImg from "../../../public/assets/CommandPopup/Adventure.jpg";
-import StudyImg from "../../../public/assets/CommandPopup/Desktop Setup.jpg";
-import TravelImg from "../../../public/assets/CommandPopup/Travel.jpg";
+import AdventureImg from "../../../public/assets/images/CommandPopup/Adventure.jpg";
+import StudyImg from "../../../public/assets/images/CommandPopup/Desktop Setup.jpg";
+import TravelImg from "../../../public/assets/images/CommandPopup/Travel.jpg";
 import BlurImage from "../ui/BlurImage";
 
 export default function CommandPopup() {

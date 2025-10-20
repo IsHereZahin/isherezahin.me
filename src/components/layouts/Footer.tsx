@@ -6,6 +6,16 @@ import Button from '../ui/Button';
 import ReferralLink from '../ui/ReferralLink';
 import Section from '../ui/Section';
 
+export function SimpleFooter() {
+    return (
+        <Section id="footer" animate={true} delay={0.2} className="relative max-w-[900px] mx-auto px-6 py-12 ">
+            <p className="text-sm text-muted-foreground border-t border-border pt-10">
+                Built with Typescript, React, Tailwind and Next.js ❤
+            </p>
+        </Section>
+    );
+}
+
 export default function Footer() {
     const currentYear = new Date().getFullYear();
     return (
