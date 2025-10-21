@@ -1,21 +1,10 @@
-import { workExperience } from "@/data";
-import Image from "next/image";
 import MotionWrapper from "@/components/motion/MotionWrapper";
 import ReferralLink from "@/components/ui/ReferralLink";
 import Section from "@/components/ui/Section";
 import SectionHeader from "@/components/ui/SectionHeader";
-
-interface WorkExperienceItemProps {
-    start: string;
-    end?: string;
-    title: string;
-    company: string;
-    companyUrl: string;
-    location: string;
-    description: string;
-    highlights: string[];
-    logo: string;
-}
+import { workExperience, WorkExperienceItemProps } from "@/data";
+import Image from "next/image";
+import ReferralListItem from "../ui/ReferralListItem";
 
 export function WorkExperienceItem({
     start,
@@ -67,13 +56,7 @@ export function WorkExperienceItem({
 
                 {/* Highlights */}
                 <ul className="list-disc pl-0 sm:ml-20 mt-2 sm:mt-5 space-y-2 text-muted-foreground marker:text-secondary-foreground">
-                    {highlights.map((point, index) => (
-                        <li
-                            key={index + 1}
-                            className="hover:text-foreground transition-colors"
-                            dangerouslySetInnerHTML={{ __html: point }}
-                        />
-                    ))}
+                    <ReferralListItem listItems={highlights} />
                 </ul>
             </div>
         </MotionWrapper>
@@ -85,7 +68,6 @@ export default function WorkExperience() {
     return (
         <Section id="work-experience" animate delay={0.2} className="px-6 py-10 max-w-[1000px]">
             <SectionHeader title="Work Experience" />
-
             {workExperience.map((item, index) => (
                 <WorkExperienceItem key={index + 1} {...item} />
             ))}

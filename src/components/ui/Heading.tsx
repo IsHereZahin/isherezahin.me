@@ -7,7 +7,7 @@ interface HeadingProps {
 export default function Heading({
     text,
     size = "lg",
-    className = "",
+    className = "text-center",
 }: Readonly<HeadingProps>) {
     const sizeClasses = {
         sm: "text-xl md:text-2xl",
@@ -19,7 +19,7 @@ export default function Heading({
 
     return (
         <h1
-            className={`${sizeClasses} bg-linear-to-b from-foreground via-foreground/90 to-foreground/70 to-90% bg-clip-text text-center font-bold text-transparent md:leading-[64px] ${className}`}
+            className={`${sizeClasses} bg-linear-to-b from-foreground via-foreground/90 to-foreground/70 to-90% bg-clip-text font-bold text-transparent md:leading-[64px] ${className}`}
         >
             {text}
         </h1>

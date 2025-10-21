@@ -1,4 +1,5 @@
 import MotionWrapper from "../motion/MotionWrapper";
+import Heading from "./Heading";
 
 type PageTitleProps = {
   title: string;
@@ -9,7 +10,7 @@ export default function PageTitle({ title, subtitle }: Readonly<PageTitleProps>)
   return (
     <div className="text-center">
       <MotionWrapper direction="top">
-        <h1 className="my-4 font-semibold text-4xl sm:text-5xl">{title}</h1>
+        <Heading text={title} />
       </MotionWrapper>
       <MotionWrapper direction="top" delay={0.1}>
         <h2 className="mb-8 transition-colors bg-gradient-to-r from-foreground/[35%] via-foreground/90 to-foreground/[35%] bg-clip-text text-transparent">{subtitle}</h2>

@@ -39,16 +39,18 @@ export default function BlogDetailsIndex() {
                     </span>
                 </div>
                 <Heading size='lg' className="mb-4 sm:mb-6" text="Modern Architecture Buildings" />
-                <TextGradient text="Nibh sed pulvinar proin gravida hendrerit lectus a. Consequat mauris nunc congue nisi vitae suscipit tellus mauris a. Cursus metus aliquam." />
+                <TextGradient text="Nibh sed pulvinar proin gravida hendrerit lectus a. Consequat mauris nunc congue nisi vitae suscipit tellus mauris a. Cursus metus aliquam." className="max-w-2xl mx-auto text-center" />
                 <ArticleInfo viewCount={1} commentCount={0} formattedDate="23 Nov 2022" />
                 <ImageZoom>
-                    <BlurImage
-                        src="https://images.unsplash.com/photo-1745750747043-da33e463f361?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                        alt="Modern architecture buildings"
-                        width={1170}
-                        height={700}
-                        className="w-full h-auto object-cover mt-10 sm:mt-12 rounded-lg"
-                    />
+                    <div className="p-2 border border-dotted border-foreground/10 rounded-2xl mt-10 sm:mt-12">
+                        <BlurImage
+                            src="https://images.unsplash.com/photo-1745750747043-da33e463f361?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                            alt="Modern architecture buildings"
+                            width={1170}
+                            height={700}
+                            className="w-full h-auto object-cover rounded-lg"
+                        />
+                    </div>
                 </ImageZoom>
             </Section>
 

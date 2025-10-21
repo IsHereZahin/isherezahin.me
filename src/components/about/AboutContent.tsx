@@ -9,6 +9,7 @@ import profileImage from "../../../public/assets/images/profile.png";
 import MotionWrapper from "../motion/MotionWrapper";
 import ReferralLink from "../ui/ReferralLink";
 import Signature from "../ui/Signature";
+import Heading from "../ui/Heading";
 
 export default function AboutContent() {
     return (
@@ -16,11 +17,11 @@ export default function AboutContent() {
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <MotionWrapper direction="top" distance={50} duration={0.6} delay={0.1}>
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-16">
+                    <div className="text-4xl md:text-5xl lg:text-6xl font-bold mb-16">
                         <span className="text-secondary-foreground">Building creative</span>
                         <br />
-                        <span className="text-foreground">and user-friendly solutions.</span>
-                    </h1>
+                        <Heading text="and user-friendly solutions." className="text-left"/>
+                    </div>
                 </MotionWrapper>
 
                 <div className="flex flex-col md:flex-row gap-6 md:gap-10">

@@ -4,7 +4,7 @@ import { MY_NAME } from "@/lib/constants";
 import useTheme from "@/lib/hooks/useTheme";
 import BlurImage from "./BlurImage";
 
-export default function Signature() {
+export default function Signature({ className = "w-full h-auto" }: { readonly className?: string }) {
     const theme = useTheme();
 
     // Based on dark mode state, choose the correct logo
@@ -18,7 +18,7 @@ export default function Signature() {
             alt={`Signature of ${MY_NAME}`}
             width={200}
             height={200}
-            className="w-full h-auto object-contain"
+            className={`object-contain ${className}`}
         />
     );
 }

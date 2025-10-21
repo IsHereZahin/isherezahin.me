@@ -1,6 +1,7 @@
+import ReferralListItem from "@/components/ui/ReferralListItem";
+import Section from "@/components/ui/Section";
+import { currentStatus } from "@/data";
 import { CircleHelp } from "lucide-react";
-import ReferralLink from "../ui/ReferralLink";
-import Section from "../ui/Section";
 
 export default function CurrentStatusCard() {
     return (
@@ -24,42 +25,7 @@ export default function CurrentStatusCard() {
                 {/* Right Section — Content */}
                 <article className="text-left">
                     <ul className="list-disc list-outside space-y-2 text-secondary-foreground leading-relaxed pl-5 marker:text-secondary-foreground break-words">
-                        <li className="hover:text-foreground transition-colors">
-                            At{" "}
-                            <ReferralLink
-                                href="http://www.iconicsolutionsbd.com"
-                                className="text-primary font-semibold hover:text-primary transition-colors"
-                            >
-                                Iconic
-                            </ReferralLink>
-                            , I’m working on a File Manager web application.
-                        </li>
-
-                        <li className="hover:text-foreground transition-colors">
-                            I also work on the frontend of a SaaS platform that will help real estate appraisers, making it simple and easy to use.
-                        </li>
-
-                        <li className="hover:text-foreground transition-colors">
-                            On the backend, I’m learning{" "}
-                            <ReferralLink
-                                href="https://www.w3schools.com/nodejs/default.asp"
-                                className="text-primary font-semibold hover:text-primary transition-colors"
-                            >
-                                Node.js
-                            </ReferralLink>{" "}
-                            and{" "}
-                            <ReferralLink
-                                href="https://expressjs.com/"
-                                className="text-primary font-semibold hover:text-primary transition-colors"
-                            >
-                                Express.js
-                            </ReferralLink>
-                            .
-                        </li>
-
-                        <li className="hover:text-foreground transition-colors">
-                            I also keep improving this website so it’s smooth, fast, and easy to use.
-                        </li>
+                        <ReferralListItem listItems={currentStatus} />
                     </ul>
                 </article>
             </div>

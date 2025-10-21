@@ -1,19 +1,20 @@
 import { TestimonialType } from "@/components/Testimonial";
 import { ThemeColor } from "@/utils";
 
-interface WorkExperienceType {
+export interface WorkExperienceItemProps {
     start: string;
     end?: string;
     title: string;
     company: string;
     companyUrl: string;
     location: string;
+    type: string;
     description: string;
-    highlights: string[];
+    highlights: { text: string }[];
     logo: string;
 }
 
-export const workExperience: WorkExperienceType[] = [
+export const workExperience: WorkExperienceItemProps[] = [
     {
         start: "Sep 2023",
         end: "Present",
@@ -21,19 +22,47 @@ export const workExperience: WorkExperienceType[] = [
         company: "Iconic Solutions (Pvt) Ltd",
         companyUrl: "http://www.iconicsolutionsbd.com",
         location: "Chittagong, BD",
+        type: "On Site",
         logo: "/assets/images/iconic.png",
         description:
             "Progressed from Web Developer Intern to Software Quality Assurance Engineer, and now Frontend Developer, contributing to SaaS applications and real-world projects by combining development and testing expertise.",
         highlights: [
-            "Developed responsive frontend interfaces using React.js, Next.js, Vue.js, and integrated APIs via Postman and Inertia.js.",
-            "Collaborated with backend teams on Laravel for API development, CRUD operations, and feature integration.",
-            "Performed manual and automated testing using Postman, Puppeteer, Selenium, and Pest.",
-            "Reviewed and enhanced UI/UX in Figma to improve user experience across platforms.",
-            "Built dynamic web projects during internship, practiced API integration, responsive design, and version control (Git).",
-            "Contributed to deploying production-ready SaaS applications and gained full-stack development experience."
+            {
+                text: "Developed responsive frontend interfaces using React.js, Next.js, Vue.js, and integrated APIs via Postman and Inertia.js.",
+            },
+            {
+                text: "Collaborated with backend teams on Laravel for API development, CRUD operations, and feature integration.",
+            },
+            {
+                text: "Performed manual and automated testing using Postman, Puppeteer, Selenium, and Pest.",
+            },
+            {
+                text: "Reviewed and enhanced UI/UX in Figma to improve user experience across platforms.",
+            },
+            {
+                text: "Built dynamic web projects during internship, practiced API integration, responsive design, and version control (Git).",
+            },
+            {
+                text: "Contributed to deploying production-ready SaaS applications and gained full-stack development experience.",
+            },
         ]
     }
 ];
+
+const currentStatus: { text: string }[] = [
+    {
+        text: "Currently employed as a Frontend Developer and SQA at (Iconic)[http://www.iconicsolutionsbd.com], working on a File Manager web application.",
+    },
+    {
+        text: "Also contributing to the frontend of a SaaS platform at (Iconic)[http://www.iconicsolutionsbd.com] designed for real estate appraisers, making it simple and user-friendly.",
+    },
+    {
+        text: "Continuously researching and learning new technologies to stay up-to-date.",
+    },
+    {
+        text: "I also love playing badminton and doing home workouts for fitness.",
+    }
+]
 
 const projects = [
         {
@@ -177,4 +206,4 @@ const testimonials: TestimonialType[] = [
     },
 ];
 
-export { availableThemes, blogs, languages, projects, testimonials };
+export { availableThemes, blogs, languages, projects, testimonials, currentStatus };

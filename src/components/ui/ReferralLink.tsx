@@ -58,7 +58,7 @@ export default function ReferralLink({ href = "", children, ...props }: Readonly
                 href={referralHref}
                 target="_blank"
                 {...props}
-                className={`relative z-10 group-hover:text-primary transition-colors ${props.className || ""}`}
+                className={`relative z-10 group-hover:text-primary hover:opacity-90 transition-colors ${props.className || ""}`}
             >
                 {children}
             </Link>
