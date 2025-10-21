@@ -3,9 +3,8 @@
 import BlurImage from "@/components/ui/BlurImage";
 import ImageZoom from "@/components/ui/ImageZoom";
 import Section from "@/components/ui/Section";
-import { MY_FULL_NAME, SITE_GITHUB_URL, SITE_LINKEDIN_URL, SITE_YOUTUBE_URL } from "@/lib/constants";
+import { MY_FULL_NAME, SITE_GITHUB_URL, SITE_LINKEDIN_URL, SITE_USER_LOGO, SITE_YOUTUBE_URL } from "@/lib/constants";
 import { GithubIcon, LinkedinIcon, YoutubeIcon } from "lucide-react";
-import profileImage from "../../../public/assets/images/profile.png";
 import MotionWrapper from "../motion/MotionWrapper";
 import ReferralLink from "../ui/ReferralLink";
 import Signature from "../ui/Signature";
@@ -39,7 +38,7 @@ export default function AboutContent() {
                                 <ImageZoom>
                                     <div className="relative rounded-3xl overflow-hidden aspect-[3/4] max-w-sm">
                                         <BlurImage
-                                            src={profileImage}
+                                            src={SITE_USER_LOGO}
                                             alt={MY_FULL_NAME}
                                         />
 

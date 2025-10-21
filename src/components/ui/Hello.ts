@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 const Hello = () => {
     useEffect(() => {
         console.log(
-            `👋 Hello, fellow developer!
+            `👋 Hello, developer!
 
             You're inspecting the code of this project. If you're curious about how it works or want to see more:
 

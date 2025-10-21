@@ -16,7 +16,7 @@ export default function Attribution() {
             text: "(Clarence)[https://github.com/theodorusclarence] Inspired by his blog and the micro-interactions in his portfolio.",
         },
         {
-            text: "(Delba de Oliveira)[https://www.linkedin.com/in/delbaoliveira/] Design ideas, including testimonial sections, were adapted from her project.",
+            text: "(Delba de Oliveira)[https://www.linkedin.com/in/delbaoliveira/] Design ideas, including testimonial and project sections, were adapted from her project.",
         },
     ];
 

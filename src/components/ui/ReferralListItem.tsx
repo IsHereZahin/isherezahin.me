@@ -16,7 +16,7 @@ export default function ReferralListItem({ listItems }: Readonly<ReferralListIte
                 const parts = item.text.split(/(\([^\)]+\)\[[^\]]+])/g);
 
                 return (
-                    <MotionWrapper key={idx + 1} delay={0.5 + idx * 0.1} viewport={{ once: true, amount: 0.2 }}>
+                    <MotionWrapper key={idx + 1} delay={0.5 + idx * 0.1} >
                         <li className="flex items-start">
                             <span className="mr-3 mt-2 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-secondary-foreground"></span>
                             <span>

@@ -1,10 +1,13 @@
+// constants.ts
 export const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 export const IS_SERVER = typeof window === 'undefined';
 
-export const MY_NAME = process.env.NEXT_PUBLIC_MY_NAME;
+// Personal Information
+export const MY_NAME = process.env.NEXT_PUBLIC_MY_NAME || "Zahin";
 export const MY_FULL_NAME = process.env.NEXT_PUBLIC_MY_FULL_NAME || "Zahin Mohammad";
-export const MY_USERNAME = process.env.NEXT_PUBLIC_MY_USERNAME;
-export const SITE_USER_LOGO = process.env.NEXT_PUBLIC_SITE_USER_LOGO;
+export const MY_USERNAME = process.env.NEXT_PUBLIC_MY_USERNAME || "isherezahin";
+export const MY_DESIGNATION = process.env.NEXT_PUBLIC_MY_DESIGNATION || "Software Developer";
+export const SITE_USER_LOGO = process.env.NEXT_PUBLIC_SITE_USER_LOGO || "https://res.cloudinary.com/dsh30sjju/image/upload/v1761056901/darklogo_eos1ps.png";
 
 export const MY_MAIL = `${MY_USERNAME}@gmail.com`;
 
@@ -17,6 +20,7 @@ export const SITE_LINKEDIN_URL = `https://www.linkedin.com/in/${MY_USERNAME}`;
 // Section IDs
 export const HERO_SECTION_ID = process.env.NEXT_PUBLIC_HERO_SECTION_ID || '1';
 
+// OG Image
 export const OG_IMAGE_WIDTH = 1200;
 export const OG_IMAGE_HEIGHT = 630;
 export const OG_IMAGE_TYPE = 'image/png';
