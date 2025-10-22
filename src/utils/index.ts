@@ -37,4 +37,9 @@ function truncateWords(text: string, wordLimit: number): string {
     return words.slice(0, wordLimit).join(' ') + '...';
 }
 
-export { generateProfessionalUnderline, getRandomTheme, truncateWords };
+function truncateText(text: string, limit: number): string {
+    if (text.length <= limit) return text;
+    return text.slice(0, limit) + '...';
+}
+
+export { generateProfessionalUnderline, getRandomTheme, truncateWords, truncateText };

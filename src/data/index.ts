@@ -206,4 +206,30 @@ const testimonials: TestimonialType[] = [
     },
 ];
 
-export { availableThemes, blogs, languages, projects, testimonials, currentStatus };
+const quests = [
+    {
+        id: 1,
+        date: "Around 2009",
+        title: "Swimming",
+        location: "Cox’s Bazar, BD",
+        description: `I was born on Maheshkhali, the only one hilly island in Bangladesh, part of the Cox’s Bazar district. My childhood was spent in the calm of the village, where ponds are part of everyday life. We had one at my grandfather’s house, and I used to bathe there all the time. My uncles tried to teach me to swim, but I was always scared. One afternoon, while my grandmother was washing clothes by the pond, I ran and jumped in like I always did it. But that day, I landed in the deep middle of the pond. I was shocked. I remembered the moves my uncles had shown me, I applyed thats tricks, and somehow made it back to the edge, gasping but alive. Then so many times I swim in the open sea at Cox’s Bazar. The point is, nothing’s really impossible, you just need that one brave moment to try.`,
+        media: [
+            {
+                type: "image",
+                src: "https://images.unsplash.com/photo-1438029071396-1e831a7fa6d8?w=800",
+            },
+            {
+                type: "image",
+                src: "https://images.unsplash.com/photo-1527439958599-d15f96255619?w=800",
+            },
+            {
+                type: "video",
+                src: "https://www.youtube.com/watch?v=Su-4BVbez3A",
+                thumbnail:
+                "https://images.unsplash.com/photo-1662238640575-8ec337062028?w=200",
+            },
+        ],
+    },
+];
+
+export { availableThemes, blogs, currentStatus, languages, projects, quests, testimonials };

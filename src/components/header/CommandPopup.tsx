@@ -8,10 +8,18 @@ import StudyImg from "../../../public/assets/images/CommandPopup/Desktop Setup.j
 import TravelImg from "../../../public/assets/images/CommandPopup/Travel.jpg";
 import BlurImage from "../ui/BlurImage";
 
-export default function CommandPopup() {
+interface CommandPopupProps {
+    onClose: () => void;
+}
+
+export default function CommandPopup({ onClose }: Readonly<CommandPopupProps>) {
     return (
         <MotionPopup isOpen={true} className="z-50 rounded-xl bg-background/85 shadow-2xl outline-none backdrop-blur-sm border border-border p-3 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2">
-            <Link className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden md:col-span-1 lg:col-span-1" href="/uses">
+            <Link
+                className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden md:col-span-1 lg:col-span-1"
+                href="/uses"
+                onClick={onClose}
+            >
                 <div className="absolute inset-0 z-[-1] rounded-xl overflow-hidden">
                     <figure className="rounded shadow-lg dark:shadow-none isolate absolute inset-0 z-[-1] overflow-hidden select-none pointer-events-none">
                         <BlurImage
@@ -27,7 +35,11 @@ export default function CommandPopup() {
                     <p className="text-xs text-white/80">A peek into my digital workspace</p>
                 </div>
             </Link>
-            <Link className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden md:col-span-1 lg:col-span-1" href="/bucket-list">
+            <Link
+                className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden md:col-span-1 lg:col-span-1"
+                href="/bucket-list"
+                onClick={onClose}
+            >
                 <div className="absolute inset-0 z-[-1] rounded-xl overflow-hidden">
                     <figure className="rounded shadow-lg dark:shadow-none isolate absolute inset-0 z-[-1] overflow-hidden select-none pointer-events-none">
                         <BlurImage
@@ -44,7 +56,11 @@ export default function CommandPopup() {
                 </div>
             </Link>
             <div className="md:col-span-1 lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <Link className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden" href="/side-quests">
+                <Link
+                    className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden"
+                    href="/side-quests"
+                    onClick={onClose}
+                >
                     <div className="absolute inset-0 z-[-1] rounded-xl overflow-hidden">
                         <figure className="rounded shadow-lg dark:shadow-none isolate absolute inset-0 z-[-1] overflow-hidden select-none pointer-events-none">
                             <BlurImage
@@ -61,7 +77,11 @@ export default function CommandPopup() {
                     </div>
                 </Link>
                 <div className="flex flex-col gap-2 justify-between h-full">
-                    <Link className="group/header-link p-3 rounded-xl bg-muted/70 w-full flex items-start gap-3 transition-colors hover:bg-muted flex-1" href="/guestbook">
+                    <Link
+                        className="group/header-link p-3 rounded-xl bg-muted/70 w-full flex items-start gap-3 transition-colors hover:bg-muted flex-1"
+                        href="/guestbook"
+                        onClick={onClose}
+                    >
                         <div className="mt-0.5 p-3 bg-muted text-muted-foreground rounded-xl [&>svg]:size-4 [&>svg]:stroke-1">
                             <BookOpen className="size-4 stroke-1" />
                         </div>
@@ -72,7 +92,11 @@ export default function CommandPopup() {
                             <p className="text-xs text-muted-foreground mt-0.5">Leave me a message</p>
                         </div>
                     </Link>
-                    <Link className="group/header-link p-3 rounded-xl bg-muted/70 w-full flex items-start gap-3 transition-colors hover:bg-muted flex-1" href="/statistics">
+                    <Link
+                        className="group/header-link p-3 rounded-xl bg-muted/70 w-full flex items-start gap-3 transition-colors hover:bg-muted flex-1"
+                        href="/statistics"
+                        onClick={onClose}
+                    >
                         <div className="mt-0.5 p-3 bg-muted text-muted-foreground rounded-xl [&>svg]:size-4 [&>svg]:stroke-1">
                             <BarChart3 className="size-4 stroke-1" />
                         </div>
@@ -83,7 +107,11 @@ export default function CommandPopup() {
                             <p className="text-xs text-muted-foreground mt-0.5">Crunched up numbers</p>
                         </div>
                     </Link>
-                    <Link className="group/header-link p-3 rounded-xl bg-muted/70 w-full flex items-start gap-3 transition-colors hover:bg-muted flex-1" href="/attribution">
+                    <Link
+                        className="group/header-link p-3 rounded-xl bg-muted/70 w-full flex items-start gap-3 transition-colors hover:bg-muted flex-1"
+                        href="/attribution"
+                        onClick={onClose}
+                    >
                         <div className="mt-0.5 p-3 bg-muted text-muted-foreground rounded-xl [&>svg]:size-4 [&>svg]:stroke-1">
                             <Info className="size-4 stroke-1" />
                         </div>

@@ -243,7 +243,7 @@ export default function HeaderActions() {
                 {state.activePopup === "command" && (
                     <div className="fixed inset-x-0 top-[84px] z-50 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2">
                         <div className="max-w-5xl mx-auto px-4 sm:px-8">
-                            <CommandPopup />
+                            <CommandPopup onClose={() => setState((prev) => ({ ...prev, activePopup: null }))} />
                         </div>
                     </div>
                 )}

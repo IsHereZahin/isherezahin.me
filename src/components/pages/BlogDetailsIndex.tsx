@@ -32,13 +32,13 @@ export default function BlogDetailsIndex() {
     return (
         <>
             {/* --- Blog Header Section --- */}
-            <Section id="blog_header" className="px-6 pt-16 max-w-[1000px]">
+            <Section id="blog_header" animate className="px-6 pt-16 max-w-[1000px]">
                 <div className="text-center mb-6 sm:mb-8">
                     <span className="inline-block px-4 py-1 border border-foreground/10 rounded-full text-xs tracking-wider uppercase text-foreground/70">
                         BLOG
                     </span>
                 </div>
-                <Heading size='lg' className="mb-4 sm:mb-6" text="Modern Architecture Buildings" />
+                <Heading size='lg' className="mb-4 sm:mb-6 text-center" text="Modern Architecture Buildings" />
                 <TextGradient text="Nibh sed pulvinar proin gravida hendrerit lectus a. Consequat mauris nunc congue nisi vitae suscipit tellus mauris a. Cursus metus aliquam." className="max-w-2xl mx-auto text-center" />
                 <ArticleInfo viewCount={1} commentCount={0} formattedDate="23 Nov 2022" />
                 <ImageZoom>

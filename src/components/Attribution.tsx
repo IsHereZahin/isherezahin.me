@@ -10,13 +10,13 @@ import Section from "./ui/Section";
 export default function Attribution() {
     const developers = [
         {
-            text: "(Nelson)[https://github.com/nelsonlaidev] Many components were adapted from his open-source blog.",
+            text: "(Nelson)[https://github.com/nelsonlaidev] Many components were adapted from his blog.",
         },
         {
             text: "(Clarence)[https://github.com/theodorusclarence] Inspired by his blog and the micro-interactions in his portfolio.",
         },
         {
-            text: "(Delba de Oliveira)[https://www.linkedin.com/in/delbaoliveira/] Design ideas, including testimonial and project sections, were adapted from her project.",
+            text: "(Delba de Oliveira)[https://www.linkedin.com/in/delbaoliveira/] Design ideas, including testimonial, BlurImage Idea and project sections, were adapted from her project.",
         },
     ];
 
@@ -38,14 +38,14 @@ export default function Attribution() {
     return (
         <Section id="attribution">
             {/* Greeting */}
-            <MotionWrapper delay={0.1}>
+            <MotionWrapper direction="left" delay={0.1}>
                 <p className="text-foreground text-xl font-medium mb-6">Hello! 👋</p>
             </MotionWrapper>
 
             {/* Intro */}
             <MotionWrapper delay={0.2}>
                 <div className="font-normal text-secondary-foreground mb-6 leading-relaxed">
-                    This website was originally created by{" "}
+                    This website was created by{" "}
                     <ReferralLink
                         href="https://github.com/isherezahin"
                         className="text-foreground font-medium transition-opacity"
@@ -61,52 +61,40 @@ export default function Attribution() {
                     </ReferralLink>
                     . This is a free and open-source project, not intended for commercial use. Feel free to explore the repository to learn about the structure and technologies used.
                 </div>
-            </MotionWrapper>
 
-            {/* Contribution Info */}
-            <MotionWrapper delay={0.3}>
+                {/* Contribution Info */}
                 <div className="font-normal text-secondary-foreground mb-6 leading-relaxed">
-                    My first contribution to this project began on <b>October 1, 2025</b>. It will always remain open-source, with plans for continuous improvements and feature additions.
+                    My first contribution to this project on <b>October 1, 2025</b>. It will always remain open-source, with plans for continuous improvements and feature additions.
                 </div>
-            </MotionWrapper>
 
-            {/* Appreciation */}
-            <MotionWrapper delay={0.4}>
+                {/* Appreciation */}
                 <div className="font-normal text-secondary-foreground mb-8 leading-relaxed">
                     I sincerely appreciate the developers whose work inspired this project. Over <b>500</b> websites were explored for ideas, inspiration, and resources. Credit belongs not only to me but also to the many developers who influenced this journey.
                 </div>
-            </MotionWrapper>
 
-            {/* Developers List */}
-            <MotionWrapper delay={0.5}>
+                {/* Developers List */}
                 <div className="font-normal text-secondary-foreground mb-6 leading-relaxed">
-                    Some of the developers who inspired this project (non-exhaustive list):
+                    Some of the developers who inspired this project (non-exhaustive list, please let me know if I missed anyone):
                 </div>
                 <ul className="space-y-3 mb-12 ml-6">
                     <ReferralListItem listItems={developers} />
                 </ul>
-            </MotionWrapper>
 
-            {/* Tools List */}
-            <MotionWrapper delay={0.7}>
+                {/* Tools List */}
                 <div className="font-normal text-secondary-foreground mb-6 leading-relaxed">
                     Tools and technologies used in this project:
                 </div>
                 <ul className="space-y-3 mb-12 ml-6">
                     <ReferralListItem listItems={tools} />
                 </ul>
-            </MotionWrapper>
 
-            {/* Signature */}
-            <MotionWrapper delay={1.2}>
+                {/* Signature */}
                 <p className="mb-8 font-bold">Best,</p>
                 <div className="font-normal text-secondary-foreground mt-[-40px]">
                     <Signature className="size-30" />
                 </div>
-            </MotionWrapper>
 
-            {/* Footer Contact */}
-            <MotionWrapper delay={1.3}>
+                {/* Footer Contact */}
                 <div className="font-normal text-secondary-foreground border-t border-border pt-8">
                     <div className="text-sm text-secondary-foreground leading-relaxed">
                         *Wina and I are also available for freelance work to help create your dream website{" "}

@@ -85,7 +85,7 @@ export default function AboutContent() {
 
                     {/* Right Column - Philosophy */}
                     <div className="md:w-3/5 space-y-8 text-lg">
-                        <MotionWrapper direction="top" delay={0.2}>
+                        <MotionWrapper direction="right" delay={0.2}>
                             <p className="leading-relaxed">
                                 <strong className="text-foreground">I build creative and user-friendly solutions</strong>{" "}
                                 <span className="text-secondary-foreground">
@@ -94,7 +94,7 @@ export default function AboutContent() {
                             </p>
                         </MotionWrapper>
 
-                        <MotionWrapper direction="top" delay={0.4}>
+                        <MotionWrapper direction="right" delay={0.2}>
                             <p className="leading-relaxed">
                                 <strong className="text-foreground">My projects range from SaaS platforms to file management systems</strong>{" "}
                                 –{" "}
@@ -104,7 +104,7 @@ export default function AboutContent() {
                             </p>
                         </MotionWrapper>
 
-                        <MotionWrapper direction="top" delay={0.6}>
+                        <MotionWrapper direction="right" delay={0.2}>
                             <p className="leading-relaxed">
                                 <strong className="text-foreground">I pay attention to details</strong>{" "}
                                 <span className="text-secondary-foreground">
@@ -113,7 +113,7 @@ export default function AboutContent() {
                             </p>
                         </MotionWrapper>
 
-                        <MotionWrapper direction="top" delay={0.8}>
+                        <MotionWrapper direction="right" delay={0.2}>
                             {/* Signature */}
                             <div className="mt-[-60px]">
                                 <Signature />
