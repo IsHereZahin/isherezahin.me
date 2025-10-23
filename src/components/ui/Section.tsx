@@ -25,7 +25,7 @@ export default function Section({
     delay = 0,
 }: Readonly<SectionProps>) {
     const sectionContent = (
-        <section id={id} className={`${className} mx-auto relative overflow-hidden`}>
+        <section id={id} className={`${className} mx-auto relative overflow-hidden sm:overflow-visible`}>
             {children}
         </section>
     );

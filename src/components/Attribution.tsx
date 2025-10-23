@@ -4,7 +4,6 @@
 import ReferralLink from "@/components/ui/ReferralLink";
 import ReferralListItem from "@/components/ui/ReferralListItem";
 import Signature from "@/components/ui/Signature";
-import MotionWrapper from "./motion/MotionWrapper";
 import Section from "./ui/Section";
 
 export default function Attribution() {
@@ -16,99 +15,110 @@ export default function Attribution() {
             text: "(Clarence)[https://github.com/theodorusclarence] Inspired by his blog and the micro-interactions in his portfolio.",
         },
         {
-            text: "(Delba de Oliveira)[https://www.linkedin.com/in/delbaoliveira/] Design ideas, including testimonial, BlurImage Idea and project sections, were adapted from her project.",
+            text: "(Delba de Oliveira)[https://www.linkedin.com/in/delbaoliveira/] Design ideas, including testimonial, BlurImage, and project sections, were adapted from her work.",
         },
     ];
 
     const tools = [
-        { text: "(Next.js)[https://nextjs.org/] a React framework used to build this website." },
-        { text: "(Tailwind CSS)[https://tailwindcss.com/] a CSS library for styling." },
-        { text: "(TypeScript)[https://www.typescriptlang.org/] for writing type-safe, scalable code." },
-        { text: "(Vercel)[https://vercel.com/] platform used to deploy and host the website." },
-        { text: "(GitHub)[https://github.com/] for source code management and version control." },
-        { text: "(Giscus)[https://giscus.app/] for comment integration via GitHub Discussions." },
-        { text: "(ESLint)[https://eslint.org/] to maintain clean, consistent code quality." },
-        { text: "(NextAuth.js)[https://next-auth.js.org/] for authentication and secure user sessions." },
-        { text: "(Framer Motion)[https://framer.com/motion/] for creating interactive animations." },
-        { text: "(Lucide React)[https://lucide.dev/] for icons." },
-        { text: "(React Simple Icons)[https://react-icons.github.io/react-icons/] for icons." },
-        { text: "(Cobe)[https://cobe.vercel.app/] for creating interactive 3D globe animations." },
+        { text: "(Next.js)[https://nextjs.org/] a React framework for building modern web applications." },
+        { text: "(Tailwind CSS)[https://tailwindcss.com/] a utility-first CSS framework for styling." },
+        { text: "(TypeScript)[https://www.typescriptlang.org/] for type-safe, scalable code." },
+        { text: "(GitHub)[https://github.com/] source code management and version control." },
+        { text: "(Giscus)[https://giscus.app/] comment integration via GitHub Discussions." },
+        { text: "(ESLint)[https://eslint.org/] code quality and consistency tooling." },
+        { text: "(NextAuth.js)[https://next-auth.js.org/] authentication and session management." },
+        { text: "(Framer Motion)[https://framer.com/motion/] interactive animations and transitions." },
+        { text: "(Lucide React)[https://lucide.dev/] modern icon library." },
+        { text: "(React Simple Icons)[https://react-icons.github.io/react-icons/] brand and social icons." },
+        { text: "(Cobe)[https://cobe.vercel.app/] interactive 3D globe visualizations." },
     ];
 
     return (
-        <Section id="attribution">
+        <Section id="attribution" animate className="mt-[-50px] py-16 max-w-[1000px]">
             {/* Greeting */}
-            <MotionWrapper direction="left" delay={0.1}>
-                <p className="text-foreground text-xl font-medium mb-6">Hello! 👋</p>
-            </MotionWrapper>
+            <p className="text-foreground text-xl font-medium mb-6">Hey there!👋</p>
 
-            {/* Intro */}
-            <MotionWrapper delay={0.2}>
-                <div className="font-normal text-secondary-foreground mb-6 leading-relaxed">
-                    This website was created by{" "}
-                    <ReferralLink
-                        href="https://github.com/isherezahin"
-                        className="text-foreground font-medium transition-opacity"
+            {/* Project Overview */}
+            <div className="font-normal text-secondary-foreground mb-6 leading-relaxed">
+                This website was originally created by{" "}
+                <ReferralLink
+                    href="https://github.com/isherezahin"
+                    className="text-foreground font-medium transition-opacity"
+                >
+                    Zahin
+                </ReferralLink>{" "}
+                as an open-source portfolio template built with Next.js and Tailwind CSS.
+                The complete source code is available on{" "}
+                <ReferralLink
+                    href="https://github.com/isherezahin/isherezahin.me"
+                    className="text-foreground font-medium transition-opacity"
+                >
+                    GitHub
+                </ReferralLink>
+                , licensed for free use with proper attribution. This project is intended for
+                personal and educational purposes.
+            </div>
+
+            {/* Project History */}
+            <div className="font-normal text-secondary-foreground mb-6 leading-relaxed">
+                Development began with the first commit on <b>October 1, 2025</b>. The project
+                remains actively maintained as an open-source resource, with ongoing improvements
+                and feature enhancements.
+            </div>
+
+            {/* Attribution Philosophy */}
+            <div className="font-normal text-secondary-foreground mb-8 leading-relaxed">
+                This project stands on the shoulders of countless developers who share their work
+                openly. During development, over <b>500</b> websites were reviewed for inspiration,
+                design patterns, and technical approaches. The following individuals made particularly
+                significant contributions to the web development community that influenced this work.
+            </div>
+
+            {/* Developers List */}
+            <div className="font-normal text-secondary-foreground mb-6 leading-relaxed">
+                Key inspirations and acknowledgments:
+            </div>
+            <ul className="space-y-3 mb-12 ml-6">
+                <ReferralListItem listItems={developers} />
+            </ul>
+
+            {/* Tools List */}
+            <div className="font-normal text-secondary-foreground mb-6 leading-relaxed">
+                Technologies and tools used:
+            </div>
+            <ul className="space-y-3 mb-12 ml-6">
+                <ReferralListItem listItems={tools} />
+            </ul>
+
+            {/* Closing */}
+            <div className="font-normal text-secondary-foreground mb-8 leading-relaxed">
+                If you use or extend this project, please maintain this attribution section and
+                add your own credits as appropriate. Open-source thrives on recognition and mutual support.
+            </div>
+
+            <p className="mb-8 font-medium text-secondary-foreground">
+                Thank you for respecting the open-source community.
+            </p>
+
+            {/* Signature */}
+            <p className="mb-8 font-bold">Best,</p>
+            <div className="font-normal text-secondary-foreground mt-[-40px]">
+                <Signature className="size-30" />
+            </div>
+
+            {/* Optional Contact Section */}
+            <div className="font-normal text-secondary-foreground border-t border-border pt-8">
+                <div className="text-sm text-secondary-foreground leading-relaxed">
+                    For questions about this project or collaboration inquiries, contact{" "}
+                    <a
+                        href="mailto:isherezahin@gmail.com"
+                        className="text-foreground font-medium underline hover:text-primary transition-opacity"
                     >
-                        (Zahin)
-                    </ReferralLink>{" "}
-                    using Next.js and Tailwind CSS, and is now hosted on Vercel. The full source code is available on{" "}
-                    <ReferralLink
-                        href="https://github.com/isherezahin/isherezahin.me"
-                        className="text-foreground font-medium transition-opacity"
-                    >
-                        GitHub
-                    </ReferralLink>
-                    . This is a free and open-source project, not intended for commercial use. Feel free to explore the repository to learn about the structure and technologies used.
+                        isherezahin@gmail.com
+                    </a>
+                    .
                 </div>
-
-                {/* Contribution Info */}
-                <div className="font-normal text-secondary-foreground mb-6 leading-relaxed">
-                    My first contribution to this project on <b>October 1, 2025</b>. It will always remain open-source, with plans for continuous improvements and feature additions.
-                </div>
-
-                {/* Appreciation */}
-                <div className="font-normal text-secondary-foreground mb-8 leading-relaxed">
-                    I sincerely appreciate the developers whose work inspired this project. Over <b>500</b> websites were explored for ideas, inspiration, and resources. Credit belongs not only to me but also to the many developers who influenced this journey.
-                </div>
-
-                {/* Developers List */}
-                <div className="font-normal text-secondary-foreground mb-6 leading-relaxed">
-                    Some of the developers who inspired this project (non-exhaustive list, please let me know if I missed anyone):
-                </div>
-                <ul className="space-y-3 mb-12 ml-6">
-                    <ReferralListItem listItems={developers} />
-                </ul>
-
-                {/* Tools List */}
-                <div className="font-normal text-secondary-foreground mb-6 leading-relaxed">
-                    Tools and technologies used in this project:
-                </div>
-                <ul className="space-y-3 mb-12 ml-6">
-                    <ReferralListItem listItems={tools} />
-                </ul>
-
-                {/* Signature */}
-                <p className="mb-8 font-bold">Best,</p>
-                <div className="font-normal text-secondary-foreground mt-[-40px]">
-                    <Signature className="size-30" />
-                </div>
-
-                {/* Footer Contact */}
-                <div className="font-normal text-secondary-foreground border-t border-border pt-8">
-                    <div className="text-sm text-secondary-foreground leading-relaxed">
-                        *Wina and I are also available for freelance work to help create your dream website{" "}
-                        <span className="inline-block">🧑‍💻</span>. If you’re looking for a clean and modern website, contact me at{" "}
-                        <ReferralLink
-                            href="mailto:isherezahin@gmail.com"
-                            className="text-foreground font-medium underline transition-opacity"
-                        >
-                            isherezahin@gmail.com
-                        </ReferralLink>
-                        .
-                    </div>
-                </div>
-            </MotionWrapper>
+            </div>
         </Section>
     );
 }
