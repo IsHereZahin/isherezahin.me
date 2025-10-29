@@ -16,7 +16,7 @@
     "lucide-react": "^0.544.0",
     "motion": "^12.23.22",
     "next": "15.5.4",
-    "next-auth": "^5.0.0-beta.29",
+    "next-auth": "^5.0.0-beta.30",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-fast-marquee": "^1.6.5",
