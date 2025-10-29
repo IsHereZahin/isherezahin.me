@@ -1,4 +1,5 @@
 import { availableThemes } from "@/data";
+import { ReactionKey, Reactions, ReactionUser } from "@/lib/contexts";
 
 export interface ThemeColor {
     name: string;
@@ -42,4 +43,69 @@ function truncateText(text: string, limit: number): string {
     return text.slice(0, limit) + '...';
 }
 
-export { generateProfessionalUnderline, getRandomTheme, truncateWords, truncateText };
+function getFormatDistanceToNow(date: Date): string {
+    const now = new Date();
+    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    const intervals: { [key: string]: number } = {
+        year: 31536000,
+        month: 2592000,
+        week: 604800,
+        day: 86400,
+        hour: 3600,
+        minute: 60,
+        second: 1
+    };
+    for (const interval in intervals) {
+        const intervalSeconds = intervals[interval];
+        const count = Math.floor(seconds / intervalSeconds);
+        if (count >= 1) {
+            return `${count} ${interval}${count > 1 ? 's' : ''} ago`;
+        }
+    }
+    return 'just now';
+}
+
+function getRoleBadge(authorAssociation: string, isOwner: boolean): { label: string; className: string } | null {
+    if (isOwner) {
+        return {
+            label: "Owner",
+            className: "bg-secondary text-secondary-foreground border border-border",
+        }
+    }
+
+    switch (authorAssociation) {
+        case "CONTRIBUTOR":
+            return {
+                label: "Contributor",
+                className: "bg-secondary text-secondary-foreground border border-border",
+            }
+        case "COLLABORATOR":
+            return {
+                label: "Collaborator",
+                className: "bg-secondary text-secondary-foreground border border-border",
+            }
+        case "MEMBER":
+            return {
+                label: "Member",
+                className: "bg-secondary text-secondary-foreground border border-border",
+            }
+        default:
+            return null
+    }
+}
+
+function hasUserReacted( reactionUsers: ReactionUser[], username: string, reactionType: ReactionKey): boolean {
+    if (!username) return false
+    return reactionUsers.some(
+        (ru) => ru.user.login === username && ru.content === reactionType
+    )
+}
+
+function getReactionCounts(reactions: Reactions) {
+    return {
+        thumbsUp: reactions["+1"] || 0,
+        thumbsDown: reactions["-1"] || 0,
+    }
+}
+
+export { generateProfessionalUnderline, getRandomTheme, truncateWords, truncateText, getFormatDistanceToNow, getRoleBadge, hasUserReacted, getReactionCounts };

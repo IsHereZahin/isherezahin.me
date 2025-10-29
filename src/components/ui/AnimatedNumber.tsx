@@ -3,9 +3,9 @@
 import { motion, MotionValue, useSpring, useTransform } from 'framer-motion'
 import { useEffect } from 'react'
 
-const fontSize = 18
+const baseFontSize = 18
 const padding = 10
-const height = fontSize + padding
+const height = baseFontSize + padding
 
 interface AnimatedNumberProps {
     value: number
@@ -15,14 +15,16 @@ interface AnimatedNumberProps {
 interface DigitProps {
     place: number
     value: number
+    className?: string
 }
 
 interface NumberProps {
     mv: MotionValue<number>
     number: number
+    className?: string
 }
 
-function Digit({ place, value }: Readonly<DigitProps>) {
+function Digit({ place, value, className }: Readonly<DigitProps>) {
     const valueRoundedToPlace = Math.floor(value / place)
     const animatedValue = useSpring(valueRoundedToPlace)
 
@@ -33,13 +35,13 @@ function Digit({ place, value }: Readonly<DigitProps>) {
     return (
         <div style={{ height }} className="relative w-[1ch] tabular-nums overflow-hidden">
             {[...Array(10).keys()].map((i) => (
-                <CountNumber key={i} mv={animatedValue} number={i} />
+                <CountNumber key={i} mv={animatedValue} number={i} className={className} />
             ))}
         </div>
     )
 }
 
-function CountNumber({ mv, number }: Readonly<NumberProps>) {
+function CountNumber({ mv, number, className }: Readonly<NumberProps>) {
     const y = useTransform(mv, (latest) => {
         const placeValue = latest % 10
         const offset = (10 + number - placeValue) % 10
@@ -51,7 +53,7 @@ function CountNumber({ mv, number }: Readonly<NumberProps>) {
     return (
         <motion.span
             style={{ y }}
-            className="absolute inset-0 flex items-center justify-center font-bold text-lg"
+            className={`absolute inset-0 flex items-center justify-center ${className ?? ''}`}
         >
             {number}
         </motion.span>
@@ -70,7 +72,7 @@ export default function AnimatedNumber({ value, className }: Readonly<AnimatedNu
     return (
         <div className={`flex space-x-0 overflow-hidden leading-none ${className ?? ''}`}>
             {places.map((place) => (
-                <Digit key={place} place={place} value={value} />
+                <Digit key={place} place={place} value={value} className={className} />
             ))}
         </div>
     )
