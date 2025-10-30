@@ -1,8 +1,9 @@
 "use client";
 
-import { AuthContext, AuthContextType } from "@/lib/contexts";
-import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
 import { useMemo } from "react";
+import { AuthContext } from "@/lib/contexts";
+import { AuthContextType } from "@/lib/github/types";
+import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
 
 // Main AuthProvider
 export default function AuthProvider({ children }: { readonly children: React.ReactNode }) {

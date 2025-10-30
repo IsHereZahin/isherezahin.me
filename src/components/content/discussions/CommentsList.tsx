@@ -52,7 +52,7 @@ export default function CommentsList() {
 
     if (loading) {
         return (
-            <div className="space-y-4 animate-pulse">
+            <div className="space-y-4 animate-pulse mt-5">
                 <div className="h-4 bg-secondary rounded w-3/4"></div>
                 <div className="h-4 bg-secondary rounded w-1/2"></div>
                 <div className="h-20 bg-secondary rounded"></div>

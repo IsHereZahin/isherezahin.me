@@ -1,6 +1,9 @@
-import { Comment, ReactionKey, Reactions, ReactionUser, Reply } from "../contexts";
+// src/lib/reducers/discussionReducer.ts
 
-export type DiscussionState = {
+import type { Comment, Reply, ReactionKey } from "@/lib/github/types";
+import { updateReaction, updateItemById, replaceItemById, removeItemById } from "@/lib/github/helpers";
+
+export interface DiscussionState {
     comments: Comment[];
     discussionId: string;
     loading: boolean;
@@ -54,35 +57,7 @@ export const initialDiscussionState: DiscussionState = {
     authUsername: null,
 };
 
-// Helper functions
-function updateItem<T extends { id: string }>(items: T[], id: string, updates: Partial<T>): T[] {
-    return items.map((item) =>
-        item.id === id
-            ? { ...item, ...updates } as T
-            : item
-    );
-}
-
-function updateReaction<T extends { reactions: Reactions; reaction_users: ReactionUser[] }>(
-    item: T,
-    reactionType: keyof Reactions,
-    add: boolean,
-    username: string
-): T {
-    const newReactions = { ...item.reactions };
-    newReactions[reactionType] = Math.max(0, (newReactions[reactionType] || 0) + (add ? 1 : -1));
-
-    const reactionContent = reactionType === "+1" ? "THUMBS_UP" : "THUMBS_DOWN";
-
-    const newReactionUsers = add
-        ? [...item.reaction_users, { content: reactionContent, user: { login: username, avatar_url: "", html_url: "" } }]
-        : item.reaction_users.filter((ru) => !(ru.user.login === username && ru.content === reactionContent));
-
-    return { ...item, reactions: newReactions, reaction_users: newReactionUsers } as T;
-}
-
-// Reducer
-export function discussionReducer(state: DiscussionState, action: DiscussionAction): DiscussionState {
+export function discussionReducer(state: DiscussionState,action: DiscussionAction): DiscussionState {
     switch (action.type) {
         case "SET_COMMENTS":
             return { ...state, comments: action.payload };
@@ -105,24 +80,33 @@ export function discussionReducer(state: DiscussionState, action: DiscussionActi
         case "SET_LOADED_REPLIES":
             return {
                 ...state,
-                loadedReplies: { ...state.loadedReplies, [action.payload.commentId]: action.payload.replies },
+                loadedReplies: {
+                    ...state.loadedReplies,
+                    [action.payload.commentId]: action.payload.replies,
+                },
             };
 
         case "SET_LOADED_REPLIES_LOADING":
             return {
                 ...state,
-                loadedRepliesLoading: { ...state.loadedRepliesLoading, [action.payload.commentId]: action.payload.loading },
+                loadedRepliesLoading: {
+                    ...state.loadedRepliesLoading,
+                    [action.payload.commentId]: action.payload.loading,
+                },
             };
 
         case "UPDATE_COMMENT":
-            return { ...state, comments: updateItem(state.comments, action.payload.id, action.payload.updates) };
+            return {
+                ...state,
+                comments: updateItemById(state.comments, action.payload.id, action.payload.updates),
+            };
 
         case "UPDATE_REPLY":
             return {
                 ...state,
                 loadedReplies: {
                     ...state.loadedReplies,
-                    [action.payload.commentId]: updateItem(
+                    [action.payload.commentId]: updateItemById(
                         state.loadedReplies[action.payload.commentId] || [],
                         action.payload.replyId,
                         action.payload.updates
@@ -134,7 +118,10 @@ export function discussionReducer(state: DiscussionState, action: DiscussionActi
             return { ...state, comments: [action.payload, ...state.comments] };
 
         case "REPLACE_COMMENT":
-            return { ...state, comments: updateItem(state.comments, action.payload.tempId, action.payload.comment) };
+            return {
+                ...state,
+                comments: replaceItemById(state.comments, action.payload.tempId, action.payload.comment),
+            };
 
         case "ADD_REPLY":
             return {
@@ -153,7 +140,7 @@ export function discussionReducer(state: DiscussionState, action: DiscussionActi
                 ...state,
                 loadedReplies: {
                     ...state.loadedReplies,
-                    [action.payload.commentId]: updateItem(
+                    [action.payload.commentId]: replaceItemById(
                         state.loadedReplies[action.payload.commentId] || [],
                         action.payload.tempId,
                         action.payload.reply
@@ -166,7 +153,7 @@ export function discussionReducer(state: DiscussionState, action: DiscussionActi
             delete remainingReplies[action.payload];
             return {
                 ...state,
-                comments: state.comments.filter((c) => c.id !== action.payload),
+                comments: removeItemById(state.comments, action.payload),
                 loadedReplies: remainingReplies,
             };
         }
@@ -176,12 +163,15 @@ export function discussionReducer(state: DiscussionState, action: DiscussionActi
                 ...state,
                 loadedReplies: {
                     ...state.loadedReplies,
-                    [action.payload.commentId]: (state.loadedReplies[action.payload.commentId] || []).filter(
-                        (r) => r.id !== action.payload.replyId
+                    [action.payload.commentId]: removeItemById(
+                        state.loadedReplies[action.payload.commentId] || [],
+                        action.payload.replyId
                     ),
                 },
                 comments: state.comments.map((c) =>
-                    c.id === action.payload.commentId ? { ...c, reply_count: Math.max(0, c.reply_count - 1) } : c
+                    c.id === action.payload.commentId
+                        ? { ...c, reply_count: Math.max(0, c.reply_count - 1) }
+                        : c
                 ),
             };
 
@@ -200,18 +190,18 @@ export function discussionReducer(state: DiscussionState, action: DiscussionActi
                     loadedReplies: {
                         ...state.loadedReplies,
                         [commentId]: (state.loadedReplies[commentId] || []).map((r) =>
-                            r.id === targetId ? updateReaction<Reply>(r, reactionType, add, username) : r
+                            r.id === targetId ? updateReaction(r, reactionType, add, username) : r
                         ),
                     },
                 };
-            } else {
-                return {
-                    ...state,
-                    comments: state.comments.map((c) =>
-                        c.id === targetId ? updateReaction<Comment>(c, reactionType, add, username) : c
-                    ),
-                };
             }
+
+            return {
+                ...state,
+                comments: state.comments.map((c) =>
+                    c.id === targetId ? updateReaction(c, reactionType, add, username) : c
+                ),
+            };
         }
 
         default:

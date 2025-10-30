@@ -4,10 +4,10 @@ import { MoreVertical } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
 
-import { Reply } from "@/lib/contexts"
 import { useDiscussion } from "@/lib/hooks/useDiscussion"
 import { getFormatDistanceToNow, getReactionCounts, getRoleBadge } from "@/utils"
 
+import { Reply } from "@/lib/github/types"
 import { useAuth } from "@/lib/hooks/useAuth"
 import MarkdownPreview from "./MarkdownPreview"
 import ReactionButton from "./ReactionButton"

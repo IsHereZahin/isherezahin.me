@@ -125,7 +125,7 @@ export default function CommentForm({ parentId, onCancel }: Readonly<CommentForm
                             className="w-8 h-8 rounded-full ring-2 ring-primary/20"
                         />
                     ) : (
-                        <UserIcon className="w-8 h-8 text-muted-foreground" aria-hidden="true" />
+                        <UserIcon className="w-8 h-8 text-muted-foreground hidden sm:block " aria-hidden="true" />
                     )}
                 </div>
 

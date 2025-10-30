@@ -1,5 +1,5 @@
 import { availableThemes } from "@/data";
-import { ReactionKey, Reactions, ReactionUser } from "@/lib/contexts";
+import type { ReactionKey, Reactions, ReactionUser } from "@/lib/github/types";
 
 export interface ThemeColor {
     name: string;
