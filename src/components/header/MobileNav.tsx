@@ -1,7 +1,6 @@
 "use client";
 
 import MotionPopup from "@/components/motion/MotionPopup";
-import { HEADER_LINKS } from "@/config/links";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 
@@ -9,9 +8,10 @@ interface MobileNavProps {
     isOpen: boolean;
     onClose: () => void;
     buttonRef: React.RefObject<HTMLButtonElement | null>;
+    links: { key: string; href: string; icon: React.ReactNode }[];
 }
 
-export default function MobileNav({ isOpen, onClose, buttonRef }: Readonly<MobileNavProps>) {
+export default function MobileNav({ isOpen, onClose, buttonRef, links }: Readonly<MobileNavProps>) {
     const navRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -43,7 +43,7 @@ export default function MobileNav({ isOpen, onClose, buttonRef }: Readonly<Mobil
         >
             <div ref={navRef}>
                 <ul className="flex flex-col">
-                    {HEADER_LINKS.map((link) => (
+                    {links.map((link) => (
                         <li key={link.href}>
                             <Link
                                 href={link.href}

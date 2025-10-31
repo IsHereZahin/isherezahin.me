@@ -1,4 +1,6 @@
 // src/lib/contexts/index.ts
+"use client";
+
 import { createContext } from "react";
 import { AuthContextType, DiscussionContextType } from "@/lib/github/types";
 

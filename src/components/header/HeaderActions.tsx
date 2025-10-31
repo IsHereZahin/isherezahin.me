@@ -1,11 +1,13 @@
 "use client";
 
+import { useAuth } from "@/lib/hooks/useAuth";
 import type { PopupState, ThemeMode } from "@/utils/types";
-import { Command, Languages, Moon, Palette, Sun } from "lucide-react";
+import { Command, Languages, Moon, Palette, Sun, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import CommandPopup from "./CommandPopup";
 import LanguageDropdown from "./LanguageDropdown";
 import ThemeColorPicker from "./ThemeColorPicker";
+import ProfileDropdown from "./ProfileDropdown";
 
 const defaultHex = "#000000";
 
@@ -28,7 +30,8 @@ function adjustLightness(hex: string, factor: number): string {
     return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
 }
 
-export default function HeaderActions() {
+export default function HeaderActions({ adminPage }: Readonly<{ adminPage?: boolean }>) {
+    const { user } = useAuth();
     const [state, setState] = useState<{
         mode: ThemeMode;
         colorTheme: string;
@@ -44,6 +47,7 @@ export default function HeaderActions() {
     const languageRef = useRef<HTMLDivElement>(null);
     const colorRef = useRef<HTMLDivElement>(null);
     const commandRef = useRef<HTMLDivElement>(null);
+    const profileRef = useRef<HTMLDivElement>(null);
 
     const applyCustom = (color: string, currentMode: ThemeMode) => {
         const root = document.documentElement;
@@ -164,6 +168,13 @@ export default function HeaderActions() {
             ) {
                 setState((prev) => ({ ...prev, activePopup: null }));
             }
+            if (
+                state.activePopup === "profile" &&
+                profileRef.current &&
+                !profileRef.current.contains(target)
+            ) {
+                setState((prev) => ({ ...prev, activePopup: null }));
+            }
         };
 
         if (state.activePopup) {
@@ -230,24 +241,45 @@ export default function HeaderActions() {
                 )}
             </div>
 
-            <div className="relative" ref={commandRef}>
-                <button
-                    onClick={() => togglePopup("command")}
-                    className={`${buttonBaseClass} ${hoverGradientClass} ${state.activePopup === "command" ? "bg-primary/10" : ""
-                        }`}
-                    aria-label="Open command menu"
-                    aria-expanded={state.activePopup === "command"}
-                >
-                    <Command className="size-4" />
-                </button>
-                {state.activePopup === "command" && (
-                    <div className="fixed inset-x-0 top-[84px] z-50 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2">
-                        <div className="max-w-5xl mx-auto px-4 sm:px-8">
-                            <CommandPopup onClose={() => setState((prev) => ({ ...prev, activePopup: null }))} />
+            {!adminPage && (
+                <div className="relative" ref={commandRef}>
+                    <button
+                        onClick={() => togglePopup("command")}
+                        className={`${buttonBaseClass} ${hoverGradientClass} ${state.activePopup === "command" ? "bg-primary/10" : ""
+                            }`}
+                        aria-label="Open command menu"
+                        aria-expanded={state.activePopup === "command"}
+                    >
+                        <Command className="size-4" />
+                    </button>
+                    {state.activePopup === "command" && (
+                        <div className="fixed inset-x-0 top-[84px] z-50 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2">
+                            <div className="max-w-5xl mx-auto px-4 sm:px-8">
+                                <CommandPopup onClose={() => setState((prev) => ({ ...prev, activePopup: null }))} />
+                            </div>
                         </div>
-                    </div>
-                )}
-            </div>
+                    )}
+                </div>
+            )}
+
+            {user && (
+                <div className="relative" ref={profileRef}>
+                    <button
+                        onClick={() => togglePopup("profile")}
+                        className={`${buttonBaseClass} ${hoverGradientClass} ${state.activePopup === "profile" ? "bg-primary/10" : ""}`}
+                        aria-expanded={state.activePopup === "profile"}
+                        aria-label="User profile"
+                    >
+                        <User className="size-4" />
+                    </button>
+
+                    {state.activePopup === "profile" && (
+                        <div className="absolute right-0 top-full mt-2 bg-background border border-border rounded-lg shadow-lg z-50 animate-in fade-in-0 zoom-in-95 w-48">
+                            <ProfileDropdown onClose={() => setState((prev) => ({ ...prev, activePopup: null }))} />
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

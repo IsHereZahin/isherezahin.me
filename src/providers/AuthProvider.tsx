@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { MY_MAIL } from "@/lib/constants";
 import { AuthContext } from "@/lib/contexts";
 import { AuthContextType } from "@/lib/github/types";
 import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
@@ -20,6 +21,7 @@ function AuthProviderInner({ children }: { readonly children: React.ReactNode })
 
     const login = () => signIn("github");
     const logout = () => signOut();
+    const isAdmin = session?.user?.email?.toLowerCase() === MY_MAIL.toLowerCase();
 
     const value: AuthContextType = useMemo(
         () => ({
@@ -27,6 +29,7 @@ function AuthProviderInner({ children }: { readonly children: React.ReactNode })
             status,
             login,
             logout,
+            isAdmin,
         }),
         [session, status]
     );

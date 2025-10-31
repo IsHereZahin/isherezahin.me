@@ -182,4 +182,5 @@ export interface AuthContextType {
     status: "loading" | "authenticated" | "unauthenticated";
     login: () => void;
     logout: () => void;
+    isAdmin: boolean;
 }

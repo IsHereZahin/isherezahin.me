@@ -5,20 +5,24 @@
 
 "use client";
 
-import { HEADER_LINKS } from "@/config/links";
-import { Menu, X } from "lucide-react";
 import Link from "next/link";
+import { Menu, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import HeaderActions from "../header/HeaderActions";
-import MobileNav from "../header/MobileNav";
-import MotionWrapper from "../motion/MotionWrapper";
-import Logo from "../ui/Logo";
 
-export default function Header() {
+import { HEADER_LINKS, ADMIN_LINKS } from "@/config/links";
+
+import HeaderActions from "@/components/header/HeaderActions";
+import MobileNav from "@/components/header/MobileNav";
+import MotionWrapper from "@/components/motion/MotionWrapper";
+import Logo from "@/components/ui/Logo";
+
+export default function Header({ adminPage }: Readonly<{ adminPage?: boolean }>) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isVisible, setIsVisible] = useState(true);
     const lastScrollY = useRef(0);
     const buttonRef = useRef<HTMLButtonElement>(null);
+
+    const links = adminPage ? ADMIN_LINKS : HEADER_LINKS;
 
     const controlHeader = useCallback(() => {
         if (typeof window !== "undefined") {
@@ -50,7 +54,7 @@ export default function Header() {
                 <div className="flex items-center gap-2">
                     <nav className="hidden md:block">
                         <ul className="flex gap-1">
-                            {HEADER_LINKS.map((link) => (
+                            {links.map((link) => (
                                 <li key={link.href}>
                                     <Link
                                         href={link.href}
@@ -63,7 +67,7 @@ export default function Header() {
                         </ul>
                     </nav>
 
-                    <HeaderActions />
+                    <HeaderActions adminPage={adminPage} />
 
                     <button
                         ref={buttonRef}
@@ -80,6 +84,7 @@ export default function Header() {
                     isOpen={isMenuOpen}
                     onClose={() => setIsMenuOpen(false)}
                     buttonRef={buttonRef}
+                    links={[...links]}
                 />
             </header>
 

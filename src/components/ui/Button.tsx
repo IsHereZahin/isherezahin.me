@@ -9,7 +9,7 @@ interface ButtonProps {
     className?: string;
 }
 
-export default function Button({ href, text, icon, onClick, className = ""}: Readonly<ButtonProps>) {
+export default function Button({ href, text, icon, onClick, className = "cursor-pointer"}: Readonly<ButtonProps>) {
     const baseClasses =
         "inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-background text-foreground font-medium shadow-feature-card border border-foreground/5 transition-all duration-200 hover:translate-y-0.5 hover:border-foreground/20";
 

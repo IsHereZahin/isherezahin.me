@@ -14,7 +14,7 @@ interface MotionWrapperProps extends HTMLMotionProps<"div"> {
 
 export default function MotionWrapper({
     direction = "bottom",
-    distance = 30,
+    distance = 10,
     duration = 0.5,
     delay = 0.2,
     children,
