@@ -1,6 +1,9 @@
+import dbConnect from "@/database/services/mongo";
 import { MY_DESIGNATION, MY_FULL_NAME, SITE_USER_LOGO } from "@/lib/constants";
-import AuthProvider from "@/providers/AuthProvider";
+import ProviderIndex from "@/providers/ProviderIndex";
 import type { Metadata } from "next";
+
+dbConnect();
 
 export const metadata: Metadata = {
   title: `${MY_FULL_NAME} | ${MY_DESIGNATION}`,
@@ -33,9 +36,9 @@ export default function MainRootLayout({ children }: { readonly children: React.
   return (
     <html lang="en">
       <body className="bg-background">
-        <AuthProvider>
+        <ProviderIndex>
           {children}
-        </AuthProvider>
+        </ProviderIndex>
       </body>
     </html>
   );

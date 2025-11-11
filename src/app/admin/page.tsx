@@ -1,3 +1,4 @@
+// hey developer if need to use admin dashboard, you can use this
 import Section from '@/components/ui/Section';
 import { MY_FULL_NAME } from '@/lib/constants';
 import type { Metadata } from "next";

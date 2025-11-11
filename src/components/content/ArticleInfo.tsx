@@ -19,7 +19,7 @@ const NumberFlow = ({ value }: { value: number }) => (
   <span className="font-medium">{value}</span>
 );
 
-export default function BlogHeaderDemo({ viewCount = 1, commentCount = 0, formattedDate = "23 Nov 2022" }: Readonly<ArticleInfoProps>) {
+export default function ArticleInfo({ viewCount = 0, commentCount = 0, formattedDate = "null" }: Readonly<ArticleInfoProps>) {
   return (
     <div className="max-w-3xl mx-auto mt-16 px-4 sm:px-8 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
       <div className="space-y-1 md:mx-auto">

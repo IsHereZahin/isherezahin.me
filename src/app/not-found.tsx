@@ -1,3 +1,4 @@
+// src/app/not-found.tsx
 import type { Metadata } from "next";
 
 import MainLayout from "@/components/layouts/MainLayout";

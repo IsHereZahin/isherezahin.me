@@ -294,6 +294,6 @@ html {
     color: var(--color-secondary-foreground);
 }
 
-article h3 {
+.content-headline {
     scroll-margin-top: 100px;
 }

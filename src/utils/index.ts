@@ -10,6 +10,12 @@ export interface ThemeColor {
     textColorClass: string;
 }
 
+export interface TocItem {
+    id: string
+    title: string
+    indent: number
+}
+
 function getRandomTheme(): ThemeColor {
     const index = Math.floor(Math.random() * availableThemes.length);
     return availableThemes[index];
@@ -94,7 +100,7 @@ function getRoleBadge(authorAssociation: string, isOwner: boolean): { label: str
     }
 }
 
-function hasUserReacted( reactionUsers: ReactionUser[], username: string, reactionType: ReactionKey): boolean {
+function hasUserReacted(reactionUsers: ReactionUser[], username: string, reactionType: ReactionKey): boolean {
     if (!username) return false
     return reactionUsers.some(
         (ru) => ru.user.login === username && ru.content === reactionType
@@ -108,4 +114,64 @@ function getReactionCounts(reactions: Reactions) {
     }
 }
 
-export { generateProfessionalUnderline, getRandomTheme, truncateWords, truncateText, getFormatDistanceToNow, getRoleBadge, hasUserReacted, getReactionCounts };
+function extractTocItems(markdown: string): TocItem[] {
+    const lines = markdown.split(/\r?\n/)
+    const toc: TocItem[] = []
+
+    for (let line of lines) {
+        line = line.trim()
+        const match = line.match(/^(#{1,3})\s*(.*?)\s*#*$/)
+        if (match) {
+            const level = match[1].length
+            const title = match[2].trim()
+            const id = title.toLowerCase().replace(/[^\w]+/g, "-")
+            toc.push({ id, title, indent: level - 1 })
+        }
+    }
+
+    return toc
+}
+
+function getReadTime(content: string, wordsPerMinute = 200): number {
+    if (!content) return 0
+
+    // Remove markdown syntax for a better estimate
+    const plainText = content
+        .replace(/```[\s\S]*?```/g, '') // code blocks
+        .replace(/`[^`]*`/g, '') // inline code
+        .replace(/!\[.*?\]\(.*?\)/g, '') // images
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // links
+        .replace(/[#>*\-]/g, '') // headings, blockquotes, lists symbols
+        .replace(/\n/g, ' ')
+
+    const wordCount = plainText.trim().split(/\s+/).length
+    const time = Math.ceil(wordCount / wordsPerMinute)
+    return time
+}
+
+function getFormattedDate(isoDate: string, options?: Intl.DateTimeFormatOptions): string {
+    if (!isoDate) return ''
+
+    const formatOptions: Intl.DateTimeFormatOptions = options ?? {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    }
+
+    const date = new Date(isoDate)
+    return new Intl.DateTimeFormat('en-US', formatOptions).format(date)
+}
+
+export { 
+    generateProfessionalUnderline,
+    getRandomTheme,
+    truncateWords,
+    truncateText,
+    getFormatDistanceToNow,
+    getRoleBadge,
+    hasUserReacted,
+    getReactionCounts,
+    extractTocItems,
+    getReadTime,
+    getFormattedDate,
+};

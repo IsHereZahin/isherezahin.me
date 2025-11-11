@@ -42,14 +42,14 @@ export default function LikeButton({ likes = 118, maxUserLikes = 3 }: LikeButton
   const progress = Math.min(userLikes / maxUserLikes, 1) * 100
 
   return (
-    <div className="mt-12 flex justify-center">
+    <div className="mt-8 sm:mt-12 flex justify-center">
       <motion.button
         ref={buttonRef}
         onClick={handleLike}
         whileTap={{ scale: 0.97 }}
         disabled={userLikes >= maxUserLikes}
         type="button"
-        className={`flex items-center gap-3 rounded-xl px-4 py-2 text-lg font-medium transition-colors duration-300
+        className={`flex items-center gap-2 sm:gap-3 rounded-xl px-3 sm:px-4 py-1.5 sm:py-2 text-base sm:text-lg font-medium transition-colors duration-300
           ${userLikes >= maxUserLikes
             ? 'bg-zinc-900 text-zinc-500 cursor-not-allowed hover:bg-zinc-900'
             : 'bg-neutral-800/40 backdrop-blur-sm text-white hover:bg-neutral-700 cursor-pointer'}`}
@@ -57,15 +57,13 @@ export default function LikeButton({ likes = 118, maxUserLikes = 3 }: LikeButton
         {/* Heart Fill */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="32"
-          height="32"
+          className="w-6 h-6 sm:w-8 sm:h-8 relative overflow-hidden"
           viewBox="0 0 24 24"
           strokeWidth="2"
           stroke="#ef4444"
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="relative overflow-hidden"
         >
           <defs>
             <clipPath id="heart-clip">
@@ -93,8 +91,8 @@ export default function LikeButton({ likes = 118, maxUserLikes = 3 }: LikeButton
         </svg>
 
         {/* Professional Like Count */}
-        <div className="flex items-center gap-2">
-          <span className="text-lg">Like</span>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <span className="text-base sm:text-lg">Like</span>
           <AnimatedNumber value={totalLikes} />
         </div>
       </motion.button>

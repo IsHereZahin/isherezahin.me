@@ -1,5 +1,5 @@
 import BlurImage from "@/components/ui/BlurImage";
-import { truncateWords } from "@/utils";
+import { getFormattedDate, getReadTime, truncateWords } from "@/utils";
 import { Clock, Eye } from "lucide-react";
 import Link from "next/link";
 import MotionWrapper from "./motion/MotionWrapper";
@@ -7,17 +7,16 @@ import MotionWrapper from "./motion/MotionWrapper";
 export interface Blog {
     id: number;
     date: string;
-    readTime: number;
     views: number;
     title: string;
     slug: string;
     excerpt: string;
     tags: string[];
     imageSrc: string;
-    alt: string;
+    content: string;
 }
 
-export default function Article({ date, readTime, views, title, slug, excerpt, imageSrc, alt, tags }: Readonly<Blog>) {
+export default function Article({ date, views, title, slug, excerpt, imageSrc, content, tags }: Readonly<Blog>) {
     const truncatedExcerpt = truncateWords(excerpt, 35);
 
     return (
@@ -28,7 +27,7 @@ export default function Article({ date, readTime, views, title, slug, excerpt, i
                     <div className="flex-1 min-w-0 order-2 sm:order-none">
                         {/* Date */}
                         <time className="text-sm text-muted-foreground mb-3 block">
-                            {date}
+                            {getFormattedDate(date)}
                         </time>
 
                         {/* Title with link */}
@@ -48,7 +47,7 @@ export default function Article({ date, readTime, views, title, slug, excerpt, i
                     <div className="relative flex-shrink-0 w-full sm:w-48 lg:w-56 xl:w-64 h-48 sm:h-32 lg:h-40 xl:h-48 rounded-lg overflow-hidden transition-all duration-300 ease-out group-hover/article:scale-105 order-first sm:order-none">
                         <BlurImage
                             src={imageSrc}
-                            alt={alt}
+                            alt={title}
                             className="w-full h-full object-cover"
                         />
                     </div>
@@ -60,7 +59,7 @@ export default function Article({ date, readTime, views, title, slug, excerpt, i
                         {/* Read Time */}
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Clock size={16} className="text-primary/60" />
-                            <span>{readTime} min read</span>
+                            <span>{getReadTime(content)} min read</span>                        
                         </div>
 
                         {/* Views */}

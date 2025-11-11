@@ -12,50 +12,53 @@ export default function MarkdownPreview({ content }: Readonly<MarkdownPreviewPro
         html = html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 
         // Headers
-        html = html.replace(/^### (.*?)$/gm, "<h3 class='font-semibold text-sm mt-2 mb-1'>$1</h3>")
-        html = html.replace(/^## (.*?)$/gm, "<h2 class='font-semibold text-base mt-2 mb-1'>$1</h2>")
-        html = html.replace(/^# (.*?)$/gm, "<h1 class='font-semibold text-lg mt-2 mb-1'>$1</h1>")
+        html = html.replace(/^### (.*?)$/gm, (_, p1) => {
+            const id = p1.toLowerCase().replace(/[^\w]+/g, "-")
+            return `<h3 id="${id}" class='content-headline text-lg font-semibold mt-5 -mb-2 text-foreground'>${p1}</h3>`
+        })
+        html = html.replace(/^## (.*?)$/gm, (_, p1) => {
+            const id = p1.toLowerCase().replace(/[^\w]+/g, "-")
+            return `<h2 id="${id}" class='content-headline text-xl font-semibold mt-5 -mb-3 text-foreground'>${p1}</h2>`
+        })
+        html = html.replace(/^# (.*?)$/gm, (_, p1) => {
+            const id = p1.toLowerCase().replace(/[^\w]+/g, "-")
+            return `<h1 id="${id}" class='content-headline text-2xl font-semibold mt-5 -mb-4 text-foreground'>${p1}</h1>`
+        })
 
-        // Bold
-        html = html.replace(/\*\*(.*?)\*\*/g, "<strong class='font-semibold'>$1</strong>")
-        html = html.replace(/__(.+?)__/g, "<strong class='font-semibold'>$1</strong>")
-
-        // Italic
-        html = html.replace(/\*(.*?)\*/g, "<em class='italic'>$1</em>")
-        html = html.replace(/_(.+?)_/g, "<em class='italic'>$1</em>")
+        // Bold & Italic
+        html = html.replace(/\*\*(.*?)\*\*/g, "<strong class='font-semibold text-foreground'>$1</strong>")
+        html = html.replace(/\*(.*?)\*/g, "<em class='italic text-foreground'>$1</em>")
 
         // Code blocks
         html = html.replace(
             /```([\s\S]*?)```/g,
-            "<pre class='bg-muted p-2 rounded text-xs overflow-x-auto my-1'><code>$1</code></pre>",
+            "<pre class='bg-muted p-4 rounded-lg text-sm overflow-x-auto text-secondary-foreground'><code>$1</code></pre>"
         )
 
         // Inline code
         html = html.replace(
             /`([^`]+)`/g,
-            "<code class='bg-muted px-1.5 py-0.5 rounded text-xs font-mono'>$1</code>",
+            "<code class='bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-secondary-foreground'>$1</code>"
         )
 
         // Links
         html = html.replace(
             /\[([^\]]+)\]\(([^)]+)\)/g,
-            "<a href='$2' class='text-primary hover:underline' target='_blank' rel='noopener noreferrer'>$1</a>",
+            "<a href='$2' class='text-primary hover:underline' target='_blank' rel='noopener noreferrer'>$1</a>"
         )
 
         // Blockquotes
         html = html.replace(
             /^&gt; (.*?)$/gm,
-            "<blockquote class='border-l-2 border-primary pl-2 italic text-muted-foreground my-1'>$1</blockquote>",
+            "<blockquote class='border-l-2 border-primary pl-3 italic text-muted-foreground my-3'>$1</blockquote>"
         )
 
-        // Unordered lists
-        html = html.replace(/^- (.*?)$/gm, "<li class='ml-4'>$1</li>")
-        html = html.replace(/(<li class='ml-4'>[\s\S]*?<\/li>)/, "<ul class='list-disc my-1'>$1</ul>")
+        // Lists
+        html = html.replace(/^- (.*?)$/gm, "<li class='ml-4 -mb-4 text-secondary-foreground'>$1</li>")
+        html = html.replace(/(<li[\s\S]*?<\/li>)/g, "<ul class='list-disc'>$1</ul>")
+        html = html.replace(/^\d+\. (.*?)$/gm, "<li class='ml-4 -mb-4 text-secondary-foreground'>$1</li>")
 
-        // Ordered lists
-        html = html.replace(/^\d+\. (.*?)$/gm, "<li class='ml-4'>$1</li>")
-
-        // @mentions
+        // Mentions
         html = html.replace(/@(\w+)/g, "<span class='text-primary font-semibold'>@$1</span>")
 
         // Line breaks
@@ -65,8 +68,8 @@ export default function MarkdownPreview({ content }: Readonly<MarkdownPreviewPro
     }
 
     return (
-        <div className="text-foreground text-sm leading-relaxed break-words">
+        <article className="prose prose-lg max-w-none flex-1 text-secondary-foreground leading-relaxed">
             <div dangerouslySetInnerHTML={{ __html: parseMarkdown(content) }} />
-        </div>
+        </article>
     )
 }

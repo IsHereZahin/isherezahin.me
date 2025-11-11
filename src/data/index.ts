@@ -145,33 +145,6 @@ const projects = [
     },
 ];
 
-const blogs = [
-    {
-        id: 1,
-        date: "October 02, 2025",
-        readTime: 5,
-        views: 89,
-        title: "Tools I'm currently enjoying and ones I'm excited to try",
-        slug: "tools-im-currently-enjoying",
-        excerpt: "Are you stuck in a rut? Not a tool rut mind you, but one of those actual life ruts?! There's a wealth of apps and books and apps that could solve all of your problems. Or if you're just looking for ways to power your way to greatness in an easier less uncomfortable way--you came to the right place.",
-        tags: ["Tools", "Productivity"],
-        imageSrc: "https://images.unsplash.com/photo-1745750747043-da33e463f361?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        alt: "Related to tools and productivity"
-    },
-    {
-        id: 2,
-        date: "September 15, 2025",
-        readTime: 6,
-        views: 76,
-        title: "Mental Models: The Key to Smarter Decision-Making",
-        slug: "mental-models",
-        excerpt: "Mental models are frameworks that help us understand and interpret the world around us. They are simplified representations of complex concepts, systems, or processes that allow us to make better decisions and solve problems more effectively. By using mental models, we can improve our critical thinking skills and enhance our ability to learn and adapt to new situations.",
-        tags: ["Mental Models", "Decision Making"],
-        imageSrc: "https://images.unsplash.com/photo-1745750747043-da33e463f361?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        alt: "Related to mental models and decision-making"
-    }
-];
-
 // Note: If you add a new theme, don't forget to also add it to the `globals.css` file.
 const availableThemes: ThemeColor[] = [ 
     { name: "violet", lightPrimary: "#8B5CF6", darkPrimary: "#A78BFA", lightPrimaryRgb: "139,92,246", darkPrimaryRgb: "167,139,250", textColorClass: "text-violet-500 dark:text-violet-400" },
@@ -232,4 +205,4 @@ const quests = [
     },
 ];
 
-export { availableThemes, blogs, currentStatus, languages, projects, quests, testimonials };
+export { availableThemes, currentStatus, languages, projects, quests, testimonials };
