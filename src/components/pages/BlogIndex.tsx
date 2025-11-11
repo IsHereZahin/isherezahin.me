@@ -1,11 +1,12 @@
 "use client";
 
-import Article, { Blog } from "@/components/Article";
+import Article from "@/components/Article";
 import MotionWrapper from "@/components/motion/MotionWrapper";
 import PageTitle from "@/components/ui/PageTitle";
 import Section from "@/components/ui/Section";
 import Tags from "@/components/ui/Tags";
 import { getBlogs } from "@/lib/api";
+import { Blog } from "@/utils/types";
 import { useQuery } from "@tanstack/react-query";
 import { BlogsLoading } from "../ui/Loading";
 

@@ -1,20 +1,9 @@
 import BlurImage from "@/components/ui/BlurImage";
 import { getFormattedDate, getReadTime, truncateWords } from "@/utils";
+import { Blog } from "@/utils/types";
 import { Clock, Eye } from "lucide-react";
 import Link from "next/link";
 import MotionWrapper from "./motion/MotionWrapper";
-
-export interface Blog {
-    id: number;
-    date: string;
-    views: number;
-    title: string;
-    slug: string;
-    excerpt: string;
-    tags: string[];
-    imageSrc: string;
-    content: string;
-}
 
 export default function Article({ date, views, title, slug, excerpt, imageSrc, content, tags }: Readonly<Blog>) {
     const truncatedExcerpt = truncateWords(excerpt, 35);
@@ -59,7 +48,7 @@ export default function Article({ date, views, title, slug, excerpt, imageSrc, c
                         {/* Read Time */}
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Clock size={16} className="text-primary/60" />
-                            <span>{getReadTime(content)} min read</span>                        
+                            <span>{getReadTime(content)} min read</span>
                         </div>
 
                         {/* Views */}

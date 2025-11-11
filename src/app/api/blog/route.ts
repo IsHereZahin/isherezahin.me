@@ -1,6 +1,7 @@
 // src/app/api/blog/route.ts
 import { BlogModel } from '@/database/models/blog-model';
 import { NextRequest, NextResponse } from 'next/server';
+import { Blog, BlogDocument } from '@/utils/types';
 
 export async function GET(req: NextRequest) {
     try {
@@ -11,28 +12,38 @@ export async function GET(req: NextRequest) {
         const skip = (page - 1) * limit;
 
         const total = await BlogModel.countDocuments();
-        const blogs = await BlogModel.find()
+
+        const blogsFromDb = await BlogModel.find()
             .sort({ date: -1 })
             .skip(skip)
             .limit(limit)
-            .lean();
+            .lean<BlogDocument[]>();
 
-        if (!blogs || blogs.length === 0) {
+        if (!blogsFromDb || blogsFromDb.length === 0) {
             return NextResponse.json({ error: 'No blogs found' }, { status: 404 });
         }
 
-        // Map _id to id for React
-        const formattedBlogs = blogs.map(blog => ({
-            ...blog,
+        // Map _id to id
+        const blogs: Blog[] = blogsFromDb.map(blog => ({
             id: blog._id.toString(),
+            date: blog.date.toString(),
+            views: blog.views,
+            type: blog.type,
+            title: blog.title,
+            slug: blog.slug,
+            excerpt: blog.excerpt,
+            tags: blog.tags,
+            imageSrc: blog.imageSrc,
+            content: blog.content,
         }));
 
         return NextResponse.json({
             total,
             page,
             limit,
-            blogs: formattedBlogs,
+            blogs,
         }, { status: 200 });
+
     } catch (error) {
         console.error(error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
