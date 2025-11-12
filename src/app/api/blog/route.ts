@@ -1,4 +1,5 @@
 // src/app/api/blog/route.ts
+import { ObjectId } from 'mongodb';
 import { BlogModel } from '@/database/models/blog-model';
 import { NextRequest, NextResponse } from 'next/server';
 import { Blog, BlogDocument } from '@/utils/types';
@@ -25,7 +26,7 @@ export async function GET(req: NextRequest) {
 
         // Map _id to id
         const blogs: Blog[] = blogsFromDb.map(blog => ({
-            id: blog._id.toString(),
+            id: (blog._id as unknown as ObjectId).toString(),
             date: blog.date.toString(),
             views: blog.views,
             type: blog.type,
