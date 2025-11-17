@@ -1,8 +1,10 @@
 // src/app/api/blog/[slug]/route.ts
+import dbConnect from '@/database/services/mongo';
 import { BlogModel } from '@/database/models/blog-model'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest,context: { params: Promise<{ slug: string }> }) {
+    await dbConnect();
     try {
         const { slug } = await context.params
 

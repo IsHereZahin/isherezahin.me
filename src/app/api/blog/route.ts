@@ -1,9 +1,11 @@
 // src/app/api/blog/route.ts
+import dbConnect from '@/database/services/mongo';
 import { BlogModel } from '@/database/models/blog-model';
 import { NextRequest, NextResponse } from 'next/server';
 import { Blog, BlogDocument } from '@/utils/types';
 
 export async function GET(req: NextRequest) {
+    await dbConnect();
     try {
         const { searchParams } = new URL(req.url);
 
