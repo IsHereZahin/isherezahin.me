@@ -10,9 +10,12 @@ import SectionHeader from "../ui/SectionHeader";
 import SeeMore from "../ui/SeeMore";
 
 export default function Blogs() {
+    const page = 1;
+    const limit = 2;
+
     const { data, isLoading, isError, error } = useQuery({
-        queryKey: ["blogs", 1], // page 1
-        queryFn: () => getBlogs(1, 2), // latest 2 blogs
+        queryKey: ["blogs", page, limit],
+        queryFn: () => getBlogs(page, limit),
         staleTime: 1000 * 60 * 5,
     });
 

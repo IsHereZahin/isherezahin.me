@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import LikeButton from "@/components/ui/LikeButton";
 import { X } from "lucide-react";
@@ -14,15 +14,20 @@ interface TableOfContentsProps {
     tocItems: TOCItem[];
     showMobileTOC: boolean;
     setShowMobileTOC: (state: boolean) => void;
+    slug: string;
 }
 
 export default function TableOfContents({
     tocItems,
     showMobileTOC,
     setShowMobileTOC,
+    slug,
 }: Readonly<TableOfContentsProps>) {
     const [activeId, setActiveId] = useState<string>("");
-    const [indicatorStyle, setIndicatorStyle] = useState<{ top: number; height: number }>({ top: 0, height: 0 });
+    const [indicatorStyle, setIndicatorStyle] = useState<{ top: number; height: number }>({
+        top: 0,
+        height: 0,
+    });
     const containerRef = useRef<HTMLUListElement>(null);
     const overlayRef = useRef<HTMLDivElement>(null);
     const listRef = useRef<HTMLUListElement>(null);
@@ -40,7 +45,9 @@ export default function TableOfContents({
             document.body.style.overflow = "";
         }
 
-        return () => { document.body.style.overflow = ""; }
+        return () => {
+            document.body.style.overflow = "";
+        };
     }, [showMobileTOC]);
 
     const getActiveTocId = (tocItems: TOCItem[]) => {
@@ -60,7 +67,7 @@ export default function TableOfContents({
         });
 
         return current;
-    }
+    };
 
     useEffect(() => {
         let ticking = false;
@@ -85,7 +92,9 @@ export default function TableOfContents({
     useEffect(() => {
         if (!containerRef.current) return;
 
-        const activeEl = containerRef.current.querySelector(`a[data-id="${activeId}"]`) as HTMLElement | null;
+        const activeEl = containerRef.current.querySelector(
+            `a[data-id="${activeId}"]`
+        ) as HTMLElement | null;
         if (activeEl) {
             const { offsetTop, offsetHeight } = activeEl;
             setIndicatorStyle({ top: offsetTop, height: offsetHeight });
@@ -102,14 +111,17 @@ export default function TableOfContents({
             }
             if (e.key === "ArrowDown" || e.key === "ArrowUp") {
                 e.preventDefault();
-                const links = overlayRef.current?.querySelectorAll('a[role="menuitem"]') as NodeListOf<HTMLAnchorElement>;
+                const links = overlayRef.current?.querySelectorAll(
+                    'a[role="menuitem"]'
+                ) as NodeListOf<HTMLAnchorElement>;
                 if (links.length === 0) return;
 
                 const currentFocus = document.activeElement as HTMLAnchorElement;
                 const currentIndex = Array.from(links).indexOf(currentFocus);
-                const nextIndex = e.key === "ArrowDown"
-                    ? (currentIndex + 1) % links.length
-                    : (currentIndex - 1 + links.length) % links.length;
+                const nextIndex =
+                    e.key === "ArrowDown"
+                        ? (currentIndex + 1) % links.length
+                        : (currentIndex - 1 + links.length) % links.length;
 
                 links[nextIndex].focus();
             }
@@ -118,7 +130,9 @@ export default function TableOfContents({
         document.addEventListener("keydown", handleKeyDown);
 
         setTimeout(() => {
-            const firstLink = overlayRef.current?.querySelector('a[role="menuitem"]') as HTMLAnchorElement;
+            const firstLink = overlayRef.current?.querySelector(
+                'a[role="menuitem"]'
+            ) as HTMLAnchorElement;
             firstLink?.focus();
         }, 100);
 
@@ -153,8 +167,8 @@ export default function TableOfContents({
                                         href={`#${item.id}`}
                                         data-id={item.id}
                                         className={`block px-3 py-1.5 rounded-md cursor-pointer font-medium transition-colors ${isActive(item.id)
-                                            ? "text-foreground"
-                                            : "text-secondary-foreground hover:text-accent-foreground"
+                                                ? "text-foreground"
+                                                : "text-secondary-foreground hover:text-accent-foreground"
                                             }`}
                                         style={{ paddingLeft: `${(item.indent || 0) + 8}px` }}
                                     >
@@ -165,7 +179,7 @@ export default function TableOfContents({
                         </ul>
                     </div>
                     <div className="mt-6">
-                        <LikeButton />
+                        <LikeButton slug={slug} />
                     </div>
                 </div>
             </aside>
@@ -186,7 +200,12 @@ export default function TableOfContents({
                     >
                         <div className="mx-auto w-10 h-1.5 shrink-0 rounded-full bg-gradient-to-r from-foreground/30 to-foreground/50 mt-4 mb-4 opacity-80" />
                         <div className="flex items-center justify-between px-6 pb-2">
-                            <h2 id="toc-title" className="text-lg font-semibold text-foreground leading-tight">Table of Contents</h2>
+                            <h2
+                                id="toc-title"
+                                className="text-lg font-semibold text-foreground leading-tight"
+                            >
+                                Table of Contents
+                            </h2>
                             <button
                                 onClick={() => setShowMobileTOC(false)}
                                 aria-label="Close table of contents"
@@ -209,8 +228,8 @@ export default function TableOfContents({
                                             }}
                                             style={{ marginLeft: `${item.indent || 0}px` }}
                                             className={`block py-1 px-2 rounded-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ring-offset-1 ${isActive(item.id)
-                                                ? "text-foreground bg-accent/10 font-semibold bg-muted/20"
-                                                : "text-secondary-foreground hover:text-foreground hover:bg-muted/15"
+                                                    ? "text-foreground bg-accent/10 font-semibold bg-muted/20"
+                                                    : "text-secondary-foreground hover:text-foreground hover:bg-muted/15"
                                                 }`}
                                         >
                                             {item.title}

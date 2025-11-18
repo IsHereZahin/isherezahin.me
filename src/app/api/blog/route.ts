@@ -30,6 +30,7 @@ export async function GET(req: NextRequest) {
             id: blog._id.toString(),
             date: blog.date.toString(),
             views: blog.views,
+            likes: blog.likes,
             type: blog.type,
             title: blog.title,
             slug: blog.slug,

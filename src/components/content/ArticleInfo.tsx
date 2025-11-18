@@ -7,6 +7,7 @@
 import BlurImage from "@/components/ui/BlurImage";
 import { MY_NAME, SITE_GITHUB_URL, SITE_USER_LOGO } from "@/lib/constants";
 import Link from "next/link";
+import AnimatedNumber from "@/components/ui/AnimatedNumber";
 
 interface ArticleInfoProps {
   viewCount: number;
@@ -46,7 +47,7 @@ export default function ArticleInfo({ viewCount = 0, commentCount = 0, formatted
 
       <div className="space-y-1 md:mx-auto">
         <div className="text-muted-foreground">Views</div>
-        <NumberFlow value={viewCount} />
+        <AnimatedNumber value={viewCount} />
       </div>
 
       <div className="space-y-1 md:mx-auto">

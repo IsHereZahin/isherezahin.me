@@ -1,48 +1,66 @@
-"use client"
+"use client";
 
-import { ApiError, getBlog } from "@/lib/api"
-import { extractTocItems, getFormattedDate } from "@/utils"
-import { useQuery } from "@tanstack/react-query"
-import { AlignLeftIcon, Facebook, Instagram, Twitter } from "lucide-react"
-import { notFound } from "next/navigation"
-import { useState } from "react"
+import { ApiError, blogViews, getBlog } from "@/lib/api";
+import { extractTocItems, getFormattedDate } from "@/utils";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { AlignLeftIcon, Facebook, Instagram, Twitter } from "lucide-react";
+import { notFound } from "next/navigation";
+import { useEffect, useState } from "react";
 
-import ArticleInfo from "@/components/content/ArticleInfo"
-import MarkdownPreview from "@/components/content/discussions/MarkdownPreview"
-import TableOfContents from "@/components/content/TableOfContents"
-import BlurImage from "@/components/ui/BlurImage"
-import Heading from "@/components/ui/Heading"
-import ImageZoom from "@/components/ui/ImageZoom"
-import { BlogDetailsLoading } from "@/components/ui/Loading"
-import ReferralLink from "@/components/ui/ReferralLink"
-import Section from "@/components/ui/Section"
-import TextGradient from "@/components/ui/TextGradient"
-import LikeButton from "../ui/LikeButton"
+import ArticleInfo from "@/components/content/ArticleInfo";
+import MarkdownPreview from "@/components/content/discussions/MarkdownPreview";
+import TableOfContents from "@/components/content/TableOfContents";
+import BlurImage from "@/components/ui/BlurImage";
+import Heading from "@/components/ui/Heading";
+import ImageZoom from "@/components/ui/ImageZoom";
+import { BlogDetailsLoading } from "@/components/ui/Loading";
+import ReferralLink from "@/components/ui/ReferralLink";
+import Section from "@/components/ui/Section";
+import TextGradient from "@/components/ui/TextGradient";
+import LikeButton from "../ui/LikeButton";
 
 export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
-    const [showTOC, setShowTOC] = useState(false)
+    const [showTOC, setShowTOC] = useState(false);
+    const [viewCount, setViewCount] = useState(0);
 
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ["blog", slug],
         queryFn: () => getBlog.getBlog(slug),
         staleTime: 1000 * 60 * 5,
-    })
+    });
+
+    // Mutation to increment view
+    const viewMutation = useMutation({
+        mutationFn: () => blogViews.incrementView(slug),
+        onSuccess: (data) => {
+            setTimeout(() => {
+                setViewCount(data.views);
+            }, 3000);
+        },
+    });
+
+    // Update view count
+    useEffect(() => {
+        if (data) {
+            setViewCount(data.views);
+            viewMutation.mutate();
+        }
+    }, [data]);
+
 
     if (isLoading) {
-        return (
-            <BlogDetailsLoading />
-        )
+        return <BlogDetailsLoading />;
     }
 
     // Handle errors
     if (isError) {
-        const err = error as ApiError
-        if (err.status === 404) notFound()
-        return <p className="text-red-500">{err.message}</p>
+        const err = error as ApiError;
+        if (err.status === 404) notFound();
+        return <p className="text-red-500">{err.message}</p>;
     }
 
-    if (!data) return notFound()
-    const toc = extractTocItems(data.content)
+    if (!data) return notFound();
+    const toc = extractTocItems(data.content);
 
     return (
         <>
@@ -55,7 +73,11 @@ export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
                 </div>
                 <Heading size="lg" className="mb-4 sm:mb-6 text-center" text={data.title} />
                 <TextGradient text={data.excerpt} className="max-w-2xl mx-auto text-center" />
-                <ArticleInfo viewCount={data.views} commentCount={0} formattedDate={getFormattedDate(data.date)} />
+                <ArticleInfo
+                    viewCount={viewCount || 0}
+                    commentCount={0}
+                    formattedDate={getFormattedDate(data.date)}
+                />
                 <ImageZoom>
                     <div className="p-2 border border-dotted border-foreground/10 rounded-2xl mt-10 sm:mt-12">
                         <BlurImage
@@ -108,8 +130,12 @@ export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
                             tocItems={toc}
                             showMobileTOC={showTOC}
                             setShowMobileTOC={setShowTOC}
+                            slug={slug}
                         />
                     </div>
+                </div>
+                <div className="block lg:hidden">
+                    <LikeButton slug={slug} />
                 </div>
             </Section>
 
@@ -121,5 +147,5 @@ export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
                 <AlignLeftIcon className="w-5 h-5" /> Table of Contents
             </button>
         </>
-    )
+    );
 }

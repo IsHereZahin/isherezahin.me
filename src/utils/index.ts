@@ -162,6 +162,21 @@ function getFormattedDate(isoDate: string, options?: Intl.DateTimeFormatOptions)
     return new Intl.DateTimeFormat('en-US', formatOptions).format(date)
 }
 
+// dynamic functions
+function getDeviceId(): string {
+    const STORAGE_KEY = 'blog_device_id';
+    
+    // Check if device ID exists in localStorage
+    let deviceId = localStorage.getItem(STORAGE_KEY);
+    
+    if (!deviceId) {
+        // Generate a unique device ID
+        deviceId = `device_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        localStorage.setItem(STORAGE_KEY, deviceId);
+    }
+    
+    return deviceId;
+}
 export { 
     generateProfessionalUnderline,
     getRandomTheme,
@@ -174,4 +189,5 @@ export {
     extractTocItems,
     getReadTime,
     getFormattedDate,
+    getDeviceId,
 };

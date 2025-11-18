@@ -6,6 +6,7 @@ export interface Blog {
     id: string;
     date: string;
     views: number;
+    likes: number;
     title: string;
     slug: string;
     excerpt: string;
@@ -18,6 +19,7 @@ export interface BlogDocument {
     _id: ObjectId;
     date: Date;
     views: number;
+    likes: number;
     type: string;
     title: string;
     slug: string;
