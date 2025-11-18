@@ -14,20 +14,19 @@ interface LikeButtonProps {
 }
 
 export default function LikeButton({ slug, maxUserLikes = 3 }: LikeButtonProps) {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
   const [totalLikes, setTotalLikes] = useState(0);
   const [userLikes, setUserLikes] = useState(0);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const queryClient = useQueryClient();
-  const { user } = useAuth();
 
-  // Fetch initial likes
   const { data } = useQuery({
     queryKey: ['blog-likes', slug],
     queryFn: () => blogLikes.getLikes(slug),
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5,
   });
 
-  // Sync state when query data changes
   useEffect(() => {
     if (data) {
       setTotalLikes(data.totalLikes ?? 0);
@@ -35,28 +34,26 @@ export default function LikeButton({ slug, maxUserLikes = 3 }: LikeButtonProps) 
     }
   }, [data]);
 
-  // Mutation for adding a like
-  const likeMutation = useMutation({
+  const mutation = useMutation({
     mutationFn: () => blogLikes.addLike(slug),
+
     onMutate: async () => {
-      // Optimistic update
       await queryClient.cancelQueries({ queryKey: ['blog-likes', slug] });
-      const previousData = queryClient.getQueryData(['blog-likes', slug]);
+
+      setUserLikes(prev => prev + 1);
+      setTotalLikes(prev => prev + 1);
 
       queryClient.setQueryData(['blog-likes', slug], (old: any) => ({
-        ...old,
-        totalLikes: (old?.totalLikes || 0) + 1,
-        userLikes: (old?.userLikes || 0) + 1,
+        totalLikes: (old?.totalLikes ?? totalLikes) + 1,
+        userLikes: (old?.userLikes ?? userLikes) + 1,
       }));
-
-      return { previousData };
     },
-    onSuccess: (data) => {
-      setTotalLikes(data.totalLikes ?? 0);
-      setUserLikes(data.userLikes ?? 0);
 
-      // Trigger confetti when user reaches max likes
-      if (data.userLikes === maxUserLikes && buttonRef.current) {
+    onSuccess: (serverData) => {
+      setTotalLikes(serverData.totalLikes ?? 0);
+      setUserLikes(serverData.userLikes ?? 0);
+
+      if ((serverData.userLikes ?? userLikes + 1) >= maxUserLikes && buttonRef.current) {
         const rect = buttonRef.current.getBoundingClientRect();
         const { clientWidth, clientHeight } = document.documentElement;
 
@@ -72,27 +69,25 @@ export default function LikeButton({ slug, maxUserLikes = 3 }: LikeButtonProps) 
         });
       }
     },
-    onError: (err, variables, context: any) => {
-      // Rollback on error
-      if (context?.previousData) {
-        queryClient.setQueryData(['blog-likes', slug], context.previousData);
-      }
-      console.error('Failed to add like:', err);
+
+    onError: () => {
+      queryClient.invalidateQueries({ queryKey: ['blog-likes', slug] });
     },
+
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['blog-likes', slug] });
     },
   });
 
   const handleLike = () => {
-    if (userLikes >= maxUserLikes || likeMutation.isPending) return;
-    likeMutation.mutate();
+    if (userLikes >= maxUserLikes) return;
+
+    mutation.mutate();
   };
 
-  // Calculate fill percentage based on current local state (most reliable)
   const fillPercentage = Math.min((userLikes / maxUserLikes) * 100);
 
-  const isDisabled = userLikes >= maxUserLikes || likeMutation.isPending;
+  const isDisabled = userLikes >= maxUserLikes;
 
   const getLikeText = () => {
     if (userLikes >= maxUserLikes) {
@@ -118,7 +113,6 @@ export default function LikeButton({ slug, maxUserLikes = 3 }: LikeButtonProps) 
             : 'bg-neutral-800/40 backdrop-blur-sm text-white hover:bg-neutral-700 cursor-pointer'
           }`}
       >
-        {/* Animated Heart with Fill */}
         <div className="relative w-7 h-7">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -134,7 +128,6 @@ export default function LikeButton({ slug, maxUserLikes = 3 }: LikeButtonProps) 
             <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.566z" />
           </svg>
 
-          {/* Fill overlay */}
           <motion.div
             className="absolute inset-0 overflow-hidden"
             style={{ clipPath: 'polygon(0 100%, 100% 100%, 100% 0, 0 0)' }}
@@ -155,14 +148,12 @@ export default function LikeButton({ slug, maxUserLikes = 3 }: LikeButtonProps) 
           </motion.div>
         </div>
 
-        {/* Like text + count */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           <span>{getLikeText()}</span>
           <AnimatedNumber value={totalLikes} />
         </div>
       </motion.button>
 
-      {/* Auth status hints */}
       {user?.email && (
         <span className="text-xs text-muted-foreground">
           Signed in as {user.email}
