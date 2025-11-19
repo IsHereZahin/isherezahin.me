@@ -1,5 +1,6 @@
 "use client"
 
+import { Toaster } from "@/components/ui/sonner"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ReactNode } from "react"
 import AuthProvider from "./AuthProvider"
@@ -14,6 +15,7 @@ export default function ProviderIndex({ children }: Readonly<ProviderIndexProps>
     return (
         <AuthProvider>
             <QueryClientProvider client={queryClient}>
+                <Toaster />
                 {children}
             </QueryClientProvider>
         </AuthProvider>

@@ -7,6 +7,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import confetti from 'canvas-confetti';
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 interface LikeButtonProps {
   readonly slug: string;
@@ -67,11 +68,18 @@ export default function LikeButton({ slug, maxUserLikes = 3 }: LikeButtonProps) 
           shapes: [confetti.shapeFromText({ text: '❤️', scalar: 2 })],
           zIndex: 9999,
         });
+
+        toast.success('Thank you for the love! 💖', {
+          description: `You've reached the maximum of ${maxUserLikes} likes for this post.`,
+        });
       }
     },
 
     onError: () => {
       queryClient.invalidateQueries({ queryKey: ['blog-likes', slug] });
+      toast.error('Failed to add like', {
+        description: 'Please try again.',
+      });
     },
 
     onSettled: () => {
@@ -80,17 +88,41 @@ export default function LikeButton({ slug, maxUserLikes = 3 }: LikeButtonProps) 
   });
 
   const handleLike = () => {
-    if (userLikes >= maxUserLikes) return;
+    if (userLikes >= maxUserLikes) {
+      toast.info(`Maximum likes reached`, {
+        description: user
+          ? `You've already liked this post ${maxUserLikes} times. That's plenty of love! ❤️`
+          : `This device has reached the maximum of ${maxUserLikes} likes. Sign in to like more!`,
+      });
+
+      // Add a gentle shake animation
+      if (buttonRef.current) {
+        buttonRef.current.animate(
+          [
+            { transform: 'translateX(0)' },
+            { transform: 'translateX(-4px)' },
+            { transform: 'translateX(4px)' },
+            { transform: 'translateX(-4px)' },
+            { transform: 'translateX(4px)' },
+            { transform: 'translateX(0)' },
+          ],
+          {
+            duration: 400,
+            easing: 'ease-in-out',
+          }
+        );
+      }
+      return;
+    }
 
     mutation.mutate();
   };
 
   const fillPercentage = Math.min((userLikes / maxUserLikes) * 100);
-
-  const isDisabled = userLikes >= maxUserLikes;
+  const isMaxed = userLikes >= maxUserLikes;
 
   const getLikeText = () => {
-    if (userLikes >= maxUserLikes) {
+    if (isMaxed) {
       return user ? 'Liked (Max)' : 'Device Max';
     }
     if (userLikes > 0) {
@@ -104,14 +136,14 @@ export default function LikeButton({ slug, maxUserLikes = 3 }: LikeButtonProps) 
       <motion.button
         ref={buttonRef}
         onClick={handleLike}
-        whileTap={{ scale: isDisabled ? 1 : 0.97 }}
-        disabled={isDisabled}
+        whileTap={{ scale: 0.95 }}
+        whileHover={{ scale: isMaxed ? 1 : 1.02 }}
         type="button"
-        className={`flex items-center gap-2 sm:gap-3 rounded-xl px-3 sm:px-4 py-1.5 sm:py-2 text-base sm:text-lg font-medium transition-colors duration-300
-          ${isDisabled
-            ? 'bg-zinc-900 text-zinc-500 cursor-not-allowed'
-            : 'bg-neutral-800/40 backdrop-blur-sm text-white hover:bg-neutral-700 cursor-pointer'
-          }`}
+        className={`flex items-center gap-2 sm:gap-3 rounded-xl px-3 sm:px-4 py-1.5 sm:py-2 text-base sm:text-lg font-medium transition-all duration-300
+          ${isMaxed
+            ? 'bg-zinc-800 backdrop-blur-sm text-zinc-400 shadow-md'
+            : 'bg-zinc-800/80 backdrop-blur-sm text-white hover:bg-neutral-700 hover:shadow-lg'
+          } cursor-pointer`}
       >
         <div className="relative w-7 h-7">
           <svg
@@ -124,6 +156,7 @@ export default function LikeButton({ slug, maxUserLikes = 3 }: LikeButtonProps) 
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
+            className="transition-colors duration-300"
           >
             <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.566z" />
           </svg>
@@ -142,6 +175,7 @@ export default function LikeButton({ slug, maxUserLikes = 3 }: LikeButtonProps) 
               viewBox="0 0 24 24"
               fill="#ef4444"
               stroke="none"
+              className="transition-colors duration-300"
             >
               <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.566z" />
             </svg>
@@ -149,8 +183,12 @@ export default function LikeButton({ slug, maxUserLikes = 3 }: LikeButtonProps) 
         </div>
 
         <div className="flex items-center gap-1.5 sm:gap-2">
-          <span>{getLikeText()}</span>
-          <AnimatedNumber value={totalLikes} />
+          <span className="transition-colors duration-300">{getLikeText()}</span>
+          {(totalLikes ?? 0) > 0 ? (
+            <AnimatedNumber value={totalLikes} />
+          ) : (
+            <span className="tabular-nums">--</span>
+          )}
         </div>
       </motion.button>
 

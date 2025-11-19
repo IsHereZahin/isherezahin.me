@@ -22,6 +22,7 @@ import CommentForm from "./CommentForm";
 import MarkdownPreview from "./MarkdownPreview";
 import ReactionButton from "./ReactionButton";
 import ReplyCard from "./ReplyCard";
+import { toast } from "sonner";
 
 interface CommentCardProps {
     comment: Comment;
@@ -88,6 +89,15 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
     const handleConfirmDelete = () => {
         deleteComment(comment.id);
         setShowDeleteDialog(false);
+    };
+
+    // handle reply
+    const handleReply = () => {
+        if (user) {
+            setReplyingTo(comment.id);
+        } else {
+            toast.error("You must be logged in to reply to a comment.");
+        }
     };
 
     return (
@@ -197,7 +207,7 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
                 )}
 
                 <button
-                    onClick={user ? () => setReplyingTo(true) : login}
+                    onClick={handleReply}
                     className="flex items-center gap-1.5 px-3 py-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
                 >
                     <MessageCircle className="w-4 h-4" />

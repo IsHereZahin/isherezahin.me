@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useReducer } from "react";
+import { toast } from "sonner";
 
 import { DiscussionContext } from "@/lib/contexts";
 import { discussionApi } from "@/lib/github/api";
@@ -43,7 +44,9 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
             dispatch({ type: "SET_ERROR", payload: null });
         } catch (err) {
             console.error(err);
-            dispatch({ type: "SET_ERROR", payload: "Failed to load comments" });
+            const errorMessage = "Failed to load comments";
+            dispatch({ type: "SET_ERROR", payload: errorMessage });
+            toast.error(errorMessage);
         } finally {
             dispatch({ type: "SET_LOADING", payload: false });
         }
@@ -64,7 +67,9 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
                 });
             } catch (err) {
                 console.error("Failed to fetch replies:", err);
-                dispatch({ type: "SET_ERROR", payload: "Failed to load replies" });
+                const errorMessage = "Failed to load replies";
+                dispatch({ type: "SET_ERROR", payload: errorMessage });
+                toast.error(errorMessage);
             } finally {
                 dispatch({
                     type: "SET_LOADED_REPLIES_LOADING",
@@ -79,7 +84,7 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
     const addComment = useCallback(
         async (body: string) => {
             try {
-                const tempComment = createTempComment(body, state.authUsername || "You", user?.image ?? undefined);
+                const tempComment = createTempComment(body, state.authUsername || "You", user?.avatar_url);
 
                 dispatch({ type: "ADD_COMMENT", payload: tempComment });
                 const result = await discussionApi.addComment(discussionNumber, body, state.discussionId);
@@ -87,25 +92,29 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
                 const formattedComment = formatCommentResponse(
                     result.comment,
                     state.authUsername || "You",
-                    user?.image ?? undefined
+                    user?.avatar_url
                 );
 
                 dispatch({
                     type: "REPLACE_COMMENT",
                     payload: { tempId: tempComment.id, comment: formattedComment },
                 });
+                
+                toast.success("Comment posted successfully");
             } catch (err) {
                 console.error(err);
-                dispatch({ type: "SET_ERROR", payload: "Failed to post comment" });
+                const errorMessage = "Failed to post comment";
+                dispatch({ type: "SET_ERROR", payload: errorMessage });
+                toast.error(errorMessage);
                 throw err;
             }
         },
-        [discussionNumber, state.discussionId, state.authUsername, user?.image]
+        [discussionNumber, state.discussionId, state.authUsername, user?.avatar_url]
     );
 
     const addReply = useCallback(
         async (commentId: string, body: string) => {
-            const avatarUrl = user?.image ?? undefined;
+            const avatarUrl = user?.avatar_url;
 
             try {
                 const tempReply = createTempReply(body, state.authUsername || "You", avatarUrl);
@@ -138,13 +147,17 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
                         updates: { reply_count: (currentComment?.reply_count ?? 0) + 1 },
                     },
                 });
+                
+                toast.success("Reply posted successfully");
             } catch (err) {
                 console.error(err);
-                dispatch({ type: "SET_ERROR", payload: "Failed to post reply" });
+                const errorMessage = "Failed to post reply";
+                dispatch({ type: "SET_ERROR", payload: errorMessage });
+                toast.error(errorMessage);
                 throw err;
             }
         },
-        [discussionNumber, state.discussionId, state.comments, state.authUsername, user?.image]
+        [discussionNumber, state.discussionId, state.comments, state.authUsername, user?.avatar_url]
     );
 
     // Delete comment
@@ -155,10 +168,13 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
 
             try {
                 await discussionApi.deleteComment(discussionNumber, commentId);
+                toast.success("Comment deleted successfully");
             } catch (err) {
                 console.error(err);
                 dispatch({ type: "SET_COMMENTS", payload: previous });
-                dispatch({ type: "SET_ERROR", payload: "Failed to delete comment" });
+                const errorMessage = "Failed to delete comment";
+                dispatch({ type: "SET_ERROR", payload: errorMessage });
+                toast.error(errorMessage);
             }
         },
         [discussionNumber, state.comments]
@@ -172,13 +188,16 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
 
             try {
                 await discussionApi.deleteComment(discussionNumber, replyId);
+                toast.success("Reply deleted successfully");
             } catch (err) {
                 console.error(err);
                 dispatch({
                     type: "SET_LOADED_REPLIES",
                     payload: { commentId, replies: previousReplies || [] },
                 });
-                dispatch({ type: "SET_ERROR", payload: "Failed to delete reply" });
+                const errorMessage = "Failed to delete reply";
+                dispatch({ type: "SET_ERROR", payload: errorMessage });
+                toast.error(errorMessage);
             }
         },
         [discussionNumber, state.loadedReplies]
@@ -213,6 +232,7 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
                 await discussionApi.toggleReaction(discussionNumber, targetId, reaction, hasReacted);
             } catch (err) {
                 console.error("Failed to toggle reaction", err);
+                toast.error("Failed to update reaction");
                 // Revert optimistic update
                 dispatch({
                     type: "OPTIMISTIC_TOGGLE_REACTION",
