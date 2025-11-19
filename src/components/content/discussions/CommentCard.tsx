@@ -1,15 +1,23 @@
 "use client";
 
-import { MessageCircle, MoreVertical } from "lucide-react";
 import type { Comment } from "@/lib/github/types";
+import { MessageCircle, MoreVertical } from "lucide-react";
 import { useState } from "react";
 
-import { isCommentDeleted, isCommentEdited, getReactionCount } from "@/lib/github/helpers";
+import { getReactionCount, isCommentDeleted, isCommentEdited } from "@/lib/github/helpers";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useDiscussion } from "@/lib/hooks/useDiscussion";
 import { getFormatDistanceToNow, getRoleBadge } from "@/utils";
 
 import BlurImage from "@/components/ui/BlurImage";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { SingleCommentLoading } from "@/components/ui/Loading";
 import CommentForm from "./CommentForm";
 import MarkdownPreview from "./MarkdownPreview";
 import ReactionButton from "./ReactionButton";
@@ -32,9 +40,8 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
     } = useDiscussion();
 
     const [replyingTo, setReplyingTo] = useState(false);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-    // Computed values
     const isOwner = user?.username === comment.user.login;
     const roleBadge = getRoleBadge(comment.author_association, comment.is_owner);
     const thumbsUpCount = getReactionCount(comment.reactions, "+1");
@@ -52,22 +59,12 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
         ? `Hide ${comment.reply_count} ${replyLabel}`
         : `${comment.reply_count} ${replyLabel}`;
 
-    // Render replies content
     const renderRepliesContent = () => {
         if (isLoadingReplies) {
             return (
-                <div className="animate-pulse space-y-3">
-                    {Array.from({ length: 2 }).map((_, index) => (
-                        <div key={index + 1} className="ml-4 pl-3">
-                            <div className="flex items-start gap-2">
-                                <div className="w-8 h-8 bg-secondary rounded-full" />
-                                <div className="flex-1 space-y-1">
-                                    <div className="h-3 bg-secondary rounded w-3/4" />
-                                    <div className="h-3 bg-secondary rounded w-1/2" />
-                                    <div className="h-2 bg-secondary rounded w-1/4 mt-1" />
-                                </div>
-                            </div>
-                        </div>
+                <div className="gap-4 flex flex-col">
+                    {[...Array(2)].map((_, idx) => (
+                        <SingleCommentLoading key={idx + 1} />
                     ))}
                 </div>
             );
@@ -84,9 +81,13 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
             ));
         }
 
-        return (
-            <div className="ml-4 pl-3 text-muted-foreground text-sm">No replies yet.</div>
-        );
+        return <div className="ml-4 pl-3 text-muted-foreground text-sm">No replies yet.</div>;
+    };
+
+    // Confirm delete handler
+    const handleConfirmDelete = () => {
+        deleteComment(comment.id);
+        setShowDeleteDialog(false);
     };
 
     return (
@@ -113,11 +114,6 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
                             >
                                 {comment.user.login}
                             </a>
-                            {comment.author_association === "CONTRIBUTOR" && (
-                                <svg className="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                                </svg>
-                            )}
                             {roleBadge && (
                                 <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-primary/10 text-primary">
                                     {roleBadge.label}
@@ -131,7 +127,9 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
                             {isEdited && comment.last_edited_at && (
                                 <span
                                     className="text-xs text-muted-foreground"
-                                    title={`Edited ${getFormatDistanceToNow(new Date(comment.last_edited_at))}`}
+                                    title={`Edited ${getFormatDistanceToNow(
+                                        new Date(comment.last_edited_at)
+                                    )}`}
                                 >
                                     • Edited
                                 </span>
@@ -142,27 +140,21 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
 
                 {/* Menu */}
                 {isOwner && (
-                    <div className="relative">
-                        <button
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg p-1.5 transition-all"
-                        >
-                            <MoreVertical className="w-4 h-4" />
-                        </button>
-                        {isMenuOpen && (
-                            <div className="absolute right-0 mt-2 w-32 bg-card border border-border rounded-lg shadow-lg z-10">
-                                <button
-                                    onClick={() => {
-                                        deleteComment(comment.id);
-                                        setIsMenuOpen(false);
-                                    }}
-                                    className="w-full text-left px-4 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors rounded-lg"
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        )}
-                    </div>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button className="text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg p-1.5 transition-all">
+                                <MoreVertical className="w-4 h-4" />
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-32">
+                            <DropdownMenuItem
+                                onClick={() => setShowDeleteDialog(true)}
+                                className="text-destructive focus:text-destructive focus:bg-destructive/10 cursor-pointer"
+                            >
+                                Delete
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 )}
             </div>
 
@@ -218,6 +210,17 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
 
             {/* Reply Form */}
             {replyingTo && <CommentForm parentId={comment.id} onCancel={() => setReplyingTo(false)} />}
+
+            {/* Confirm Delete Dialog */}
+            <ConfirmDialog
+                open={showDeleteDialog}
+                onOpenChange={setShowDeleteDialog}
+                title="Delete Comment?"
+                description="Are you sure you want to delete this comment? This action cannot be undone."
+                confirmText="Delete"
+                cancelText="Cancel"
+                onConfirm={handleConfirmDelete}
+            />
         </div>
     );
 }

@@ -1,8 +1,14 @@
 "use client"
 
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { CommentsLoading } from "@/components/ui/Loading"
 import { useDiscussion } from "@/lib/hooks/useDiscussion"
-import { ChevronDown, Settings2 } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { Settings2 } from "lucide-react"
 import CommentCard from "./CommentCard"
 
 interface SortOption {
@@ -12,8 +18,6 @@ interface SortOption {
 
 export default function CommentsList() {
     const { comments, loading, sortBy, setSortBy } = useDiscussion()
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-    const dropdownRef = useRef<HTMLDivElement>(null)
 
     const sortOptions: SortOption[] = [
         { value: "newest", label: "Newest" },
@@ -39,24 +43,9 @@ export default function CommentsList() {
         }
     })
 
-    // Close dropdown when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsDropdownOpen(false)
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside)
-        return () => document.removeEventListener("mousedown", handleClickOutside)
-    }, [])
-
     if (loading) {
         return (
-            <div className="space-y-4 animate-pulse mt-5">
-                <div className="h-4 bg-secondary rounded w-3/4"></div>
-                <div className="h-4 bg-secondary rounded w-1/2"></div>
-                <div className="h-20 bg-secondary rounded"></div>
-            </div>
+            <CommentsLoading />
         )
     }
 
@@ -74,41 +63,28 @@ export default function CommentsList() {
                 </div>
 
                 {/* Sort Dropdown */}
-                <div ref={dropdownRef} className="relative">
-                    <button
-                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                        aria-haspopup="listbox"
-                        aria-expanded={isDropdownOpen}
-                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium cursor-pointer rounded-lg border border-border bg-background text-foreground hover:bg-secondary hover:text-secondary-foreground transition"
-                    >
-                        <Settings2 className="w-4 h-4" />
-                        {sortLabel}
-                        <ChevronDown className={`w-4 h-4 ${isDropdownOpen ? "rotate-180" : ""}`} />
-                    </button>
-
-                    <div
-                        className={`absolute right-0 mt-2 w-48 bg-background border border-border rounded-lg shadow-feature-card z-20 transition-all duration-200 ease-out
-                            ${isDropdownOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-2 pointer-events-none"}`}
-                    >
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium cursor-pointer rounded-lg border border-border bg-background text-foreground hover:bg-secondary hover:text-secondary-foreground transition">
+                            <Settings2 className="w-4 h-4" />
+                            {sortLabel}
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
                         {sortOptions.map((option) => (
-                            <button
+                            <DropdownMenuItem
                                 key={option.value}
-                                aria-pressed={currentSort === option.value}
-                                onClick={() => {
-                                    setSortBy(option.value as typeof sortBy)
-                                    setIsDropdownOpen(false)
-                                }}
-                                className={`w-full text-left px-4 py-2 text-sm font-medium rounded-md transition-colors
-                                    ${currentSort === option.value
+                                onClick={() => setSortBy(option.value as typeof sortBy)}
+                                className={`cursor-pointer ${currentSort === option.value
                                         ? "bg-secondary text-secondary-foreground"
-                                        : "text-foreground hover:bg-secondary hover:text-secondary-foreground"
+                                        : ""
                                     }`}
                             >
                                 {option.label}
-                            </button>
+                            </DropdownMenuItem>
                         ))}
-                    </div>
-                </div>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
 
             {/* Comments List */}

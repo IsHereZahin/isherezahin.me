@@ -18,51 +18,61 @@ interface CommentFormProps {
 export default function CommentForm({ parentId, onCancel }: Readonly<CommentFormProps>) {
     const { user, login } = useAuth()
     const { addComment, addReply } = useDiscussion()
+
     const [text, setText] = useState("")
     const [submitting, setSubmitting] = useState(false)
     const [showPreview, setShowPreview] = useState(false)
     const [error, setError] = useState<string | null>(null)
+
     const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-    // Handle submit for comment or reply
     const handleSubmit = useCallback(
         async (e: React.FormEvent) => {
             e.preventDefault()
-            if (!text.trim() || !user) return
+            if (!text.trim() || !user || submitting) return
 
             try {
                 setSubmitting(true)
                 setError(null)
+
                 if (parentId) {
-                    await addReply(parentId, text)
+                    // Reply to a comment
+                    await addReply(parentId, text.trim())
                 } else {
-                    await addComment(text, user.image || undefined)
+                    // Top-level comment
+                    await addComment(text.trim())
                 }
+
+                // Success: reset form
                 setText("")
                 setShowPreview(false)
-                if (onCancel) onCancel()
+                onCancel?.()
             } catch (err) {
-                console.error(err)
-                setError("Failed to submit. Please try again.")
+                console.error("Submission failed:", err)
+                setError("Failed to post. Please try again.")
             } finally {
                 setSubmitting(false)
             }
         },
-        [text, user, addComment, addReply, parentId, onCancel],
+        [text, user, submitting, parentId, addComment, addReply, onCancel]
     )
 
-    // Insert markdown syntax at cursor
+    // Insert markdown syntax at cursor position
     const insertMarkdown = (before: string, after: string, placeholder = "") => {
         const input = textareaRef.current
         if (!input) return
+
         const start = input.selectionStart
         const end = input.selectionEnd
-        const selectedText = text.substring(start, end)
-        const newText = text.substring(0, start) + before + (selectedText || placeholder) + after + text.substring(end)
+        const selected = text.substring(start, end) || placeholder
+
+        const newText = text.slice(0, start) + before + selected + after + text.slice(end)
         setText(newText)
+
         setTimeout(() => {
             input.focus()
-            input.setSelectionRange(start + before.length, start + before.length + (selectedText || placeholder).length)
+            const newCursorPos = start + before.length + selected.length
+            input.setSelectionRange(newCursorPos, newCursorPos)
         }, 0)
     }
 
@@ -115,49 +125,47 @@ export default function CommentForm({ parentId, onCancel }: Readonly<CommentForm
                     </button>
                 )}
 
-                <div className="flex-shrink-0 sm:order-1">
+                {/* Avatar */}
+                <div className="flex-shrink-0">
                     {user?.image ? (
                         <BlurImage
-                            src={user?.image}
-                            alt={user?.name || "User avatar"}
-                            width={32}
-                            height={32}
-                            className="w-8 h-8 rounded-full ring-2 ring-primary/20"
-                        />
+                            src={user.image} alt={user.name || "User"} width={32} height={32} className="h-8 w-8 rounded-full ring-2 ring-primary/20" />
                     ) : (
-                        <UserIcon className="w-8 h-8 text-muted-foreground hidden sm:block " aria-hidden="true" />
+                        <UserIcon className="h-8 w-8 text-muted-foreground" />
                     )}
                 </div>
 
-                <div className="flex-1 flex flex-col min-w-0 w-full sm:order-2">
+                {/* Input / Preview + Controls */}
+                <div className="flex min-w-0 flex-1 flex-col">
                     {commentBody}
 
                     {error && (
-                        <p id="comment-error" className="text-sm text-destructive mt-2" role="alert">
+                        <p className="mt-2 text-sm text-destructive" role="alert">
                             {error}
                         </p>
                     )}
 
-                    <div className="flex items-center justify-between gap-2 mt-3 flex-wrap sm:justify-end">
-                        {!showPreview && <MarkdownToolbar onInsert={insertMarkdown} disabled={!user} />}
+                    <div className="mt-3 flex flex-wrap items-center justify-between gap-3 sm:justify-end">
+                        {/* Markdown toolbar – only in write mode */}
+                        {!showPreview && <MarkdownToolbar onInsert={insertMarkdown} disabled={!user || submitting} />}
 
-                        <div className="flex items-center gap-2 ml-auto flex-wrap">
+                        <div className="flex items-center gap-2">
                             {parentId && onCancel && (
                                 <button
                                     type="button"
                                     onClick={onCancel}
-                                    className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-all disabled:opacity-50"
-                                    disabled={!user}
+                                    disabled={submitting}
+                                    className="rounded-lg px-3 py-1.5 text-sm text-muted-foreground transition hover:bg-secondary hover:text-foreground disabled:opacity-50"
                                 >
                                     Cancel
                                 </button>
                             )}
+
                             <button
                                 type="button"
-                                onClick={() => setShowPreview(!showPreview)}
-                                disabled={!user}
-                                className="p-2 text-xs transition-all cursor-pointer hover:bg-secondary rounded-lg text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
-                                title={`Toggle ${showPreview ? "write" : "preview"} mode`}
+                                onClick={() => setShowPreview((p) => !p)}
+                                disabled={!user || submitting}
+                                className="rounded-lg px-3 py-1.5 text-xs text-muted-foreground transition hover:bg-secondary hover:text-foreground disabled:opacity-50"
                             >
                                 {showPreview ? "Write" : "Preview"}
                             </button>
@@ -165,10 +173,10 @@ export default function CommentForm({ parentId, onCancel }: Readonly<CommentForm
                             <button
                                 type="submit"
                                 disabled={!text.trim() || submitting || !user}
-                                className="p-2 transition-all cursor-pointer hover:bg-primary/10 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-primary hover:text-primary"
+                                className="rounded-lg p-2 text-primary transition hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50"
                                 title={parentId ? "Post reply" : "Post comment"}
                             >
-                                <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+                                <Send className="h-4 w-4 sm:h-5 sm:w-5" />
                             </button>
                         </div>
                     </div>

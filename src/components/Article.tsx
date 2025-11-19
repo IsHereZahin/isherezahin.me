@@ -10,7 +10,7 @@ export default function Article({ date, views, title, slug, excerpt, imageSrc, c
 
     return (
         <MotionWrapper direction="bottom" delay={0.2}>
-            <article className="group/article relative py-8 border-t border-border/30 last:border-b-0 transition-all duration-500 ease-out hover:-translate-y-1 hover:bg-accent/30">
+            <article className="group/article relative py-8 border-t border-border/30 last:border-b-0 transition-all duration-500 ease-out hover:-translate-y-1">
                 <div className="flex flex-col sm:flex-row gap-8 items-start sm:items-center">
                     {/* Content Section - Below image on xs screens, left on sm and up */}
                     <div className="flex-1 min-w-0 order-2 sm:order-none">

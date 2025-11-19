@@ -28,7 +28,7 @@ import Marquee from 'react-fast-marquee'
 
 export default function StacksCard() {
   return (
-    <div className='flex h-64 flex-col gap-4 overflow-hidden rounded-xl p-4 shadow-feature-card lg:p-6 bg-card'>
+    <div className='flex h-64 flex-col gap-4 overflow-hidden rounded-xl p-4 shadow-feature-card lg:p-6'>
       <div className='flex items-center gap-2'>
         <ZapIcon className='h-4 w-4 flex-shrink-0' />
         <h2 className='text-base font-medium'>Languages and Tools</h2>

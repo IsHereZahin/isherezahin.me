@@ -4,8 +4,14 @@ import React, { useCallback, useEffect, useMemo, useReducer } from "react";
 
 import { DiscussionContext } from "@/lib/contexts";
 import { discussionApi } from "@/lib/github/api";
-import { createTempComment, createTempReply, formatCommentResponse, hasUserReacted } from "@/lib/github/helpers";
+import {
+    createTempComment,
+    createTempReply,
+    formatCommentResponse,
+    hasUserReacted,
+} from "@/lib/github/helpers";
 import type { Comment, DiscussionContextType, ReactionKey, ReactionUser, Reply } from "@/lib/github/types";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { discussionReducer, initialDiscussionState } from "@/lib/reducers/DiscussionReducer";
 
 interface DiscussionProviderProps {
@@ -15,6 +21,8 @@ interface DiscussionProviderProps {
 }
 
 export function DiscussionProvider({ children, discussionNumber = 1, authUsername = null }: Readonly<DiscussionProviderProps>) {
+    const { user } = useAuth();
+
     const [state, dispatch] = useReducer(discussionReducer, {
         ...initialDiscussionState,
         authUsername,
@@ -69,9 +77,9 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
 
     // Add new comment
     const addComment = useCallback(
-        async (body: string, userAvatar?: string) => {
+        async (body: string) => {
             try {
-                const tempComment = createTempComment(body, state.authUsername || "You", userAvatar);
+                const tempComment = createTempComment(body, state.authUsername || "You", user?.avatar_url);
 
                 dispatch({ type: "ADD_COMMENT", payload: tempComment });
                 const result = await discussionApi.addComment(discussionNumber, body, state.discussionId);
@@ -79,7 +87,7 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
                 const formattedComment = formatCommentResponse(
                     result.comment,
                     state.authUsername || "You",
-                    userAvatar
+                    user?.avatar_url
                 );
 
                 dispatch({
@@ -92,22 +100,32 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
                 throw err;
             }
         },
-        [discussionNumber, state.discussionId, state.authUsername]
+        [discussionNumber, state.discussionId, state.authUsername, user?.avatar_url]
     );
 
-    // Add new reply to a comment
     const addReply = useCallback(
-        async (commentId: string, body: string, userAvatar?: string) => {
-            try {
-                const tempReply = createTempReply(body, state.authUsername || "You", userAvatar);
+        async (commentId: string, body: string) => {
+            const avatarUrl = user?.avatar_url;
 
+            try {
+                const tempReply = createTempReply(body, state.authUsername || "You", avatarUrl);
+
+                // Optimistically add reply
                 dispatch({ type: "ADD_REPLY", payload: { commentId, reply: tempReply } });
+
+                // If this is the first reply, automatically expand
+                const currentComment = state.comments.find((c) => c.id === commentId);
+                if (currentComment && currentComment.reply_count === 0) {
+                    dispatch({ type: "TOGGLE_EXPANDED", payload: commentId });
+                }
+
                 const result = await discussionApi.addReply(
                     discussionNumber,
                     commentId,
                     body,
                     state.discussionId
                 );
+
                 dispatch({
                     type: "REPLACE_REPLY",
                     payload: { commentId, tempId: tempReply.id, reply: result.reply },
@@ -117,9 +135,7 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
                     type: "UPDATE_COMMENT",
                     payload: {
                         id: commentId,
-                        updates: {
-                            reply_count: (state.comments.find((c) => c.id === commentId)?.reply_count ?? 0) + 1,
-                        },
+                        updates: { reply_count: (currentComment?.reply_count ?? 0) + 1 },
                     },
                 });
             } catch (err) {
@@ -128,13 +144,12 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
                 throw err;
             }
         },
-        [discussionNumber, state.discussionId, state.comments, state.authUsername]
+        [discussionNumber, state.discussionId, state.comments, state.authUsername, user?.avatar_url]
     );
 
     // Delete comment
     const deleteComment = useCallback(
         async (commentId: string) => {
-            if (!confirm("Are you sure you want to delete this comment?")) return;
             const previous = [...state.comments];
             dispatch({ type: "DELETE_COMMENT", payload: commentId });
 
@@ -152,7 +167,6 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
     // Delete reply
     const deleteReply = useCallback(
         async (commentId: string, replyId: string) => {
-            if (!confirm("Are you sure you want to delete this reply?")) return;
             const previousReplies = state.loadedReplies[commentId];
             dispatch({ type: "DELETE_REPLY", payload: { commentId, replyId } });
 
@@ -162,7 +176,7 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
                 console.error(err);
                 dispatch({
                     type: "SET_LOADED_REPLIES",
-                    payload: { commentId, replies: previousReplies },
+                    payload: { commentId, replies: previousReplies || [] },
                 });
                 dispatch({ type: "SET_ERROR", payload: "Failed to delete reply" });
             }
@@ -230,8 +244,8 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
 
     // Initial fetch of comments
     useEffect(() => {
-        fetchComments()
-    }, [fetchComments])
+        fetchComments();
+    }, [fetchComments]);
 
     // Memoized context value
     const value = useMemo<DiscussionContextType>(
