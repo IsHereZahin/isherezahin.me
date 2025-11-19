@@ -79,7 +79,7 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
     const addComment = useCallback(
         async (body: string) => {
             try {
-                const tempComment = createTempComment(body, state.authUsername || "You", user?.avatar_url);
+                const tempComment = createTempComment(body, state.authUsername || "You", user?.image ?? undefined);
 
                 dispatch({ type: "ADD_COMMENT", payload: tempComment });
                 const result = await discussionApi.addComment(discussionNumber, body, state.discussionId);
@@ -87,7 +87,7 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
                 const formattedComment = formatCommentResponse(
                     result.comment,
                     state.authUsername || "You",
-                    user?.avatar_url
+                    user?.image ?? undefined
                 );
 
                 dispatch({
@@ -100,12 +100,12 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
                 throw err;
             }
         },
-        [discussionNumber, state.discussionId, state.authUsername, user?.avatar_url]
+        [discussionNumber, state.discussionId, state.authUsername, user?.image]
     );
 
     const addReply = useCallback(
         async (commentId: string, body: string) => {
-            const avatarUrl = user?.avatar_url;
+            const avatarUrl = user?.image ?? undefined;
 
             try {
                 const tempReply = createTempReply(body, state.authUsername || "You", avatarUrl);
@@ -144,7 +144,7 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
                 throw err;
             }
         },
-        [discussionNumber, state.discussionId, state.comments, state.authUsername, user?.avatar_url]
+        [discussionNumber, state.discussionId, state.comments, state.authUsername, user?.image]
     );
 
     // Delete comment
