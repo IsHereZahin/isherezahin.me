@@ -17,6 +17,7 @@ import { BlogDetailsLoading } from "@/components/ui/Loading";
 import ReferralLink from "@/components/ui/ReferralLink";
 import Section from "@/components/ui/Section";
 import TextGradient from "@/components/ui/TextGradient";
+import { toast } from "sonner";
 import LikeButton from "../ui/LikeButton";
 
 export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
@@ -33,9 +34,7 @@ export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
     const viewMutation = useMutation({
         mutationFn: () => blogViews.incrementView(slug),
         onSuccess: (data) => {
-            setTimeout(() => {
-                setViewCount(data.views);
-            }, 3000);
+            setViewCount(data.views);
         },
     });
 
