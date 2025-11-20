@@ -40,7 +40,7 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
         hasUserReacted,
     } = useDiscussion();
 
-    const [replyingTo, setReplyingTo] = useState(false);
+    const [replyingTo, setReplyingTo] = useState<string | null>(null);
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
     const isOwner = user?.username === comment.user.login;
@@ -219,7 +219,9 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
             {isExpanded && <div className="mt-4 pt-4 space-y-3">{renderRepliesContent()}</div>}
 
             {/* Reply Form */}
-            {replyingTo && <CommentForm parentId={comment.id} onCancel={() => setReplyingTo(false)} />}
+            {replyingTo && (
+                <CommentForm parentId={comment.id} onCancel={() => setReplyingTo(null)} />
+            )}
 
             {/* Confirm Delete Dialog */}
             <ConfirmDialog

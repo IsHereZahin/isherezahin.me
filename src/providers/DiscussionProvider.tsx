@@ -23,6 +23,7 @@ interface DiscussionProviderProps {
 
 export function DiscussionProvider({ children, discussionNumber = 1, authUsername = null }: Readonly<DiscussionProviderProps>) {
     const { user } = useAuth();
+    const avatarUrl = useMemo(() => user?.image ?? undefined, [user?.image]);
 
     const [state, dispatch] = useReducer(discussionReducer, {
         ...initialDiscussionState,
@@ -84,7 +85,7 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
     const addComment = useCallback(
         async (body: string) => {
             try {
-                const tempComment = createTempComment(body, state.authUsername || "You", user?.avatar_url);
+                const tempComment = createTempComment(body, state.authUsername || "You", avatarUrl);
 
                 dispatch({ type: "ADD_COMMENT", payload: tempComment });
                 const result = await discussionApi.addComment(discussionNumber, body, state.discussionId);
@@ -92,7 +93,7 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
                 const formattedComment = formatCommentResponse(
                     result.comment,
                     state.authUsername || "You",
-                    user?.avatar_url
+                    avatarUrl
                 );
 
                 dispatch({
@@ -109,13 +110,11 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
                 throw err;
             }
         },
-        [discussionNumber, state.discussionId, state.authUsername, user?.avatar_url]
+        [discussionNumber, state.discussionId, state.authUsername, avatarUrl]
     );
 
     const addReply = useCallback(
         async (commentId: string, body: string) => {
-            const avatarUrl = user?.avatar_url;
-
             try {
                 const tempReply = createTempReply(body, state.authUsername || "You", avatarUrl);
 
@@ -157,7 +156,7 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
                 throw err;
             }
         },
-        [discussionNumber, state.discussionId, state.comments, state.authUsername, user?.avatar_url]
+        [discussionNumber, state.discussionId, state.comments, state.authUsername, avatarUrl]
     );
 
     // Delete comment

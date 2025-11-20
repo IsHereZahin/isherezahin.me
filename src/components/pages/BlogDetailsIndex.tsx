@@ -35,12 +35,6 @@ export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
         mutationFn: () => blogViews.incrementView(slug),
         onSuccess: (data) => {
             setViewCount(data.views);
-            toast(
-                <div className="flex items-center gap-3">
-                    <span className="text-xl">📘</span>
-                    <span className="font-medium">Thanks for reading. Appreciate your visit.</span>
-                </div>
-            )
         },
     });
 
