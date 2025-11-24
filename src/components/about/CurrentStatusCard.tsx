@@ -10,7 +10,7 @@ export default function CurrentStatusCard() {
             id="current-status"
             className="px-4 sm:px-6 py-10 max-w-[1000px] mx-auto overflow-hidden"
         >
-            <div className="shadow-feature-card px-6 sm:px-8 md:px-10 py-8 sm:py-10 md:py-12 rounded-2xl flex flex-col md:flex-row items-center md:items-center justify-between gap-10 md:gap-14 backdrop-blur-sm transition-colors duration-300 hover:bg-muted/40 overflow-hidden">
+            <div className="shadow-feature-card px-6 sm:px-8 md:px-10 py-8 sm:py-10 md:py-12 rounded-2xl flex flex-col md:flex-row items-center md:items-center justify-between gap-10 md:gap-14 backdrop-blur-sm transition-all duration-300 overflow-hidden">
 
                 {/* Left Section — Icon + Title */}
                 <div className="flex flex-col md:flex-row items-center gap-4 md:gap-5 w-full md:w-auto text-center sm:text-left flex-shrink-0">

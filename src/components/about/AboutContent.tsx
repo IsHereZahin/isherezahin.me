@@ -6,22 +6,16 @@ import Section from "@/components/ui/Section";
 import { MY_FULL_NAME, SITE_GITHUB_URL, SITE_LINKEDIN_URL, SITE_USER_LOGO, SITE_YOUTUBE_URL } from "@/lib/constants";
 import { GithubIcon, LinkedinIcon, YoutubeIcon } from "lucide-react";
 import MotionWrapper from "../motion/MotionWrapper";
+import PageTitle from "../ui/PageTitle";
 import ReferralLink from "../ui/ReferralLink";
 import Signature from "../ui/Signature";
-import Heading from "../ui/Heading";
 
 export default function AboutContent() {
     return (
         <Section id="about">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
-                <MotionWrapper direction="top" distance={50} duration={0.6} delay={0.1}>
-                    <div className="text-4xl md:text-5xl lg:text-6xl font-bold mb-16">
-                        <span className="text-secondary-foreground">Building creative</span>
-                        <br />
-                        <Heading text="and user-friendly solutions." className="text-left"/>
-                    </div>
-                </MotionWrapper>
+                <PageTitle title="About Me" subtitle="How I explored, learned, and finally found my place in tech" />
 
                 <div className="flex flex-col md:flex-row gap-6 md:gap-10">
                     {/* Left Column - Profile */}
@@ -87,35 +81,31 @@ export default function AboutContent() {
                     <div className="md:w-3/5 space-y-8 text-lg">
                         <MotionWrapper direction="right" delay={0.2}>
                             <p className="leading-relaxed">
-                                <strong className="text-foreground">I build creative and user-friendly solutions</strong>{" "}
                                 <span className="text-secondary-foreground">
-                                    that solve real-world problems in a simple way. With 2+ years of experience, I work mainly with <strong>React.js, Next.js, Vue.js, Laravel</strong> and tools like <strong>TypeScript, Tailwind CSS, Bootstrap, Figma, Postman, Docker, Git</strong> to deliver smooth and functional applications.
+                                    I work with the <strong>React & Laravel ecosystem</strong>, building robust web applications, dashboards, and internal tools. I focus on creating intuitive user experiences, clean interfaces, and maintainable code that performs reliably in real-world scenarios.
                                 </span>
                             </p>
                         </MotionWrapper>
 
                         <MotionWrapper direction="right" delay={0.2}>
                             <p className="leading-relaxed">
-                                <strong className="text-foreground">My projects range from SaaS platforms to file management systems</strong>{" "}
-                                –{" "}
                                 <span className="text-secondary-foreground">
-                                    I focus on clean design, responsive interfaces, and intuitive user experiences. Whether building the frontend or contributing to backend APIs, I aim for simple, practical solutions that work in the real world.
+                                    Beyond coding, I write to teach and help others rethink fundamental concepts through mental models. My goal is to simplify complex ideas, inspire new ways of thinking, and empower developers to build smarter solutions.
                                 </span>
                             </p>
                         </MotionWrapper>
 
                         <MotionWrapper direction="right" delay={0.2}>
                             <p className="leading-relaxed">
-                                <strong className="text-foreground">I pay attention to details</strong>{" "}
                                 <span className="text-secondary-foreground">
-                                    because small improvements make a big difference. This approach helps me deliver high-quality work, collaborate effectively with teams, and create software users enjoy.
+                                    With 2+ years of experience, I leverage tools like <strong>TypeScript, Tailwind CSS, Bootstrap, Figma, Postman, Docker, and Git</strong> to deliver scalable and high-quality software. I pay attention to details because even small improvements can make a significant difference in usability and performance.
                                 </span>
                             </p>
                         </MotionWrapper>
 
                         <MotionWrapper direction="right" delay={0.2}>
                             {/* Signature */}
-                            <div className="mt-[-60px]">
+                            <div className="mt-[-40px]">
                                 <Signature />
                             </div>
                         </MotionWrapper>

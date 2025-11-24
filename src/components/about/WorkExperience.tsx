@@ -18,7 +18,7 @@ export function WorkExperienceItem({
     logo,
 }: Readonly<WorkExperienceItemProps>) {
     return (
-        <MotionWrapper delay={0.2} className="grid md:grid-cols-[120px,1fr] gap-6 p-6 md:p-8 rounded-2xl shadow-feature-card bg-background hover:bg-muted/40 transition-shadow duration-300">
+        <MotionWrapper delay={0.2} className="grid md:grid-cols-[120px,1fr] gap-6 p-6 md:p-8 rounded-2xl shadow-feature-card bg-background transition-all duration-300">
             {/* Timeline / Date */}
             <div className="flex flex-col items-center md:items-start text-center md:text-left">
                 <p className="text-xs uppercase tracking-wide text-muted-foreground">
