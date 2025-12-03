@@ -1,6 +1,8 @@
-import { BarChart3, BookOpen, Info } from "lucide-react";
+"use client";
 
+import { BarChart3, BookOpen, Info } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import MotionPopup from "@/components/motion/MotionPopup";
 import AdventureImg from "../../../public/assets/images/CommandPopup/Adventure.jpg";
@@ -13,6 +15,15 @@ interface CommandPopupProps {
 }
 
 export default function CommandPopup({ onClose }: Readonly<CommandPopupProps>) {
+    const pathname = usePathname();
+
+    const isActive = (href: string) => pathname.startsWith(href);
+
+    const ActiveTag = () => (
+        <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-primary/20 text-primary">
+            Current
+        </span>
+    );
     return (
         <MotionPopup isOpen={true} className="z-50 rounded-xl bg-background/85 shadow-2xl outline-none backdrop-blur-sm border border-border p-3 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2">
             <Link
@@ -31,7 +42,10 @@ export default function CommandPopup({ onClose }: Readonly<CommandPopupProps>) {
                 </div>
                 <div className="rounded-[11px] bg-gradient-to-b from-black/30 to-black/50 absolute inset-0 z-[-1] group-hover/header-link:opacity-0 opacity-100 transition-opacity duration-300"></div>
                 <div className="rounded-md p-2 transition-all duration-300 z-10 relative">
-                    <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-white/50 transition-colors text-white">Uses</p>
+                    <div className="flex items-center gap-2">
+                        <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-white/50 transition-colors text-white">Uses</p>
+                        {isActive("/uses") && <ActiveTag />}
+                    </div>
                     <p className="text-xs text-white/80">A peek into my digital workspace</p>
                 </div>
             </Link>
@@ -51,7 +65,10 @@ export default function CommandPopup({ onClose }: Readonly<CommandPopupProps>) {
                 </div>
                 <div className="rounded-[11px] bg-gradient-to-b from-black/30 to-black/50 absolute inset-0 z-[-1] group-hover/header-link:opacity-0 opacity-100 transition-opacity duration-300"></div>
                 <div className="rounded-md p-2 transition-all duration-300 z-10 relative">
-                    <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-white/50 transition-colors text-white">Bucket List</p>
+                    <div className="flex items-center gap-2">
+                        <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-white/50 transition-colors text-white">Bucket List</p>
+                        {isActive("/bucket-list") && <ActiveTag />}
+                    </div>
                     <p className="text-xs text-white/80">Things to do at least once in life</p>
                 </div>
             </Link>
@@ -72,7 +89,10 @@ export default function CommandPopup({ onClose }: Readonly<CommandPopupProps>) {
                     </div>
                     <div className="rounded-[11px] bg-gradient-to-b from-black/30 to-black/50 absolute inset-0 z-[-1] group-hover/header-link:opacity-0 opacity-100 transition-opacity duration-300"></div>
                     <div className="rounded-md p-2 transition-all duration-300 z-10 relative">
-                        <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-white/50 transition-colors text-white">Side Quests</p>
+                        <div className="flex items-center gap-2">
+                            <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-white/50 transition-colors text-white">Side Quests</p>
+                            {isActive("/side-quests") && <ActiveTag />}
+                        </div>
                         <p className="text-xs text-white/80">New skills and adventures</p>
                     </div>
                 </Link>
@@ -88,6 +108,7 @@ export default function CommandPopup({ onClose }: Readonly<CommandPopupProps>) {
                         <div className="grow">
                             <div className="flex items-center gap-2 justify-between">
                                 <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-foreground/50 transition-colors text-foreground">Guest Book</p>
+                                {isActive("/guestbook") && <ActiveTag />}
                             </div>
                             <p className="text-xs text-muted-foreground mt-0.5">Leave me a message</p>
                         </div>
@@ -103,6 +124,7 @@ export default function CommandPopup({ onClose }: Readonly<CommandPopupProps>) {
                         <div className="grow">
                             <div className="flex items-center gap-2 justify-between">
                                 <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-foreground/50 transition-colors text-foreground">Statistics</p>
+                                {isActive("/statistics") && <ActiveTag />}
                             </div>
                             <p className="text-xs text-muted-foreground mt-0.5">Crunched up numbers</p>
                         </div>
@@ -118,6 +140,7 @@ export default function CommandPopup({ onClose }: Readonly<CommandPopupProps>) {
                         <div className="grow">
                             <div className="flex items-center gap-2 justify-between">
                                 <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-foreground/50 transition-colors text-foreground">Attribution</p>
+                                {isActive("/attribution") && <ActiveTag />}
                             </div>
                             <p className="text-xs text-muted-foreground mt-0.5">Journey to create this site</p>
                         </div>

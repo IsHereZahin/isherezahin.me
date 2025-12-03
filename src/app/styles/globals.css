@@ -339,8 +339,12 @@
 
 html {
     font-size: var(--font-size);
-    scroll-behavior: smooth;
     color: var(--color-secondary-foreground);
+}
+
+/* Only apply smooth scroll for internal anchor links */
+html:has(a[href^="#"]:target) {
+    scroll-behavior: smooth;
 }
 
 .content-headline {

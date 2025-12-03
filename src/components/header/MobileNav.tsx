@@ -2,6 +2,7 @@
 
 import MotionPopup from "@/components/motion/MotionPopup";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 interface MobileNavProps {
@@ -13,6 +14,12 @@ interface MobileNavProps {
 
 export default function MobileNav({ isOpen, onClose, buttonRef, links }: Readonly<MobileNavProps>) {
     const navRef = useRef<HTMLDivElement>(null);
+    const pathname = usePathname();
+
+    const isActiveLink = (href: string) => {
+        if (href === "/") return pathname === "/";
+        return pathname.startsWith(href);
+    };
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -43,18 +50,24 @@ export default function MobileNav({ isOpen, onClose, buttonRef, links }: Readonl
         >
             <div ref={navRef}>
                 <ul className="flex flex-col">
-                    {links.map((link) => (
-                        <li key={link.href}>
-                            <Link
-                                href={link.href}
-                                onClick={onClose}
-                                className="relative cursor-pointer rounded-sm px-2 py-1.5 text-xs sm:text-sm text-foreground flex items-center gap-3 sm:gap-4 w-full hover:bg-foreground/30 transition-colors"
-                            >
-                                {link.icon}
-                                <span>{link.key}</span>
-                            </Link>
-                        </li>
-                    ))}
+                    {links.map((link) => {
+                        const isActive = isActiveLink(link.href);
+                        return (
+                            <li key={link.href}>
+                                <Link
+                                    href={link.href}
+                                    onClick={onClose}
+                                    className={`relative cursor-pointer rounded-sm px-2 py-1.5 text-xs sm:text-sm flex items-center gap-3 sm:gap-4 w-full transition-colors ${isActive
+                                            ? "text-primary bg-primary/10"
+                                            : "text-foreground hover:bg-foreground/30"
+                                        }`}
+                                >
+                                    {link.icon}
+                                    <span>{link.key}</span>
+                                </Link>
+                            </li>
+                        );
+                    })}
                 </ul>
             </div>
         </MotionPopup>

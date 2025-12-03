@@ -166,6 +166,10 @@ export default function TableOfContents({
                                     <a
                                         href={`#${item.id}`}
                                         data-id={item.id}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth" });
+                                        }}
                                         className={`block px-3 py-1.5 rounded-md cursor-pointer font-medium transition-colors ${isActive(item.id)
                                             ? "text-foreground"
                                             : "text-secondary-foreground hover:text-accent-foreground"
