@@ -115,7 +115,7 @@ export default function ReplyCard({ reply, parentCommentId, authUsername }: Read
                     )}
                 </div>
 
-                <div className="text-foreground text-xs mb-2 leading-relaxed prose prose-sm max-w-none">
+                <div className="text-sm sm:text-base mb-2 leading-relaxed prose prose-sm max-w-none text-muted-foreground group-hover:text-foreground/80 transition-colors">
                     <MarkdownPreview content={reply.body} />
                 </div>
 

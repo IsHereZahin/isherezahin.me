@@ -1,7 +1,7 @@
 'use client';
 
 import AnimatedNumber from '@/components/ui/AnimatedNumber';
-import { blogLikes } from '@/lib/api';
+import { blogLikes, projectLikes } from '@/lib/api';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import confetti from 'canvas-confetti';
@@ -11,10 +11,11 @@ import { toast } from 'sonner';
 
 interface LikeButtonProps {
   readonly slug: string;
+  readonly type?: string;
   readonly maxUserLikes?: number;
 }
 
-export default function LikeButton({ slug, maxUserLikes = 3 }: LikeButtonProps) {
+export default function LikeButton({ slug, type, maxUserLikes = 3 }: LikeButtonProps) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -22,9 +23,12 @@ export default function LikeButton({ slug, maxUserLikes = 3 }: LikeButtonProps) 
   const [totalLikes, setTotalLikes] = useState(0);
   const [userLikes, setUserLikes] = useState(0);
 
+  const likesApi = type === 'project' ? projectLikes : blogLikes;
+  const queryKey = [`${type || 'blog'}-likes`, slug];
+
   const { data } = useQuery({
-    queryKey: ['blog-likes', slug],
-    queryFn: () => blogLikes.getLikes(slug),
+    queryKey,
+    queryFn: () => likesApi.getLikes(slug),
     staleTime: 1000 * 60 * 5,
   });
 
@@ -36,15 +40,15 @@ export default function LikeButton({ slug, maxUserLikes = 3 }: LikeButtonProps) 
   }, [data]);
 
   const mutation = useMutation({
-    mutationFn: () => blogLikes.addLike(slug),
+    mutationFn: () => likesApi.addLike(slug),
 
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ['blog-likes', slug] });
+      await queryClient.cancelQueries({ queryKey });
 
       setUserLikes(prev => prev + 1);
       setTotalLikes(prev => prev + 1);
 
-      queryClient.setQueryData(['blog-likes', slug], (old: any) => ({
+      queryClient.setQueryData(queryKey, (old: any) => ({
         totalLikes: (old?.totalLikes ?? totalLikes) + 1,
         userLikes: (old?.userLikes ?? userLikes) + 1,
       }));
@@ -70,20 +74,20 @@ export default function LikeButton({ slug, maxUserLikes = 3 }: LikeButtonProps) 
         });
 
         toast.success('Thank you for the love! 💖', {
-          description: `You've reached the maximum of ${maxUserLikes} likes for this post.`,
+          description: `You've reached the maximum of ${maxUserLikes} likes for this ${type}.`,
         });
       }
     },
 
     onError: () => {
-      queryClient.invalidateQueries({ queryKey: ['blog-likes', slug] });
+      queryClient.invalidateQueries({ queryKey });
       toast.error('Failed to add like', {
         description: 'Please try again.',
       });
     },
 
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['blog-likes', slug] });
+      queryClient.invalidateQueries({ queryKey });
     },
   });
 
@@ -91,7 +95,7 @@ export default function LikeButton({ slug, maxUserLikes = 3 }: LikeButtonProps) 
     if (userLikes >= maxUserLikes) {
       toast.info(`Maximum likes reached`, {
         description: user
-          ? `You've already liked this post ${maxUserLikes} times. That's plenty of love! ❤️`
+          ? `You've already liked this ${type} ${maxUserLikes} times. That's plenty of love! ❤️`
           : `This device has reached the maximum of ${maxUserLikes} likes. Sign in to like more!`,
       });
 

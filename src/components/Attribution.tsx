@@ -34,7 +34,7 @@ export default function Attribution() {
     ];
 
     return (
-        <Section id="attribution" animate className="mt-[-50px] py-16 max-w-[1000px]">
+        <Section id="attribution" animate className="mt-[-50px] py-16 max-w-[700px]">
             {/* Greeting */}
             <p className="text-foreground text-xl font-medium mb-6">Hey there!👋</p>
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { MY_USERNAME, MY_MAIL } from '@/lib/constants'
+import { MY_MAIL, MY_USERNAME } from '@/lib/constants'
 import { useAnimate } from 'motion/react'
 import { useEffect } from 'react'
 import Logo from '../ui/Logo'
@@ -34,7 +34,7 @@ export default function GetInTouch() {
 
     return (
         <Section id="get-in-touch" animate={true}>
-            <div className='flex flex-col gap-6 p-4 lg:p-6 rounded-xl shadow-feature-card'>
+            <div className='flex flex-col gap-4 sm:gap-6 p-4 lg:p-6 rounded-xl shadow-feature-card'>
                 <div className='flex gap-12 max-md:flex-col'>
                     <div className='relative size-64 max-md:mx-auto' ref={scope}>
                         <Logo
@@ -88,13 +88,13 @@ export default function GetInTouch() {
 
                     <div className='flex flex-col justify-center px-4'>
                         <p
-                            className="font-bold text-3xl leading-snug
+                            className="font-bold text-xl sm:text-2xl md:text-3xl leading-snug
                                 bg-gradient-to-r from-foreground/90 to-foreground/60
                                 bg-clip-text text-transparent"
                         >
                             Any questions about software?
                         </p>
-                        <p className="text-secondary-foreground">
+                        <p className="text-sm sm:text-base text-muted-foreground hover:text-foreground/80 transition-colors">
                             Feel free to reach out to me!{' '}
                             <span className="text-primary">I&apos;m available for collaboration.</span>
                         </p>

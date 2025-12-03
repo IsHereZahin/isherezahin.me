@@ -18,11 +18,11 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SingleCommentLoading } from "@/components/ui/Loading";
+import { toast } from "sonner";
 import CommentForm from "./CommentForm";
 import MarkdownPreview from "./MarkdownPreview";
 import ReactionButton from "./ReactionButton";
 import ReplyCard from "./ReplyCard";
-import { toast } from "sonner";
 
 interface CommentCardProps {
     comment: Comment;
@@ -82,7 +82,7 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
             ));
         }
 
-        return <div className="ml-4 pl-3 text-muted-foreground text-sm">No replies yet.</div>;
+        return <div className="ml-4 pl-3 text-muted-foreground text-sm sm:text-base">No replies yet.</div>;
     };
 
     // Confirm delete handler
@@ -169,9 +169,9 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
             </div>
 
             {/* Body */}
-            <div className="text-foreground text-sm mb-4 leading-relaxed prose prose-sm max-w-none">
+            <div className="text-sm sm:text-base mb-4 leading-relaxed prose prose-sm max-w-none text-muted-foreground group-hover:text-foreground/80 transition-colors">
                 {isDeleted ? (
-                    <span className="text-muted-foreground italic">This message was deleted.</span>
+                    <span className="italic">This message was deleted.</span>
                 ) : (
                     <MarkdownPreview content={comment.body} />
                 )}

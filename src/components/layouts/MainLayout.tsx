@@ -6,7 +6,7 @@ import Hello from "@/components/ui/Hello";
 
 export default function MainLayout({ children, adminPage }: Readonly<{ children: React.ReactNode, adminPage?: boolean }>) {
     return (
-        <div className="flex flex-col min-h-screen relative">
+        <div className="flex flex-col min-h-screen relative selection:bg-primary/20 selection:text-primary">
             <Hello />
             {adminPage ? (
                 <Header adminPage={true} />

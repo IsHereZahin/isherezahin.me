@@ -76,8 +76,8 @@ export default function CommentsList() {
                                 key={option.value}
                                 onClick={() => setSortBy(option.value as typeof sortBy)}
                                 className={`cursor-pointer ${currentSort === option.value
-                                        ? "bg-secondary text-secondary-foreground"
-                                        : ""
+                                    ? "bg-secondary text-secondary-foreground"
+                                    : ""
                                     }`}
                             >
                                 {option.label}

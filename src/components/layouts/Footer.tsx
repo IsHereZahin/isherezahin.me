@@ -1,6 +1,6 @@
 import { FOOTER_MENU_ITEMS, SOCIAL_LINKS } from '@/config/links';
 import { MY_NAME } from '@/lib/constants';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import Button from '../ui/Button';
 import ReferralLink from '../ui/ReferralLink';
@@ -8,10 +8,20 @@ import Section from '../ui/Section';
 
 export function SimpleFooter() {
     return (
-        <Section id="footer" animate={true} delay={0.2} className="relative max-w-[900px] mx-auto px-6 py-12 ">
-            <p className="text-sm text-muted-foreground border-t border-border pt-10">
-                Built with Typescript, React, Tailwind and Next.js ❤
-            </p>
+        <Section id="footer" animate={true} delay={0.2}>
+            <footer className="border-t border-border pt-12 pb-8 text-center md:text-left">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p className="text-sm text-muted-foreground">
+                        &copy; {new Date().getFullYear()} Designed & Built with Typescript, React, Tailwind and Next.js ❤
+                    </p>
+                    <a
+                        href="#"
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+                    >
+                        Back to top <ArrowUpRight className="h-3 w-3" />
+                    </a>
+                </div>
+            </footer>
         </Section>
     );
 }

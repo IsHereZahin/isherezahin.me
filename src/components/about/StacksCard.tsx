@@ -28,10 +28,10 @@ import Marquee from 'react-fast-marquee'
 
 export default function StacksCard() {
   return (
-    <div className='flex h-64 flex-col gap-4 overflow-hidden rounded-xl p-4 shadow-feature-card lg:p-6'>
+    <div className='flex h-56 sm:h-64 flex-col gap-3 sm:gap-4 overflow-hidden rounded-xl p-4 shadow-feature-card lg:p-6'>
       <div className='flex items-center gap-2'>
-        <ZapIcon className='h-4 w-4 flex-shrink-0' />
-        <h2 className='text-base font-medium'>Languages and Tools</h2>
+        <ZapIcon className='h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0' />
+        <h2 className='text-sm sm:text-base font-medium text-foreground'>Languages and Tools</h2>
       </div>
       <div className='flex-1 overflow-hidden'>
         <Marquee

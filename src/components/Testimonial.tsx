@@ -7,11 +7,11 @@ export interface TestimonialType {
 
 export default function Testimonial({ quote, name, role }: Readonly<TestimonialType>) {
     return (
-        <blockquote className="pl-12 mt-10 group">
+        <blockquote className="pl-8 sm:pl-12 mt-6 sm:mt-10 group">
             <div className="relative">
                 {/* Quote Icon */}
                 <svg
-                    className="absolute top-0 left-0 w-8 h-8 text-gray-200 transform -translate-x-12"
+                    className="absolute top-0 left-0 w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground/30 transform -translate-x-8 sm:-translate-x-12"
                     fill="currentColor"
                     viewBox="0 0 32 32"
                     aria-hidden="true"
@@ -20,13 +20,13 @@ export default function Testimonial({ quote, name, role }: Readonly<TestimonialT
                 </svg>
 
                 {/* Quote text */}
-                <div className="text-secondary-foreground">{quote}</div>
+                <p className="text-sm sm:text-base text-muted-foreground group-hover:text-foreground/80 transition-colors leading-relaxed">{quote}</p>
             </div>
 
             {/* Footer */}
-            <footer className="mt-1 font-bold text-secondary-foreground group-hover:text-primary transition-colors duration-200 ease-in-out">
-                <span className="font-semibold">{name}</span>{" "}
-                <span className="font-normal">· {role}</span>
+            <footer className="mt-2 sm:mt-3 text-sm sm:text-base text-secondary-foreground group-hover:text-primary transition-colors duration-200 ease-in-out">
+                <span className="font-semibold text-foreground">{name}</span>{" "}
+                <span className="font-normal text-muted-foreground">· {role}</span>
             </footer>
         </blockquote>
     );

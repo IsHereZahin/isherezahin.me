@@ -7,9 +7,10 @@
 
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { HEADER_LINKS, ADMIN_LINKS } from "@/config/links";
+import { ADMIN_LINKS, HEADER_LINKS } from "@/config/links";
 
 import HeaderActions from "@/components/header/HeaderActions";
 import MobileNav from "@/components/header/MobileNav";
@@ -21,8 +22,14 @@ export default function Header({ adminPage }: Readonly<{ adminPage?: boolean }>)
     const [isVisible, setIsVisible] = useState(true);
     const lastScrollY = useRef(0);
     const buttonRef = useRef<HTMLButtonElement>(null);
+    const pathname = usePathname();
 
     const links = adminPage ? ADMIN_LINKS : HEADER_LINKS;
+
+    const isActiveLink = (href: string) => {
+        if (href === "/") return pathname === "/";
+        return pathname.startsWith(href);
+    };
 
     const controlHeader = useCallback(() => {
         if (typeof window !== "undefined") {
@@ -54,16 +61,22 @@ export default function Header({ adminPage }: Readonly<{ adminPage?: boolean }>)
                 <div className="flex items-center gap-2">
                     <nav className="hidden md:block">
                         <ul className="flex gap-1">
-                            {links.map((link) => (
-                                <li key={link.href}>
-                                    <Link
-                                        href={link.href}
-                                        className="rounded-sm px-3 py-2 text-sm font-medium transition-colors text-secondary-foreground hover:text-foreground capitalize"
-                                    >
-                                        {link.key}
-                                    </Link>
-                                </li>
-                            ))}
+                            {links.map((link) => {
+                                const isActive = isActiveLink(link.href);
+                                return (
+                                    <li key={link.href} className="relative flex items-center justify-center">
+                                        <Link
+                                            href={link.href}
+                                            className={`rounded-sm px-3 py-2 text-sm font-medium transition-colors capitalize ${isActive
+                                                    ? "text-foreground"
+                                                    : "text-muted-foreground hover:text-foreground"
+                                                }`}
+                                        >
+                                            {link.key}
+                                        </Link>
+                                    </li>
+                                );
+                            })}
                         </ul>
                     </nav>
 

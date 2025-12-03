@@ -6,22 +6,16 @@ import Section from "@/components/ui/Section";
 import { MY_FULL_NAME, SITE_GITHUB_URL, SITE_LINKEDIN_URL, SITE_USER_LOGO, SITE_YOUTUBE_URL } from "@/lib/constants";
 import { GithubIcon, LinkedinIcon, YoutubeIcon } from "lucide-react";
 import MotionWrapper from "../motion/MotionWrapper";
+import PageTitle from "../ui/PageTitle";
 import ReferralLink from "../ui/ReferralLink";
 import Signature from "../ui/Signature";
-import Heading from "../ui/Heading";
 
 export default function AboutContent() {
     return (
         <Section id="about">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
-                <MotionWrapper direction="top" distance={50} duration={0.6} delay={0.1}>
-                    <div className="text-4xl md:text-5xl lg:text-6xl font-bold mb-16">
-                        <span className="text-secondary-foreground">Building creative</span>
-                        <br />
-                        <Heading text="and user-friendly solutions." className="text-left"/>
-                    </div>
-                </MotionWrapper>
+                <PageTitle title="About Me" subtitle="How I explored, learned, and finally found my place in tech" />
 
                 <div className="flex flex-col md:flex-row gap-6 md:gap-10">
                     {/* Left Column - Profile */}
@@ -70,12 +64,12 @@ export default function AboutContent() {
                                 </ImageZoom>
 
                                 {/* Name & Title */}
-                                <div className="mt-6 text-center md:text-left">
-                                    <h2 className="text-2xl font-bold text-foreground">{MY_FULL_NAME}</h2>
-                                    <p className="text-secondary-foreground text-lg">
+                                <div className="mt-4 sm:mt-6 text-center md:text-left">
+                                    <h2 className="text-xl sm:text-2xl font-bold text-foreground">{MY_FULL_NAME}</h2>
+                                    <p className="text-secondary-foreground text-base sm:text-lg">
                                         Software Developer | Frontend Focused
                                     </p>
-                                    <p className="text-secondary-foreground text-sm mt-1">
+                                    <p className="text-muted-foreground text-xs sm:text-sm mt-1">
                                         Khulshi, Chittagong, BD (UTC+6)
                                     </p>
                                 </div>
@@ -84,38 +78,28 @@ export default function AboutContent() {
                     </MotionWrapper>
 
                     {/* Right Column - Philosophy */}
-                    <div className="md:w-3/5 space-y-8 text-lg">
+                    <div className="md:w-3/5 space-y-6 sm:space-y-8 text-sm sm:text-base md:text-lg">
                         <MotionWrapper direction="right" delay={0.2}>
-                            <p className="leading-relaxed">
-                                <strong className="text-foreground">I build creative and user-friendly solutions</strong>{" "}
-                                <span className="text-secondary-foreground">
-                                    that solve real-world problems in a simple way. With 2+ years of experience, I work mainly with <strong>React.js, Next.js, Vue.js, Laravel</strong> and tools like <strong>TypeScript, Tailwind CSS, Bootstrap, Figma, Postman, Docker, Git</strong> to deliver smooth and functional applications.
-                                </span>
+                            <p className="leading-relaxed text-muted-foreground hover:text-foreground/80 transition-colors">
+                                I work with the <strong className="text-foreground">React & Laravel ecosystem</strong>, building robust web applications, dashboards, and internal tools. I focus on creating intuitive user experiences, clean interfaces, and maintainable code that performs reliably in real-world scenarios.
                             </p>
                         </MotionWrapper>
 
                         <MotionWrapper direction="right" delay={0.2}>
-                            <p className="leading-relaxed">
-                                <strong className="text-foreground">My projects range from SaaS platforms to file management systems</strong>{" "}
-                                –{" "}
-                                <span className="text-secondary-foreground">
-                                    I focus on clean design, responsive interfaces, and intuitive user experiences. Whether building the frontend or contributing to backend APIs, I aim for simple, practical solutions that work in the real world.
-                                </span>
+                            <p className="leading-relaxed text-muted-foreground hover:text-foreground/80 transition-colors">
+                                Beyond coding, I write to teach and help others rethink fundamental concepts through mental models. My goal is to simplify complex ideas, inspire new ways of thinking, and empower developers to build smarter solutions.
                             </p>
                         </MotionWrapper>
 
                         <MotionWrapper direction="right" delay={0.2}>
-                            <p className="leading-relaxed">
-                                <strong className="text-foreground">I pay attention to details</strong>{" "}
-                                <span className="text-secondary-foreground">
-                                    because small improvements make a big difference. This approach helps me deliver high-quality work, collaborate effectively with teams, and create software users enjoy.
-                                </span>
+                            <p className="leading-relaxed text-muted-foreground hover:text-foreground/80 transition-colors">
+                                With 2+ years of experience, I leverage tools like <strong className="text-foreground">TypeScript, Tailwind CSS, Bootstrap, Figma, Postman, Docker, and Git</strong> to deliver scalable and high-quality software. I pay attention to details because even small improvements can make a significant difference in usability and performance.
                             </p>
                         </MotionWrapper>
 
                         <MotionWrapper direction="right" delay={0.2}>
                             {/* Signature */}
-                            <div className="mt-[-60px]">
+                            <div className="mt-[-40px]">
                                 <Signature />
                             </div>
                         </MotionWrapper>

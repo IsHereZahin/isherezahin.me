@@ -15,13 +15,13 @@ export default function ProfileDropdown({ onClose }: { readonly onClose: () => v
             {/* Profile Info */}
             <Link
                 href="/profile"
-                className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-muted"
+                className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-muted transition-colors"
                 onClick={onClose}
             >
                 <User className="h-4 w-4" />
                 <div>
-                    <p className="text-sm font-medium">{user.name || user.email}</p>
-                    <p className="text-xs text-muted-foreground">{user.email}</p>
+                    <p className="text-xs sm:text-sm font-medium text-foreground">{user.name || user.email}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">{user.email}</p>
                 </div>
             </Link>
 

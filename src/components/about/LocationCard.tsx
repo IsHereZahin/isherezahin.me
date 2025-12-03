@@ -59,10 +59,10 @@ export default function LocationCard() {
   }, [springRotation])
 
   return (
-    <div className='relative flex h-60 flex-col gap-6 overflow-hidden rounded-xl p-4 shadow-feature-card lg:p-6'>
+    <div className='relative flex h-52 sm:h-60 flex-col gap-4 sm:gap-6 overflow-hidden rounded-xl p-4 shadow-feature-card lg:p-6'>
       <div className='flex items-center gap-2'>
-        <MapPinIcon className='size-[18px]' />
-        <h2 className='text-sm'>Bangladesh</h2>
+        <MapPinIcon className='size-4 sm:size-[18px]' />
+        <h2 className='text-xs sm:text-sm font-medium text-muted-foreground'>Bangladesh</h2>
       </div>
       <div className='absolute inset-x-0 bottom-[-190px] mx-auto aspect-square h-[388px] [@media(max-width:420px)]:bottom-[-140px] [@media(max-width:420px)]:h-[320px] [@media(min-width:768px)_and_(max-width:858px)]:h-[350px]'>
         <div

@@ -21,7 +21,7 @@ export const workExperience: WorkExperienceItemProps[] = [
         title: "Frontend Developer & SQA",
         company: "Iconic Solutions (Pvt) Ltd",
         companyUrl: "http://www.iconicsolutionsbd.com",
-        location: "Chittagong, BD",
+        location: "Chittagong, BD (On Site)",
         type: "On Site",
         logo: "/assets/images/iconic.png",
         description:

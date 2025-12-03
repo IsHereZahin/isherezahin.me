@@ -6,7 +6,7 @@ import ProfileHero from "@/components/home/ProfileHero";
 import Projects from "@/components/home/Projects";
 // import Skills from "@/components/sections/Skills";
 import Testimonials from "@/components/home/Testimonials";
-import { projects, testimonials } from "@/data";
+import { testimonials } from "@/data";
 import { HERO_SECTION_ID } from "@/lib/constants";
 
 export default function HomeIndex() {
@@ -17,7 +17,7 @@ export default function HomeIndex() {
             {/* <Skills /> */}
             <AboutMe />
             <Blogs />
-            <Projects projects={projects} />
+            <Projects />
             <Testimonials testimonials={testimonials} />
             <GetInTouch />
         </>

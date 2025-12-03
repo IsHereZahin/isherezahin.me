@@ -22,7 +22,7 @@ export default function ExpandableText({ text, limit = 180 }: Readonly<Expandabl
             {isLong && (
                 <button
                     onClick={toggle}
-                    className="ml-1 text-primary/80 hover:text-primary cursor-pointer text-base font-medium inline"
+                    className="ml-1 text-primary/80 hover:text-primary cursor-pointer text-sm sm:text-base font-medium inline"
                 >
                     {expanded ? "See less" : "See more"}
                 </button>

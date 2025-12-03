@@ -3,7 +3,7 @@
 import { ApiError, blogViews, getBlog } from "@/lib/api";
 import { extractTocItems, getFormattedDate } from "@/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { AlignLeftIcon, Facebook, Instagram, Twitter } from "lucide-react";
+import { AlignLeftIcon } from "lucide-react";
 import { notFound } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -14,10 +14,8 @@ import BlurImage from "@/components/ui/BlurImage";
 import Heading from "@/components/ui/Heading";
 import ImageZoom from "@/components/ui/ImageZoom";
 import { BlogDetailsLoading } from "@/components/ui/Loading";
-import ReferralLink from "@/components/ui/ReferralLink";
 import Section from "@/components/ui/Section";
 import TextGradient from "@/components/ui/TextGradient";
-import { toast } from "sonner";
 import LikeButton from "../ui/LikeButton";
 
 export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
@@ -37,6 +35,11 @@ export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
             setViewCount(data.views);
         },
     });
+
+    // Scroll to top when blog slug changes (only for blog details page)
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+    }, [slug]);
 
     // Update view count
     useEffect(() => {
@@ -94,34 +97,6 @@ export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
             {/* Blog Content Section */}
             <Section id="blog_content">
                 <div className="relative flex flex-col lg:flex-row">
-                    {/* Social Icons */}
-                    <div className="hidden lg:block absolute -left-16 xl:-left-20 top-0">
-                        <div className="sticky top-24 flex flex-col gap-4">
-                            {[Twitter, Instagram, Facebook].map((Icon, i) => (
-                                <ReferralLink
-                                    key={i + 1}
-                                    href="#"
-                                    className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
-                                >
-                                    <Icon className="w-5 h-5 text-secondary-foreground hover:text-primary" />
-                                </ReferralLink>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Mobile Icons */}
-                    <div className="lg:hidden flex justify-center gap-4 mb-4">
-                        {[Twitter, Instagram, Facebook].map((Icon, i) => (
-                            <ReferralLink
-                                key={i + 1}
-                                href="#"
-                                className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
-                            >
-                                <Icon className="w-5 h-5 text-secondary-foreground hover:text-primary" />
-                            </ReferralLink>
-                        ))}
-                    </div>
-
                     {/* Main Content */}
                     <div className="flex flex-col lg:flex-row gap-12 w-full">
                         <MarkdownPreview content={data.content} />
@@ -130,6 +105,8 @@ export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
                             showMobileTOC={showTOC}
                             setShowMobileTOC={setShowTOC}
                             slug={slug}
+                            title={data.title}
+                            type={data.type}
                         />
                     </div>
                 </div>

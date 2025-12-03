@@ -10,12 +10,12 @@ export default function FavoriteFramework() {
 
   return (
     <div
-      className="flex flex-col gap-6 rounded-xl p-4 shadow-feature-card lg:p-6"
+      className="flex flex-col gap-4 sm:gap-6 rounded-xl p-4 shadow-feature-card lg:p-6"
       title="Next.js & Laravel"
     >
       <div className="flex items-center gap-2">
-        <HeartIcon className="size-[18px]" />
-        <h2 className="text-sm">Favorite Framework</h2>
+        <HeartIcon className="size-4 sm:size-[18px]" />
+        <h2 className="text-xs sm:text-sm font-medium text-muted-foreground">Favorite Framework</h2>
       </div>
 
       <div className="flex items-center justify-center gap-4">

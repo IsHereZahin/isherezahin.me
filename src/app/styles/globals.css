@@ -285,43 +285,40 @@
     }
 }
 
-/**
-    * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
-    */
 @layer base {
     :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
         h1 {
-            font-size: var(--text-2xl);
-            font-weight: var(--font-weight-medium);
-            line-height: 1.5;
+            font-size: var(--text-3xl);
+            font-weight: 700;
+            line-height: 1.3;
         }
 
         h2 {
-            font-size: var(--text-xl);
-            font-weight: var(--font-weight-medium);
-            line-height: 1.5;
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            line-height: 1.4;
         }
 
         h3 {
-            font-size: var(--text-lg);
-            font-weight: var(--font-weight-medium);
+            font-size: var(--text-xl);
+            font-weight: 600;
             line-height: 1.5;
         }
 
         h4 {
-            font-size: var(--text-base);
-            font-weight: var(--font-weight-medium);
+            font-size: var(--text-lg);
+            font-weight: 600;
             line-height: 1.5;
         }
 
         p {
             font-size: var(--text-base);
             font-weight: var(--font-weight-normal);
-            line-height: 1.5;
+            line-height: 1.625;
         }
 
         label {
-            font-size: var(--text-base);
+            font-size: var(--text-sm);
             font-weight: var(--font-weight-medium);
             line-height: 1.5;
         }
@@ -342,8 +339,12 @@
 
 html {
     font-size: var(--font-size);
-    scroll-behavior: smooth;
     color: var(--color-secondary-foreground);
+}
+
+/* Only apply smooth scroll for internal anchor links */
+html:has(a[href^="#"]:target) {
+    scroll-behavior: smooth;
 }
 
 .content-headline {
@@ -385,10 +386,11 @@ html {
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+    * {
+        @apply border-border outline-ring/50;
     }
-  body {
-    @apply bg-background text-foreground;
+
+    body {
+        @apply bg-background text-foreground;
     }
 }
