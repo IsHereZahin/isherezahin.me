@@ -23,7 +23,7 @@ export default function Blogs() {
 
     return (
         <Section id="blogs" animate={true}>
-            <SectionHeader title="Blogs" subtitle="Thoughts on what I'm learning and building in web development" />
+            <SectionHeader tag="02" title="Blogs" subtitle="Thoughts on what I'm learning and building in web development" />
 
             {isLoading ? (
                 <BlogsLoading count={2} />

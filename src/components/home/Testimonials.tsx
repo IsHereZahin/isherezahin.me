@@ -10,6 +10,7 @@ export default function Testimonials({ testimonials }: Readonly<TestimonialsProp
     return (
         <Section id="testimonials" animate={true}>
             <SectionHeader
+                tag="04"
                 title="Nice words"
                 subtitle="Some feedback from people that I've had the privilege of working with."
             />

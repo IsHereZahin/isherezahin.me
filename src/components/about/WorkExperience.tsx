@@ -67,7 +67,7 @@ export function WorkExperienceItem({
 export default function WorkExperience() {
     return (
         <Section id="work-experience" animate delay={0.2} className="px-6 py-10 max-w-[1000px]">
-            <SectionHeader title="Work Experience" />
+            <SectionHeader tag="02" title="Work Experience" subtitle="A little bit about my work experience" />
             {workExperience.map((item, index) => (
                 <WorkExperienceItem key={index + 1} {...item} />
             ))}
