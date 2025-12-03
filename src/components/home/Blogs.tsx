@@ -28,7 +28,7 @@ export default function Blogs() {
             {isLoading ? (
                 <BlogsLoading count={2} />
             ) : (
-                <div className="space-y-8">
+                <div className="space-y-6 sm:space-y-8">
                     {data.blogs.map((blog: Blog) => (
                         <Article key={blog.id} {...blog} />
                     ))}

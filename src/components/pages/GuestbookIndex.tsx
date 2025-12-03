@@ -12,9 +12,9 @@ export default function GuestbookIndex({ discussionNumber }: { readonly discussi
                 title="GuestBook"
                 subtitle="Leave whatever you want to say, message, appreciation, suggestions or feedback."
             />
-            <div className="mt-8">
+            <div className="mt-6 sm:mt-8">
                 <GitHubComments discussionNumber={discussionNumber} />
-                <div className="text-secondary-foreground text-sm text-center mt-5">For any questions, feel free to leave them in the <ReferralLink href={AMA_DISCUSSION_URL} className="underline">AMA discussion</ReferralLink> or contact me via email.</div>
+                <div className="text-muted-foreground text-xs sm:text-sm text-center mt-4 sm:mt-5">For any questions, feel free to leave them in the <ReferralLink href={AMA_DISCUSSION_URL} className="underline hover:text-primary transition-colors">AMA discussion</ReferralLink> or contact me via email.</div>
             </div>
         </Section>
     )

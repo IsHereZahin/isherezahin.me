@@ -4,8 +4,8 @@ import { quests } from '@/data';
 import { MapPin, Play } from 'lucide-react';
 import { useState } from 'react';
 import BlurImage from './ui/BlurImage';
-import Section from './ui/Section';
 import ExpandableText from './ui/ExpandableText';
+import Section from './ui/Section';
 
 export default function SideQuests() {
     const [selectedMedia, setSelectedMedia] = useState<Record<number, number>>({});
@@ -17,24 +17,24 @@ export default function SideQuests() {
 
     return (
         <Section id="side-quests" animate delay={0.1}>
-            <div className="space-y-24">
+            <div className="space-y-16 sm:space-y-24">
                 {quests.map((quest) => (
                     <div key={quest.id} className="relative">
                         <div className="flex flex-col md:flex-row gap-8 items-start">
                             <div className="md:w-1/4">
                                 <div className="sticky top-8">
-                                    <p className="text-sm text-secondary-foreground uppercase tracking-wider mb-2">{quest.date}</p>
-                                    <h3 className="text-3xl font-bold mb-2">{quest.title}</h3>
-                                    <p className="text-muted-foreground flex items-center gap-2">
-                                        <MapPin className="w-4 h-4" />
+                                    <p className="text-xs sm:text-sm text-muted-foreground hover:text-foreground/80 transition-colors uppercase tracking-wider mb-1 sm:mb-2">{quest.date}</p>
+                                    <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 sm:mb-2 text-foreground">{quest.title}</h3>
+                                    <p className="text-sm sm:text-base text-muted-foreground hover:text-foreground/80 transition-colors flex items-center gap-1.5 sm:gap-2">
+                                        <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                         {quest.location}
                                     </p>
                                 </div>
                             </div>
 
                             <div className="md:w-3/4">
-                                <div className="shadow-feature-card rounded-2xl p-6">
-                                    <div className="text-secondary-foreground leading-relaxed mb-6">
+                                <div className="shadow-feature-card rounded-2xl p-4 sm:p-6 group">
+                                    <div className="text-sm sm:text-base text-muted-foreground group-hover:text-foreground/80 transition-colors leading-relaxed mb-4 sm:mb-6">
                                         <ExpandableText text={quest.description} limit={200} />
                                     </div>
 

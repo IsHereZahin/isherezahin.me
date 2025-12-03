@@ -64,12 +64,12 @@ export default function AboutContent() {
                                 </ImageZoom>
 
                                 {/* Name & Title */}
-                                <div className="mt-6 text-center md:text-left">
-                                    <h2 className="text-2xl font-bold text-foreground">{MY_FULL_NAME}</h2>
-                                    <p className="text-secondary-foreground text-lg">
+                                <div className="mt-4 sm:mt-6 text-center md:text-left">
+                                    <h2 className="text-xl sm:text-2xl font-bold text-foreground">{MY_FULL_NAME}</h2>
+                                    <p className="text-secondary-foreground text-base sm:text-lg">
                                         Software Developer | Frontend Focused
                                     </p>
-                                    <p className="text-secondary-foreground text-sm mt-1">
+                                    <p className="text-muted-foreground text-xs sm:text-sm mt-1">
                                         Khulshi, Chittagong, BD (UTC+6)
                                     </p>
                                 </div>
@@ -78,28 +78,22 @@ export default function AboutContent() {
                     </MotionWrapper>
 
                     {/* Right Column - Philosophy */}
-                    <div className="md:w-3/5 space-y-8 text-lg">
+                    <div className="md:w-3/5 space-y-6 sm:space-y-8 text-sm sm:text-base md:text-lg">
                         <MotionWrapper direction="right" delay={0.2}>
-                            <p className="leading-relaxed">
-                                <span className="text-secondary-foreground">
-                                    I work with the <strong>React & Laravel ecosystem</strong>, building robust web applications, dashboards, and internal tools. I focus on creating intuitive user experiences, clean interfaces, and maintainable code that performs reliably in real-world scenarios.
-                                </span>
+                            <p className="leading-relaxed text-muted-foreground hover:text-foreground/80 transition-colors">
+                                I work with the <strong className="text-foreground">React & Laravel ecosystem</strong>, building robust web applications, dashboards, and internal tools. I focus on creating intuitive user experiences, clean interfaces, and maintainable code that performs reliably in real-world scenarios.
                             </p>
                         </MotionWrapper>
 
                         <MotionWrapper direction="right" delay={0.2}>
-                            <p className="leading-relaxed">
-                                <span className="text-secondary-foreground">
-                                    Beyond coding, I write to teach and help others rethink fundamental concepts through mental models. My goal is to simplify complex ideas, inspire new ways of thinking, and empower developers to build smarter solutions.
-                                </span>
+                            <p className="leading-relaxed text-muted-foreground hover:text-foreground/80 transition-colors">
+                                Beyond coding, I write to teach and help others rethink fundamental concepts through mental models. My goal is to simplify complex ideas, inspire new ways of thinking, and empower developers to build smarter solutions.
                             </p>
                         </MotionWrapper>
 
                         <MotionWrapper direction="right" delay={0.2}>
-                            <p className="leading-relaxed">
-                                <span className="text-secondary-foreground">
-                                    With 2+ years of experience, I leverage tools like <strong>TypeScript, Tailwind CSS, Bootstrap, Figma, Postman, Docker, and Git</strong> to deliver scalable and high-quality software. I pay attention to details because even small improvements can make a significant difference in usability and performance.
-                                </span>
+                            <p className="leading-relaxed text-muted-foreground hover:text-foreground/80 transition-colors">
+                                With 2+ years of experience, I leverage tools like <strong className="text-foreground">TypeScript, Tailwind CSS, Bootstrap, Figma, Postman, Docker, and Git</strong> to deliver scalable and high-quality software. I pay attention to details because even small improvements can make a significant difference in usability and performance.
                             </p>
                         </MotionWrapper>
 

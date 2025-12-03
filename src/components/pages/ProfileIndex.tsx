@@ -53,7 +53,7 @@ export default function ProfileDashboard() {
                     <h2 className="text-2xl font-semibold mb-4">Access Restricted</h2>
                 </MotionWrapper>
                 <MotionWrapper delay={0.4}>
-                    <p className="text-base text-muted-foreground mb-6">
+                    <p className="text-sm sm:text-base text-muted-foreground mb-6">
                         You need to log in to view your profile.
                     </p>
                 </MotionWrapper>
@@ -139,27 +139,27 @@ export default function ProfileDashboard() {
                                     {/* Grid for basic info */}
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="space-y-1">
-                                            <label className="text-sm font-medium text-foreground block">First Name</label>
-                                            <p className="text-base text-foreground truncate">{personalInfo.firstName}</p>
+                                            <label className="text-xs sm:text-sm font-medium text-foreground block">First Name</label>
+                                            <p className="text-sm sm:text-base text-foreground truncate">{personalInfo.firstName}</p>
                                         </div>
                                         <div className="space-y-1">
-                                            <label className="text-sm font-medium text-foreground block">Last Name</label>
-                                            <p className="text-base text-foreground truncate">{personalInfo.lastName}</p>
+                                            <label className="text-xs sm:text-sm font-medium text-foreground block">Last Name</label>
+                                            <p className="text-sm sm:text-base text-foreground truncate">{personalInfo.lastName}</p>
                                         </div>
                                         <div className="space-y-1">
-                                            <label className="text-sm font-medium text-foreground block">Email</label>
-                                            <p className="text-base text-foreground truncate">{personalInfo.email}</p>
+                                            <label className="text-xs sm:text-sm font-medium text-foreground block">Email</label>
+                                            <p className="text-sm sm:text-base text-foreground truncate">{personalInfo.email}</p>
                                         </div>
                                         <div className="space-y-1">
-                                            <label className="text-sm font-medium text-foreground block">Phone</label>
-                                            <p className="text-base text-foreground truncate">{personalInfo.phone}</p>
+                                            <label className="text-xs sm:text-sm font-medium text-foreground block">Phone</label>
+                                            <p className="text-sm sm:text-base text-foreground truncate">{personalInfo.phone}</p>
                                         </div>
                                     </div>
 
                                     {/* Gender */}
                                     <div className="space-y-1">
-                                        <label className="text-sm font-medium text-foreground block">Gender</label>
-                                        <p className="text-base text-foreground">{personalInfo.gender}</p>
+                                        <label className="text-xs sm:text-sm font-medium text-foreground block">Gender</label>
+                                        <p className="text-sm sm:text-base text-foreground">{personalInfo.gender}</p>
                                     </div>
 
                                     {/* Action Button */}

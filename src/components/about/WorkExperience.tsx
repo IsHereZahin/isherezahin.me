@@ -18,7 +18,7 @@ export function WorkExperienceItem({
     logo,
 }: Readonly<WorkExperienceItemProps>) {
     return (
-        <MotionWrapper delay={0.2} className="grid md:grid-cols-[120px,1fr] gap-6 p-6 md:p-8 rounded-2xl shadow-feature-card bg-background transition-all duration-300">
+        <MotionWrapper delay={0.2} className="grid md:grid-cols-[120px,1fr] gap-4 sm:gap-6 p-4 sm:p-6 md:p-8 rounded-2xl shadow-feature-card bg-background transition-all duration-300">
             {/* Timeline / Date */}
             <div className="flex flex-col items-center md:items-start text-center md:text-left">
                 <p className="text-xs uppercase tracking-wide text-muted-foreground">
@@ -27,7 +27,7 @@ export function WorkExperienceItem({
             </div>
 
             {/* Details */}
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2 sm:gap-3">
                 {/* Company + Logo */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
@@ -36,23 +36,23 @@ export function WorkExperienceItem({
                             alt={`${company} logo`}
                             width={32}
                             height={32}
-                            className="w-8 h-8 rounded-md object-contain"
+                            className="w-6 h-6 sm:w-8 sm:h-8 rounded-md object-contain"
                         />
                         <ReferralLink
                             href={companyUrl}
-                            className="text-lg font-semibold text-foreground hover:text-primary transition-colors"
+                            className="text-base sm:text-lg font-semibold text-foreground hover:text-primary transition-colors"
                         >
                             {company}
                         </ReferralLink>
                     </div>
-                    <span className="text-sm text-muted-foreground">{location}</span>
+                    <span className="text-xs sm:text-sm text-muted-foreground">{location}</span>
                 </div>
 
                 {/* Title */}
-                <h3 className="text-xl font-semibold text-foreground">{title}</h3>
+                <h3 className="text-lg sm:text-xl font-semibold text-foreground">{title}</h3>
 
                 {/* Description */}
-                <p className="text-muted-foreground leading-relaxed">{description}</p>
+                <p className="text-sm sm:text-base text-muted-foreground hover:text-foreground/80 transition-colors leading-relaxed">{description}</p>
 
                 {/* Highlights */}
                 <ul className="list-disc pl-0 sm:ml-20 mt-2 sm:mt-5 space-y-2 text-muted-foreground marker:text-secondary-foreground">

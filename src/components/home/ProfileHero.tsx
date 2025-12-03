@@ -19,7 +19,7 @@ export default function ProfileHero() {
                     transition={{ duration: 0.6, ease: "easeOut" }}
                 >
                     {SITE_USER_LOGO && (
-                        <div className="relative size-25 rounded-full overflow-hidden shadow-lg mb-8">
+                        <div className="relative size-20 sm:size-25 rounded-full overflow-hidden shadow-lg mb-6 sm:mb-8">
                             <ImageZoom>
                                 <BlurImage
                                     src={SITE_USER_LOGO}
@@ -27,7 +27,7 @@ export default function ProfileHero() {
                                     className="w-full h-full object-cover"
                                     width={500}
                                     height={500}
-                                    
+
                                 />
                             </ImageZoom>
                         </div>
@@ -42,7 +42,7 @@ export default function ProfileHero() {
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.6, ease: "easeOut" }}
                 >
-                    <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-4">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-3 sm:mb-4">
                         Hey, I’m <span className="text-primary">{MY_NAME}</span>. <br />
                         Coder & Thinker
                     </h1>
@@ -56,8 +56,8 @@ export default function ProfileHero() {
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.6, ease: "easeOut" }}
                 >
-                    <p className="max-w-xl text-base text-muted-foreground mb-6">
-                        I work with <b>React</b> & <b>Laravel</b> Ecosystem, and write to teach people
+                    <p className="max-w-xl text-sm sm:text-base text-muted-foreground hover:text-foreground/80 transition-colors mb-4 sm:mb-6 leading-relaxed">
+                        I work with <b className="text-foreground">React</b> & <b className="text-foreground">Laravel</b> Ecosystem, and write to teach people
                         how to rebuild and redefine fundamental concepts through mental models.
                     </p>
                 </MotionWrapper>
@@ -70,7 +70,7 @@ export default function ProfileHero() {
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.6, ease: "easeOut" }}
                 >
-                    <div className="mt-6 sm:mt-8 flex gap-2 sm:gap-4">
+                    <div className="mt-4 sm:mt-8 flex gap-2 sm:gap-4 flex-wrap">
                         <Button
                             href="#about-me"
                             text="Learn More"

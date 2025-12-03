@@ -11,7 +11,7 @@ export default function Projects({ projects }: Readonly<ProjectsProps>) {
     return (
         <Section id="projects" animate={true}>
             <SectionHeader tag="03" title="Projects" subtitle="A select few that I&apos;ve shipped in the past few months" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12">
                 {projects.slice(0, 4).map((project) => (
                     <Project key={project.id} {...project} />
                 ))}

@@ -20,8 +20,8 @@ export default function ProjectsIndex() {
                     className="mb-4"
                 />
             </MotionWrapper>
-            <div className="space-y-8 border-t border-border/30">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div className="space-y-6 sm:space-y-8 border-t border-border/30">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12">
                     {projects.map((project) => (
                         <Project key={project.id} {...project} />
                     ))}

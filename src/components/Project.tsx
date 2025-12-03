@@ -22,7 +22,7 @@ export default function Project(project: Readonly<ProjectType>) {
 
     return (
         <MotionWrapper direction="bottom" delay={0.2}>
-            <article className="space-y-4 group relative rounded-lg overflow-hidden p-6">
+            <article className="space-y-3 sm:space-y-4 group relative rounded-lg overflow-hidden p-4 sm:p-6">
                 {/* Image Wrapper */}
                 <Frame>
                     <BlurImage
@@ -35,15 +35,15 @@ export default function Project(project: Readonly<ProjectType>) {
                 {/* Content */}
                 <div>
                     <header className="flex items-center gap-2 mb-2">
-                        <h3 className="text-lg font-semibold text-foreground">{project.title}</h3>
+                        <h3 className="text-base sm:text-lg font-semibold text-foreground">{project.title}</h3>
                         {project.status && (
-                            <span className="text-base text-secondary-foreground">
+                            <span className="text-xs sm:text-sm text-muted-foreground">
                                 {project.status ? "In Progress" : ""}
                             </span>
                         )}
                     </header>
 
-                    <p className="text-font-base leading-relaxed text-secondary-foreground">
+                    <p className="text-sm sm:text-base leading-relaxed text-muted-foreground group-hover:text-foreground/80 transition-colors">
                         {project.shortDescription}
                     </p>
 

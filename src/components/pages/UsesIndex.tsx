@@ -112,7 +112,7 @@ export default function UsesIndex() {
                                 <p className="text-sm sm:text-base text-muted-foreground"> {/* Changed from text-base */}
                                     27-inch IPS, 5120 x 2880
                                 </p>
-                                <p className="text-xs text-muted-foreground max-w-xs group-hover:text-foreground/80"> {/* Unchanged, already xs */}
+                                <p className="text-sm sm:text-base text-muted-foreground max-w-xs group-hover:text-foreground/80 transition-colors">
                                     Pixel-perfect density for interface design. The matte finish helps with glare during the day.
                                 </p>
                             </div>
@@ -136,7 +136,7 @@ export default function UsesIndex() {
                                 <h3 className="text-sm sm:text-base font-semibold text-foreground"> {/* Changed from text-base */}
                                     Samsung T7
                                 </h3>
-                                <p className="text-xs text-muted-foreground group-hover:text-foreground/80"> {/* Unchanged */}
+                                <p className="text-sm sm:text-base text-muted-foreground group-hover:text-foreground/80 transition-colors">
                                     2TB Shield Edition
                                 </p>
                             </div>
@@ -151,7 +151,7 @@ export default function UsesIndex() {
                                 <h3 className="text-sm sm:text-base font-semibold text-foreground"> {/* Changed from text-base */}
                                     Unifi Dream
                                 </h3>
-                                <p className="text-xs text-muted-foreground group-hover:text-foreground/80"> {/* Unchanged */}
+                                <p className="text-sm sm:text-base text-muted-foreground group-hover:text-foreground/80 transition-colors">
                                     Router SE
                                 </p>
                             </div>

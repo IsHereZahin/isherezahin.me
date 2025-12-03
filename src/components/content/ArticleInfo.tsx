@@ -22,7 +22,7 @@ const NumberFlow = ({ value }: { value: number }) => (
 
 export default function ArticleInfo({ viewCount = 0, commentCount = 0, formattedDate = "null" }: Readonly<ArticleInfoProps>) {
   return (
-    <div className="max-w-3xl mx-auto mt-16 px-4 sm:px-8 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+    <div className="max-w-3xl mx-auto mt-10 sm:mt-16 px-4 sm:px-8 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-xs sm:text-sm">
       <div className="space-y-1 md:mx-auto">
         <div className="text-muted-foreground">Written by</div>
         <Link

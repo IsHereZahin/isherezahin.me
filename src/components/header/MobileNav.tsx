@@ -48,10 +48,10 @@ export default function MobileNav({ isOpen, onClose, buttonRef, links }: Readonl
                             <Link
                                 href={link.href}
                                 onClick={onClose}
-                                className="relative cursor-pointer rounded-sm px-2 py-1.5 text-sm text-foreground flex items-center gap-4 w-full hover:bg-foreground/30"
+                                className="relative cursor-pointer rounded-sm px-2 py-1.5 text-xs sm:text-sm text-foreground flex items-center gap-3 sm:gap-4 w-full hover:bg-foreground/30 transition-colors"
                             >
                                 {link.icon}
-                                <div>{link.key}</div>
+                                <span>{link.key}</span>
                             </Link>
                         </li>
                     ))}
