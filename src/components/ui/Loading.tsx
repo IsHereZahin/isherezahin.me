@@ -198,3 +198,134 @@ export function CommentsLoading({ count = 3 }: { readonly count?: number }) {
         </section>
     );
 }
+
+export function ProjectDetailsLoading() {
+    return (
+        <section className="px-6 pt-16 max-w-[1000px] mx-auto">
+            <div className="space-y-8">
+                {/* Category Badge */}
+                <div className="text-center">
+                    <Skeleton className="h-6 w-24 mx-auto rounded-full" />
+                </div>
+
+                {/* Title + Subtitle */}
+                <div className="text-center space-y-4">
+                    <Skeleton className="h-12 w-96 mx-auto rounded-lg" />
+                    <Skeleton className="h-5 w-80 mx-auto rounded" />
+                </div>
+
+                {/* Project Meta Info */}
+                <div className="flex flex-wrap items-center justify-center gap-6">
+                    <div className="flex items-center gap-2">
+                        <Skeleton className="h-4 w-4 rounded" />
+                        <Skeleton className="h-4 w-24 rounded" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Skeleton className="h-4 w-4 rounded" />
+                        <Skeleton className="h-4 w-20 rounded" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Skeleton className="h-4 w-4 rounded" />
+                        <Skeleton className="h-4 w-28 rounded" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Skeleton className="h-2 w-2 rounded-full" />
+                        <Skeleton className="h-4 w-20 rounded" />
+                    </div>
+                </div>
+
+                {/* Project Image */}
+                <Skeleton className="aspect-[16/9] w-full rounded-2xl mt-12" />
+
+                {/* Content Area */}
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 mt-12">
+                    {/* Main Content */}
+                    <div className="lg:col-span-3 space-y-8">
+                        {/* Action Buttons */}
+                        <div className="flex gap-3">
+                            <Skeleton className="h-10 w-32 rounded-lg" />
+                            <Skeleton className="h-10 w-28 rounded-lg" />
+                        </div>
+
+                        {/* Tech Stack Tags */}
+                        <div className="flex flex-wrap gap-2">
+                            {[...Array(5)].map((_, i) => (
+                                <Skeleton key={i} className="h-6 w-20 rounded-full" />
+                            ))}
+                        </div>
+
+                        {/* Content Sections */}
+                        <div className="space-y-6">
+                            <Skeleton className="h-8 w-32 rounded-lg" />
+                            {[...Array(6)].map((_, i) => (
+                                <Skeleton
+                                    key={i}
+                                    className={`h-4 rounded ${i % 3 === 0 ? "w-full" : i % 3 === 1 ? "w-11/12" : "w-9/12"}`}
+                                />
+                            ))}
+                        </div>
+
+                        <div className="space-y-6 mt-8">
+                            <Skeleton className="h-8 w-40 rounded-lg" />
+                            {[...Array(4)].map((_, i) => (
+                                <Skeleton key={i} className="h-4 w-full rounded" />
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Sidebar */}
+                    <aside className="lg:col-span-1">
+                        <Skeleton className="h-6 w-32 mb-6 rounded-lg" />
+                        <div className="space-y-3">
+                            {[...Array(4)].map((_, i) => (
+                                <Skeleton key={i} className="h-4 w-full rounded" />
+                            ))}
+                        </div>
+
+                        {/* Like Button */}
+                        <div className="mt-8">
+                            <Skeleton className="h-12 w-32 rounded-xl" />
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+export function ProjectsLoading({ count = 4 }: { readonly count?: number }) {
+    return (
+        <section className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12">
+                {Array.from({ length: count }).map((_, idx) => (
+                    <article
+                        key={idx + 1}
+                        className="space-y-4 group relative rounded-lg overflow-hidden p-4 sm:p-6"
+                    >
+                        {/* Project Image */}
+                        <Skeleton className="aspect-[16/10] w-full rounded-lg" />
+
+                        {/* Content */}
+                        <div className="space-y-3">
+                            {/* Title and Status */}
+                            <div className="flex items-center gap-2">
+                                <Skeleton className="h-6 w-48 rounded" />
+                                <Skeleton className="h-4 w-20 rounded" />
+                            </div>
+
+                            {/* Description */}
+                            <div className="space-y-2">
+                                <Skeleton className="h-4 w-full rounded" />
+                                <Skeleton className="h-4 w-11/12 rounded" />
+                                <Skeleton className="h-4 w-4/5 rounded" />
+                            </div>
+
+                            {/* View Project Link */}
+                            <Skeleton className="h-6 w-24 rounded mt-4" />
+                        </div>
+                    </article>
+                ))}
+            </div>
+        </section>
+    );
+}

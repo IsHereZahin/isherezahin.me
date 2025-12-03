@@ -28,3 +28,42 @@ export interface BlogDocument {
     imageSrc: string;
     content: string;
 }
+
+export interface Project {
+    id: string;
+    date: string;
+    views: number;
+    likes: number;
+    title: string;
+    slug: string;
+    excerpt: string;
+    categories: string;
+    company: string;
+    duration: string;
+    status: string;
+    tags: string[];
+    imageSrc: string;
+    liveUrl?: string;
+    githubUrl?: string;
+    content: string;
+}
+
+export interface ProjectDocument {
+    _id: ObjectId;
+    date: Date;
+    views: number;
+    likes: number;
+    type: string;
+    title: string;
+    slug: string;
+    excerpt: string;
+    categories: string;
+    company: string;
+    duration: string;
+    status: string;
+    tags: string[];
+    imageSrc: string;
+    liveUrl?: string;
+    githubUrl?: string;
+    content: string;
+}

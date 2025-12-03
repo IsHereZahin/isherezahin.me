@@ -19,7 +19,13 @@ export default function Blogs() {
         staleTime: 1000 * 60 * 5,
     });
 
-    if (isError) return <div>Error: {error instanceof Error ? error.message : "Something went wrong"}</div>;
+    // Don't render anything if there's an error or no blogs
+    if (isError) return null;
+
+    // Don't render if loading is complete and there are no blogs
+    if (!isLoading && (!data?.blogs || data.blogs.length === 0)) {
+        return null;
+    }
 
     return (
         <Section id="blogs" animate={true}>

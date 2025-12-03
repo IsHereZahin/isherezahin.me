@@ -1,21 +1,9 @@
 import { getRandomTheme } from "@/utils";
+import { Project as ProjectType } from "@/utils/types";
 import MotionWrapper from "./motion/MotionWrapper";
 import BlurImage from "./ui/BlurImage";
 import Frame from "./ui/Frame";
 import StylishLink from "./ui/StylishLink";
-
-export interface ProjectType {
-    id: number;
-    date: string;
-    title: string;
-    slug: string;
-    status: boolean;
-    shortDescription: string;
-    image: string;
-    url: string;
-    categories: string;
-    tags: string[];
-}
 
 export default function Project(project: Readonly<ProjectType>) {
     const theme = getRandomTheme();
@@ -26,7 +14,7 @@ export default function Project(project: Readonly<ProjectType>) {
                 {/* Image Wrapper */}
                 <Frame>
                     <BlurImage
-                        src={project.image}
+                        src={project.imageSrc}
                         alt={project.title}
                         className="object-cover"
                     />
@@ -36,15 +24,15 @@ export default function Project(project: Readonly<ProjectType>) {
                 <div>
                     <header className="flex items-center gap-2 mb-2">
                         <h3 className="text-base sm:text-lg font-semibold text-foreground">{project.title}</h3>
-                        {project.status && (
+                        {project.status === "in-progress" && (
                             <span className="text-xs sm:text-sm text-muted-foreground">
-                                {project.status ? "In Progress" : ""}
+                                In Progress
                             </span>
                         )}
                     </header>
 
                     <p className="text-sm sm:text-base leading-relaxed text-muted-foreground group-hover:text-foreground/80 transition-colors">
-                        {project.shortDescription}
+                        {project.excerpt}
                     </p>
 
                     <StylishLink

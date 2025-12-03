@@ -1,7 +1,12 @@
-import ComingSoon from "@/components/ComingSoon";
+// src/app/(main)/projects/[slug]/page.tsx
+import ProjectDetailsIndex from "@/components/pages/ProjectDetailsIndex";
 
-export default function ProjectDetails() {
-    return (
-        <ComingSoon />
-    )
+interface ProjectDetailsPageProps {
+    params: { slug: string };
+}
+
+export default async function ProjectDetailsPage({ params }: Readonly<ProjectDetailsPageProps>) {
+    const { slug } = await params;
+
+    return <ProjectDetailsIndex slug={slug} />;
 }
