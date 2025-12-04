@@ -13,5 +13,9 @@ export default function AdminLayout({ children }: { readonly children: React.Rea
     </MainLayout>
   );
 
-  return <MainLayout adminPage={true}>{children}</MainLayout>;
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {children}
+    </div>
+  );
 }

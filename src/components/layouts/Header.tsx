@@ -5,26 +5,26 @@
 
 "use client";
 
-import Link from "next/link";
 import { Menu, X } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { ADMIN_LINKS, HEADER_LINKS } from "@/config/links";
+import { HEADER_LINKS } from "@/config/links";
 
 import HeaderActions from "@/components/header/HeaderActions";
 import MobileNav from "@/components/header/MobileNav";
 import MotionWrapper from "@/components/motion/MotionWrapper";
 import Logo from "@/components/ui/Logo";
 
-export default function Header({ adminPage }: Readonly<{ adminPage?: boolean }>) {
+export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isVisible, setIsVisible] = useState(true);
     const lastScrollY = useRef(0);
     const buttonRef = useRef<HTMLButtonElement>(null);
     const pathname = usePathname();
 
-    const links = adminPage ? ADMIN_LINKS : HEADER_LINKS;
+    const links = HEADER_LINKS;
 
     const isActiveLink = (href: string) => {
         if (href === "/") return pathname === "/";
@@ -68,8 +68,8 @@ export default function Header({ adminPage }: Readonly<{ adminPage?: boolean }>)
                                         <Link
                                             href={link.href}
                                             className={`rounded-sm px-3 py-2 text-sm font-medium transition-colors capitalize ${isActive
-                                                    ? "text-foreground"
-                                                    : "text-muted-foreground hover:text-foreground"
+                                                ? "text-foreground"
+                                                : "text-muted-foreground hover:text-foreground"
                                                 }`}
                                         >
                                             {link.key}
@@ -80,7 +80,7 @@ export default function Header({ adminPage }: Readonly<{ adminPage?: boolean }>)
                         </ul>
                     </nav>
 
-                    <HeaderActions adminPage={adminPage} />
+                    <HeaderActions />
 
                     <button
                         ref={buttonRef}
