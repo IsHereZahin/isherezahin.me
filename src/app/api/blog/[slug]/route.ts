@@ -1,8 +1,8 @@
 // src/app/api/blog/[slug]/route.ts
-import { auth } from '@/auth';
 import { BlogModel } from '@/database/models/blog-model';
 import dbConnect from '@/database/services/mongo';
-import { MY_MAIL } from '@/lib/constants';
+import { checkIsAdmin } from '@/lib/auth-utils';
+import { deleteCloudinaryImage } from '@/lib/cloudinary-utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest, context: { params: Promise<{ slug: string }> }) {
@@ -12,6 +12,14 @@ export async function GET(req: NextRequest, context: { params: Promise<{ slug: s
 
         const blog = await BlogModel.findOne({ slug }).lean();
         if (!blog) {
+            return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
+        }
+
+        // Check if user is admin
+        const isAdmin = await checkIsAdmin();
+
+        // If blog is unpublished and user is not admin, return 404
+        if (!(blog as any).published && !isAdmin) {
             return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
         }
 
@@ -26,8 +34,7 @@ export async function PUT(req: NextRequest, context: { params: Promise<{ slug: s
     await dbConnect();
     try {
         // Check if user is admin
-        const session = await auth();
-        const isAdmin = session?.user?.email?.toLowerCase() === MY_MAIL.toLowerCase();
+        const isAdmin = await checkIsAdmin();
 
         if (!isAdmin) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -92,8 +99,7 @@ export async function DELETE(req: NextRequest, context: { params: Promise<{ slug
     await dbConnect();
     try {
         // Check if user is admin
-        const session = await auth();
-        const isAdmin = session?.user?.email?.toLowerCase() === MY_MAIL.toLowerCase();
+        const isAdmin = await checkIsAdmin();
 
         if (!isAdmin) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -105,6 +111,11 @@ export async function DELETE(req: NextRequest, context: { params: Promise<{ slug
 
         if (!deletedBlog) {
             return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
+        }
+
+        // Delete associated image from Cloudinary
+        if (deletedBlog.imageSrc) {
+            await deleteCloudinaryImage(deletedBlog.imageSrc);
         }
 
         return NextResponse.json({ message: 'Blog deleted successfully' }, { status: 200 });

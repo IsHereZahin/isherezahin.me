@@ -3,6 +3,7 @@ import { auth } from '@/auth';
 import { BlogLikeModel } from '@/database/models/blog-like-model';
 import { BlogModel } from '@/database/models/blog-model';
 import dbConnect from '@/database/services/mongo';
+import { checkIsAdmin } from '@/lib/auth-utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 // Type for lean BlogLike queries
@@ -29,10 +30,19 @@ export async function GET( req: NextRequest, context: { params: Promise<{ slug: 
         // Get user session (if authenticated)
         const session = await auth();
         const userEmail = session?.user?.email || null;
+        const isAdmin = await checkIsAdmin();
 
         // Get blog total likes
-        const blog = await BlogModel.findOne({ slug }, 'likes').lean<{ likes?: number }>();
+        const blog = await BlogModel.findOne({ slug }, 'likes published').lean<{ likes?: number; published?: boolean }>();
         if (!blog) {
+            return NextResponse.json(
+                { error: 'Blog not found' },
+                { status: 404 }
+            );
+        }
+
+        // If blog is unpublished and user is not admin, return 404
+        if (!blog.published && !isAdmin) {
             return NextResponse.json(
                 { error: 'Blog not found' },
                 { status: 404 }
@@ -93,6 +103,17 @@ export async function POST( req: NextRequest, context: { params: Promise<{ slug:
         // Check if blog exists
         const blog = await BlogModel.findOne({ slug });
         if (!blog) {
+            return NextResponse.json(
+                { error: 'Blog not found' },
+                { status: 404 }
+            );
+        }
+
+        // Check if user is admin
+        const isAdmin = await checkIsAdmin();
+
+        // If blog is unpublished and user is not admin, return 404
+        if (!blog.published && !isAdmin) {
             return NextResponse.json(
                 { error: 'Blog not found' },
                 { status: 404 }

@@ -233,7 +233,7 @@ export default function ProfileDashboard() {
                                         </div>
                                         <button
                                             onClick={() => toggleVisibility(setShowOnDeveloperPage)}
-                                            className={`p-2 rounded-full transition-colors ${showOnDeveloperPage
+                                            className={`p-2 rounded-full transition-colors cursor-pointer ${showOnDeveloperPage
                                                 ? "bg-secondary text-foreground hover:bg-secondary/90"
                                                 : "bg-muted text-muted-foreground hover:bg-muted/80"
                                                 }`}
@@ -253,7 +253,7 @@ export default function ProfileDashboard() {
                                         </div>
                                         <button
                                             onClick={() => toggleVisibility(setShowContactInfo)}
-                                            className={`p-2 rounded-full transition-colors ${showContactInfo
+                                            className={`p-2 rounded-full transition-colors cursor-pointer ${showContactInfo
                                                 ? "bg-secondary text-foreground hover:bg-secondary/90"
                                                 : "bg-muted text-muted-foreground hover:bg-muted/80"
                                                 }`}
@@ -273,7 +273,7 @@ export default function ProfileDashboard() {
                                         </div>
                                         <button
                                             onClick={() => toggleVisibility(setShowBioInfo)}
-                                            className={`p-2 rounded-full transition-colors ${showBioInfo
+                                            className={`p-2 rounded-full transition-colors cursor-pointer ${showBioInfo
                                                 ? "bg-secondary text-foreground hover:bg-secondary/90"
                                                 : "bg-muted text-muted-foreground hover:bg-muted/80"
                                                 }`}

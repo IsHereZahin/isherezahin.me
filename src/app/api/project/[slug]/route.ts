@@ -1,8 +1,8 @@
 // src/app/api/project/[slug]/route.ts
-import { auth } from '@/auth';
 import { ProjectModel } from '@/database/models/project-model';
 import dbConnect from '@/database/services/mongo';
-import { MY_MAIL } from '@/lib/constants';
+import { checkIsAdmin } from '@/lib/auth-utils';
+import { deleteCloudinaryImage } from '@/lib/cloudinary-utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest, context: { params: Promise<{ slug: string }> }) {
@@ -12,6 +12,14 @@ export async function GET(req: NextRequest, context: { params: Promise<{ slug: s
 
         const project = await ProjectModel.findOne({ slug }).lean();
         if (!project) {
+            return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+        }
+
+        // Check if user is admin
+        const isAdmin = await checkIsAdmin();
+
+        // If project is unpublished and user is not admin, return 404
+        if (!(project as any).published && !isAdmin) {
             return NextResponse.json({ error: 'Project not found' }, { status: 404 });
         }
 
@@ -47,8 +55,7 @@ export async function PUT(req: NextRequest, context: { params: Promise<{ slug: s
     await dbConnect();
     try {
         // Check if user is admin
-        const session = await auth();
-        const isAdmin = session?.user?.email?.toLowerCase() === MY_MAIL.toLowerCase();
+        const isAdmin = await checkIsAdmin();
 
         if (!isAdmin) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -122,8 +129,7 @@ export async function DELETE(req: NextRequest, context: { params: Promise<{ slug
     await dbConnect();
     try {
         // Check if user is admin
-        const session = await auth();
-        const isAdmin = session?.user?.email?.toLowerCase() === MY_MAIL.toLowerCase();
+        const isAdmin = await checkIsAdmin();
 
         if (!isAdmin) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -135,6 +141,11 @@ export async function DELETE(req: NextRequest, context: { params: Promise<{ slug
 
         if (!deletedProject) {
             return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+        }
+
+        // Delete associated image from Cloudinary
+        if (deletedProject.imageSrc) {
+            await deleteCloudinaryImage(deletedProject.imageSrc);
         }
 
         return NextResponse.json({ message: 'Project deleted successfully' }, { status: 200 });

@@ -57,8 +57,14 @@ export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
     }, [data]);
 
     const handleDelete = async () => {
-        await deleteBlog(slug);
-        toast.success("Blog deleted successfully!");
+        await toast.promise(
+            deleteBlog(slug),
+            {
+                loading: "Deleting blog...",
+                success: "Blog deleted successfully!",
+                error: "Failed to delete blog",
+            }
+        );
         queryClient.invalidateQueries({ queryKey: ["blogs"] });
         router.push("/blogs");
     };
@@ -88,7 +94,7 @@ export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
                         <div className="absolute right-0 top-0">
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <button className="p-2 rounded-full hover:bg-muted transition-colors">
+                                    <button className="p-2 rounded-full hover:bg-muted transition-colors cursor-pointer">
                                         <MoreVertical className="h-5 w-5 text-muted-foreground" />
                                     </button>
                                 </DropdownMenuTrigger>

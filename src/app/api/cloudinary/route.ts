@@ -1,14 +1,13 @@
 // src/app/api/cloudinary/route.ts
-import { auth } from '@/auth';
-import { CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_CLOUD_NAME, MY_MAIL } from '@/lib/constants';
+import { checkIsAdmin } from '@/lib/auth-utils';
+import { CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_CLOUD_NAME } from '@/lib/constants';
 import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
 // Upload image to Cloudinary (signed upload)
 export async function POST(req: NextRequest) {
     try {
-        const session = await auth();
-        const isAdmin = session?.user?.email?.toLowerCase() === MY_MAIL.toLowerCase();
+        const isAdmin = await checkIsAdmin();
         if (!isAdmin) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
@@ -72,8 +71,7 @@ export async function POST(req: NextRequest) {
 // Delete image from Cloudinary
 export async function DELETE(req: NextRequest) {
     try {
-        const session = await auth();
-        const isAdmin = session?.user?.email?.toLowerCase() === MY_MAIL.toLowerCase();
+        const isAdmin = await checkIsAdmin();
         if (!isAdmin) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }

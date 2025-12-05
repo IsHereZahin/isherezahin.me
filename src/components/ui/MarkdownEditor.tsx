@@ -52,7 +52,7 @@ export default function MarkdownEditor({
                     <button
                         type="button"
                         onClick={() => setShowPreview((p) => !p)}
-                        className={`rounded-md px-3 py-1.5 text-xs font-medium transition-all ${showPreview
+                        className={`rounded-md px-3 py-1.5 text-xs font-medium transition-all cursor-pointer ${showPreview
                             ? "bg-foreground text-background"
                             : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
                             }`}

@@ -60,8 +60,14 @@ export default function ProjectDetailsIndex({ slug }: { readonly slug: string })
     }, [data]);
 
     const handleDelete = async () => {
-        await deleteProject(slug);
-        toast.success("Project deleted successfully!");
+        await toast.promise(
+            deleteProject(slug),
+            {
+                loading: "Deleting project...",
+                success: "Project deleted successfully!",
+                error: "Failed to delete project",
+            }
+        );
         queryClient.invalidateQueries({ queryKey: ["projects"] });
         router.push("/projects");
     };
@@ -92,7 +98,7 @@ export default function ProjectDetailsIndex({ slug }: { readonly slug: string })
                         <div className="absolute right-0 top-0">
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <button className="p-2 rounded-full hover:bg-muted transition-colors">
+                                    <button className="p-2 rounded-full hover:bg-muted transition-colors cursor-pointer">
                                         <MoreVertical className="h-5 w-5 text-muted-foreground" />
                                     </button>
                                 </DropdownMenuTrigger>
@@ -141,37 +147,35 @@ export default function ProjectDetailsIndex({ slug }: { readonly slug: string })
             </Section>
 
             <Section id="project_content">
-                <div className="relative flex flex-col lg:flex-row">
-                    <div className="flex flex-col lg:flex-row gap-12 w-full">
-                        <div className="flex-1">
-                            <div className="flex flex-wrap gap-3 mb-8">
-                                {data.liveUrl && (
-                                    <ReferralLink href={data.liveUrl}>
-                                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-foreground text-primary-foreground hover:bg-foreground/80 transition-colors font-medium cursor-pointer">
-                                            <Globe className="w-4 h-4" /><span>Visit Website</span><ExternalLink className="w-3 h-3 opacity-80" />
-                                        </div>
-                                    </ReferralLink>
-                                )}
-                                {data.githubUrl && (
-                                    <ReferralLink href={data.githubUrl}>
-                                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-muted text-foreground hover:bg-muted/80 transition-colors font-medium cursor-pointer">
-                                            <Github className="w-4 h-4" /><span>Source Code</span><ExternalLink className="w-3 h-3 opacity-80" />
-                                        </div>
-                                    </ReferralLink>
-                                )}
-                            </div>
-
-                            <div className="flex flex-wrap gap-2 mb-8">
-                                {data.tags.map((tech: string, index: number) => (
-                                    <Badge key={index + 1} variant="secondary" className="text-xs sm:text-sm">{tech}</Badge>
-                                ))}
-                            </div>
-
-                            <MarkdownPreview content={data.content} />
+                <div className="relative flex flex-col lg:flex-row lg:items-start gap-12 w-full">
+                    <div className="flex-1">
+                        <div className="flex flex-wrap gap-3 mb-8">
+                            {data.liveUrl && (
+                                <ReferralLink href={data.liveUrl}>
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-foreground text-primary-foreground hover:bg-foreground/80 transition-colors font-medium cursor-pointer">
+                                        <Globe className="w-4 h-4" /><span>Visit Website</span><ExternalLink className="w-3 h-3 opacity-80" />
+                                    </div>
+                                </ReferralLink>
+                            )}
+                            {data.githubUrl && (
+                                <ReferralLink href={data.githubUrl}>
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-muted text-foreground hover:bg-muted/80 transition-colors font-medium cursor-pointer">
+                                        <Github className="w-4 h-4" /><span>Source Code</span><ExternalLink className="w-3 h-3 opacity-80" />
+                                    </div>
+                                </ReferralLink>
+                            )}
                         </div>
 
-                        <TableOfContents tocItems={tocItems} showMobileTOC={showTOC} setShowMobileTOC={setShowTOC} slug={slug} title={data.title} type="project" />
+                        <div className="flex flex-wrap gap-2 mb-8">
+                            {data.tags.map((tech: string, index: number) => (
+                                <Badge key={index + 1} variant="secondary" className="text-xs sm:text-sm">{tech}</Badge>
+                            ))}
+                        </div>
+
+                        <MarkdownPreview content={data.content} />
                     </div>
+
+                    <TableOfContents tocItems={tocItems} showMobileTOC={showTOC} setShowMobileTOC={setShowTOC} slug={slug} title={data.title} type="project" />
                 </div>
                 <div className="block lg:hidden">
                     <LikeButton slug={slug} type="project" />
@@ -183,14 +187,16 @@ export default function ProjectDetailsIndex({ slug }: { readonly slug: string })
             </button>
 
             {/* Edit Modal */}
-            {isAdmin && data && (
-                <EditProjectModal
-                    open={isEditOpen}
-                    onOpenChange={setIsEditOpen}
-                    project={{ ...data, id: data._id?.toString() || data.id, date: data.date?.toString() || data.date, published: data.published ?? true }}
-                    onSuccess={handleEditSuccess}
-                />
-            )}
+            {
+                isAdmin && data && (
+                    <EditProjectModal
+                        open={isEditOpen}
+                        onOpenChange={setIsEditOpen}
+                        project={{ ...data, id: data._id?.toString() || data.id, date: data.date?.toString() || data.date, published: data.published ?? true }}
+                        onSuccess={handleEditSuccess}
+                    />
+                )
+            }
 
             {/* Delete Confirmation */}
             <DeleteConfirmDialog

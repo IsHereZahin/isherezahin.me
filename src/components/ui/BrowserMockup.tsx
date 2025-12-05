@@ -50,7 +50,7 @@ export function BrowserMockup({
                             <button
                                 type="button"
                                 onClick={handleUrlClick}
-                                className="flex-1 truncate text-sm text-secondary-foreground hover:text-foreground transition-colors text-left"
+                                className="flex-1 truncate text-sm text-secondary-foreground hover:text-foreground transition-colors text-left cursor-pointer"
                             >
                                 {displayUrl}
                             </button>

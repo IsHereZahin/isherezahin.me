@@ -4,7 +4,7 @@ import { DecorativeBlobBottom, DecorativeBlobTop, Hello } from "@/components/ui"
 
 export default function MainLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
-        <div className="flex flex-col min-h-screen relative selection:bg-primary/20 selection:text-primary overflow-hidden">
+        <div className="flex flex-col min-h-screen relative selection:bg-primary/20 selection:text-primary">
             <Hello />
             <Header />
             <DecorativeBlobTop />

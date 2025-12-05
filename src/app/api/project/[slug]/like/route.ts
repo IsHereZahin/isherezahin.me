@@ -3,6 +3,7 @@ import { auth } from '@/auth';
 import { ProjectLikeModel } from '@/database/models/project-like-model';
 import { ProjectModel } from '@/database/models/project-model';
 import dbConnect from '@/database/services/mongo';
+import { checkIsAdmin } from '@/lib/auth-utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 // Type for lean ProjectLike queries
@@ -29,10 +30,19 @@ export async function GET(req: NextRequest, context: { params: Promise<{ slug: s
         // Get user session (if authenticated)
         const session = await auth();
         const userEmail = session?.user?.email || null;
+        const isAdmin = await checkIsAdmin();
 
         // Get project total likes
-        const project = await ProjectModel.findOne({ slug }, 'likes').lean<{ likes?: number }>();
+        const project = await ProjectModel.findOne({ slug }, 'likes published').lean<{ likes?: number; published?: boolean }>();
         if (!project) {
+            return NextResponse.json(
+                { error: 'Project not found' },
+                { status: 404 }
+            );
+        }
+
+        // If project is unpublished and user is not admin, return 404
+        if (!project.published && !isAdmin) {
             return NextResponse.json(
                 { error: 'Project not found' },
                 { status: 404 }
@@ -93,6 +103,17 @@ export async function POST(req: NextRequest, context: { params: Promise<{ slug: 
         // Check if project exists
         const project = await ProjectModel.findOne({ slug });
         if (!project) {
+            return NextResponse.json(
+                { error: 'Project not found' },
+                { status: 404 }
+            );
+        }
+
+        // Check if user is admin
+        const isAdmin = await checkIsAdmin();
+
+        // If project is unpublished and user is not admin, return 404
+        if (!project.published && !isAdmin) {
             return NextResponse.json(
                 { error: 'Project not found' },
                 { status: 404 }

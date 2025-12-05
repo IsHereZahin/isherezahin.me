@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, Trash2 } from "lucide-react";
+import { AlertTriangle, Trash2, Loader2 } from "lucide-react";
 import { useState } from "react";
 import {
     AlertDialog,
@@ -100,7 +100,12 @@ export default function ConfirmDialog({
                         disabled={isLoading}
                         className={config.buttonClass}
                     >
-                        {isLoading ? "Processing..." : confirmText}
+                        {isLoading ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Deleting...
+                            </>
+                        ) : confirmText}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

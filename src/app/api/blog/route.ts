@@ -1,8 +1,7 @@
 // src/app/api/blog/route.ts
-import { auth } from '@/auth';
 import { BlogModel } from '@/database/models/blog-model';
 import dbConnect from '@/database/services/mongo';
-import { MY_MAIL } from '@/lib/constants';
+import { checkIsAdmin } from '@/lib/auth-utils';
 import { Blog, BlogDocument } from '@/utils/types';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -16,8 +15,7 @@ export async function GET(req: NextRequest) {
         const skip = (page - 1) * limit;
 
         // Check if user is admin
-        const session = await auth();
-        const isAdmin = session?.user?.email?.toLowerCase() === MY_MAIL.toLowerCase();
+        const isAdmin = await checkIsAdmin();
 
         // Build query - non-admin users only see published blogs
         const query = isAdmin ? {} : { published: true };
@@ -72,8 +70,7 @@ export async function POST(req: NextRequest) {
     await dbConnect();
     try {
         // Check if user is admin
-        const session = await auth();
-        const isAdmin = session?.user?.email?.toLowerCase() === MY_MAIL.toLowerCase();
+        const isAdmin = await checkIsAdmin();
 
         if (!isAdmin) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

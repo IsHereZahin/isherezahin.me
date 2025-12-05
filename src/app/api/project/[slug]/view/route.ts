@@ -1,6 +1,7 @@
 // src/app/api/project/[slug]/view/route.ts
 import { ProjectModel } from '@/database/models/project-model';
 import dbConnect from '@/database/services/mongo';
+import { checkIsAdmin } from '@/lib/auth-utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest, context: { params: Promise<{ slug: string }> }) {
@@ -9,6 +10,26 @@ export async function POST(req: NextRequest, context: { params: Promise<{ slug: 
     try {
         const { slug } = await context.params;
 
+        // Check if project exists and is published
+        const existingProject = await ProjectModel.findOne({ slug }).lean<{ published?: boolean }>();
+        if (!existingProject) {
+            return NextResponse.json(
+                { error: 'Project not found' },
+                { status: 404 }
+            );
+        }
+
+        // Check if user is admin
+        const isAdmin = await checkIsAdmin();
+
+        // If project is unpublished and user is not admin, return 404
+        if (!existingProject.published && !isAdmin) {
+            return NextResponse.json(
+                { error: 'Project not found' },
+                { status: 404 }
+            );
+        }
+
         // Increment view count
         const project = await ProjectModel.findOneAndUpdate(
             { slug },
@@ -16,15 +37,8 @@ export async function POST(req: NextRequest, context: { params: Promise<{ slug: 
             { new: true, lean: true }
         ).lean<{ views: number }>();
 
-        if (!project) {
-            return NextResponse.json(
-                { error: 'Project not found' },
-                { status: 404 }
-            );
-        }
-
         return NextResponse.json(
-            { views: project.views, success: true },
+            { views: project?.views || 0, success: true },
             { status: 200 }
         );
     } catch (error) {
