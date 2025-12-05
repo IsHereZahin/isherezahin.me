@@ -1,6 +1,6 @@
 import { SITE_GITHUB_URL, SITE_INSTAGRAM_URL, SITE_LINKEDIN_URL, SITE_X_URL, SITE_YOUTUBE_URL } from '@/lib/constants';
 import { SiGithub, SiInstagram, SiX, SiYoutube } from '@icons-pack/react-simple-icons';
-import { FlameIcon, LayoutDashboard, LinkedinIcon, MessageCircleIcon, MonitorIcon, PencilIcon, UserCircleIcon } from 'lucide-react';
+import { FlameIcon, LinkedinIcon, MessageCircleIcon, MonitorIcon, PencilIcon, UserCircleIcon } from 'lucide-react';
 import { ComponentType, SVGProps } from 'react';
 
 type SocialLinks = Array<{
@@ -13,29 +13,6 @@ type FooterMenuItems = Array<{
   category: string
   items: Array<{ href: string; label: string }>
 }>
-
-export const ADMIN_LINKS = [
-  {
-    icon: <LayoutDashboard className='size-3.5' />,
-    href: '/admin',
-    key: 'dashboard'
-  },
-  {
-    icon: <PencilIcon className='size-3.5' />,
-    href: '/admin/blogs',
-    key: 'blogs'
-  },
-  {
-    icon: <FlameIcon className='size-3.5' />,
-    href: '/admin/projects',
-    key: 'projects'
-  },
-  {
-    icon: <MonitorIcon className='size-3.5' />,
-    href: '/admin/users',
-    key: 'users'
-  }
-] as const
 
 export const HEADER_LINKS = [
   {

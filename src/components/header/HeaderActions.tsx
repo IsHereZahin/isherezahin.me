@@ -30,7 +30,7 @@ function adjustLightness(hex: string, factor: number): string {
     return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
 }
 
-export default function HeaderActions({ adminPage }: Readonly<{ adminPage?: boolean }>) {
+export default function HeaderActions() {
     const { user } = useAuth();
     const [state, setState] = useState<{
         mode: ThemeMode;
@@ -241,26 +241,24 @@ export default function HeaderActions({ adminPage }: Readonly<{ adminPage?: bool
                 )}
             </div>
 
-            {!adminPage && (
-                <div className="relative" ref={commandRef}>
-                    <button
-                        onClick={() => togglePopup("command")}
-                        className={`${buttonBaseClass} ${hoverGradientClass} ${state.activePopup === "command" ? "bg-primary/10" : ""
-                            }`}
-                        aria-label="Open command menu"
-                        aria-expanded={state.activePopup === "command"}
-                    >
-                        <Command className="size-4" />
-                    </button>
-                    {state.activePopup === "command" && (
-                        <div className="fixed inset-x-0 top-[84px] z-50 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2">
-                            <div className="max-w-5xl mx-auto px-4 sm:px-8">
-                                <CommandPopup onClose={() => setState((prev) => ({ ...prev, activePopup: null }))} />
-                            </div>
+            <div className="relative" ref={commandRef}>
+                <button
+                    onClick={() => togglePopup("command")}
+                    className={`${buttonBaseClass} ${hoverGradientClass} ${state.activePopup === "command" ? "bg-primary/10" : ""
+                        }`}
+                    aria-label="Open command menu"
+                    aria-expanded={state.activePopup === "command"}
+                >
+                    <Command className="size-4" />
+                </button>
+                {state.activePopup === "command" && (
+                    <div className="fixed inset-x-0 top-[84px] z-50 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2">
+                        <div className="max-w-5xl mx-auto px-4 sm:px-8">
+                            <CommandPopup onClose={() => setState((prev) => ({ ...prev, activePopup: null }))} />
                         </div>
-                    )}
-                </div>
-            )}
+                    </div>
+                )}
+            </div>
 
             {user && (
                 <div className="relative" ref={profileRef}>

@@ -4,15 +4,11 @@ import Header from "@/components/layouts/Header";
 import { DecorativeBlobBottom, DecorativeBlobTop } from "@/components/ui/DecorativeBlob";
 import Hello from "@/components/ui/Hello";
 
-export default function MainLayout({ children, adminPage }: Readonly<{ children: React.ReactNode, adminPage?: boolean }>) {
+export default function MainLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
         <div className="flex flex-col min-h-screen relative selection:bg-primary/20 selection:text-primary overflow-hidden">
             <Hello />
-            {adminPage ? (
-                <Header adminPage={true} />
-            ) : (
-                <Header />
-            )}
+            <Header />
             <DecorativeBlobTop />
 
             <main className="flex-1 relative z-10">
