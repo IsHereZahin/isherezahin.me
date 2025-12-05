@@ -11,7 +11,7 @@ import SeeMore from "../ui/SeeMore";
 
 export default function Projects() {
     const page = 1;
-    const limit = 4;
+    const limit = 2;
 
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ["projects", page, limit],
@@ -32,10 +32,10 @@ export default function Projects() {
             <SectionHeader tag="03" title="Projects" subtitle="A select few that I&apos;ve shipped in the past few months" />
 
             {isLoading ? (
-                <ProjectsLoading count={4} />
+                <ProjectsLoading count={2} />
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12">
-                    {data.projects.slice(0, 4).map((project: ProjectType) => (
+                    {data.projects.slice(0, 2).map((project: ProjectType) => (
                         <Project key={project.id} {...project} />
                     ))}
                 </div>

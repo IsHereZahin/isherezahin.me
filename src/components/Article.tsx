@@ -1,11 +1,15 @@
 import BlurImage from "@/components/ui/BlurImage";
 import { getFormattedDate, getReadTime, truncateWords } from "@/utils";
 import { Blog } from "@/utils/types";
-import { Clock, Eye } from "lucide-react";
+import { Clock, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import MotionWrapper from "./motion/MotionWrapper";
 
-export default function Article({ date, views, title, slug, excerpt, imageSrc, content, tags }: Readonly<Blog>) {
+interface ArticleProps extends Blog {
+    showUnpublishedBadge?: boolean;
+}
+
+export default function Article({ date, views, title, slug, excerpt, imageSrc, content, tags, showUnpublishedBadge }: Readonly<ArticleProps>) {
     const truncatedExcerpt = truncateWords(excerpt, 35);
 
     return (
@@ -21,8 +25,14 @@ export default function Article({ date, views, title, slug, excerpt, imageSrc, c
 
                         {/* Title with link */}
                         <Link href={`/blogs/${slug}`} className="group/link block mb-2 sm:mb-3">
-                            <h3 className="text-lg sm:text-xl font-semibold text-foreground group-hover/link:text-primary transition-colors duration-300">
+                            <h3 className="text-lg sm:text-xl font-semibold text-foreground group-hover/link:text-primary transition-colors duration-300 flex items-center gap-2">
                                 {title}
+                                {showUnpublishedBadge && (
+                                    <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border border-yellow-500/20">
+                                        <EyeOff size={12} />
+                                        Draft
+                                    </span>
+                                )}
                             </h3>
                         </Link>
 

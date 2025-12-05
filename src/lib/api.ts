@@ -168,6 +168,138 @@ const projectLikes = {
     },
 };
 
+const createBlog = async (data: {
+    title: string;
+    slug: string;
+    excerpt: string;
+    tags: string[];
+    imageSrc: string;
+    content: string;
+    published: boolean;
+}) => {
+    const response = await fetch('/api/blog', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const message = errorData.error || "Failed to create blog";
+        throw new ApiError(message, response.status);
+    }
+
+    return await response.json();
+};
+
+const createProject = async (data: {
+    title: string;
+    slug: string;
+    excerpt: string;
+    categories?: string;
+    company: string;
+    duration: string;
+    status?: string;
+    tags: string[];
+    imageSrc: string;
+    liveUrl?: string;
+    githubUrl?: string;
+    content: string;
+    published: boolean;
+}) => {
+    const response = await fetch('/api/project', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const message = errorData.error || "Failed to create project";
+        throw new ApiError(message, response.status);
+    }
+
+    return await response.json();
+};
+
+const updateBlog = async (slug: string, data: {
+    title: string;
+    excerpt: string;
+    tags: string[];
+    imageSrc: string;
+    content: string;
+    published: boolean;
+}) => {
+    const response = await fetch(`/api/blog/${slug}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new ApiError(errorData.error || "Failed to update blog", response.status);
+    }
+
+    return await response.json();
+};
+
+const deleteBlog = async (slug: string) => {
+    const response = await fetch(`/api/blog/${slug}`, { method: 'DELETE' });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new ApiError(errorData.error || "Failed to delete blog", response.status);
+    }
+
+    return await response.json();
+};
+
+const updateProject = async (slug: string, data: {
+    title: string;
+    excerpt: string;
+    categories?: string;
+    company: string;
+    duration: string;
+    status?: string;
+    tags: string[];
+    imageSrc: string;
+    liveUrl?: string;
+    githubUrl?: string;
+    content: string;
+    published: boolean;
+}) => {
+    const response = await fetch(`/api/project/${slug}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new ApiError(errorData.error || "Failed to update project", response.status);
+    }
+
+    return await response.json();
+};
+
+const deleteProject = async (slug: string) => {
+    const response = await fetch(`/api/project/${slug}`, { method: 'DELETE' });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new ApiError(errorData.error || "Failed to delete project", response.status);
+    }
+
+    return await response.json();
+};
+
 export {
-    blogLikes, blogViews, getBlog, getBlogs, getProject, getProjects, projectLikes, projectViews
+    blogLikes, blogViews, createBlog, createProject, deleteBlog, deleteProject,
+    getBlog, getBlogs, getProject, getProjects, projectLikes, projectViews,
+    updateBlog, updateProject
 };

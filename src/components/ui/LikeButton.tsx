@@ -10,12 +10,12 @@ import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 interface LikeButtonProps {
-  readonly slug: string;
-  readonly type?: string;
-  readonly maxUserLikes?: number;
+  slug: string;
+  type?: string;
+  maxUserLikes?: number;
 }
 
-export default function LikeButton({ slug, type, maxUserLikes = 3 }: LikeButtonProps) {
+export default function LikeButton({ slug, type, maxUserLikes = 3 }: Readonly<LikeButtonProps>) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const buttonRef = useRef<HTMLButtonElement>(null);

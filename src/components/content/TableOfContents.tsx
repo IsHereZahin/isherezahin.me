@@ -157,39 +157,39 @@ export default function TableOfContents({
             <aside className="hidden lg:block w-64 flex-shrink-0">
                 <div className="sticky top-24 pt-4 pb-6 text-xs sm:text-sm space-y-6">
                     {/* Table of Contents */}
-                    <div>
-                        <h4 className="text-foreground font-semibold mb-3 sm:mb-4 text-base sm:text-lg">On this page</h4>
-                        <div className="relative">
-                            <div className="absolute left-0 top-0 bottom-0 border-l border-border" />
-                            {indicatorStyle.height > 0 && (
+                    {tocItems.length > 0 && (
+                        <div>
+                            <h4 className="text-foreground font-semibold mb-3 sm:mb-4 text-base sm:text-lg">On this page</h4>
+                            <div className="relative">
+                                <div className="absolute left-0 top-0 bottom-0 border-l border-border" />
                                 <div
                                     className="absolute left-0 border-l-2 border-foreground transition-all duration-200 ease-in-out"
                                     style={{ top: indicatorStyle.top, height: indicatorStyle.height }}
                                 />
-                            )}
-                            <ul ref={containerRef} className="flex flex-col gap-1 pl-4">
-                                {tocItems.map((item) => (
-                                    <li key={item.id}>
-                                        <a
-                                            href={`#${item.id}`}
-                                            data-id={item.id}
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth" });
-                                            }}
-                                            className={`block px-3 py-1.5 rounded-md cursor-pointer font-medium transition-colors ${isActive(item.id)
-                                                ? "text-foreground"
-                                                : "text-secondary-foreground hover:text-foreground/80 transition-colors"
-                                                }`}
-                                            style={{ paddingLeft: `${(item.indent || 0) + 8}px` }}
-                                        >
-                                            {item.title}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
+                                <ul ref={containerRef} className="flex flex-col gap-1 pl-4">
+                                    {tocItems.map((item) => (
+                                        <li key={item.id}>
+                                            <a
+                                                href={`#${item.id}`}
+                                                data-id={item.id}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth" });
+                                                }}
+                                                className={`block px-3 py-1.5 rounded-md cursor-pointer font-medium transition-colors ${isActive(item.id)
+                                                    ? "text-foreground"
+                                                    : "text-secondary-foreground hover:text-foreground/80 transition-colors"
+                                                    }`}
+                                                style={{ paddingLeft: `${(item.indent || 0) + 8}px` }}
+                                            >
+                                                {item.title}
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     {/* Like Button */}
                     <div className="mt-6">

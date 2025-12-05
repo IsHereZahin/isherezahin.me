@@ -71,6 +71,11 @@ const projectSchema = new Schema(
             type: String,
             required: true,
         },
+        published: {
+            type: Boolean,
+            required: true,
+            default: false,
+        },
     },
     { timestamps: true }
 );

@@ -9,7 +9,7 @@ interface ShareSectionProps {
     url?: string;
 }
 
-export default function ShareSection({ title, type, url }: ShareSectionProps) {
+export default function ShareSection({ title, type, url }: Readonly<ShareSectionProps>) {
     const [shareUrl, setShareUrl] = useState(url || '');
 
     useEffect(() => {

@@ -5,11 +5,11 @@ import type React from "react"
 import ReferralLink from "./ReferralLink"
 
 interface BrowserMockupProps {
-    readonly children: React.ReactNode
-    readonly url?: string | null
-    readonly className?: string
-    readonly showAddressBar?: boolean
-    readonly urlNotFoundReason?: string
+    children: React.ReactNode
+    url?: string | null
+    className?: string
+    showAddressBar?: boolean
+    urlNotFoundReason?: string
 }
 
 export function BrowserMockup({
@@ -18,7 +18,7 @@ export function BrowserMockup({
     className,
     showAddressBar = true,
     urlNotFoundReason = "URL not found or not provided",
-}: BrowserMockupProps) {
+}: Readonly<BrowserMockupProps>) {
     const isUrlMissing = !url || url.trim() === ""
     const displayUrl = isUrlMissing ? "http://********.***" : url
 

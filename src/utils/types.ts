@@ -13,6 +13,7 @@ export interface Blog {
     tags: string[];
     imageSrc: string;
     content: string;
+    published: boolean;
 }
 
 export interface BlogDocument {
@@ -27,6 +28,7 @@ export interface BlogDocument {
     tags: string[];
     imageSrc: string;
     content: string;
+    published: boolean;
 }
 
 export interface Project {
@@ -46,6 +48,7 @@ export interface Project {
     liveUrl?: string;
     githubUrl?: string;
     content: string;
+    published: boolean;
 }
 
 export interface ProjectDocument {
@@ -66,4 +69,5 @@ export interface ProjectDocument {
     liveUrl?: string;
     githubUrl?: string;
     content: string;
+    published: boolean;
 }

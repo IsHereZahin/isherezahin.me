@@ -10,7 +10,7 @@ interface EmptyStateProps {
     description?: string;
 }
 
-export default function EmptyState({ type, title, subtitle, description }: EmptyStateProps) {
+export default function EmptyState({ type, title, subtitle, description }: Readonly<EmptyStateProps>) {
     const defaultContent = {
         blogs: {
             title: "Ideas, insights, & inspiration",

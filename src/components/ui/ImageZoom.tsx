@@ -9,7 +9,7 @@ type ImageZoomProps = {
   children: React.ReactNode
 } & React.ComponentProps<typeof Zoom>
 
-const ImageZoom = (props: ImageZoomProps) => {
+const ImageZoom = (props: Readonly<ImageZoomProps>) => {
   const { children, ...rest } = props
 
   return (

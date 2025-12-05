@@ -1,6 +1,8 @@
 // src/app/api/project/route.ts
+import { auth } from '@/auth';
 import { ProjectModel } from '@/database/models/project-model';
 import dbConnect from '@/database/services/mongo';
+import { MY_MAIL } from '@/lib/constants';
 import { Project, ProjectDocument } from '@/utils/types';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -13,9 +15,16 @@ export async function GET(req: NextRequest) {
         const limit = parseInt(searchParams.get("limit") || "10", 10);
         const skip = (page - 1) * limit;
 
-        const total = await ProjectModel.countDocuments();
+        // Check if user is admin
+        const session = await auth();
+        const isAdmin = session?.user?.email?.toLowerCase() === MY_MAIL.toLowerCase();
 
-        const projectsFromDb = await ProjectModel.find()
+        // Build query - non-admin users only see published projects
+        const query = isAdmin ? {} : { published: true };
+
+        const total = await ProjectModel.countDocuments(query);
+
+        const projectsFromDb = await ProjectModel.find(query)
             .sort({ date: -1 })
             .skip(skip)
             .limit(limit)
@@ -48,6 +57,7 @@ export async function GET(req: NextRequest) {
             liveUrl: project.liveUrl,
             githubUrl: project.githubUrl,
             content: project.content,
+            published: project.published ?? true,
         }));
 
         return NextResponse.json({
@@ -59,6 +69,65 @@ export async function GET(req: NextRequest) {
 
     } catch (error) {
         console.error('Error fetching projects:', error);
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    }
+}
+
+export async function POST(req: NextRequest) {
+    await dbConnect();
+    try {
+        // Check if user is admin
+        const session = await auth();
+        const isAdmin = session?.user?.email?.toLowerCase() === MY_MAIL.toLowerCase();
+
+        if (!isAdmin) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const body = await req.json();
+        const { 
+            title, slug, excerpt, categories, company, duration, 
+            status, tags, imageSrc, liveUrl, githubUrl, content, published 
+        } = body;
+
+        // Validate required fields
+        if (!title || !slug || !excerpt || !company || !duration || !imageSrc || !content) {
+            return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+        }
+
+        // Check if slug already exists
+        const existingProject = await ProjectModel.findOne({ slug });
+        if (existingProject) {
+            return NextResponse.json({ error: 'A project with this slug already exists' }, { status: 400 });
+        }
+
+        const newProject = await ProjectModel.create({
+            date: new Date(),
+            views: 0,
+            likes: 0,
+            type: 'Project',
+            title,
+            slug,
+            excerpt,
+            categories: categories || 'Project',
+            company,
+            duration,
+            status: status || 'completed',
+            tags: tags || [],
+            imageSrc,
+            liveUrl: liveUrl || null,
+            githubUrl: githubUrl || null,
+            content,
+            published: published ?? false,
+        });
+
+        return NextResponse.json({
+            id: newProject._id.toString(),
+            message: 'Project created successfully',
+        }, { status: 201 });
+
+    } catch (error) {
+        console.error('Error creating project:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

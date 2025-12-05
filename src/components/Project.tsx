@@ -1,11 +1,16 @@
 import { getRandomTheme } from "@/utils";
 import { Project as ProjectType } from "@/utils/types";
+import { EyeOff } from "lucide-react";
 import MotionWrapper from "./motion/MotionWrapper";
 import BlurImage from "./ui/BlurImage";
 import Frame from "./ui/Frame";
 import StylishLink from "./ui/StylishLink";
 
-export default function Project(project: Readonly<ProjectType>) {
+interface ProjectProps extends ProjectType {
+    showUnpublishedBadge?: boolean;
+}
+
+export default function Project({ showUnpublishedBadge, ...project }: Readonly<ProjectProps>) {
     const theme = getRandomTheme();
 
     return (
@@ -22,8 +27,14 @@ export default function Project(project: Readonly<ProjectType>) {
 
                 {/* Content */}
                 <div>
-                    <header className="flex items-center gap-2 mb-2">
+                    <header className="flex items-center gap-2 mb-2 flex-wrap">
                         <h3 className="text-base sm:text-lg font-semibold text-foreground">{project.title}</h3>
+                        {showUnpublishedBadge && (
+                            <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border border-yellow-500/20">
+                                <EyeOff size={12} />
+                                Draft
+                            </span>
+                        )}
                         {project.status === "in-progress" && (
                             <span className="text-xs sm:text-sm text-muted-foreground">
                                 In Progress

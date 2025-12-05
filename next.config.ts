@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
     // Replace domains with remotePatterns
     remotePatterns: [
       {
+        protocol: "http",
+        hostname: "localhost",
+        pathname: "/**",
+      },
+      {
         protocol: "https",
         hostname: "avatars.githubusercontent.com",
         pathname: "/**",
@@ -30,6 +35,16 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "framerusercontent.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "isherezahin.vercel.app",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "**.vercel.app",
         pathname: "/**",
       }
     ],

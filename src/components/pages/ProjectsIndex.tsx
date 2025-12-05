@@ -1,19 +1,27 @@
 "use client";
 
+import AddProjectModal from "@/components/admin/AddProjectModal";
 import Project from "@/components/Project";
 import EmptyState from "@/components/ui/EmptyState";
 import ErrorState from "@/components/ui/ErrorState";
 import PageTitle from "@/components/ui/PageTitle";
 import Section from "@/components/ui/Section";
+import { Button } from "@/components/ui/shadcn-button";
 import Tags from "@/components/ui/Tags";
 import { getProjects } from "@/lib/api";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { Project as ProjectType } from "@/utils/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { FilePlus, Plus } from "lucide-react";
+import { useState } from "react";
 import MotionWrapper from "../motion/MotionWrapper";
 import { ProjectsLoading } from "../ui/Loading";
 
 export default function ProjectsIndex() {
     const queryClient = useQueryClient();
+    const { isAdmin } = useAuth();
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
     const { data, isLoading, isError, error, refetch } = useQuery({
         queryKey: ["projects", 1], // first page
         queryFn: () => getProjects(1, 10), // fetch 10 projects
@@ -42,6 +50,19 @@ export default function ProjectsIndex() {
                 <PageTitle title="Projects I've worked on" subtitle="Nothing too fancy, just solid websites that do their job." />
             )}
 
+            {isAdmin && (
+                <div className="flex justify-start mb-4">
+                    <Button
+                        onClick={() => setIsAddModalOpen(true)}
+                        size="sm"
+                        className="shrink-0 cursor-pointer"
+                    >
+                        <FilePlus className="h-4 w-4 mr-1" />
+                        Add Project
+                    </Button>
+                </div>
+            )}
+
             {/* Only show tags if there are projects */}
             {hasProjects && (
                 <MotionWrapper direction="left" delay={0.2}>
@@ -61,13 +82,26 @@ export default function ProjectsIndex() {
                 <div className="space-y-6 sm:space-y-8 border-t border-border/30">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12">
                         {data.projects.map((project: ProjectType) => (
-                            <Project key={project.id} {...project} />
+                            <Project key={project.id} {...project} showUnpublishedBadge={isAdmin && !project.published} />
                         ))}
                     </div>
                 </div>
             ) : (
-                <EmptyState type="projects" />
+                <div className="space-y-4">
+                    <EmptyState type="projects" />
+                    {isAdmin && (
+                        <div className="flex justify-center">
+                            <Button onClick={() => setIsAddModalOpen(true)}>
+                                <Plus className="h-4 w-4 mr-1" />
+                                Add Your First Project
+                            </Button>
+                        </div>
+                    )}
+                </div>
             )}
+
+            {/* Add Project Modal */}
+            <AddProjectModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
         </Section>
-    )
+    );
 }

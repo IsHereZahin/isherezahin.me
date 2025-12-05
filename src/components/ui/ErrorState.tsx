@@ -13,7 +13,7 @@ export default function ErrorState({
     title = "Something went wrong",
     message = "We encountered an error while loading the content. Please try again.",
     onRetry
-}: ErrorStateProps) {
+}: Readonly<ErrorStateProps>) {
     return (
         <MotionWrapper direction="bottom" delay={0.3}>
             <div className="flex flex-col items-center justify-center py-16 sm:py-20 text-center">
