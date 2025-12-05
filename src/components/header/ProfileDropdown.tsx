@@ -1,6 +1,6 @@
 "use client";
 
-import MotionPopup from "@/components/motion/MotionPopup";
+import { MotionPopup } from "@/components/motion";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";

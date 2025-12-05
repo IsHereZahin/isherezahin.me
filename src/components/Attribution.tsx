@@ -1,10 +1,12 @@
 // NOTICE: If you are using the is-here-zahin.me project, please respect this attribution and do not remove or modify it.
 // You are welcome to add additional credits if you extend or modify the project, but please retain this original attribution.
 
-import ReferralLink from "@/components/ui/ReferralLink";
-import ReferralListItem from "@/components/ui/ReferralListItem";
-import Signature from "@/components/ui/Signature";
-import Section from "./ui/Section";
+import {
+    ReferralLink,
+    ReferralListItem,
+    Section,
+    Signature,
+} from "@/components/ui";
 
 export default function Attribution() {
     const developers = [

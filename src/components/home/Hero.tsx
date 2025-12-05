@@ -1,15 +1,17 @@
-import HeroBanner from "@/components/home/HeroBanner";
-import MotionWrapper from "@/components/motion/MotionWrapper";
-import BlurImage from "@/components/ui/BlurImage";
-import HighlightedWord from "@/components/ui/HighlightedWord";
-import ReferralLink from "@/components/ui/ReferralLink";
-import Section from "@/components/ui/Section";
+import { HeroBanner } from "@/components/home";
+import { MotionWrapper } from "@/components/motion";
+import {
+    BlurImage,
+    Button,
+    HighlightedWord,
+    ReferralLink,
+    Section,
+} from "@/components/ui";
 import { MY_NAME } from "@/lib/constants";
 import { ArrowDown } from "lucide-react";
 import Link from "next/link";
 import iconicLogo from "../../../public/assets/images/iconic.png";
 import src from "../../../public/assets/images/profile.png";
-import Button from "../ui/Button";
 
 export default function Hero() {
     return (

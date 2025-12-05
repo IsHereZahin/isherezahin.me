@@ -8,25 +8,22 @@ import { notFound, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
-import EditBlogModal from "@/components/admin/EditBlogModal";
-import ArticleInfo from "@/components/content/ArticleInfo";
-import MarkdownPreview from "@/components/content/discussions/MarkdownPreview";
-import TableOfContents from "@/components/content/TableOfContents";
-import BlurImage from "@/components/ui/BlurImage";
+import { DeleteConfirmDialog, EditBlogModal } from "@/components/admin";
+import { ArticleInfo, MarkdownPreview, TableOfContents } from "@/components/content";
 import {
+    BlogDetailsLoading,
+    BlurImage,
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import Heading from "@/components/ui/Heading";
-import ImageZoom from "@/components/ui/ImageZoom";
-import { BlogDetailsLoading } from "@/components/ui/Loading";
-import Section from "@/components/ui/Section";
-import TextGradient from "@/components/ui/TextGradient";
+    Heading,
+    ImageZoom,
+    LikeButton,
+    Section,
+    TextGradient,
+} from "@/components/ui";
 import { useAuth } from "@/lib/hooks/useAuth";
-import LikeButton from "../ui/LikeButton";
 
 export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
     const [showTOC, setShowTOC] = useState(false);

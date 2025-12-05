@@ -1,12 +1,8 @@
 // src/app/api/cloudinary/route.ts
 import { auth } from '@/auth';
-import { MY_MAIL } from '@/lib/constants';
+import { CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_CLOUD_NAME, MY_MAIL } from '@/lib/constants';
 import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
-
-const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
-const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
-const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
 
 // Upload image to Cloudinary (signed upload)
 export async function POST(req: NextRequest) {

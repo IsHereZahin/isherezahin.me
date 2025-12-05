@@ -1,12 +1,12 @@
 "use client"
 
 import {
+    CommentsLoading,
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { CommentsLoading } from "@/components/ui/Loading"
+} from "@/components/ui"
 import { useDiscussion } from "@/lib/hooks/useDiscussion"
 import { Settings2 } from "lucide-react"
 import CommentCard from "./CommentCard"

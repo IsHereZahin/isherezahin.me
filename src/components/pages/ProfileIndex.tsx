@@ -1,15 +1,17 @@
 "use client";
 
-import MotionWrapper from "@/components/motion/MotionWrapper";
-import Button from "@/components/ui/Button";
-import PageTitle from "@/components/ui/PageTitle";
-import Section from "@/components/ui/Section";
+import { MotionWrapper } from "@/components/motion";
+import {
+    BlurImage,
+    Button,
+    PageTitle,
+    ReferralLink,
+    Section,
+} from "@/components/ui";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Edit, Eye, EyeOff, Globe, LogIn, LogOut, Monitor, User } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import BlurImage from "../ui/BlurImage";
-import ReferralLink from "../ui/ReferralLink";
 
 interface Session {
     id: string;

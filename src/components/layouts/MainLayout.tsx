@@ -1,8 +1,6 @@
 import "@/app/styles/globals.css";
-import { SimpleFooter } from "@/components/layouts/Footer";
-import Header from "@/components/layouts/Header";
-import { DecorativeBlobBottom, DecorativeBlobTop } from "@/components/ui/DecorativeBlob";
-import Hello from "@/components/ui/Hello";
+import { Header, SimpleFooter } from "@/components/layouts";
+import { DecorativeBlobBottom, DecorativeBlobTop, Hello } from "@/components/ui";
 
 export default function MainLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (

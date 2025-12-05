@@ -1,9 +1,10 @@
 // src/app/api/discussions/[discussionNumber]/replies/[commentId]/route.ts
 import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { callGraphQL, GITHUB_ACCESS_TOKEN } from "@/lib/github/graphql";
+import { callGraphQL } from "@/lib/github/graphql";
 import { formatComment } from "@/lib/github/formatters";
 import type { CommentNode } from "@/lib/github/types";
+import { GITHUB_ACCESS_TOKEN } from "@/lib/constants";
 
 const GET_REPLIES_QUERY = `
   query($commentId: ID!) {

@@ -1,6 +1,6 @@
 import PageTitle from '@/components/ui/PageTitle'
 import Section from '@/components/ui/Section'
-import Attribution from '../Attribution'
+import { Attribution } from "@/components";
 
 export default function AttributionIndex() {
     return (

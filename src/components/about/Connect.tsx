@@ -1,6 +1,6 @@
+import ReferralLink from '@/components/ui/ReferralLink'
 import { SOCIAL_LINKS } from '@/config/links'
 import { LinkIcon } from 'lucide-react'
-import ReferralLink from '../ui/ReferralLink'
 
 export default function Connect() {
   return (

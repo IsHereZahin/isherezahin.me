@@ -4,11 +4,11 @@ import { BarChart3, BookOpen, Info } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import MotionPopup from "@/components/motion/MotionPopup";
+import { MotionPopup } from "@/components/motion";
+import { BlurImage } from "@/components/ui";
 import AdventureImg from "../../../public/assets/images/CommandPopup/Adventure.jpg";
 import StudyImg from "../../../public/assets/images/CommandPopup/Desktop Setup.jpg";
 import TravelImg from "../../../public/assets/images/CommandPopup/Travel.jpg";
-import BlurImage from "../ui/BlurImage";
 
 interface CommandPopupProps {
     onClose: () => void;

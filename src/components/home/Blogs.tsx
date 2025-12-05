@@ -1,29 +1,39 @@
 "use client";
 
+import { AddBlogModal } from "@/components/admin";
+import {
+    AdminEmptyState,
+    BlogsLoading,
+    Section,
+    SectionHeader,
+    SeeMore,
+} from "@/components/ui";
 import { getBlogs } from "@/lib/api";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { Blog } from "@/utils/types";
 import { useQuery } from "@tanstack/react-query";
-import Article from "../Article";
-import { BlogsLoading } from "../ui/Loading";
-import Section from "../ui/Section";
-import SectionHeader from "../ui/SectionHeader";
-import SeeMore from "../ui/SeeMore";
+import { useState } from "react";
+import { Article } from "@/components";
 
 export default function Blogs() {
+    const { isAdmin } = useAuth();
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const page = 1;
     const limit = 2;
 
-    const { data, isLoading, isError, error } = useQuery({
+    const { data, isLoading, isError } = useQuery({
         queryKey: ["blogs", page, limit],
         queryFn: () => getBlogs(page, limit),
         staleTime: 1000 * 60 * 5,
     });
 
-    // Don't render anything if there's an error or no blogs
+    // Don't render anything if there's an error
     if (isError) return null;
 
-    // Don't render if loading is complete and there are no blogs
-    if (!isLoading && (!data?.blogs || data.blogs.length === 0)) {
+    const hasBlogs = !isLoading && data?.blogs && data.blogs.length > 0;
+
+    // Don't render if loading is complete and there are no blogs (for non-admins)
+    if (!isLoading && !hasBlogs && !isAdmin) {
         return null;
     }
 
@@ -33,16 +43,23 @@ export default function Blogs() {
 
             {isLoading ? (
                 <BlogsLoading count={2} />
-            ) : (
-                <div className="space-y-6 sm:space-y-8">
-                    {data.blogs.map((blog: Blog) => (
-                        <Article key={blog.id} {...blog} />
-                    ))}
-                </div>
-            )}
-            <div className="flex justify-center">
-                <SeeMore href="/blogs" text="See all blogs" className="mt-16" />
-            </div>
+            ) : hasBlogs ? (
+                <>
+                    <div className="space-y-6 sm:space-y-8">
+                        {data.blogs.map((blog: Blog) => (
+                            <Article key={blog.id} {...blog} />
+                        ))}
+                    </div>
+                    <div className="flex justify-center">
+                        <SeeMore href="/blogs" text="See all blogs" className="mt-16" />
+                    </div>
+                </>
+            ) : isAdmin ? (
+                <AdminEmptyState type="blogs" onAdd={() => setIsAddModalOpen(true)} />
+            ) : null}
+
+            {/* Add Blog Modal */}
+            <AddBlogModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
         </Section>
     );
 }

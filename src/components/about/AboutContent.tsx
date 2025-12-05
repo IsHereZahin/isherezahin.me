@@ -1,14 +1,16 @@
 "use client";
 
-import BlurImage from "@/components/ui/BlurImage";
-import ImageZoom from "@/components/ui/ImageZoom";
-import Section from "@/components/ui/Section";
+import { MotionWrapper } from "@/components/motion";
+import {
+    BlurImage,
+    ImageZoom,
+    PageTitle,
+    ReferralLink,
+    Section,
+    Signature,
+} from "@/components/ui";
 import { MY_FULL_NAME, SITE_GITHUB_URL, SITE_LINKEDIN_URL, SITE_USER_LOGO, SITE_YOUTUBE_URL } from "@/lib/constants";
 import { GithubIcon, LinkedinIcon, YoutubeIcon } from "lucide-react";
-import MotionWrapper from "../motion/MotionWrapper";
-import PageTitle from "../ui/PageTitle";
-import ReferralLink from "../ui/ReferralLink";
-import Signature from "../ui/Signature";
 
 export default function AboutContent() {
     return (

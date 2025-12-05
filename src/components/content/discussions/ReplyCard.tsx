@@ -7,13 +7,13 @@ import { useState } from "react"
 import { useDiscussion } from "@/lib/hooks/useDiscussion"
 import { getFormatDistanceToNow, getReactionCounts, getRoleBadge } from "@/utils"
 
-import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 import {
+    ConfirmDialog,
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui"
 import { Reply } from "@/lib/github/types"
 import { useAuth } from "@/lib/hooks/useAuth"
 import MarkdownPreview from "./MarkdownPreview"

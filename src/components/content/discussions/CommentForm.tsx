@@ -1,6 +1,6 @@
 "use client"
 
-import BlurImage from "@/components/ui/BlurImage"
+import { BlurImage } from "@/components/ui"
 import { useAuth } from "@/lib/hooks/useAuth"
 import { useDiscussion } from "@/lib/hooks/useDiscussion"
 import { SiGithub } from "@icons-pack/react-simple-icons"

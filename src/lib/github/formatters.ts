@@ -1,7 +1,7 @@
 // src/lib/github/formatters.ts
 
+import { GITHUB_REPO_OWNER } from "../constants";
 import { formatReactions } from "./reactions";
-import { REPO_OWNER } from "./graphql";
 import type { CommentNode, FormattedComment } from "./types";
 
 // Format Comment
@@ -27,7 +27,7 @@ export function formatComment( comment: CommentNode, sessionUserLogin?: string, 
         reaction_users,
         author_association: comment.authorAssociation || "NONE",
         is_owner:
-            (comment.author?.login ?? "").toLowerCase() === REPO_OWNER.toLowerCase(),
+            (comment.author?.login ?? "").toLowerCase() === GITHUB_REPO_OWNER.toLowerCase(),
         is_contributor: comment.authorAssociation === "CONTRIBUTOR",
     };
 

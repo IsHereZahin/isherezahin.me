@@ -1,7 +1,5 @@
+import { BlurImage, ImageZoom } from "@/components/ui";
 import { StaticImageData } from "next/image";
-
-import BlurImage from "@/components/ui/BlurImage";
-import ImageZoom from "../ui/ImageZoom";
 
 export interface HeroBannerProps {
   src: string | StaticImageData;

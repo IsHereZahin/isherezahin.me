@@ -1,5 +1,4 @@
-import ReferralListItem from "@/components/ui/ReferralListItem";
-import Section from "@/components/ui/Section";
+import { ReferralListItem, Section } from "@/components/ui";
 import { currentStatus } from "@/data";
 import { CircleHelp } from "lucide-react";
 

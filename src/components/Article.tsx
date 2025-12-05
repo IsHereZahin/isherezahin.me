@@ -1,9 +1,9 @@
-import BlurImage from "@/components/ui/BlurImage";
+import { MotionWrapper } from "@/components/motion";
+import { BlurImage } from "@/components/ui";
 import { getFormattedDate, getReadTime, truncateWords } from "@/utils";
 import { Blog } from "@/utils/types";
 import { Clock, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import MotionWrapper from "./motion/MotionWrapper";
 
 interface ArticleProps extends Blog {
     showUnpublishedBadge?: boolean;

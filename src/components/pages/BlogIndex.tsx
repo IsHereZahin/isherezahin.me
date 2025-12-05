@@ -1,24 +1,25 @@
 "use client";
 
-import AddBlogModal from "@/components/admin/AddBlogModal";
-import Article from "@/components/Article";
-import MotionWrapper from "@/components/motion/MotionWrapper";
-import EmptyState from "@/components/ui/EmptyState";
-import ErrorState from "@/components/ui/ErrorState";
-import PageTitle from "@/components/ui/PageTitle";
-import Section from "@/components/ui/Section";
-import { Button } from "@/components/ui/shadcn-button";
-import Tags from "@/components/ui/Tags";
+import { AddBlogModal } from "@/components/admin";
+import { Article } from "@/components";
+import { MotionWrapper } from "@/components/motion";
+import {
+    AdminAddButton,
+    AdminEmptyState,
+    BlogsLoading,
+    EmptyState,
+    ErrorState,
+    PageTitle,
+    Section,
+    Tags,
+} from "@/components/ui";
 import { getBlogs } from "@/lib/api";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Blog } from "@/utils/types";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { FilePlus, Plus } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { BlogsLoading } from "../ui/Loading";
 
 export default function BlogIndex() {
-    const queryClient = useQueryClient();
     const { isAdmin } = useAuth();
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
@@ -56,17 +57,12 @@ export default function BlogIndex() {
                 />
             )}
 
-            {isAdmin && (
-                <div className="flex justify-start mb-4">
-                    <Button
-                        onClick={() => setIsAddModalOpen(true)}
-                        size="sm"
-                        className="shrink-0 cursor-pointer"
-                    >
-                        <FilePlus className="h-4 w-4 mr-1" />
-                        Add Blog
-                    </Button>
-                </div>
+            {isAdmin && hasBlogs && (
+                <AdminAddButton
+                    onClick={() => setIsAddModalOpen(true)}
+                    label="Add Blog"
+                    className="mb-4"
+                />
             )}
 
             {/* Only show tags if there are blogs */}
@@ -90,18 +86,10 @@ export default function BlogIndex() {
                         <Article key={blog.id} {...blog} showUnpublishedBadge={isAdmin && !blog.published} />
                     ))}
                 </div>
+            ) : isAdmin ? (
+                <AdminEmptyState type="blogs" onAdd={() => setIsAddModalOpen(true)} />
             ) : (
-                <div className="space-y-4">
-                    <EmptyState type="blogs" />
-                    {isAdmin && (
-                        <div className="flex justify-center">
-                            <Button onClick={() => setIsAddModalOpen(true)}>
-                                <Plus className="h-4 w-4 mr-1" />
-                                Add Your First Blog
-                            </Button>
-                        </div>
-                    )}
-                </div>
+                <EmptyState type="blogs" />
             )}
 
             {/* Add Blog Modal */}

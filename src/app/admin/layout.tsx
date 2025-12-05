@@ -1,7 +1,7 @@
 "use client";
 
-import AccessDenied from "@/components/admin/AccessDenied";
-import MainLayout from "@/components/layouts/MainLayout";
+import { AccessDenied } from "@/components/admin";
+import { MainLayout } from "@/components/layouts";
 import { useAuth } from "@/lib/hooks/useAuth";
 
 export default function AdminLayout({ children }: { readonly children: React.ReactNode }) {

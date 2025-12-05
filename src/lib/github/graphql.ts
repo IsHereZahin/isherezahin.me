@@ -1,11 +1,8 @@
 // src/lib/github/graphql.ts
+import { GITHUB_ACCESS_TOKEN } from "@/lib/constants";
 
 // GitHub GraphQL API
 const GITHUB_API_URL = "https://api.github.com/graphql";
-
-export const REPO_OWNER = process.env.GITHUB_REPO_OWNER!;
-export const REPO_NAME = process.env.GITHUB_REPO_NAME!;
-export const GITHUB_ACCESS_TOKEN = process.env.GITHUB_ACCESS_TOKEN;
 
 if (!GITHUB_ACCESS_TOKEN) {
     throw new Error("Missing GitHub access token");

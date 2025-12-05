@@ -1,9 +1,10 @@
 // src/app/api/discussions/[discussionNumber]/route.ts
 import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { callGraphQL, REPO_OWNER, REPO_NAME, GITHUB_ACCESS_TOKEN } from "@/lib/github/graphql";
+import { callGraphQL } from "@/lib/github/graphql";
 import { formatComment } from "@/lib/github/formatters";
 import type { CommentNode } from "@/lib/github/types";
+import { GITHUB_ACCESS_TOKEN, GITHUB_REPO_NAME, GITHUB_REPO_OWNER } from "@/lib/constants";
 
 // GraphQL Queries & Mutations
 const GET_DISCUSSION_QUERY = `
@@ -86,7 +87,7 @@ export async function GET(_request: NextRequest, context: { params: Promise<{ di
 
     const data = await callGraphQL<DiscussionData>(
       GET_DISCUSSION_QUERY,
-      { owner: REPO_OWNER, name: REPO_NAME, number: discussionNumber },
+      { owner: GITHUB_REPO_OWNER, name: GITHUB_REPO_NAME, number: discussionNumber },
       GITHUB_ACCESS_TOKEN as string
     );
 
@@ -143,7 +144,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ di
     if (!finalDiscussionId) {
       const data = await callGraphQL<DiscussionData>(
         GET_DISCUSSION_QUERY,
-        { owner: REPO_OWNER, name: REPO_NAME, number: discussionNumber },
+        { owner: GITHUB_REPO_OWNER, name: GITHUB_REPO_NAME, number: discussionNumber },
         session.accessToken
       );
       finalDiscussionId = data.repository.discussion.id;

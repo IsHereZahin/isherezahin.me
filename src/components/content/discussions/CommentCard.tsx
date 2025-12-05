@@ -9,15 +9,15 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { useDiscussion } from "@/lib/hooks/useDiscussion";
 import { getFormatDistanceToNow, getRoleBadge } from "@/utils";
 
-import BlurImage from "@/components/ui/BlurImage";
-import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import {
+    BlurImage,
+    ConfirmDialog,
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { SingleCommentLoading } from "@/components/ui/Loading";
+    SingleCommentLoading,
+} from "@/components/ui";
 import { toast } from "sonner";
 import CommentForm from "./CommentForm";
 import MarkdownPreview from "./MarkdownPreview";

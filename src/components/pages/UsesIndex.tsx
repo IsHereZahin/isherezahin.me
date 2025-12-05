@@ -22,12 +22,14 @@ import {
 import DeskImage from "../../../public/assets/images/uses/desk.jpg";
 import MonitorImage from "../../../public/assets/images/uses/monitor-screen-abstract.jpg";
 
-import { Badge } from "@/components/ui/badge";
-import BlurImage from "@/components/ui/BlurImage";
-import ImageZoom from "@/components/ui/ImageZoom";
-import PageTitle from "@/components/ui/PageTitle";
-import Section from "@/components/ui/Section";
-import SectionHeader from "@/components/ui/SectionHeader";
+import {
+    Badge,
+    BlurImage,
+    ImageZoom,
+    PageTitle,
+    Section,
+    SectionHeader,
+} from "@/components/ui";
 
 export default function UsesIndex() {
     return (

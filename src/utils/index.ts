@@ -177,6 +177,15 @@ function getDeviceId(): string {
     
     return deviceId;
 }
+
+const generateSlug = (title: string): string => {
+    return title.toLowerCase().trim()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+};
+
 export { 
     generateProfessionalUnderline,
     getRandomTheme,
@@ -190,4 +199,5 @@ export {
     getReadTime,
     getFormattedDate,
     getDeviceId,
+    generateSlug,
 };

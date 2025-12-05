@@ -1,11 +1,9 @@
 "use client";
 
-import { quests } from '@/data';
-import { MapPin, Play } from 'lucide-react';
-import { useState } from 'react';
-import BlurImage from './ui/BlurImage';
-import ExpandableText from './ui/ExpandableText';
-import Section from './ui/Section';
+import { BlurImage, ExpandableText, Section } from "@/components/ui";
+import { quests } from "@/data";
+import { MapPin, Play } from "lucide-react";
+import { useState } from "react";
 
 export default function SideQuests() {
     const [selectedMedia, setSelectedMedia] = useState<Record<number, number>>({});

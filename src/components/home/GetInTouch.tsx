@@ -1,10 +1,10 @@
 'use client'
 
+import Logo from '@/components/ui/Logo'
+import Section from '@/components/ui/Section'
 import { MY_MAIL, MY_USERNAME } from '@/lib/constants'
 import { useAnimate } from 'motion/react'
 import { useEffect } from 'react'
-import Logo from '../ui/Logo'
-import Section from '../ui/Section'
 
 export default function GetInTouch() {
     const [scope, animate] = useAnimate()

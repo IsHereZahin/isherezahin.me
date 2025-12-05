@@ -5,30 +5,28 @@ import { notFound, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
-import EditProjectModal from "@/components/admin/EditProjectModal";
-import { Badge } from "@/components/ui/badge";
-import BlurImage from "@/components/ui/BlurImage";
+import { DeleteConfirmDialog, EditProjectModal } from "@/components/admin";
+import { MarkdownPreview, TableOfContents } from "@/components/content";
 import {
+    AnimatedNumber,
+    Badge,
+    BlurImage,
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import Heading from "@/components/ui/Heading";
-import ImageZoom from "@/components/ui/ImageZoom";
-import Section from "@/components/ui/Section";
-import TextGradient from "@/components/ui/TextGradient";
+    Heading,
+    ImageZoom,
+    LikeButton,
+    ProjectDetailsLoading,
+    ReferralLink,
+    Section,
+    TextGradient,
+} from "@/components/ui";
 import { ApiError, deleteProject, getProject, projectViews } from "@/lib/api";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { extractTocItems, getFormattedDate } from "@/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import MarkdownPreview from "../content/discussions/MarkdownPreview";
-import TableOfContents from "../content/TableOfContents";
-import AnimatedNumber from "../ui/AnimatedNumber";
-import LikeButton from "../ui/LikeButton";
-import { ProjectDetailsLoading } from "../ui/Loading";
-import ReferralLink from "../ui/ReferralLink";
 
 export default function ProjectDetailsIndex({ slug }: { readonly slug: string }) {
     const [showTOC, setShowTOC] = useState(false);

@@ -1,7 +1,6 @@
-import Button from '@/components/ui/Button';
-import Heading from '@/components/ui/Heading';
-import { Home } from 'lucide-react';
-import MotionWrapper from './motion/MotionWrapper';
+import { MotionWrapper } from "@/components/motion";
+import { Button, Heading } from "@/components/ui";
+import { Home } from "lucide-react";
 
 export default function ComingSoon() {
     return (
@@ -12,15 +11,12 @@ export default function ComingSoon() {
             </MotionWrapper>
             {/* Message */}
             <MotionWrapper delay={0.4}>
-
                 <h2 className="text-base font-semibold text-secondary-foreground mb-4">
                     We’re working hard to bring something amazing!
                 </h2>
-
             </MotionWrapper>
             {/* Go Home Button */}
             <MotionWrapper delay={0.6}>
-
                 <Button href="/" text="Go Back Home" icon={<Home className="h-4 w-4" />} />
             </MotionWrapper>
         </div>

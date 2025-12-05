@@ -1,6 +1,5 @@
-import Testimonial, { TestimonialType } from "../Testimonial";
-import Section from "../ui/Section";
-import SectionHeader from "../ui/SectionHeader";
+import { Section, SectionHeader } from "@/components/ui";
+import { Testimonial, TestimonialType } from "@/components";
 
 export type TestimonialsProps = {
     testimonials: TestimonialType[];

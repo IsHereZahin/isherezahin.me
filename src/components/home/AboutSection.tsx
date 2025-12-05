@@ -1,10 +1,9 @@
+import { StacksCard } from "@/components/about";
+import { MotionWrapper } from "@/components/motion";
+import { BlurImage, ImageZoom } from "@/components/ui";
 import { MY_NAME, SITE_USER_LOGO } from "@/lib/constants";
 import Image from "next/image";
 import React from "react";
-import StacksCard from "../about/StacksCard";
-import MotionWrapper from "../motion/MotionWrapper";
-import BlurImage from "../ui/BlurImage";
-import ImageZoom from "../ui/ImageZoom";
 
 // Tag Component 
 export interface TagProps {
@@ -147,7 +146,7 @@ export const ImageCard: React.FC = () => (
 );
 
 // AboutSection Component 
-export const AboutSection: React.FC = () => (
+const AboutSection: React.FC = () => (
     <MotionWrapper
         direction="top"
         delay={0.2}
@@ -168,3 +167,5 @@ export const AboutSection: React.FC = () => (
         </div>
     </MotionWrapper>
 );
+
+export default AboutSection;

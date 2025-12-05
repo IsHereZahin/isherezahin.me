@@ -1,5 +1,5 @@
-import MotionWrapper from "@/components/motion/MotionWrapper";
-import ReferralLink from "./ReferralLink";
+import { MotionWrapper } from "@/components/motion";
+import { ReferralLink } from "@/components/ui";
 
 interface ReferralItem {
     text: string;

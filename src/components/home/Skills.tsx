@@ -1,9 +1,7 @@
 "use client";
 
+import { BlurImage, Section, SectionHeader } from "@/components/ui";
 import { useState } from 'react';
-import BlurImage from '../ui/BlurImage';
-import Section from "../ui/Section";
-import SectionHeader from "../ui/SectionHeader";
 
 const skillImages: Record<string, string> = {
     "Figma": "https://images.unsplash.com/photo-1618761714954-0b8cd0026356?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080",

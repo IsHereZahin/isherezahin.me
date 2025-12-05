@@ -1,5 +1,6 @@
 "use client";
 
+import { BASE_DOMAIN } from "@/lib/constants";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import React, { useCallback, useRef, useState } from "react";
@@ -10,7 +11,7 @@ interface ReferralLinkProps extends React.HTMLAttributes<HTMLAnchorElement> {
 }
 
 export default function ReferralLink({ href = "", children, ...props }: Readonly<ReferralLinkProps>) {
-    const refId = process.env.NEXT_PUBLIC_BASE_DOMAIN || "isherezahin.me";
+    const refId = BASE_DOMAIN;
     const separator = href.includes("?") ? "&" : "?";
     const referralHref = `${href}${separator}ref=${encodeURIComponent(refId)}`;
 

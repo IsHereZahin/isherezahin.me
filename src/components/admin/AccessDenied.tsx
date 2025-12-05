@@ -1,10 +1,9 @@
 "use client";
 
-import Button from "@/components/ui/Button";
-import Heading from "@/components/ui/Heading";
+import { MotionWrapper } from "@/components/motion";
+import { Button, Heading } from "@/components/ui";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { LogIn, LogOut, User } from "lucide-react";
-import MotionWrapper from "@/components/motion/MotionWrapper";
 
 export default function AccessDenied() {
     const { user, status, login, logout } = useAuth();

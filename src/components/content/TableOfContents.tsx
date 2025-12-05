@@ -1,9 +1,8 @@
 'use client';
 
-import LikeButton from "@/components/ui/LikeButton";
+import { LikeButton, ShareSection } from "@/components/ui";
 import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import ShareSection from "../ui/ShareSection";
 
 interface TOCItem {
     id: string;

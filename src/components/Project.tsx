@@ -1,10 +1,8 @@
+import { MotionWrapper } from "@/components/motion";
+import { BlurImage, Frame, StylishLink } from "@/components/ui";
 import { getRandomTheme } from "@/utils";
 import { Project as ProjectType } from "@/utils/types";
 import { EyeOff } from "lucide-react";
-import MotionWrapper from "./motion/MotionWrapper";
-import BlurImage from "./ui/BlurImage";
-import Frame from "./ui/Frame";
-import StylishLink from "./ui/StylishLink";
 
 interface ProjectProps extends ProjectType {
     showUnpublishedBadge?: boolean;

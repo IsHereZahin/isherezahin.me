@@ -1,10 +1,8 @@
+import { Button, ReferralLink, Section } from '@/components/ui';
 import { FOOTER_MENU_ITEMS, SOCIAL_LINKS } from '@/config/links';
 import { MY_NAME } from '@/lib/constants';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
-import Button from '../ui/Button';
-import ReferralLink from '../ui/ReferralLink';
-import Section from '../ui/Section';
 
 export function SimpleFooter() {
     return (

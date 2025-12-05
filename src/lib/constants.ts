@@ -1,5 +1,6 @@
 // constants.ts
 export const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+export const IS_DEVELOPMENT = process.env.NODE_ENV === 'development';
 export const IS_SERVER = typeof window === 'undefined';
 
 // Personal Information
@@ -17,6 +18,9 @@ export const SITE_X_URL = `https://x.com/${MY_USERNAME}`;
 export const SITE_YOUTUBE_URL = `https://www.youtube.com/@${MY_USERNAME}`;
 export const SITE_LINKEDIN_URL = `https://www.linkedin.com/in/${MY_USERNAME}`;
 
+// Base Domain
+export const BASE_DOMAIN = process.env.NEXT_PUBLIC_BASE_DOMAIN || "isherezahin.me";
+
 // Section IDs
 export const HERO_SECTION_ID = process.env.NEXT_PUBLIC_HERO_SECTION_ID || '1';
 
@@ -25,4 +29,19 @@ export const OG_IMAGE_WIDTH = 1200;
 export const OG_IMAGE_HEIGHT = 630;
 export const OG_IMAGE_TYPE = 'image/png';
 
-export const AMA_DISCUSSION_URL  = process.env.NEXT_PUBLIC_AMA_DISCUSSION_URL || '';
+export const AMA_DISCUSSION_URL = process.env.NEXT_PUBLIC_AMA_DISCUSSION_URL || '';
+
+// GitHub Configuration
+export const AUTH_GITHUB_ID = process.env.AUTH_GITHUB_ID!;
+export const AUTH_GITHUB_SECRET = process.env.AUTH_GITHUB_SECRET!;
+export const GITHUB_REPO_OWNER = process.env.GITHUB_REPO_OWNER!;
+export const GITHUB_REPO_NAME = process.env.GITHUB_REPO_NAME!;
+export const GITHUB_ACCESS_TOKEN = process.env.GITHUB_ACCESS_TOKEN;
+
+// Cloudinary Configuration
+export const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
+export const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
+export const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
+
+// MongoDB Configuration
+export const MONGODB_URI = process.env.MONGODB_URI;

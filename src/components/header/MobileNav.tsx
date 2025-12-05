@@ -1,6 +1,6 @@
 "use client";
 
-import MotionPopup from "@/components/motion/MotionPopup";
+import { MotionPopup } from "@/components/motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
@@ -58,8 +58,8 @@ export default function MobileNav({ isOpen, onClose, buttonRef, links }: Readonl
                                     href={link.href}
                                     onClick={onClose}
                                     className={`relative cursor-pointer rounded-sm px-2 py-1.5 text-xs sm:text-sm flex items-center gap-3 sm:gap-4 w-full transition-colors ${isActive
-                                            ? "text-primary bg-primary/10"
-                                            : "text-foreground hover:bg-foreground/30"
+                                        ? "text-primary bg-primary/10"
+                                        : "text-foreground hover:bg-foreground/30"
                                         }`}
                                 >
                                     {link.icon}

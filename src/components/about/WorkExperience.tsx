@@ -1,10 +1,12 @@
-import MotionWrapper from "@/components/motion/MotionWrapper";
-import ReferralLink from "@/components/ui/ReferralLink";
-import Section from "@/components/ui/Section";
-import SectionHeader from "@/components/ui/SectionHeader";
+import { MotionWrapper } from "@/components/motion";
+import {
+    ReferralLink,
+    ReferralListItem,
+    Section,
+    SectionHeader,
+} from "@/components/ui";
 import { workExperience, WorkExperienceItemProps } from "@/data";
 import Image from "next/image";
-import ReferralListItem from "../ui/ReferralListItem";
 
 export function WorkExperienceItem({
     start,

@@ -1,6 +1,6 @@
 'use client';
 
-import AnimatedNumber from '@/components/ui/AnimatedNumber';
+import { AnimatedNumber } from '@/components/ui';
 import { blogLikes, projectLikes } from '@/lib/api';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';

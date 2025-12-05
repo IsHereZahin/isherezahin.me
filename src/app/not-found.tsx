@@ -1,10 +1,9 @@
 // src/app/not-found.tsx
 import type { Metadata } from "next";
 
-import MainLayout from "@/components/layouts/MainLayout";
-import MotionWrapper from "@/components/motion/MotionWrapper";
-import Button from "@/components/ui/Button";
-import Heading from "@/components/ui/Heading";
+import { MainLayout } from "@/components/layouts";
+import { MotionWrapper } from "@/components/motion";
+import { Button, Heading } from "@/components/ui";
 import { Home } from "lucide-react";
 
 export const metadata: Metadata = {

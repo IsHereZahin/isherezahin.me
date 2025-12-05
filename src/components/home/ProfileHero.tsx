@@ -1,10 +1,7 @@
+import { MotionWrapper } from "@/components/motion";
+import { BlurImage, Button, ImageZoom, Section } from "@/components/ui";
 import { MY_NAME, SITE_USER_LOGO } from "@/lib/constants";
 import { ArrowDown } from "lucide-react";
-import MotionWrapper from "../motion/MotionWrapper";
-import BlurImage from "../ui/BlurImage";
-import Button from "../ui/Button";
-import ImageZoom from "../ui/ImageZoom";
-import Section from "../ui/Section";
 
 export default function ProfileHero() {
     return (

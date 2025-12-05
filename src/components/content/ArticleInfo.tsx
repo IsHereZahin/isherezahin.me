@@ -4,8 +4,7 @@
 //
 // Modified by: Zahin Mohammad
 
-import AnimatedNumber from "@/components/ui/AnimatedNumber";
-import BlurImage from "@/components/ui/BlurImage";
+import { AnimatedNumber, BlurImage } from "@/components/ui";
 import { MY_NAME, SITE_GITHUB_URL, SITE_USER_LOGO } from "@/lib/constants";
 import Link from "next/link";
 

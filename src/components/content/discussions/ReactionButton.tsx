@@ -1,6 +1,6 @@
 "use client"
 
-import AnimatedNumber from "@/components/ui/AnimatedNumber"
+import { AnimatedNumber } from "@/components/ui"
 import { ThumbsDown, ThumbsUp } from "lucide-react"
 
 interface ReactionButtonProps {

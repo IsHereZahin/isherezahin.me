@@ -1,7 +1,7 @@
 "use client";
 
+import { MotionPopup } from "@/components/motion";
 import { languages } from "@/data";
-import MotionPopup from "@/components/motion/MotionPopup";
 
 interface LanguageDropdownProps {
     onLanguageSelect: (code: string) => void;
