@@ -12,7 +12,11 @@ interface ProjectDetailsPageProps {
 export async function generateMetadata({ params }: ProjectDetailsPageProps): Promise<Metadata> {
     const { slug } = await params;
     await dbConnect();
-    const project = await ProjectModel.findOne({ slug, published: true }).lean();
+    const project = await ProjectModel.findOne({ slug, published: true }).lean() as {
+        title: string;
+        excerpt: string;
+        imageSrc: string;
+    } | null;
 
     if (!project) {
         return {

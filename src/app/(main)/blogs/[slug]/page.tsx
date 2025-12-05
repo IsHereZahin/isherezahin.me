@@ -12,7 +12,11 @@ interface BlogPostPageProps {
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
     const { slug } = await params;
     await dbConnect();
-    const blog = await BlogModel.findOne({ slug, published: true }).lean();
+    const blog = await BlogModel.findOne({ slug, published: true }).lean() as {
+        title: string;
+        excerpt: string;
+        imageSrc: string;
+    } | null;
 
     if (!blog) {
         return {
