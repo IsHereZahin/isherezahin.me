@@ -6,6 +6,9 @@ import type { Metadata } from "next";
 dbConnect();
 
 export const metadata: Metadata = {
+  icons: {
+    icon: "/assets/images/logoicon.png",
+  },
   title: `${MY_FULL_NAME} | ${MY_DESIGNATION}`,
   description: `${MY_FULL_NAME} is a ${MY_DESIGNATION} from Cox's Bazar, Bangladesh, specializing in building high-performance and elegant web applications using React, Node.js, Laravel, and other modern web technologies.`,
   openGraph: {
