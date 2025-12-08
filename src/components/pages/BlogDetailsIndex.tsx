@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { DeleteConfirmDialog, EditBlogModal } from "@/components/admin";
-import { ArticleInfo, MarkdownPreview, TableOfContents } from "@/components/content";
+import { ArticleInfo, BlogSubscribe, MarkdownPreview, RelatedBlogs, TableOfContents } from "@/components/content";
 import {
     BlogDetailsLoading,
     BlurImage,
@@ -135,6 +135,12 @@ export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
                 <div className="block lg:hidden">
                     <LikeButton slug={slug} />
                 </div>
+
+                {/* Subscribe Section */}
+                <BlogSubscribe />
+
+                {/* Related Blogs Section */}
+                <RelatedBlogs currentSlug={slug} currentTags={data.tags || []} currentType={data.type} />
             </Section>
 
             <button onClick={() => setShowTOC(true)} className="group rounded-xl border border-transparent bg-neutral-800/40 backdrop-blur-sm fixed z-10 bottom-5 right-5 lg:hidden py-3 px-3 flex items-center gap-2 transition-opacity duration-300 opacity-50 hover:!opacity-100">

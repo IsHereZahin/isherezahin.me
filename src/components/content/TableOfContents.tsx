@@ -234,27 +234,42 @@ export default function TableOfContents({
                         </div>
 
                         <div className="overflow-auto px-6 pb-6 max-h-[80vh]">
-                            <ul ref={listRef} className="flex flex-col space-y-2.5 text-sm leading-relaxed">
-                                {tocItems.map((item) => (
-                                    <li key={item.id}>
-                                        <a
-                                            href={`#${item.id}`}
-                                            role="menuitem"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                handleItemClick(item.id);
-                                            }}
-                                            style={{ marginLeft: `${item.indent || 0}px` }}
-                                            className={`block py-1 px-2 rounded-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ring-offset-1 ${isActive(item.id)
-                                                ? "text-foreground bg-muted/10 font-semibold"
-                                                : "text-secondary-foreground hover:text-foreground hover:bg-muted/15"
-                                                }`}
-                                        >
-                                            {item.title}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
+                            {tocItems.length > 0 ? (
+                                <ul ref={listRef} className="flex flex-col space-y-2.5 text-sm leading-relaxed">
+                                    {tocItems.map((item) => (
+                                        <li key={item.id}>
+                                            <a
+                                                href={`#${item.id}`}
+                                                role="menuitem"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    handleItemClick(item.id);
+                                                }}
+                                                style={{ marginLeft: `${item.indent || 0}px` }}
+                                                className={`block py-1 px-2 rounded-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ring-offset-1 ${isActive(item.id)
+                                                    ? "text-foreground bg-muted/10 font-semibold"
+                                                    : "text-secondary-foreground hover:text-foreground hover:bg-muted/15"
+                                                    }`}
+                                            >
+                                                {item.title}
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <div className="text-center py-8">
+                                    <p className="text-muted-foreground text-sm">
+                                        No headings found in this {type.toLowerCase()}.
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* Mobile Share Section */}
+                            {title && (
+                                <div className={`pt-6 border-t border-border/50 ${tocItems.length > 0 ? 'mt-6' : 'mt-0'}`}>
+                                    <ShareSection title={title} type={type} />
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

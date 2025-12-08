@@ -1,5 +1,7 @@
 export { default as ArticleContent } from "./ArticleContent";
 export { default as ArticleInfo } from "./ArticleInfo";
+export { default as BlogSubscribe } from "./BlogSubscribe";
+export { default as RelatedBlogs } from "./RelatedBlogs";
 export { default as TableOfContents } from "./TableOfContents";
 
 // Discussions

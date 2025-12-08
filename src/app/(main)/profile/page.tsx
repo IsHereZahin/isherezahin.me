@@ -1,7 +1,5 @@
-import ProfileIndex from "@/components/pages/ProfileIndex";
+import { redirect } from "next/navigation";
 
 export default function ProfilePage() {
-    return (
-        <ProfileIndex />
-    )
+    redirect("/profile/personal");
 }

@@ -298,8 +298,52 @@ const deleteProject = async (slug: string) => {
     return await response.json();
 };
 
+// Newsletter subscription
+const newsletter = {
+    async checkSubscription(email: string) {
+        const response = await fetch(`/api/subscribe?email=${encodeURIComponent(email)}`);
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to check subscription", response.status);
+        }
+
+        return await response.json();
+    },
+
+    async subscribe(email: string) {
+        const response = await fetch("/api/subscribe", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to subscribe", response.status);
+        }
+
+        return await response.json();
+    },
+
+    async unsubscribe(email: string) {
+        const response = await fetch("/api/subscribe", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to unsubscribe", response.status);
+        }
+
+        return await response.json();
+    },
+};
+
 export {
     blogLikes, blogViews, createBlog, createProject, deleteBlog, deleteProject,
-    getBlog, getBlogs, getProject, getProjects, projectLikes, projectViews,
+    getBlog, getBlogs, getProject, getProjects, newsletter, projectLikes, projectViews,
     updateBlog, updateProject
 };
