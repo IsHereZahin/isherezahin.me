@@ -23,6 +23,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { newsletter } from "@/lib/api";
 import { useAuth } from "@/lib/hooks/useAuth";
 
 const DecorativeSVG = ({ className, id }: { className?: string; id: string }) => (
@@ -109,7 +110,7 @@ const NotificationCard = ({
             rotateX: 0,
             rotate: index === 0 ? 0 : index === 1 ? -1 : 1,
             transition: {
-                type: "spring",
+                type: "spring" as const,
                 stiffness: 100,
                 damping: 15,
                 delay: index * 0.15,

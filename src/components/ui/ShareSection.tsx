@@ -96,7 +96,7 @@ export default function ShareSection({ title, type, url, compact = false }: Read
                 >
                     {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                 </button>
-                {typeof navigator !== 'undefined' && navigator.share && (
+                {typeof navigator !== 'undefined' && typeof navigator.share === 'function' && (
                     <button
                         onClick={handleNativeShare}
                         title="Share"
@@ -133,8 +133,8 @@ export default function ShareSection({ title, type, url, compact = false }: Read
                     onClick={handleCopyLink}
                     title="Copy link"
                     className={`w-10 h-10 flex items-center justify-center rounded-xl border border-border/50 transition-all duration-200 ${copied
-                            ? "bg-green-500/10 text-green-500 border-green-500/20"
-                            : "bg-muted/50 hover:bg-primary hover:text-primary-foreground"
+                        ? "bg-green-500/10 text-green-500 border-green-500/20"
+                        : "bg-muted/50 hover:bg-primary hover:text-primary-foreground"
                         }`}
                 >
                     {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -142,7 +142,7 @@ export default function ShareSection({ title, type, url, compact = false }: Read
             </div>
 
             {/* Native share button for mobile */}
-            {typeof navigator !== 'undefined' && navigator.share && (
+            {typeof navigator !== 'undefined' && typeof navigator.share === 'function' && (
                 <button
                     onClick={handleNativeShare}
                     className="w-full mt-3 py-2.5 px-4 rounded-xl bg-foreground text-background font-medium text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
