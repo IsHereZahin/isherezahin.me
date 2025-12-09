@@ -1,10 +1,10 @@
 // src/app/api/discussions/[discussionNumber]/replies/[commentId]/route.ts
 import { auth } from "@/auth";
-import { NextRequest, NextResponse } from "next/server";
-import { callGraphQL } from "@/lib/github/graphql";
-import { formatComment } from "@/lib/github/formatters";
-import type { CommentNode } from "@/lib/github/types";
 import { GITHUB_ACCESS_TOKEN } from "@/lib/constants";
+import { formatComment } from "@/lib/github/formatters";
+import { callGraphQL } from "@/lib/github/graphql";
+import type { CommentNode } from "@/lib/github/types";
+import { NextRequest, NextResponse } from "next/server";
 
 const GET_REPLIES_QUERY = `
   query($commentId: ID!) {
@@ -110,6 +110,14 @@ export async function POST(request: NextRequest, context: {params: Promise<{ dis
     const session = await auth();
     if (!session?.accessToken) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Only GitHub users can post replies
+    if (session.user?.provider !== "github") {
+      return NextResponse.json(
+        { error: "GitHub authentication required" },
+        { status: 403 }
+      );
     }
 
     const { commentId } = await context.params;

@@ -3,7 +3,7 @@
 import MotionWrapper from "@/components/motion/MotionWrapper";
 import { BlurImage, Button, PageTitle, Section } from "@/components/ui";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { LogIn, LogOut, Monitor, Settings, User } from "lucide-react";
+import { LogIn, LogOut, Monitor, Settings, Shield, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
@@ -15,7 +15,7 @@ const navItems = [
 ];
 
 export default function ProfileLayout({ children }: { children: ReactNode }) {
-    const { user, logout, login } = useAuth();
+    const { user, logout, login, isAdmin } = useAuth();
     const pathname = usePathname();
 
     const currentSection = pathname.split("/").pop() || "personal";
@@ -81,6 +81,21 @@ export default function ProfileLayout({ children }: { children: ReactNode }) {
                                 </Link>
                             );
                         })}
+
+                        {isAdmin && (
+                            <>
+                                <div className="border-t border-border my-2" />
+                                <Link
+                                    href="/admin"
+                                    prefetch={true}
+                                    className="flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-colors text-foreground hover:bg-muted"
+                                >
+                                    <Shield className="h-4 w-4" />
+                                    Admin Panel
+                                </Link>
+                            </>
+                        )}
+
                         <button
                             onClick={logout}
                             className="flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-colors text-foreground cursor-pointer hover:bg-muted w-full"

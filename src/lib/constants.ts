@@ -38,6 +38,10 @@ export const GITHUB_REPO_OWNER = process.env.GITHUB_REPO_OWNER!;
 export const GITHUB_REPO_NAME = process.env.GITHUB_REPO_NAME!;
 export const GITHUB_ACCESS_TOKEN = process.env.GITHUB_ACCESS_TOKEN;
 
+// Google Configuration
+export const AUTH_GOOGLE_ID = process.env.AUTH_GOOGLE_ID!;
+export const AUTH_GOOGLE_SECRET = process.env.AUTH_GOOGLE_SECRET!;
+
 // Cloudinary Configuration
 export const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
 export const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;

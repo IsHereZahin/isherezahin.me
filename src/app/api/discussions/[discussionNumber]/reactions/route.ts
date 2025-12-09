@@ -1,8 +1,8 @@
 // src/app/api/discussions/[discussionNumber]/reactions/route.ts
 import { auth } from "@/auth";
-import { type NextRequest, NextResponse } from "next/server";
 import { callGraphQL } from "@/lib/github/graphql";
 import { REACTION_MAP_REVERSE } from "@/lib/github/reactions";
+import { type NextRequest, NextResponse } from "next/server";
 
 const ADD_REACTION_MUTATION = `
   mutation($subjectId: ID!, $content: ReactionContent!) {
@@ -36,6 +36,14 @@ export async function POST(request: NextRequest) {
     const session = await auth();
     if (!session?.accessToken) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Only GitHub users can manage reactions
+    if (session.user?.provider !== "github") {
+      return NextResponse.json(
+        { error: "GitHub authentication required" },
+        { status: 403 }
+      );
     }
 
     const { subjectId, reaction, hasReacted } =

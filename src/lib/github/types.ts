@@ -171,16 +171,25 @@ export interface User {
 }
 
 export interface AuthUser {
+    id?: string;
     name?: string | null;
     email?: string | null;
     image?: string | null;
+    avatar_url?: string | null;
     username?: string | null;
+    provider?: "github" | "google";
+    bio?: string | null;
 }
 
 export interface AuthContextType {
     user: AuthUser | null;
     status: "loading" | "authenticated" | "unauthenticated";
     login: () => void;
+    loginWithProvider: (provider: "github" | "google") => Promise<void>;
     logout: () => void;
     isAdmin: boolean;
+    isGitHubUser: boolean;
+    openLoginModal: () => void;
+    closeLoginModal: () => void;
+    isLoginModalOpen: boolean;
 }

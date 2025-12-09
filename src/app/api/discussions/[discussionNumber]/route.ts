@@ -1,10 +1,10 @@
 // src/app/api/discussions/[discussionNumber]/route.ts
 import { auth } from "@/auth";
-import { NextRequest, NextResponse } from "next/server";
-import { callGraphQL } from "@/lib/github/graphql";
-import { formatComment } from "@/lib/github/formatters";
-import type { CommentNode } from "@/lib/github/types";
 import { GITHUB_ACCESS_TOKEN, GITHUB_REPO_NAME, GITHUB_REPO_OWNER } from "@/lib/constants";
+import { formatComment } from "@/lib/github/formatters";
+import { callGraphQL } from "@/lib/github/graphql";
+import type { CommentNode } from "@/lib/github/types";
+import { NextRequest, NextResponse } from "next/server";
 
 // GraphQL Queries & Mutations
 const GET_DISCUSSION_QUERY = `
@@ -126,6 +126,14 @@ export async function POST(request: NextRequest, context: { params: Promise<{ di
     if (!session?.accessToken)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+    // Only GitHub users can post comments
+    if (session.user?.provider !== "github") {
+      return NextResponse.json(
+        { error: "GitHub authentication required" },
+        { status: 403 }
+      );
+    }
+
     const { discussionNumber: discussionNumberStr } = await context.params;
     const discussionNumber = parseInt(discussionNumberStr);
 
@@ -175,6 +183,14 @@ export async function DELETE(request: NextRequest) {
     const session = await auth();
     if (!session?.accessToken)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    // Only GitHub users can delete comments
+    if (session.user?.provider !== "github") {
+      return NextResponse.json(
+        { error: "GitHub authentication required" },
+        { status: 403 }
+      );
+    }
 
     const { commentId } = (await request.json()) as { commentId: string };
 

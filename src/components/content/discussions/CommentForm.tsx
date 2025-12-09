@@ -16,7 +16,7 @@ interface CommentFormProps {
 }
 
 export default function CommentForm({ parentId, onCancel }: Readonly<CommentFormProps>) {
-    const { user, login } = useAuth()
+    const { user, login, isGitHubUser } = useAuth()
     const { addComment, addReply } = useDiscussion()
 
     const [text, setText] = useState("")
@@ -25,6 +25,9 @@ export default function CommentForm({ parentId, onCancel }: Readonly<CommentForm
     const [error, setError] = useState<string | null>(null)
 
     const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+    // Check if user can interact (must be GitHub user)
+    const canInteract = user && isGitHubUser
 
     const handleSubmit = useCallback(
         async (e: React.FormEvent) => {
@@ -95,7 +98,7 @@ export default function CommentForm({ parentId, onCancel }: Readonly<CommentForm
                 placeholder={parentId ? "Write a reply..." : "Leave a comment..."}
                 className="w-full border-none outline-none text-sm resize-none max-h-32 overflow-auto rounded-lg p-3 focus:ring-2 focus:ring-secondary-foreground/30 transition-all bg-secondary/50 text-foreground placeholder:text-muted-foreground disabled:opacity-50"
                 rows={3}
-                disabled={submitting || !user}
+                disabled={submitting || !canInteract}
                 aria-label={parentId ? "Reply input" : "Comment input"}
                 aria-describedby={error ? "comment-error" : undefined}
             />
@@ -106,23 +109,31 @@ export default function CommentForm({ parentId, onCancel }: Readonly<CommentForm
         <div className="relative">
             <form
                 onSubmit={handleSubmit}
-                className={`relative rounded-xl p-4 flex flex-col sm:flex-row items-start gap-4 border border-border/70 bg-card hover:border-border transition-all mt-3 overflow-hidden ${user ? "" : "opacity-60"}`}
+                className={`relative rounded-xl p-4 flex flex-col sm:flex-row items-start gap-4 border border-border/70 bg-card hover:border-border transition-all mt-3 overflow-hidden ${canInteract ? "" : "opacity-60"}`}
             >
-                {/* Sign in button */}
-                {!user && (
-                    <button
-                        type="button"
-                        onClick={() => login?.()}
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-                            px-4 py-2 flex items-center gap-2 rounded-lg font-semibold text-sm 
-                            cursor-pointer transition-all bg-foreground text-background 
-                            hover:shadow-lg hover:bg-foreground/90 pointer-events-auto z-10"
-                        aria-label="Sign in with GitHub"
-                    >
-                        <SiGithub className="w-5 h-5" />
-                        <span className="sm:hidden">Sign in</span>
-                        <span className="hidden sm:inline">Sign in with GitHub</span>
-                    </button>
+                {/* Sign in button or non-GitHub user message */}
+                {!canInteract && (
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-center">
+                        {!user ? (
+                            <button
+                                type="button"
+                                onClick={() => login?.()}
+                                className="px-4 py-2 flex items-center gap-2 rounded-lg font-semibold text-sm 
+                                    cursor-pointer transition-all bg-foreground text-background 
+                                    hover:shadow-lg hover:bg-foreground/90 pointer-events-auto"
+                                aria-label="Sign in with GitHub"
+                            >
+                                <SiGithub className="w-5 h-5" />
+                                <span className="sm:hidden">Sign in</span>
+                                <span className="hidden sm:inline">Sign in with GitHub</span>
+                            </button>
+                        ) : (
+                            <div className="px-4 py-2 rounded-lg bg-muted/80 text-sm text-muted-foreground">
+                                <p className="font-medium">GitHub login required</p>
+                                <p className="text-xs mt-1">Sign in with GitHub to interact with the Guestbook</p>
+                            </div>
+                        )}
+                    </div>
                 )}
 
                 {/* Avatar */}
@@ -164,7 +175,7 @@ export default function CommentForm({ parentId, onCancel }: Readonly<CommentForm
                             <button
                                 type="button"
                                 onClick={() => setShowPreview((p) => !p)}
-                                disabled={!user || submitting}
+                                disabled={!canInteract || submitting}
                                 className="rounded-lg px-3 py-1.5 text-xs text-muted-foreground transition hover:bg-secondary hover:text-foreground disabled:opacity-50"
                             >
                                 {showPreview ? "Write" : "Preview"}
@@ -172,7 +183,7 @@ export default function CommentForm({ parentId, onCancel }: Readonly<CommentForm
 
                             <button
                                 type="submit"
-                                disabled={!text.trim() || submitting || !user}
+                                disabled={!text.trim() || submitting || !canInteract}
                                 className="rounded-lg p-2 text-primary transition hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50"
                                 title={parentId ? "Post reply" : "Post comment"}
                             >
