@@ -49,3 +49,12 @@ export const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
 
 // MongoDB Configuration
 export const MONGODB_URI = process.env.MONGODB_URI;
+
+// Email Configuration (SMTP)
+export const MAIL_MAILER = process.env.MAIL_MAILER || 'smtp';
+export const MAIL_HOST = process.env.MAIL_HOST;
+export const MAIL_PORT = process.env.MAIL_PORT ? parseInt(process.env.MAIL_PORT) : 2525;
+export const MAIL_USERNAME = process.env.MAIL_USERNAME;
+export const MAIL_PASSWORD = process.env.MAIL_PASSWORD;
+export const MAIL_FROM_ADDRESS = process.env.MAIL_FROM_ADDRESS;
+export const MAIL_FROM_NAME = process.env.NEXT_PUBLIC_MY_NAME;

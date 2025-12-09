@@ -2,12 +2,21 @@ import { SubscriberModel } from "@/database/models/subscriber-model";
 import dbConnect from "@/database/services/mongo";
 import { NextRequest, NextResponse } from "next/server";
 
-// Check if email is subscribed
+// Check if email is subscribed and get newsletter status
 export async function GET(request: NextRequest) {
     try {
         await dbConnect();
         const { searchParams } = new URL(request.url);
         const email = searchParams.get("email");
+        const checkStatus = searchParams.get("status");
+
+        // If checking newsletter status only
+        if (checkStatus === "true") {
+            const { AdminSettingsModel } = await import("@/database/models/admin-settings-model");
+            const newsletterSetting = await AdminSettingsModel.findOne({ key: 'newsletterEnabled' }).lean() as { value: boolean } | null;
+            const isNewsletterEnabled = newsletterSetting?.value ?? true;
+            return NextResponse.json({ newsletterEnabled: isNewsletterEnabled });
+        }
 
         if (!email) {
             return NextResponse.json({ error: "Email is required" }, { status: 400 });
@@ -18,7 +27,15 @@ export async function GET(request: NextRequest) {
             isActive: true 
         });
 
-        return NextResponse.json({ isSubscribed: !!subscriber });
+        // Also get newsletter enabled status
+        const { AdminSettingsModel } = await import("@/database/models/admin-settings-model");
+        const newsletterSetting = await AdminSettingsModel.findOne({ key: 'newsletterEnabled' }).lean() as { value: boolean } | null;
+        const isNewsletterEnabled = newsletterSetting?.value ?? true;
+
+        return NextResponse.json({ 
+            isSubscribed: !!subscriber,
+            newsletterEnabled: isNewsletterEnabled
+        });
     } catch (error) {
         console.error("Error checking subscription:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });

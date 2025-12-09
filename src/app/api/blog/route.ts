@@ -1,7 +1,10 @@
 // src/app/api/blog/route.ts
+import { AdminSettingsModel } from '@/database/models/admin-settings-model';
 import { BlogModel } from '@/database/models/blog-model';
+import { SubscriberModel } from '@/database/models/subscriber-model';
 import dbConnect from '@/database/services/mongo';
 import { checkIsAdmin } from '@/lib/auth-utils';
+import { sendNewBlogNotification } from '@/lib/mails/new-blog-notification';
 import { Blog, BlogDocument } from '@/utils/types';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -104,9 +107,54 @@ export async function POST(req: NextRequest) {
             published: published ?? false,
         });
 
+        // Send newsletter to subscribers if blog is published and newsletter is enabled
+        let emailsSent = 0;
+        let emailsFailed = 0;
+        
+        if (published) {
+            try {
+                // Check if newsletter is enabled
+                const newsletterSetting = await AdminSettingsModel.findOne({ key: 'newsletterEnabled' }).lean() as { value: boolean } | null;
+                const isNewsletterEnabled = newsletterSetting?.value ?? true;
+
+                console.log('Newsletter enabled:', isNewsletterEnabled);
+
+                if (isNewsletterEnabled) {
+                    // Get all active subscribers
+                    const activeSubscribers = await SubscriberModel.find({ isActive: true }).lean() as unknown as { email: string }[];
+                    const subscriberEmails = activeSubscribers.map((sub) => sub.email);
+
+                    console.log('Active subscribers found:', subscriberEmails.length);
+
+                    if (subscriberEmails.length > 0) {
+                        const result = await sendNewBlogNotification(
+                            {
+                                blogTitle: title,
+                                blogExcerpt: excerpt,
+                                blogSlug: slug,
+                                blogImageSrc: imageSrc,
+                                publishedDate: new Date().toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                }),
+                            },
+                            subscriberEmails
+                        );
+                        emailsSent = result.sent;
+                        emailsFailed = result.failed;
+                        console.log('Newsletter results - sent:', emailsSent, 'failed:', emailsFailed);
+                    }
+                }
+            } catch (emailError) {
+                console.error('Error sending newsletter emails:', emailError);
+            }
+        }
+
         return NextResponse.json({
             id: newBlog._id.toString(),
             message: 'Blog created successfully',
+            newsletter: published ? { sent: emailsSent, failed: emailsFailed } : null,
         }, { status: 201 });
 
     } catch (error) {

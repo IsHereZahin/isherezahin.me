@@ -2,13 +2,14 @@
 
 import { newsletter } from "@/lib/api";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { Bell, BellOff, Loader2 } from "lucide-react";
+import { AlertCircle, Bell, BellOff, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function ProfileSettings() {
     const { user } = useAuth();
     const [isSubscribed, setIsSubscribed] = useState(false);
+    const [isNewsletterEnabled, setIsNewsletterEnabled] = useState(true);
     const [isLoadingSubscription, setIsLoadingSubscription] = useState(true);
     const [isTogglingSubscription, setIsTogglingSubscription] = useState(false);
 
@@ -19,6 +20,7 @@ export default function ProfileSettings() {
                 try {
                     const data = await newsletter.checkSubscription(user.email);
                     setIsSubscribed(data.isSubscribed);
+                    setIsNewsletterEnabled(data.newsletterEnabled ?? true);
                 } catch (error) {
                     console.error("Error checking subscription:", error);
                 } finally {
@@ -108,9 +110,19 @@ export default function ProfileSettings() {
                         </button>
                     </div>
                     {isSubscribed && (
-                        <p className="text-xs text-muted-foreground mt-3 pt-3 border-t border-border/50">
-                            Subscribed email: <span className="text-foreground">{user.email}</span>
-                        </p>
+                        <div className="mt-3 pt-3 border-t border-border/50 space-y-2">
+                            <p className="text-xs text-muted-foreground">
+                                Subscribed email: <span className="text-foreground">{user.email}</span>
+                            </p>
+                            {!isNewsletterEnabled && (
+                                <div className="flex items-start gap-2 p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                                    <AlertCircle className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                                    <p className="text-xs text-amber-600 dark:text-amber-400">
+                                        Admin has currently disabled newsletter notifications. You will receive emails once the admin enables it.
+                                    </p>
+                                </div>
+                            )}
+                        </div>
                     )}
                 </div>
             </div>

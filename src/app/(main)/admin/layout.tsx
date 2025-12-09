@@ -3,13 +3,15 @@
 import MotionWrapper from "@/components/motion/MotionWrapper";
 import { BlurImage, PageTitle, Section } from "@/components/ui";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { Loader2, LogOut, Users } from "lucide-react";
+import { Loader2, LogOut, Mail, Settings, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ReactNode, useEffect } from "react";
 
 const adminNavItems = [
     { id: "users", label: "Manage Users", icon: Users, href: "/admin/users" },
+    { id: "subscribers", label: "Subscribers", icon: Mail, href: "/admin/subscribers" },
+    { id: "settings", label: "Settings", icon: Settings, href: "/admin/settings" },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
@@ -69,8 +71,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                                     href={item.href}
                                     prefetch={true}
                                     className={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-colors ${isActive
-                                            ? "bg-foreground text-secondary"
-                                            : "text-foreground hover:bg-muted"
+                                        ? "bg-foreground text-secondary"
+                                        : "text-foreground hover:bg-muted"
                                         }`}
                                 >
                                     <Icon className="h-4 w-4" />
