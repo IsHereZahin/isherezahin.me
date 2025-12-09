@@ -1,4 +1,4 @@
-import { MotionWrapper } from "@/components/motion";
+import MotionWrapper from "@/components/motion/MotionWrapper";
 import { BlurImage, Frame, StylishLink } from "@/components/ui";
 import { getRandomTheme } from "@/utils";
 import { Project as ProjectType } from "@/utils/types";

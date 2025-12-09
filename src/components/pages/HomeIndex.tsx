@@ -1,12 +1,10 @@
-import { AboutMe } from "@/components/about";
-import {
-    Blogs,
-    GetInTouch,
-    Hero,
-    ProfileHero,
-    Projects,
-    Testimonials,
-} from "@/components/home";
+import AboutMe from "@/components/about/AboutMe";
+import Blogs from "@/components/home/Blogs";
+import GetInTouch from "@/components/home/GetInTouch";
+import Hero from "@/components/home/Hero";
+import ProfileHero from "@/components/home/ProfileHero";
+import Projects from "@/components/home/Projects";
+import Testimonials from "@/components/home/Testimonials";
 import { testimonials } from "@/data";
 import { HERO_SECTION_ID } from "@/lib/constants";
 

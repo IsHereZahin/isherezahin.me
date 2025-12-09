@@ -12,8 +12,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { HEADER_LINKS } from "@/config/links";
 
-import { HeaderActions, MobileNav } from "@/components/header";
-import { MotionWrapper } from "@/components/motion";
+import HeaderActions from "@/components/header/HeaderActions";
+import MobileNav from "@/components/header/MobileNav";
+import MotionWrapper from "@/components/motion/MotionWrapper";
 import { Logo } from "@/components/ui";
 
 export default function Header() {

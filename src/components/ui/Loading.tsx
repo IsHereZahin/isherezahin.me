@@ -2,73 +2,72 @@ import { Skeleton } from "./skeleton";
 
 export function BlogDetailsLoading() {
     return (
-        <section className="px-6 pt-16 max-w-[900px] mx-auto">
-            <div className="space-y-8">
+        <section className="px-4 sm:px-6 pt-8 sm:pt-16 max-w-[900px] mx-auto">
+            <div className="space-y-6 sm:space-y-8">
 
                 {/* Title + Subtitle */}
-                <div className="text-center space-y-4">
-                    <Skeleton className="h-10 w-96 mx-auto rounded-lg" />
-                    <Skeleton className="h-5 w-72 mx-auto rounded" />
+                <div className="text-center space-y-3 sm:space-y-4">
+                    <Skeleton className="h-8 sm:h-10 w-full max-w-[280px] sm:max-w-[384px] mx-auto rounded-lg" />
+                    <Skeleton className="h-4 sm:h-5 w-full max-w-[200px] sm:max-w-[288px] mx-auto rounded" />
                 </div>
 
                 {/* Author Meta */}
-                <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+                <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
-                        <Skeleton className="h-8 w-8 rounded-full" />
-                        <Skeleton className="h-4 w-20 rounded" />
+                        <Skeleton className="h-6 w-6 sm:h-8 sm:w-8 rounded-full" />
+                        <Skeleton className="h-3 sm:h-4 w-16 sm:w-20 rounded" />
                     </div>
-                    <Skeleton className="h-4 w-28 rounded" /> {/* Date + Read time */}
-                    <Skeleton className="h-4 w-20 rounded" /> {/* Views */}
-                    <Skeleton className="h-4 w-20 rounded" /> {/* Comments */}
+                    <Skeleton className="h-3 sm:h-4 w-20 sm:w-28 rounded" />
+                    <Skeleton className="hidden sm:block h-4 w-20 rounded" />
+                    <Skeleton className="hidden sm:block h-4 w-20 rounded" />
                 </div>
 
                 {/* Featured Hero Image */}
-                <Skeleton className="aspect-[16/9] w-full rounded-2xl mt-8" />
-                {/* Alternative fixed height: <Skeleton className="h-96 w-full rounded-2xl mt-8" /> */}
+                <Skeleton className="aspect-[16/9] w-full rounded-xl sm:rounded-2xl mt-4 sm:mt-8" />
 
                 {/* Sidebar-like Summary Box */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mt-12">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8 mt-8 sm:mt-12">
                     {/* Main Content Area */}
-                    <div className="md:col-span-3 space-y-6">
+                    <div className="md:col-span-3 space-y-4 sm:space-y-6">
                         {/* Summary Title */}
-                        <Skeleton className="h-7 w-32 rounded-lg" />
+                        <Skeleton className="h-6 sm:h-7 w-28 sm:w-32 rounded-lg" />
 
                         {/* Summary Bullet Points */}
-                        <div className="space-y-3">
+                        <div className="space-y-2 sm:space-y-3">
                             {[...Array(5)].map((_, i) => (
-                                <div key={i} className="flex items-start gap-3">
-                                    <Skeleton className="h-5 w-5 rounded shrink-0 mt-0.5" />
-                                    <Skeleton className="h-4 w-full max-w-lg rounded" />
+                                <div key={i} className="flex items-start gap-2 sm:gap-3">
+                                    <Skeleton className="h-4 w-4 sm:h-5 sm:w-5 rounded shrink-0 mt-0.5" />
+                                    <Skeleton className="h-3 sm:h-4 w-full max-w-lg rounded" />
                                 </div>
                             ))}
                         </div>
 
                         {/* Body Paragraphs */}
-                        <div className="space-y-4 mt-10">
-                            <Skeleton className="h-6 w-48 rounded-lg" />
+                        <div className="space-y-3 sm:space-y-4 mt-6 sm:mt-10">
+                            <Skeleton className="h-5 sm:h-6 w-32 sm:w-48 rounded-lg" />
                             {[...Array(8)].map((_, i) => (
                                 <Skeleton
                                     key={i}
-                                    className={`h-4 rounded ${i % 3 === 0 ? "w-full" : i % 3 === 1 ? "w-11/12" : "w-9/12"}`}
+                                    className={`h-3 sm:h-4 rounded ${i % 3 === 0 ? "w-full" : i % 3 === 1 ? "w-11/12" : "w-9/12"}`}
                                 />
                             ))}
                         </div>
 
                         {/* Conclusion Section */}
-                        <div className="mt-12 space-y-4">
-                            <Skeleton className="h-6 w-64 rounded-lg" />
+                        <div className="mt-8 sm:mt-12 space-y-3 sm:space-y-4">
+                            <Skeleton className="h-5 sm:h-6 w-48 sm:w-64 rounded-lg" />
                             {[...Array(6)].map((_, i) => (
-                                <Skeleton key={i} className="h-4 w-full rounded" />
+                                <Skeleton key={i} className="h-3 sm:h-4 w-full rounded" />
                             ))}
                         </div>
                     </div>
 
-                    {/* Right Sidebar - "On this page" */}
-                    <aside className="md:col-span-1">
+                    {/* Right Sidebar - "On this page" - Hidden on mobile */}
+                    <aside className="hidden md:block md:col-span-1">
                         <Skeleton className="h-6 w-32 mb-6 rounded-lg" />
                         <div className="space-y-3">
                             {[...Array(4)].map((_, i) => (
-                                <Skeleton key={i} className="h-4 w-40 rounded" />
+                                <Skeleton key={i} className="h-4 w-full max-w-[160px] rounded" />
                             ))}
                         </div>
 
@@ -201,80 +200,80 @@ export function CommentsLoading({ count = 3 }: { readonly count?: number }) {
 
 export function ProjectDetailsLoading() {
     return (
-        <section className="px-6 pt-16 max-w-[1000px] mx-auto">
-            <div className="space-y-8">
+        <section className="px-4 sm:px-6 pt-8 sm:pt-16 max-w-[1000px] mx-auto">
+            <div className="space-y-6 sm:space-y-8">
                 {/* Category Badge */}
                 <div className="text-center">
-                    <Skeleton className="h-6 w-24 mx-auto rounded-full" />
+                    <Skeleton className="h-5 sm:h-6 w-20 sm:w-24 mx-auto rounded-full" />
                 </div>
 
                 {/* Title + Subtitle */}
-                <div className="text-center space-y-4">
-                    <Skeleton className="h-12 w-96 mx-auto rounded-lg" />
-                    <Skeleton className="h-5 w-80 mx-auto rounded" />
+                <div className="text-center space-y-3 sm:space-y-4">
+                    <Skeleton className="h-8 sm:h-12 w-full max-w-[280px] sm:max-w-[384px] mx-auto rounded-lg" />
+                    <Skeleton className="h-4 sm:h-5 w-full max-w-[240px] sm:max-w-[320px] mx-auto rounded" />
                 </div>
 
                 {/* Project Meta Info */}
-                <div className="flex flex-wrap items-center justify-center gap-6">
+                <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
                     <div className="flex items-center gap-2">
-                        <Skeleton className="h-4 w-4 rounded" />
-                        <Skeleton className="h-4 w-24 rounded" />
+                        <Skeleton className="h-3 w-3 sm:h-4 sm:w-4 rounded" />
+                        <Skeleton className="h-3 sm:h-4 w-16 sm:w-24 rounded" />
                     </div>
                     <div className="flex items-center gap-2">
-                        <Skeleton className="h-4 w-4 rounded" />
-                        <Skeleton className="h-4 w-20 rounded" />
+                        <Skeleton className="h-3 w-3 sm:h-4 sm:w-4 rounded" />
+                        <Skeleton className="h-3 sm:h-4 w-14 sm:w-20 rounded" />
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="hidden sm:flex items-center gap-2">
                         <Skeleton className="h-4 w-4 rounded" />
                         <Skeleton className="h-4 w-28 rounded" />
                     </div>
                     <div className="flex items-center gap-2">
                         <Skeleton className="h-2 w-2 rounded-full" />
-                        <Skeleton className="h-4 w-20 rounded" />
+                        <Skeleton className="h-3 sm:h-4 w-14 sm:w-20 rounded" />
                     </div>
                 </div>
 
                 {/* Project Image */}
-                <Skeleton className="aspect-[16/9] w-full rounded-2xl mt-12" />
+                <Skeleton className="aspect-[16/9] w-full rounded-xl sm:rounded-2xl mt-6 sm:mt-12" />
 
                 {/* Content Area */}
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 mt-12">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 sm:gap-12 mt-8 sm:mt-12">
                     {/* Main Content */}
-                    <div className="lg:col-span-3 space-y-8">
+                    <div className="lg:col-span-3 space-y-6 sm:space-y-8">
                         {/* Action Buttons */}
-                        <div className="flex gap-3">
-                            <Skeleton className="h-10 w-32 rounded-lg" />
-                            <Skeleton className="h-10 w-28 rounded-lg" />
+                        <div className="flex gap-2 sm:gap-3">
+                            <Skeleton className="h-9 sm:h-10 w-24 sm:w-32 rounded-lg" />
+                            <Skeleton className="h-9 sm:h-10 w-20 sm:w-28 rounded-lg" />
                         </div>
 
                         {/* Tech Stack Tags */}
                         <div className="flex flex-wrap gap-2">
                             {[...Array(5)].map((_, i) => (
-                                <Skeleton key={i} className="h-6 w-20 rounded-full" />
+                                <Skeleton key={i} className="h-5 sm:h-6 w-16 sm:w-20 rounded-full" />
                             ))}
                         </div>
 
                         {/* Content Sections */}
-                        <div className="space-y-6">
-                            <Skeleton className="h-8 w-32 rounded-lg" />
+                        <div className="space-y-4 sm:space-y-6">
+                            <Skeleton className="h-6 sm:h-8 w-24 sm:w-32 rounded-lg" />
                             {[...Array(6)].map((_, i) => (
                                 <Skeleton
                                     key={i}
-                                    className={`h-4 rounded ${i % 3 === 0 ? "w-full" : i % 3 === 1 ? "w-11/12" : "w-9/12"}`}
+                                    className={`h-3 sm:h-4 rounded ${i % 3 === 0 ? "w-full" : i % 3 === 1 ? "w-11/12" : "w-9/12"}`}
                                 />
                             ))}
                         </div>
 
-                        <div className="space-y-6 mt-8">
-                            <Skeleton className="h-8 w-40 rounded-lg" />
+                        <div className="space-y-4 sm:space-y-6 mt-6 sm:mt-8">
+                            <Skeleton className="h-6 sm:h-8 w-32 sm:w-40 rounded-lg" />
                             {[...Array(4)].map((_, i) => (
-                                <Skeleton key={i} className="h-4 w-full rounded" />
+                                <Skeleton key={i} className="h-3 sm:h-4 w-full rounded" />
                             ))}
                         </div>
                     </div>
 
-                    {/* Sidebar */}
-                    <aside className="lg:col-span-1">
+                    {/* Sidebar - Hidden on mobile */}
+                    <aside className="hidden lg:block lg:col-span-1">
                         <Skeleton className="h-6 w-32 mb-6 rounded-lg" />
                         <div className="space-y-3">
                             {[...Array(4)].map((_, i) => (

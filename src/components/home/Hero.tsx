@@ -1,5 +1,5 @@
-import { HeroBanner } from "@/components/home";
-import { MotionWrapper } from "@/components/motion";
+import HeroBanner from "@/components/home/HeroBanner";
+import MotionWrapper from "@/components/motion/MotionWrapper";
 import {
     BlurImage,
     Button,

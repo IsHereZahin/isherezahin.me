@@ -5,8 +5,10 @@ import { notFound, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { DeleteConfirmDialog, EditProjectModal } from "@/components/admin";
-import { MarkdownPreview, TableOfContents } from "@/components/content";
+import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
+import EditProjectModal from "@/components/admin/EditProjectModal";
+import MarkdownPreview from "@/components/content/discussions/MarkdownPreview";
+import TableOfContents from "@/components/content/TableOfContents";
 import {
     AnimatedNumber,
     Badge,

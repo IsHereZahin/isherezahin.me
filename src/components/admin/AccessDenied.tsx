@@ -1,6 +1,6 @@
 "use client";
 
-import { MotionWrapper } from "@/components/motion";
+import MotionWrapper from "@/components/motion/MotionWrapper";
 import { Button, Heading } from "@/components/ui";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { LogIn, LogOut, User } from "lucide-react";

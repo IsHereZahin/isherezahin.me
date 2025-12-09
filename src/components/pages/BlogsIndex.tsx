@@ -1,8 +1,9 @@
 "use client";
 
-import { AddBlogModal } from "@/components/admin";
-import { Article } from "@/components";
-import { MotionWrapper } from "@/components/motion";
+import AddBlogModal from "@/components/admin/AddBlogModal";
+import Article from "@/components/Article";
+import BlogSubscribe from "@/components/content/BlogSubscribe";
+import MotionWrapper from "@/components/motion/MotionWrapper";
 import {
     AdminAddButton,
     AdminEmptyState,
@@ -47,6 +48,33 @@ export default function BlogIndex() {
 
     const hasBlogs = data?.blogs && data.blogs.length > 0;
 
+    let blogContent;
+
+    if (isLoading) {
+        blogContent = <BlogsLoading count={5} />;
+    } else if (hasBlogs) {
+        blogContent = (
+            <div className="space-y-6 sm:space-y-8">
+                {data.blogs.map((blog: Blog) => (
+                    <Article
+                        key={blog.id}
+                        {...blog}
+                        showUnpublishedBadge={isAdmin && !blog.published}
+                    />
+                ))}
+            </div>
+        );
+    } else if (isAdmin) {
+        blogContent = (
+            <AdminEmptyState
+                type="blogs"
+                onAdd={() => setIsAddModalOpen(true)}
+            />
+        );
+    } else {
+        blogContent = <EmptyState type="blogs" />;
+    }
+
     return (
         <Section id="blogs">
             {/* Only show PageTitle if there are blogs or still loading */}
@@ -78,19 +106,9 @@ export default function BlogIndex() {
                 </MotionWrapper>
             )}
 
-            {isLoading ? (
-                <BlogsLoading count={5} />
-            ) : hasBlogs ? (
-                <div className="space-y-6 sm:space-y-8">
-                    {data.blogs.map((blog: Blog) => (
-                        <Article key={blog.id} {...blog} showUnpublishedBadge={isAdmin && !blog.published} />
-                    ))}
-                </div>
-            ) : isAdmin ? (
-                <AdminEmptyState type="blogs" onAdd={() => setIsAddModalOpen(true)} />
-            ) : (
-                <EmptyState type="blogs" />
-            )}
+            {blogContent}
+
+            <BlogSubscribe />
 
             {/* Add Blog Modal */}
             <AddBlogModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />

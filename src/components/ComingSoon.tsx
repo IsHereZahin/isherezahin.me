@@ -1,4 +1,4 @@
-import { MotionWrapper } from "@/components/motion";
+import MotionWrapper from "@/components/motion/MotionWrapper";
 import { Button, Heading } from "@/components/ui";
 import { Home } from "lucide-react";
 

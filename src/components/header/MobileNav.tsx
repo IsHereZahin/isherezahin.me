@@ -1,6 +1,6 @@
 "use client";
 
-import { MotionPopup } from "@/components/motion";
+import MotionPopup from "@/components/motion/MotionPopup";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";

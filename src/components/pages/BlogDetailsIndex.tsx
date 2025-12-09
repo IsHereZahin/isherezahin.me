@@ -8,8 +8,13 @@ import { notFound, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { DeleteConfirmDialog, EditBlogModal } from "@/components/admin";
-import { ArticleInfo, BlogSubscribe, MarkdownPreview, RelatedBlogs, TableOfContents } from "@/components/content";
+import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
+import EditBlogModal from "@/components/admin/EditBlogModal";
+import ArticleInfo from "@/components/content/ArticleInfo";
+import BlogSubscribe from "@/components/content/BlogSubscribe";
+import MarkdownPreview from "@/components/content/discussions/MarkdownPreview";
+import RelatedBlogs from "@/components/content/RelatedBlogs";
+import TableOfContents from "@/components/content/TableOfContents";
 import {
     BlogDetailsLoading,
     BlurImage,

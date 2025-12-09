@@ -43,7 +43,7 @@ export default function ProfilePersonal() {
                                 Last Name
                             </label>
                             <p className="text-sm sm:text-base text-foreground truncate">
-                                {personalInfo.lastName || "—"}
+                                {personalInfo.lastName || "-"}
                             </p>
                         </div>
                         <div className="space-y-1">

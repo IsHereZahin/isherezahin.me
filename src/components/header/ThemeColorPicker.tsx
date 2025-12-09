@@ -1,6 +1,6 @@
 "use client";
 
-import { MotionPopup } from "@/components/motion";
+import MotionPopup from "@/components/motion/MotionPopup";
 import { availableThemes } from "@/data";
 import { ThemeMode } from "@/utils/types";
 import { Plus, RefreshCw, X } from "lucide-react";

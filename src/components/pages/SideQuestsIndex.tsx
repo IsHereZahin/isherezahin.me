@@ -1,6 +1,6 @@
-import PageTitle from '@/components/ui/PageTitle'
-import Section from '@/components/ui/Section'
-import { SideQuests } from "@/components";
+import SideQuests from "@/components/SideQuests";
+import PageTitle from '@/components/ui/PageTitle';
+import Section from '@/components/ui/Section';
 
 export default function SideQuestsIndex() {
     return (

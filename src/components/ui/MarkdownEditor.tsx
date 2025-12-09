@@ -1,6 +1,7 @@
 "use client";
 
-import { MarkdownPreview, MarkdownToolbar } from "@/components/content";
+import MarkdownPreview from "@/components/content/discussions/MarkdownPreview";
+import MarkdownToolbar from "@/components/content/discussions/MarkdownToolbar";
 import { useCallback, useRef, useState } from "react";
 import { FormControl, FormItem, FormLabel, FormMessage } from "./form";
 import { Textarea } from "./textarea";

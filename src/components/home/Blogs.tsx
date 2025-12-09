@@ -1,6 +1,7 @@
 "use client";
 
-import { AddBlogModal } from "@/components/admin";
+import Article from "@/components/Article";
+import AddBlogModal from "@/components/admin/AddBlogModal";
 import {
     AdminEmptyState,
     BlogsLoading,
@@ -13,7 +14,6 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { Blog } from "@/utils/types";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Article } from "@/components";
 
 export default function Blogs() {
     const { isAdmin } = useAuth();

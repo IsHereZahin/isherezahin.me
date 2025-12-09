@@ -1,4 +1,4 @@
-import { MotionWrapper } from "@/components/motion";
+import MotionWrapper from "@/components/motion/MotionWrapper";
 import {
     ReferralLink,
     ReferralListItem,
@@ -6,6 +6,7 @@ import {
     SectionHeader,
 } from "@/components/ui";
 import { workExperience, WorkExperienceItemProps } from "@/data";
+import { Calendar, MapPin } from "lucide-react";
 import Image from "next/image";
 
 export function WorkExperienceItem({
@@ -20,44 +21,47 @@ export function WorkExperienceItem({
     logo,
 }: Readonly<WorkExperienceItemProps>) {
     return (
-        <MotionWrapper delay={0.2} className="grid md:grid-cols-[120px,1fr] gap-4 sm:gap-6 p-4 sm:p-6 md:p-8 rounded-2xl shadow-feature-card bg-background transition-all duration-300">
-            {/* Timeline / Date */}
-            <div className="flex flex-col items-center md:items-start text-center md:text-left">
-                <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                    {start} <span className="mx-1 text-primary">—</span> {end}
-                </p>
-            </div>
-
+        <MotionWrapper delay={0.2} className="grid md:grid-cols-[120px,1fr] gap-4 sm:gap-6 p-5 sm:p-6 md:p-8 rounded-2xl shadow-feature-card bg-background">
             {/* Details */}
-            <div className="flex flex-col gap-2 sm:gap-3">
+            <div className="flex flex-col gap-3 sm:gap-4">
                 {/* Company + Logo */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
                         <Image
                             src={logo}
                             alt={`${company} logo`}
-                            width={32}
-                            height={32}
-                            className="w-6 h-6 sm:w-8 sm:h-8 rounded-md object-contain"
+                            width={40}
+                            height={40}
+                            className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg object-contain bg-muted/30 p-1"
                         />
                         <ReferralLink
                             href={companyUrl}
-                            className="text-base sm:text-lg font-semibold text-foreground hover:text-primary transition-colors"
+                            className="text-lg sm:text-xl font-bold text-foreground hover:text-primary transition-colors"
                         >
                             {company}
                         </ReferralLink>
                     </div>
-                    <span className="text-xs sm:text-sm text-muted-foreground">{location}</span>
+                    {/* Meta info */}
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                            <Calendar className="w-3.5 h-3.5" />
+                            {start} - {end}
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted text-muted-foreground text-xs font-medium">
+                            <MapPin className="w-3.5 h-3.5" />
+                            {location}
+                        </span>
+                    </div>
                 </div>
 
                 {/* Title */}
-                <h3 className="text-lg sm:text-xl font-semibold text-foreground">{title}</h3>
+                <h3 className="text-lg sm:text-xl font-semibold text-foreground/90">{title}</h3>
 
                 {/* Description */}
-                <p className="text-sm sm:text-base text-muted-foreground hover:text-foreground/80 transition-colors leading-relaxed">{description}</p>
+                <p className="text-sm sm:text-base text-muted-foreground hover:text-foreground transition-all duration-200 leading-relaxed">{description}</p>
 
                 {/* Highlights */}
-                <ul className="list-disc pl-0 sm:ml-20 mt-2 sm:mt-5 space-y-2 text-muted-foreground marker:text-secondary-foreground">
+                <ul className="list-disc pl-5 sm:pl-6 mt-2 space-y-1.5 text-base marker:text-primary/60">
                     <ReferralListItem listItems={highlights} />
                 </ul>
             </div>

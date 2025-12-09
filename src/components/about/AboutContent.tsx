@@ -1,6 +1,6 @@
 "use client";
 
-import { MotionWrapper } from "@/components/motion";
+import MotionWrapper from "@/components/motion/MotionWrapper";
 import {
     BlurImage,
     ImageZoom,
@@ -80,7 +80,7 @@ export default function AboutContent() {
                     </MotionWrapper>
 
                     {/* Right Column - Philosophy */}
-                    <div className="md:w-3/5 space-y-6 sm:space-y-8 text-sm sm:text-base md:text-lg">
+                    <div className="md:w-3/5 space-y-6 sm:space-y-8 text-base">
                         <MotionWrapper direction="right" delay={0.2}>
                             <p className="leading-relaxed text-muted-foreground hover:text-foreground/80 transition-colors">
                                 I work with the <strong className="text-foreground">React & Laravel ecosystem</strong>, building robust web applications, dashboards, and internal tools. I focus on creating intuitive user experiences, clean interfaces, and maintainable code that performs reliably in real-world scenarios.

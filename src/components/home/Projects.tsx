@@ -1,6 +1,7 @@
 "use client";
 
-import { AddProjectModal } from "@/components/admin";
+import Project from "@/components/Project";
+import AddProjectModal from "@/components/admin/AddProjectModal";
 import {
     AdminEmptyState,
     ProjectsLoading,
@@ -13,7 +14,6 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { Project as ProjectType } from "@/utils/types";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Project } from "@/components";
 
 export default function Projects() {
     const { isAdmin } = useAuth();

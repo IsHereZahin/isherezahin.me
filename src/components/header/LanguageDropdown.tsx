@@ -1,6 +1,6 @@
 "use client";
 
-import { MotionPopup } from "@/components/motion";
+import MotionPopup from "@/components/motion/MotionPopup";
 import { languages } from "@/data";
 
 interface LanguageDropdownProps {

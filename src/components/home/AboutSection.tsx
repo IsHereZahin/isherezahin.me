@@ -1,5 +1,5 @@
-import { StacksCard } from "@/components/about";
-import { MotionWrapper } from "@/components/motion";
+import StacksCard from "@/components/about/StacksCard";
+import MotionWrapper from "@/components/motion/MotionWrapper";
 import { BlurImage, ImageZoom } from "@/components/ui";
 import { MY_NAME, SITE_USER_LOGO } from "@/lib/constants";
 import Image from "next/image";

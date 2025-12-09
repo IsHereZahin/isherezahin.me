@@ -1,7 +1,7 @@
 "use client"
 
-import * as React from "react"
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
+import * as React from "react"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "./shadcn-button"
@@ -47,10 +47,14 @@ function AlertDialogOverlay({
 function AlertDialogContent({ className, ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Content>) {
   return (
     <AlertDialogPrimitive.Portal>
-      <AlertDialogPrimitive.Overlay className="fixed inset-0 bg-black/50 z-50 animate-fade-in" />
+      <AlertDialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
       <AlertDialogPrimitive.Content
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-lg bg-background p-6 shadow-lg",
+          "fixed left-[50%] top-[50%] z-50 grid translate-x-[-50%] translate-y-[-50%]",
+          "w-[calc(100%-3rem)] sm:w-full max-w-lg",
+          "gap-4 border bg-background p-6 shadow-2xl rounded-2xl",
+          "border-neutral-200 dark:border-neutral-800",
+          "duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
           className
         )}
         {...props}
@@ -80,7 +84,7 @@ function AlertDialogFooter({
     <div
       data-slot="alert-dialog-footer"
       className={cn(
-        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end mt-3",
+        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end mt-4",
         className
       )}
       {...props}
@@ -139,15 +143,7 @@ function AlertDialogCancel({
 }
 
 export {
-  AlertDialog,
-  AlertDialogPortal,
-  AlertDialogOverlay,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogAction,
-  AlertDialogCancel,
+  AlertDialog, AlertDialogAction,
+  AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger
 }
+

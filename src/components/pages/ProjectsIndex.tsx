@@ -1,7 +1,7 @@
 "use client";
 
-import { AddProjectModal } from "@/components/admin";
-import { MotionWrapper } from "@/components/motion";
+import AddProjectModal from "@/components/admin/AddProjectModal";
+import MotionWrapper from "@/components/motion/MotionWrapper";
 import Project from "@/components/Project";
 import {
     AdminAddButton,

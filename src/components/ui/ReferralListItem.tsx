@@ -1,4 +1,4 @@
-import { MotionWrapper } from "@/components/motion";
+import MotionWrapper from "@/components/motion/MotionWrapper";
 import { ReferralLink } from "@/components/ui";
 
 interface ReferralItem {
@@ -41,7 +41,7 @@ export default function ReferralListItem({
                                     );
                                 }
                                 return (
-                                    <span className="text-secondary-foreground" key={partIdx + 1}>
+                                    <span className="text-muted-foreground hover:text-foreground transition-all duration-200" key={partIdx + 1}>
                                         {part}
                                     </span>
                                 );

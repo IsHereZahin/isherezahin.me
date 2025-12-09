@@ -1,4 +1,4 @@
-import { MotionWrapper } from "@/components/motion";
+import MotionWrapper from "@/components/motion/MotionWrapper";
 import { BlurImage } from "@/components/ui";
 import { getFormattedDate, getReadTime, truncateWords } from "@/utils";
 import { Blog } from "@/utils/types";

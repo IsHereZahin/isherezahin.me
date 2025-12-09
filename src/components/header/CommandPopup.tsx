@@ -4,7 +4,7 @@ import { BarChart3, BookOpen, Info } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { MotionPopup } from "@/components/motion";
+import MotionPopup from "@/components/motion/MotionPopup";
 import { BlurImage } from "@/components/ui";
 import AdventureImg from "../../../public/assets/images/CommandPopup/Adventure.jpg";
 import StudyImg from "../../../public/assets/images/CommandPopup/Desktop Setup.jpg";

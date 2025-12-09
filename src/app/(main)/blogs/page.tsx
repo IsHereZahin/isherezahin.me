@@ -1,4 +1,4 @@
-import BlogIndex from '@/components/pages/BlogIndex';
+import BlogIndex from '@/components/pages/BlogsIndex';
 import { MY_FULL_NAME } from "@/lib/constants";
 import type { Metadata } from "next";
 

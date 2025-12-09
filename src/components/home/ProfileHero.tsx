@@ -1,4 +1,4 @@
-import { MotionWrapper } from "@/components/motion";
+import MotionWrapper from "@/components/motion/MotionWrapper";
 import { BlurImage, Button, ImageZoom, Section } from "@/components/ui";
 import { MY_NAME, SITE_USER_LOGO } from "@/lib/constants";
 import { ArrowDown } from "lucide-react";

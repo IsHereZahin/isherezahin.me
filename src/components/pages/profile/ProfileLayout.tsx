@@ -1,6 +1,6 @@
 "use client";
 
-import { MotionWrapper } from "@/components/motion";
+import MotionWrapper from "@/components/motion/MotionWrapper";
 import { BlurImage, Button, PageTitle, Section } from "@/components/ui";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { LogIn, LogOut, Monitor, Settings, User } from "lucide-react";
@@ -72,8 +72,8 @@ export default function ProfileLayout({ children }: { children: ReactNode }) {
                                     href={item.href}
                                     prefetch={true}
                                     className={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-colors ${isActive
-                                            ? "bg-foreground text-secondary"
-                                            : "text-foreground hover:bg-muted"
+                                        ? "bg-foreground text-secondary"
+                                        : "text-foreground hover:bg-muted"
                                         }`}
                                 >
                                     <Icon className="h-4 w-4" />
