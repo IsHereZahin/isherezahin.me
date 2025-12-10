@@ -142,7 +142,10 @@ export default function Users() {
 
     return (
         <section className="border border-border rounded-xl p-6">
-            <h3 className="text-base font-semibold mb-4">Manage Users</h3>
+            <div className="flex items-center gap-2 mb-4">
+                <ShieldCheck className="h-5 w-5 icon-bw" />
+                <h3 className="text-base font-semibold">Manage Users</h3>
+            </div>
 
             <div className="flex flex-col sm:flex-row gap-3 mb-4">
                 <div className="relative flex-1">
@@ -188,8 +191,8 @@ export default function Users() {
                             <div
                                 key={user.id}
                                 className={`border rounded-lg p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${user.isBanned
-                                        ? "border-destructive/50 bg-destructive/5"
-                                        : "border-border"
+                                    ? "border-destructive/50 bg-destructive/5"
+                                    : "border-border"
                                     }`}
                             >
                                 <div className="flex items-center gap-3 min-w-0">
@@ -235,8 +238,8 @@ export default function Users() {
                                         onClick={() => handleBanToggle(user.id, user.isBanned)}
                                         disabled={actionLoading === user.id}
                                         className={`flex items-center gap-2 text-sm font-medium rounded-md px-4 py-2 transition self-start sm:self-auto ${user.isBanned
-                                                ? "bg-green-600 text-white hover:bg-green-700"
-                                                : "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                            ? "bg-green-600 text-white hover:bg-green-700"
+                                            : "bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                             } disabled:opacity-50`}
                                     >
                                         {actionLoading === user.id ? (

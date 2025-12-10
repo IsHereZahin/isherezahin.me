@@ -12,12 +12,34 @@ export class ApiError extends Error {
     }
 }
 
-const getBlogs = async (page = 1, limit = 10) => {
-    const response = await fetch(`/api/blog?page=${page}&limit=${limit}`);
+const getBlogs = async (page = 1, limit = 10, tags: string[] = [], search = "") => {
+    const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+    });
+    if (tags.length > 0) {
+        params.set('tags', tags.join(','));
+    }
+    if (search.trim()) {
+        params.set('search', search.trim());
+    }
+    const response = await fetch(`/api/blog?${params.toString()}`);
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         const message = errorData.error || "Failed to fetch blogs";
+        throw new ApiError(message, response.status);
+    }
+
+    return await response.json();
+};
+
+const getBlogTags = async () => {
+    const response = await fetch('/api/blog/tags');
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const message = errorData.error || "Failed to fetch blog tags";
         throw new ApiError(message, response.status);
     }
 
@@ -91,12 +113,34 @@ const blogLikes = {
     },
 };
 
-const getProjects = async (page = 1, limit = 10) => {
-    const response = await fetch(`/api/project?page=${page}&limit=${limit}`);
+const getProjects = async (page = 1, limit = 10, tags: string[] = [], search = "") => {
+    const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+    });
+    if (tags.length > 0) {
+        params.set('tags', tags.join(','));
+    }
+    if (search.trim()) {
+        params.set('search', search.trim());
+    }
+    const response = await fetch(`/api/project?${params.toString()}`);
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         const message = errorData.error || "Failed to fetch projects";
+        throw new ApiError(message, response.status);
+    }
+
+    return await response.json();
+};
+
+const getProjectTags = async () => {
+    const response = await fetch('/api/project/tags');
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const message = errorData.error || "Failed to fetch project tags";
         throw new ApiError(message, response.status);
     }
 
@@ -386,7 +430,7 @@ const newsletter = {
 
 export {
     blogLikes, blogViews, createBlog, createProject, deleteBlog, deleteProject,
-    getBlog, getBlogs, getProject, getProjects, newsletter, projectLikes, projectViews,
-    updateBlog, updateProject
+    getBlog, getBlogs, getBlogTags, getProject, getProjects, getProjectTags,
+    newsletter, projectLikes, projectViews, updateBlog, updateProject
 };
 

@@ -427,3 +427,23 @@ html:has(a[href^="#"]:target) {
 .modal-scrollbar::-webkit-scrollbar-thumb:hover {
     background: var(--muted-foreground);
 }
+
+/* Simple fade-in animation for filtered content */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+}
+
+/* Icon styling for black/white (follows theme foreground) */
+.icon-bw {
+    color: var(--foreground);
+}

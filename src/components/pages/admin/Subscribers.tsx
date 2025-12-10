@@ -166,7 +166,7 @@ export default function Subscribers() {
     return (
         <section className="border border-border rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4">
-                <Mail className="h-5 w-5 text-primary" />
+                <Mail className="h-5 w-5 icon-bw" />
                 <h3 className="text-base font-semibold">Manage Subscribers</h3>
             </div>
 
@@ -214,16 +214,16 @@ export default function Subscribers() {
                             <div
                                 key={subscriber.id}
                                 className={`border rounded-lg p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${!subscriber.isActive
-                                        ? "border-muted bg-muted/20"
-                                        : "border-border"
+                                    ? "border-muted bg-muted/20"
+                                    : "border-border"
                                     }`}
                             >
                                 <div className="flex items-center gap-3 min-w-0">
-                                    <div className={`p-2 rounded-full ${subscriber.isActive ? "bg-green-100 dark:bg-green-900/30" : "bg-gray-100 dark:bg-gray-800"}`}>
+                                    <div className={`p-2 rounded-full ${subscriber.isActive ? "bg-muted" : "bg-muted/50"}`}>
                                         {subscriber.isActive ? (
-                                            <MailCheck className="h-5 w-5 text-green-600 dark:text-green-400" />
+                                            <MailCheck className="h-5 w-5 icon-bw" />
                                         ) : (
-                                            <MailX className="h-5 w-5 text-gray-400" />
+                                            <MailX className="h-5 w-5 icon-bw opacity-50" />
                                         )}
                                     </div>
                                     <div className="min-w-0">
@@ -251,8 +251,8 @@ export default function Subscribers() {
                                         onClick={() => handleToggleStatus(subscriber.id, subscriber.isActive)}
                                         disabled={actionLoading === subscriber.id}
                                         className={`flex items-center gap-2 text-sm font-medium rounded-md px-3 py-2 transition ${subscriber.isActive
-                                                ? "bg-amber-500 text-white hover:bg-amber-600"
-                                                : "bg-green-600 text-white hover:bg-green-700"
+                                            ? "bg-amber-500 text-white hover:bg-amber-600"
+                                            : "bg-green-600 text-white hover:bg-green-700"
                                             } disabled:opacity-50`}
                                     >
                                         {actionLoading === subscriber.id ? (

@@ -13,12 +13,27 @@ export async function GET(req: NextRequest) {
         const page = parseInt(searchParams.get("page") || "1", 10);
         const limit = parseInt(searchParams.get("limit") || "10", 10);
         const skip = (page - 1) * limit;
+        const tagsParam = searchParams.get("tags");
+        const searchQuery = searchParams.get("search");
 
         // Check if user is admin
         const isAdmin = await checkIsAdmin();
 
         // Build query - non-admin users only see published projects
-        const query = isAdmin ? {} : { published: true };
+        const query: Record<string, unknown> = isAdmin ? {} : { published: true };
+
+        // Add tag filtering if tags are provided
+        if (tagsParam) {
+            const tags = tagsParam.split(',').filter(Boolean);
+            if (tags.length > 0) {
+                query.tags = { $all: tags };
+            }
+        }
+
+        // Add search filtering if search query is provided
+        if (searchQuery && searchQuery.trim()) {
+            query.title = { $regex: searchQuery.trim(), $options: 'i' };
+        }
 
         const total = await ProjectModel.countDocuments(query);
 

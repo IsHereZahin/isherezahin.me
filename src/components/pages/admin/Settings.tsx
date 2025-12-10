@@ -82,7 +82,7 @@ export default function Settings() {
     return (
         <section className="border border-border rounded-xl p-6">
             <div className="flex items-center gap-2 mb-6">
-                <SettingsIcon className="h-5 w-5 text-primary" />
+                <SettingsIcon className="h-5 w-5 icon-bw" />
                 <h3 className="text-base font-semibold">Admin Settings</h3>
             </div>
 
@@ -94,12 +94,12 @@ export default function Settings() {
                 <div className="space-y-4">
                     {/* Newsletter Setting */}
                     <div className="border border-border rounded-lg p-4">
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                             <div className="flex items-center gap-3">
-                                <div className={`p-2 rounded-full ${settings.newsletterEnabled ? "bg-primary/10" : "bg-muted"}`}>
-                                    <Mail className={`h-5 w-5 ${settings.newsletterEnabled ? "text-primary" : "text-muted-foreground"}`} />
+                                <div className={`p-2 rounded-full shrink-0 ${settings.newsletterEnabled ? "bg-muted" : "bg-muted/50"}`}>
+                                    <Mail className={`h-5 w-5 icon-bw ${!settings.newsletterEnabled ? "opacity-50" : ""}`} />
                                 </div>
-                                <div>
+                                <div className="min-w-0">
                                     <p className="font-medium text-sm">Newsletter Notifications</p>
                                     <p className="text-xs text-muted-foreground">
                                         Send email notifications to active subscribers when a new blog is published
@@ -109,7 +109,7 @@ export default function Settings() {
                             <button
                                 onClick={() => handleToggleSetting("newsletterEnabled")}
                                 disabled={saving === "newsletterEnabled"}
-                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${settings.newsletterEnabled ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600"
+                                className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 self-start sm:self-center ${settings.newsletterEnabled ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600"
                                     } disabled:opacity-50`}
                             >
                                 {saving === "newsletterEnabled" ? (
@@ -118,7 +118,7 @@ export default function Settings() {
                                     </span>
                                 ) : (
                                     <span
-                                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.newsletterEnabled ? "translate-x-6" : "translate-x-1"
+                                        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-all duration-300 ease-in-out ${settings.newsletterEnabled ? "translate-x-6" : "translate-x-1"
                                             }`}
                                     />
                                 )}

@@ -1,5 +1,6 @@
 "use client";
 
+import { ProfileSessionsLoading } from "@/components/ui";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Loader2, Monitor, Smartphone } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -83,20 +84,17 @@ export default function ProfileSessions() {
     if (!user) return null;
 
     if (loading) {
-        return (
-            <section className="border border-border rounded-xl p-6">
-                <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                </div>
-            </section>
-        );
+        return <ProfileSessionsLoading />;
     }
 
     return (
         <section className="border border-border rounded-xl p-6">
-            <h3 className="text-base font-semibold mb-4">
-                Active Sessions ({sessions.length})
-            </h3>
+            <div className="flex items-center gap-2 mb-4">
+                <Monitor className="h-5 w-5 icon-bw" />
+                <h3 className="text-base font-semibold">
+                    Active Sessions ({sessions.length})
+                </h3>
+            </div>
             {sessions.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
                     No active sessions found.

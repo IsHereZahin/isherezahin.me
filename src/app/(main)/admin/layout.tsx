@@ -3,7 +3,7 @@
 import MotionWrapper from "@/components/motion/MotionWrapper";
 import { BlurImage, PageTitle, Section } from "@/components/ui";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { Loader2, LogOut, Mail, Settings, Users } from "lucide-react";
+import { LogOut, Mail, Settings, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ReactNode, useEffect } from "react";
@@ -27,17 +27,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         }
     }, [status, isAdmin, router]);
 
-    if (status === "loading") {
-        return (
-            <Section id="admin">
-                <div className="min-h-[60vh] flex items-center justify-center">
-                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                </div>
-            </Section>
-        );
-    }
-
-    if (!user || !isAdmin) {
+    if (status === "loading" || !user || !isAdmin) {
         return null;
     }
 

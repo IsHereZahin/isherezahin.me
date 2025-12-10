@@ -11,8 +11,8 @@ import MarkdownPreview from "@/components/content/discussions/MarkdownPreview";
 import TableOfContents from "@/components/content/TableOfContents";
 import {
     AnimatedNumber,
-    Badge,
     BlurImage,
+    ClickableTag,
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
@@ -23,7 +23,7 @@ import {
     ProjectDetailsLoading,
     ReferralLink,
     Section,
-    TextGradient,
+    TextGradient
 } from "@/components/ui";
 import { ApiError, deleteProject, getProject, projectViews } from "@/lib/api";
 import { useAuth } from "@/lib/hooks/useAuth";
@@ -170,7 +170,7 @@ export default function ProjectDetailsIndex({ slug }: { readonly slug: string })
 
                         <div className="flex flex-wrap gap-2 mb-8">
                             {data.tags.map((tech: string, index: number) => (
-                                <Badge key={index + 1} variant="secondary" className="text-xs sm:text-sm">{tech}</Badge>
+                                <ClickableTag key={`${tech}-${index}`} tag={tech} type="project" />
                             ))}
                         </div>
 

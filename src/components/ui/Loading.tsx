@@ -88,50 +88,53 @@ export function BlogDetailsLoading() {
 
 export function BlogsLoading({ count = 3 }: { readonly count?: number }) {
     return (
-        <section className="space-y-8">
+        <section className="space-y-6 sm:space-y-8">
             {Array.from({ length: count }).map((_, idx) => (
                 <article
                     key={idx + 1}
-                    className="flex flex-col md:flex-row gap-8 py-8 border-b border-border last:border-0"
+                    className="py-6 sm:py-8 border-t border-border/30"
                 >
-                    {/* Left: Text Content */}
-                    <div className="flex-1 min-w-0 space-y-5">
-                        {/* Date */}
-                        <Skeleton className="h-4 w-32 rounded-md" />
+                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 items-start sm:items-center">
+                        {/* Content Section - Below image on mobile, left on sm+ */}
+                        <div className="w-full flex-1 min-w-0 order-2 sm:order-none space-y-2 sm:space-y-3">
+                            {/* Date */}
+                            <Skeleton className="h-3 sm:h-4 w-24 sm:w-28 rounded" />
 
-                        {/* Title */}
-                        <Skeleton className="h-10 w-full max-w-3xl rounded-lg" />
+                            {/* Title */}
+                            <Skeleton className="h-5 sm:h-6 w-3/4 sm:w-full sm:max-w-md rounded" />
 
-                        {/* Description (3 lines with natural variation) */}
-                        <div className="space-y-3">
-                            <Skeleton className="h-5 w-full rounded-md" />
-                            <Skeleton className="h-5 w-11/12 rounded-md" />
-                            <Skeleton className="h-5 w-4/5 rounded-md" />
-                        </div>
-
-                        {/* Bottom Stats: Read time + Views */}
-                        <div className="flex items-center gap-6 pt-4">
-                            <div className="flex items-center gap-2">
-                                <Skeleton className="h-4 w-4 rounded" />
-                                <Skeleton className="h-4 w-20 rounded-md" />
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Skeleton className="h-4 w-4 rounded" />
-                                <Skeleton className="h-4 w-24 rounded-md" />
+                            {/* Excerpt */}
+                            <div className="w-full space-y-2">
+                                <Skeleton className="h-3 sm:h-4 w-full rounded" />
+                                <Skeleton className="h-3 sm:h-4 w-[90%] rounded" />
+                                <Skeleton className="h-3 sm:h-4 w-[75%] rounded" />
                             </div>
                         </div>
+
+                        {/* Image - Top on mobile, right on sm+ */}
+                        <Skeleton className="w-full sm:w-48 lg:w-56 xl:w-64 h-40 sm:h-32 lg:h-40 xl:h-48 rounded-lg flex-shrink-0 order-first sm:order-none" />
                     </div>
 
-                    {/* Right: Image + Tags (aligned to the right edge) */}
-                    <div className="flex flex-col items-end gap-4">
-                        {/* Thumbnail - properly sized and aligned */}
-                        <Skeleton className="w-full max-w-sm md:w-60 lg:w-76 aspect-[5/3] rounded-xl" />
+                    {/* Metadata Row - Read time, Views, and Tags */}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 pt-3 sm:pt-4">
+                        <div className="flex items-center gap-3 sm:gap-6">
+                            {/* Read Time */}
+                            <div className="flex items-center gap-1.5 sm:gap-2">
+                                <Skeleton className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded" />
+                                <Skeleton className="h-3 sm:h-4 w-16 sm:w-20 rounded" />
+                            </div>
+                            {/* Views */}
+                            <div className="flex items-center gap-1.5 sm:gap-2">
+                                <Skeleton className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded" />
+                                <Skeleton className="h-3 sm:h-4 w-14 sm:w-16 rounded" />
+                            </div>
+                        </div>
 
-                        {/* Tags directly under the image, right-aligned */}
-                        <div className="flex flex-wrap justify-end gap-2">
-                            <Skeleton className="h-8 w-24 rounded-full" />
-                            <Skeleton className="h-8 w-20 rounded-full" />
-                            <Skeleton className="h-8 w-28 rounded-full" />
+                        {/* Tags */}
+                        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 sm:ml-auto mt-2 sm:mt-0">
+                            <Skeleton className="h-5 sm:h-6 w-14 sm:w-16 rounded-md" />
+                            <Skeleton className="h-5 sm:h-6 w-12 sm:w-14 rounded-md" />
+                            <Skeleton className="h-5 sm:h-6 w-16 sm:w-18 rounded-md" />
                         </div>
                     </div>
                 </article>
@@ -292,6 +295,23 @@ export function ProjectDetailsLoading() {
     );
 }
 
+// Fixed widths to avoid hydration mismatch from Math.random()
+const TAG_WIDTHS = [72, 88, 64, 96, 80, 68, 92, 76];
+
+export function TagsLoading() {
+    return (
+        <div className="mt-4 sm:mt-6 flex flex-wrap items-baseline justify-start gap-1.5 sm:gap-2">
+            {TAG_WIDTHS.map((width, idx) => (
+                <Skeleton
+                    key={idx}
+                    className="h-6 sm:h-7 rounded-md"
+                    style={{ width: `${width}px` }}
+                />
+            ))}
+        </div>
+    );
+}
+
 export function ProjectsLoading({ count = 4 }: { readonly count?: number }) {
     return (
         <section className="space-y-8">
@@ -323,6 +343,34 @@ export function ProjectsLoading({ count = 4 }: { readonly count?: number }) {
                             <Skeleton className="h-6 w-24 rounded mt-4" />
                         </div>
                     </article>
+                ))}
+            </div>
+        </section>
+    );
+}
+
+export function ProfileSessionsLoading() {
+    return (
+        <section className="border border-border rounded-xl p-6">
+            <div className="flex items-center gap-2 mb-4">
+                <Skeleton className="h-5 w-5 rounded" />
+                <Skeleton className="h-5 w-36" />
+            </div>
+            <div className="space-y-3">
+                {[1, 2].map((i) => (
+                    <div
+                        key={i}
+                        className="border border-border rounded-lg p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+                    >
+                        <div className="flex items-start gap-3">
+                            <Skeleton className="h-9 w-9 rounded-lg" />
+                            <div className="space-y-2">
+                                <Skeleton className="h-4 w-24" />
+                                <Skeleton className="h-3 w-32" />
+                            </div>
+                        </div>
+                        <Skeleton className="h-9 w-20 rounded-md" />
+                    </div>
                 ))}
             </div>
         </section>

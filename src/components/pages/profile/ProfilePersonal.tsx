@@ -3,7 +3,7 @@
 import { BlurImage } from "@/components/ui";
 import { Button } from "@/components/ui/shadcn-button";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { Check, Loader2, Pencil, X } from "lucide-react";
+import { Check, Loader2, Pencil, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -68,6 +68,10 @@ export default function ProfilePersonal() {
 
     return (
         <section className="border border-border rounded-xl p-6">
+            <div className="flex items-center gap-2 mb-4">
+                <User className="h-5 w-5 icon-bw" />
+                <h3 className="text-base font-semibold">Personal Information</h3>
+            </div>
             <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
                 <div className="flex-shrink-0 mx-auto lg:mx-0">
                     <BlurImage

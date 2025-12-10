@@ -70,7 +70,10 @@ export default function ProfileSettings() {
 
     return (
         <section className="border border-border rounded-xl p-6">
-            <h3 className="text-lg font-semibold mb-4">Settings</h3>
+            <div className="flex items-center gap-2 mb-4">
+                <Bell className="h-5 w-5 icon-bw" />
+                <h3 className="text-lg font-semibold">Settings</h3>
+            </div>
             <div className="space-y-4">
                 <div className="p-4 rounded-xl border border-border/50 bg-card/50">
                     <div className="flex items-center justify-between gap-4">

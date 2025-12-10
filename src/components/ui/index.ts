@@ -1,4 +1,4 @@
-// Shadcn UI Components
+// UI Components
 export {
     AlertDialog,
     AlertDialogAction,
@@ -68,6 +68,7 @@ export { default as AnimatedNumber } from "./AnimatedNumber";
 export { default as BlurImage } from "./BlurImage";
 export { BrowserMockup } from "./BrowserMockup";
 export { default as Button } from "./Button";
+export { default as ClickableTag } from "./ClickableTag";
 export { default as ConfirmDialog } from "./ConfirmDialog";
 export { DecorativeBlobBottom, DecorativeBlobTop } from "./DecorativeBlob";
 export { default as EmptyState } from "./EmptyState";
@@ -90,7 +91,9 @@ export {
     CommentsLoading,
     ProjectDetailsLoading,
     ProjectsLoading,
-    SingleCommentLoading
+    SingleCommentLoading,
+    TagsLoading,
+    ProfileSessionsLoading
 } from "./Loading";
 export { default as Logo } from "./Logo";
 export { default as MarkdownEditor } from "./MarkdownEditor";
