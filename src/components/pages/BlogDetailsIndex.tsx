@@ -142,7 +142,7 @@ export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
                 </div>
 
                 {/* Subscribe Section */}
-                <BlogSubscribe />
+                <BlogSubscribe variant="details" />
 
                 {/* Related Blogs Section */}
                 <RelatedBlogs currentSlug={slug} currentTags={data.tags || []} currentType={data.type} />

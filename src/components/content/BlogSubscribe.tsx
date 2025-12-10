@@ -10,9 +10,9 @@
 
 "use client";
 
-import { Check, ChevronRight, Flame, Loader2, Mail, Podcast } from "lucide-react";
+import { ArrowLeft, Check, ChevronRight, Flame, Loader2, Mail, Podcast } from "lucide-react";
 import { motion, useInView } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import {
@@ -21,10 +21,15 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { newsletter } from "@/lib/api";
+    Input,
+    InputOTP,
+    InputOTPGroup,
+    InputOTPSlot,
+} from "@/components/ui";
+import { ApiError, newsletter } from "@/lib/api";
 import { useAuth } from "@/lib/hooks/useAuth";
+
+type ModalStep = "email" | "otp";
 
 const DecorativeSVG = ({ className, id }: { className?: string; id: string }) => (
     <svg
@@ -187,16 +192,55 @@ const notificationData = [
     },
 ];
 
-export default function BlogSubscribe() {
+interface BlogSubscribeProps {
+    variant?: "blog" | "details";
+}
+
+const subscribeContent = {
+    blog: {
+        title: "Stay in the Loop",
+        description: "Get the latest articles delivered straight to your inbox. Quality content, zero spam.",
+    },
+    details: {
+        title: "Enjoyed This Read?",
+        description: "Subscribe to receive new posts and insights directly in your inbox.",
+    },
+};
+
+const RESEND_COOLDOWN_MS = 10 * 60 * 1000; // 10 minutes
+
+export default function BlogSubscribe({ variant = "blog" }: BlogSubscribeProps) {
     const { user, status } = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalStep, setModalStep] = useState<ModalStep>("email");
     const [email, setEmail] = useState("");
+    const [otp, setOtp] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isSubscribed, setIsSubscribed] = useState(false);
     const [checkingSubscription, setCheckingSubscription] = useState(false);
+    const [canResendAt, setCanResendAt] = useState<Date | null>(null);
+    const [resendCountdown, setResendCountdown] = useState(0);
 
     const cardsRef = useRef<HTMLDivElement>(null);
     const isInView = useInView(cardsRef, { once: true, amount: 0.3 });
+
+    // Countdown timer for resend
+    useEffect(() => {
+        if (!canResendAt) {
+            setResendCountdown(0);
+            return;
+        }
+
+        const updateCountdown = () => {
+            const remaining = Math.max(0, canResendAt.getTime() - Date.now());
+            setResendCountdown(Math.ceil(remaining / 1000));
+        };
+
+        updateCountdown();
+        const interval = setInterval(updateCountdown, 1000);
+
+        return () => clearInterval(interval);
+    }, [canResendAt]);
 
     // Check subscription status when user is authenticated
     useEffect(() => {
@@ -216,6 +260,13 @@ export default function BlogSubscribe() {
         checkSubscription();
     }, [status, user?.email]);
 
+    const resetModal = useCallback(() => {
+        setModalStep("email");
+        setEmail("");
+        setOtp("");
+        setCanResendAt(null);
+    }, []);
+
     const handleSubscribe = async (emailToSubscribe: string) => {
         setIsLoading(true);
         try {
@@ -229,13 +280,82 @@ export default function BlogSubscribe() {
                 setIsSubscribed(true);
             }
             setIsModalOpen(false);
-            setEmail("");
+            resetModal();
         } catch (error) {
             console.error("Error subscribing:", error);
             toast.error("Something went wrong. Please try again.");
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const handleSendOtp = async () => {
+        if (!email) return;
+
+        setIsLoading(true);
+        try {
+            const data = await newsletter.sendOtp(email);
+
+            // Check if already subscribed (success response, not error)
+            if (data.alreadySubscribed) {
+                toast.info("This email is already subscribed to the newsletter!");
+                setIsSubscribed(true);
+                setIsModalOpen(false);
+                resetModal();
+                return;
+            }
+
+            toast.success("Verification code sent to your email!");
+            setModalStep("otp");
+            setCanResendAt(new Date(Date.now() + RESEND_COOLDOWN_MS));
+        } catch (error) {
+            console.error("Error sending OTP:", error);
+            if (error instanceof ApiError) {
+                if (error.data?.cooldown && error.data?.canResendAt) {
+                    setCanResendAt(new Date(error.data.canResendAt as string));
+                    setModalStep("otp");
+                    toast.error(error.message);
+                } else {
+                    toast.error(error.message);
+                }
+            } else {
+                toast.error("Failed to send verification code. Please try again.");
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleVerifyOtp = async () => {
+        if (!email || !otp) return;
+
+        setIsLoading(true);
+        try {
+            const data = await newsletter.verifyOtp(email, otp);
+
+            if (data.alreadySubscribed) {
+                toast.info("You're already subscribed! 🎉");
+            } else if (data.success) {
+                toast.success("Successfully subscribed! 🎉");
+            }
+            setIsSubscribed(true);
+            setIsModalOpen(false);
+            resetModal();
+        } catch (error) {
+            console.error("Error verifying OTP:", error);
+            if (error instanceof ApiError) {
+                toast.error(error.message);
+            } else {
+                toast.error("Failed to verify code. Please try again.");
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleResendOtp = async () => {
+        if (resendCountdown > 0) return;
+        await handleSendOtp();
     };
 
     const handleButtonClick = () => {
@@ -246,11 +366,27 @@ export default function BlogSubscribe() {
         }
     };
 
-    const handleModalSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (email) {
-            handleSubscribe(email);
+    const handleModalClose = (open: boolean) => {
+        setIsModalOpen(open);
+        if (!open) {
+            resetModal();
         }
+    };
+
+    const handleEmailSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        handleSendOtp();
+    };
+
+    const handleOtpSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        handleVerifyOtp();
+    };
+
+    const formatCountdown = (seconds: number) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, "0")}`;
     };
 
     return (
@@ -272,9 +408,9 @@ export default function BlogSubscribe() {
                 >
                     {isSubscribed ? (
                         <>
-                            <h3 className="text-xl md:text-2xl font-semibold">You&apos;re subscribed! 🎉</h3>
+                            <h3 className="text-xl md:text-2xl font-semibold">You&apos;re All Set! 🎉</h3>
                             <p className="mt-2 text-neutral-400">
-                                Thanks for subscribing! You&apos;ll get notified when new posts are published.
+                                You&apos;re on the list. New content will land in your inbox as soon as it&apos;s published.
                             </p>
                             <motion.div
                                 className="inline-flex items-center gap-3 mt-6 px-4 py-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-500"
@@ -288,9 +424,9 @@ export default function BlogSubscribe() {
                         </>
                     ) : (
                         <>
-                            <h3 className="text-xl md:text-2xl font-semibold">Enjoying this post?</h3>
+                            <h3 className="text-xl md:text-2xl font-semibold">{subscribeContent[variant].title}</h3>
                             <p className="mt-2 text-neutral-400">
-                                Don&apos;t miss out 😉. Get an email whenever I post, no spam.
+                                {subscribeContent[variant].description}
                             </p>
                             <button
                                 onClick={handleButtonClick}
@@ -333,38 +469,106 @@ export default function BlogSubscribe() {
             </div>
 
             {/* Subscribe Modal for non-authenticated users */}
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
                 <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                        <DialogTitle className="text-xl">Subscribe to Newsletter</DialogTitle>
-                        <DialogDescription>
-                            Enter your email to get notified when new blog posts are published. No spam, unsubscribe anytime.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={handleModalSubmit} className="space-y-4 mt-2">
-                        <Input
-                            type="email"
-                            placeholder="Enter your email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            className="w-full h-12 rounded-xl px-4 bg-neutral-100 border-neutral-200 focus:border-neutral-300 dark:bg-neutral-900 dark:border-neutral-800 dark:focus:border-neutral-700"
-                        />
-                        <button
-                            type="submit"
-                            disabled={isLoading || !email}
-                            className="w-full h-12 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
-                        >
-                            {isLoading ? (
-                                <>
-                                    <Loader2 className="size-4 animate-spin" />
-                                    Subscribing...
-                                </>
-                            ) : (
-                                "Subscribe"
-                            )}
-                        </button>
-                    </form>
+                    {modalStep === "email" ? (
+                        <>
+                            <DialogHeader>
+                                <DialogTitle className="text-xl">Subscribe to Newsletter</DialogTitle>
+                                <DialogDescription>
+                                    Enter your email to get notified when new blog posts are published. No spam, unsubscribe anytime.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <form onSubmit={handleEmailSubmit} className="space-y-4 mt-2">
+                                <Input
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    className="w-full h-12 rounded-xl px-4 bg-neutral-100 border-neutral-200 focus:border-neutral-300 dark:bg-neutral-900 dark:border-neutral-800 dark:focus:border-neutral-700"
+                                />
+                                <button
+                                    type="submit"
+                                    disabled={isLoading || !email}
+                                    className="w-full h-12 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+                                >
+                                    {isLoading ? (
+                                        <>
+                                            <Loader2 className="size-4 animate-spin" />
+                                            Sending code...
+                                        </>
+                                    ) : (
+                                        "Continue"
+                                    )}
+                                </button>
+                            </form>
+                        </>
+                    ) : (
+                        <>
+                            <button
+                                type="button"
+                                onClick={() => setModalStep("email")}
+                                className="absolute left-4 top-4 p-2 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors z-10"
+                            >
+                                <ArrowLeft className="size-4" />
+                            </button>
+                            <DialogHeader>
+                                <DialogTitle className="text-xl">Verify Your Email</DialogTitle>
+                                <DialogDescription>
+                                    We&apos;ve sent a 6-digit code to <span className="font-medium text-foreground">{email}</span>
+                                </DialogDescription>
+                            </DialogHeader>
+                            <form onSubmit={handleOtpSubmit} className="space-y-4 mt-2">
+                                <div className="flex justify-center">
+                                    <InputOTP
+                                        maxLength={6}
+                                        value={otp}
+                                        onChange={(value) => setOtp(value)}
+                                    >
+                                        <InputOTPGroup>
+                                            <InputOTPSlot index={0} />
+                                            <InputOTPSlot index={1} />
+                                            <InputOTPSlot index={2} />
+                                            <InputOTPSlot index={3} />
+                                            <InputOTPSlot index={4} />
+                                            <InputOTPSlot index={5} />
+                                        </InputOTPGroup>
+                                    </InputOTP>
+                                </div>
+                                <button
+                                    type="submit"
+                                    disabled={isLoading || otp.length !== 6}
+                                    className="w-full h-12 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+                                >
+                                    {isLoading ? (
+                                        <>
+                                            <Loader2 className="size-4 animate-spin" />
+                                            Verifying...
+                                        </>
+                                    ) : (
+                                        "Verify & Subscribe"
+                                    )}
+                                </button>
+                                <div className="text-center">
+                                    {resendCountdown > 0 ? (
+                                        <p className="text-sm text-neutral-500">
+                                            Resend code in {formatCountdown(resendCountdown)}
+                                        </p>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            onClick={handleResendOtp}
+                                            disabled={isLoading}
+                                            className="text-sm text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100 underline underline-offset-2 disabled:opacity-50"
+                                        >
+                                            Resend code
+                                        </button>
+                                    )}
+                                </div>
+                            </form>
+                        </>
+                    )}
                 </DialogContent>
             </Dialog>
         </>

@@ -108,7 +108,7 @@ export default function BlogIndex() {
 
             {blogContent}
 
-            <BlogSubscribe />
+            <BlogSubscribe variant="blog" />
 
             {/* Add Blog Modal */}
             <AddBlogModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />

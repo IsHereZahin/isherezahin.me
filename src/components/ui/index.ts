@@ -53,8 +53,9 @@ export {
     useFormField
 } from "./form";
 export { Input } from "./input";
+export { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "./input-otp";
 export { Label } from "./label";
-export { Button as ShadcnButton, buttonVariants } from "./shadcn-button";
+export { buttonVariants, Button as ShadcnButton } from "./shadcn-button";
 export { Skeleton } from "./skeleton";
 export { Toaster } from "./sonner";
 export { Switch } from "./switch";

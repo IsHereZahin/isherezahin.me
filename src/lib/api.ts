@@ -3,10 +3,12 @@ import { getDeviceId } from "@/utils";
 
 export class ApiError extends Error {
     status: number;
+    data?: Record<string, unknown>;
 
-    constructor(message: string, status: number) {
+    constructor(message: string, status: number, data?: Record<string, unknown>) {
         super(message);
         this.status = status;
+        this.data = data;
     }
 }
 
@@ -340,6 +342,46 @@ const newsletter = {
 
         return await response.json();
     },
+
+    async sendOtp(email: string) {
+        const response = await fetch("/api/subscribe/otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new ApiError(
+                data.error || "Failed to send verification code",
+                response.status,
+                data
+            );
+        }
+
+        return data;
+    },
+
+    async verifyOtp(email: string, otp: string) {
+        const response = await fetch("/api/subscribe/otp", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, otp }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new ApiError(
+                data.error || "Failed to verify code",
+                response.status,
+                data
+            );
+        }
+
+        return data;
+    },
 };
 
 export {
@@ -347,3 +389,4 @@ export {
     getBlog, getBlogs, getProject, getProjects, newsletter, projectLikes, projectViews,
     updateBlog, updateProject
 };
+
