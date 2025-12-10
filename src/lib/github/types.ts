@@ -134,16 +134,21 @@ export interface DiscussionContextType {
     comments: Comment[];
     discussionId: string;
     loading: boolean;
+    loadingMore: boolean;
     error: string | null;
     sortBy: "newest" | "oldest" | "popular";
     expandedComments: Set<string>;
     loadedReplies: Record<string, Reply[]>;
     loadedRepliesLoading: Record<string, boolean>;
     expandedCommentId: string | null;
+    // Pagination
+    total: number;
+    hasNextPage: boolean;
 
     // Actions
     setSortBy: (sortBy: "newest" | "oldest" | "popular") => void;
     fetchComments: () => Promise<void>;
+    fetchMoreComments: () => Promise<void>;
     fetchReplies: (commentId: string) => Promise<void>;
     addComment: (body: string, userAvatar?: string) => Promise<void>;
     deleteComment: (commentId: string) => Promise<void>;
@@ -154,7 +159,8 @@ export interface DiscussionContextType {
         reaction: ReactionKey,
         hasReacted: boolean,
         isReply?: boolean,
-        parentCommentId?: string
+        parentCommentId?: string,
+        hasOppositeReaction?: boolean
     ) => Promise<void>;
     toggleExpanded: (commentId: string) => void;
     hasUserReacted: (reactionUsers: ReactionUser[], reactionType: ReactionKey) => boolean;

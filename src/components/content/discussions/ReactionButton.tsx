@@ -25,11 +25,9 @@ export default function ReactionButton({ type, count, active, onClick, disabled 
             `}
         >
             <Icon className="w-4 h-4" />
-            {count > 0 && (
-                <span className="font-medium">
-                    <AnimatedNumber value={count} />
-                </span>
-            )}
+            <span className="font-medium">
+                <AnimatedNumber value={count} />
+            </span>
         </button>
     )
 }

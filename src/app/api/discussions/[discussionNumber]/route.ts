@@ -6,13 +6,18 @@ import { callGraphQL } from "@/lib/github/graphql";
 import type { CommentNode } from "@/lib/github/types";
 import { NextRequest, NextResponse } from "next/server";
 
-// GraphQL Queries & Mutations
+// GraphQL Queries & Mutations - using last/before for newest first ordering
 const GET_DISCUSSION_QUERY = `
-  query($owner: String!, $name: String!, $number: Int!) {
+  query($owner: String!, $name: String!, $number: Int!, $last: Int!, $before: String) {
     repository(owner: $owner, name: $name) {
       discussion(number: $number) {
         id
-        comments(first: 100) {
+        comments(last: $last, before: $before) {
+          totalCount
+          pageInfo {
+            hasPreviousPage
+            startCursor
+          }
           nodes {
             id
             body
@@ -72,22 +77,39 @@ interface DiscussionData {
     discussion: {
       id: string;
       comments: {
+        totalCount: number;
+        pageInfo: {
+          hasPreviousPage: boolean;
+          startCursor: string | null;
+        };
         nodes: CommentNode[];
       };
     };
   };
 }
 
-// GET all comments for a discussion
-export async function GET(_request: NextRequest, context: { params: Promise<{ discussionNumber: string }> }) {
+const DEFAULT_PAGE_SIZE = 10;
+
+// GET comments for a discussion with pagination (newest first)
+export async function GET(request: NextRequest, context: { params: Promise<{ discussionNumber: string }> }) {
   try {
     const session = await auth();
     const { discussionNumber: discussionNumberStr } = await context.params;
     const discussionNumber = parseInt(discussionNumberStr);
 
+    const { searchParams } = new URL(request.url);
+    const last = parseInt(searchParams.get("last") || String(DEFAULT_PAGE_SIZE));
+    const before = searchParams.get("before") || undefined;
+
     const data = await callGraphQL<DiscussionData>(
       GET_DISCUSSION_QUERY,
-      { owner: GITHUB_REPO_OWNER, name: GITHUB_REPO_NAME, number: discussionNumber },
+      { 
+        owner: GITHUB_REPO_OWNER, 
+        name: GITHUB_REPO_NAME, 
+        number: discussionNumber,
+        last,
+        before,
+      },
       GITHUB_ACCESS_TOKEN as string
     );
 
@@ -98,16 +120,20 @@ export async function GET(_request: NextRequest, context: { params: Promise<{ di
       );
     }
 
-    const comments = data.repository.discussion.comments.nodes;
-    const formattedComments = comments.map((comment) =>
+    const { comments, id: discussionId } = data.repository.discussion;
+    // Reverse to get newest first (last/before returns oldest at end)
+    const formattedComments = comments.nodes.map((comment) =>
       formatComment(comment, session?.user?.name ?? undefined, {
         includeReplyCount: true,
       })
-    );
+    ).reverse();
 
     return NextResponse.json({
       comments: formattedComments,
-      discussionId: data.repository.discussion.id,
+      discussionId,
+      total: comments.totalCount,
+      hasNextPage: comments.pageInfo.hasPreviousPage,
+      endCursor: comments.pageInfo.startCursor,
     });
   } catch (error: unknown) {
     console.error("Error fetching discussion comments:", error);

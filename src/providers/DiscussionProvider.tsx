@@ -35,13 +35,20 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
         dispatch({ type: "SET_AUTH_USERNAME", payload: authUsername });
     }, [authUsername]);
 
-    // Fetch comments for the discussion
+    // Fetch comments for the discussion (initial load)
     const fetchComments = useCallback(async () => {
         try {
             dispatch({ type: "SET_LOADING", payload: true });
             const data = await discussionApi.fetchComments(discussionNumber);
             dispatch({ type: "SET_COMMENTS", payload: data.comments });
             dispatch({ type: "SET_DISCUSSION_ID", payload: data.discussionId });
+            dispatch({
+                type: "SET_PAGINATION", payload: {
+                    total: data.total,
+                    hasNextPage: data.hasNextPage,
+                    endCursor: data.endCursor
+                }
+            });
             dispatch({ type: "SET_ERROR", payload: null });
         } catch (err) {
             console.error(err);
@@ -52,6 +59,29 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
             dispatch({ type: "SET_LOADING", payload: false });
         }
     }, [discussionNumber]);
+
+    // Fetch more comments (pagination)
+    const fetchMoreComments = useCallback(async () => {
+        if (!state.hasNextPage || state.loadingMore) return;
+
+        try {
+            dispatch({ type: "SET_LOADING_MORE", payload: true });
+            const data = await discussionApi.fetchComments(discussionNumber, 10, state.endCursor || undefined);
+            dispatch({ type: "APPEND_COMMENTS", payload: data.comments });
+            dispatch({
+                type: "SET_PAGINATION", payload: {
+                    total: data.total,
+                    hasNextPage: data.hasNextPage,
+                    endCursor: data.endCursor
+                }
+            });
+        } catch (err) {
+            console.error(err);
+            toast.error("Failed to load more comments");
+        } finally {
+            dispatch({ type: "SET_LOADING_MORE", payload: false });
+        }
+    }, [discussionNumber, state.hasNextPage, state.loadingMore, state.endCursor]);
 
     // Fetch replies for a comment
     const fetchReplies = useCallback(
@@ -100,7 +130,7 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
                     type: "REPLACE_COMMENT",
                     payload: { tempId: tempComment.id, comment: formattedComment },
                 });
-                
+
                 toast.success("Comment posted successfully");
             } catch (err) {
                 console.error(err);
@@ -146,7 +176,7 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
                         updates: { reply_count: (currentComment?.reply_count ?? 0) + 1 },
                     },
                 });
-                
+
                 toast.success("Reply posted successfully");
             } catch (err) {
                 console.error(err);
@@ -202,18 +232,35 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
         [discussionNumber, state.loadedReplies]
     );
 
-    // Toggle reaction
+    // Toggle reaction (mutually exclusive - like/unlike can't both be active)
     const toggleReaction = useCallback(
         async (
             targetId: string,
             reaction: ReactionKey,
             hasReacted: boolean,
             isReply = false,
-            parentCommentId?: string
+            parentCommentId?: string,
+            hasOppositeReaction = false
         ) => {
             if (!state.authUsername) return;
 
-            // Optimistic update
+            const oppositeReaction: ReactionKey = reaction === "+1" ? "-1" : "+1";
+
+            // Optimistic updates first for instant UI feedback
+            if (hasOppositeReaction) {
+                dispatch({
+                    type: "OPTIMISTIC_TOGGLE_REACTION",
+                    payload: {
+                        targetId,
+                        reactionType: oppositeReaction,
+                        isReply,
+                        commentId: parentCommentId,
+                        add: false,
+                        username: state.authUsername,
+                    },
+                });
+            }
+
             dispatch({
                 type: "OPTIMISTIC_TOGGLE_REACTION",
                 payload: {
@@ -226,13 +273,34 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
                 },
             });
 
-            // API call
+            // API calls in background (don't block UI)
             try {
-                await discussionApi.toggleReaction(discussionNumber, targetId, reaction, hasReacted);
+                const promises: Promise<unknown>[] = [];
+
+                if (hasOppositeReaction) {
+                    promises.push(discussionApi.toggleReaction(discussionNumber, targetId, oppositeReaction, true));
+                }
+                promises.push(discussionApi.toggleReaction(discussionNumber, targetId, reaction, hasReacted));
+
+                await Promise.all(promises);
             } catch (err) {
                 console.error("Failed to toggle reaction", err);
                 toast.error("Failed to update reaction");
-                // Revert optimistic update
+
+                // Revert all optimistic updates on error
+                if (hasOppositeReaction) {
+                    dispatch({
+                        type: "OPTIMISTIC_TOGGLE_REACTION",
+                        payload: {
+                            targetId,
+                            reactionType: oppositeReaction,
+                            isReply,
+                            commentId: parentCommentId,
+                            add: true,
+                            username: state.authUsername,
+                        },
+                    });
+                }
                 dispatch({
                     type: "OPTIMISTIC_TOGGLE_REACTION",
                     payload: {
@@ -273,17 +341,22 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
             comments: state.comments,
             discussionId: state.discussionId,
             loading: state.loading,
+            loadingMore: state.loadingMore,
             error: state.error,
             sortBy: state.sortBy,
             expandedComments: new Set<string>(),
             loadedReplies: state.loadedReplies,
             loadedRepliesLoading: state.loadedRepliesLoading,
             expandedCommentId: state.expandedCommentId,
+            // Pagination
+            total: state.total,
+            hasNextPage: state.hasNextPage,
 
             // Actions
             setSortBy: (sort: "newest" | "oldest" | "popular") =>
                 dispatch({ type: "SET_SORT", payload: sort }),
             fetchComments,
+            fetchMoreComments,
             fetchReplies,
             addComment,
             addReply,
@@ -303,6 +376,7 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
         [
             state,
             fetchComments,
+            fetchMoreComments,
             fetchReplies,
             addComment,
             addReply,

@@ -1,24 +1,31 @@
 // src/lib/reducers/discussionReducer.ts
 
-import type { Comment, Reply, ReactionKey } from "@/lib/github/types";
-import { updateReaction, updateItemById, replaceItemById, removeItemById } from "@/lib/github/helpers";
+import { removeItemById, replaceItemById, updateItemById, updateReaction } from "@/lib/github/helpers";
+import type { Comment, ReactionKey, Reply } from "@/lib/github/types";
 
 export interface DiscussionState {
     comments: Comment[];
     discussionId: string;
     loading: boolean;
+    loadingMore: boolean;
     error: string | null;
     sortBy: "newest" | "oldest" | "popular";
     loadedReplies: Record<string, Reply[]>;
     loadedRepliesLoading: Record<string, boolean>;
     expandedCommentId: string | null;
     authUsername: string | null;
+    // Pagination
+    total: number;
+    hasNextPage: boolean;
+    endCursor: string | null;
 };
 
 export type DiscussionAction =
     | { type: "SET_COMMENTS"; payload: Comment[] }
+    | { type: "APPEND_COMMENTS"; payload: Comment[] }
     | { type: "SET_DISCUSSION_ID"; payload: string }
     | { type: "SET_LOADING"; payload: boolean }
+    | { type: "SET_LOADING_MORE"; payload: boolean }
     | { type: "SET_ERROR"; payload: string | null }
     | { type: "SET_SORT"; payload: "newest" | "oldest" | "popular" }
     | { type: "TOGGLE_EXPANDED"; payload: string }
@@ -33,6 +40,7 @@ export type DiscussionAction =
     | { type: "REPLACE_REPLY"; payload: { commentId: string; tempId: string; reply: Reply } }
     | { type: "DELETE_COMMENT"; payload: string }
     | { type: "DELETE_REPLY"; payload: { commentId: string; replyId: string } }
+    | { type: "SET_PAGINATION"; payload: { total: number; hasNextPage: boolean; endCursor: string | null } }
     | {
         type: "OPTIMISTIC_TOGGLE_REACTION";
         payload: {
@@ -49,12 +57,16 @@ export const initialDiscussionState: DiscussionState = {
     comments: [],
     discussionId: "",
     loading: true,
+    loadingMore: false,
     error: null,
     sortBy: "newest",
     loadedReplies: {},
     loadedRepliesLoading: {},
     expandedCommentId: null,
     authUsername: null,
+    total: 0,
+    hasNextPage: false,
+    endCursor: null,
 };
 
 export function discussionReducer(state: DiscussionState,action: DiscussionAction): DiscussionState {
@@ -62,11 +74,25 @@ export function discussionReducer(state: DiscussionState,action: DiscussionActio
         case "SET_COMMENTS":
             return { ...state, comments: action.payload };
 
+        case "APPEND_COMMENTS":
+            return { ...state, comments: [...state.comments, ...action.payload] };
+
         case "SET_DISCUSSION_ID":
             return { ...state, discussionId: action.payload };
 
         case "SET_LOADING":
             return { ...state, loading: action.payload };
+
+        case "SET_LOADING_MORE":
+            return { ...state, loadingMore: action.payload };
+
+        case "SET_PAGINATION":
+            return {
+                ...state,
+                total: action.payload.total,
+                hasNextPage: action.payload.hasNextPage,
+                endCursor: action.payload.endCursor,
+            };
 
         case "SET_ERROR":
             return { ...state, error: action.payload };

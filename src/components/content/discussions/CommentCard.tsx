@@ -62,9 +62,10 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
 
     const renderRepliesContent = () => {
         if (isLoadingReplies) {
+            const loaderCount = Math.min(comment.reply_count, 3);
             return (
                 <div className="gap-4 flex flex-col">
-                    {[...Array(2)].map((_, idx) => (
+                    {[...Array(loaderCount)].map((_, idx) => (
                         <SingleCommentLoading key={idx + 1} />
                     ))}
                 </div>
@@ -183,14 +184,14 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
                     type="up"
                     count={thumbsUpCount}
                     active={hasThumbsUp}
-                    onClick={() => toggleReaction(comment.id, "+1", hasThumbsUp, undefined)}
+                    onClick={() => toggleReaction(comment.id, "+1", hasThumbsUp, false, undefined, hasThumbsDown)}
                     disabled={isDeleted || !user}
                 />
                 <ReactionButton
                     type="down"
                     count={thumbsDownCount}
                     active={hasThumbsDown}
-                    onClick={() => toggleReaction(comment.id, "-1", hasThumbsDown, undefined)}
+                    onClick={() => toggleReaction(comment.id, "-1", hasThumbsDown, false, undefined, hasThumbsUp)}
                     disabled={isDeleted || !user}
                 />
 

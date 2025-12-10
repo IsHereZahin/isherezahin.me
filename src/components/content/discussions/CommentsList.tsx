@@ -6,9 +6,11 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
+    SingleCommentLoading,
 } from "@/components/ui"
 import { useDiscussion } from "@/lib/hooks/useDiscussion"
 import { Settings2 } from "lucide-react"
+import { useEffect, useMemo, useRef } from "react"
 import CommentCard from "./CommentCard"
 
 interface SortOption {
@@ -16,8 +18,21 @@ interface SortOption {
     label: string
 }
 
+const ITEMS_PER_PAGE = 10
+const PRELOAD_THRESHOLD = 3
+
 export default function CommentsList() {
-    const { comments, loading, sortBy, setSortBy } = useDiscussion()
+    const {
+        comments,
+        loading,
+        loadingMore,
+        sortBy,
+        setSortBy,
+        total,
+        hasNextPage,
+        fetchMoreComments
+    } = useDiscussion()
+    const loadMoreRef = useRef<HTMLDivElement>(null)
 
     const sortOptions: SortOption[] = [
         { value: "newest", label: "Newest" },
@@ -27,26 +42,42 @@ export default function CommentsList() {
 
     const currentSort = sortBy || "newest"
 
-    // Sort comments based on selected sort option
-    const sortedComments = [...comments].sort((a, b) => {
-        switch (currentSort) {
-            case "newest":
-                return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-            case "oldest":
-                return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-            case "popular":
-                const aScore = (a.reactions["+1"] || 0) - (a.reactions["-1"] || 0)
-                const bScore = (b.reactions["+1"] || 0) - (b.reactions["-1"] || 0)
-                return bScore - aScore
-            default:
-                return 0
-        }
-    })
+    // Sort comments based on selected sort option (client-side sorting of loaded comments)
+    const sortedComments = useMemo(() => {
+        return [...comments].sort((a, b) => {
+            switch (currentSort) {
+                case "newest":
+                    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+                case "oldest":
+                    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+                case "popular":
+                    const aScore = (a.reactions["+1"] || 0) - (a.reactions["-1"] || 0)
+                    const bScore = (b.reactions["+1"] || 0) - (b.reactions["-1"] || 0)
+                    return bScore - aScore
+                default:
+                    return 0
+            }
+        })
+    }, [comments, currentSort])
+
+    const remainingCount = Math.min(ITEMS_PER_PAGE, total - comments.length)
+
+    // Intersection observer for lazy loading from backend
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && hasNextPage && !loadingMore) {
+                    fetchMoreComments()
+                }
+            },
+            { threshold: 0.1 }
+        )
+        if (loadMoreRef.current) observer.observe(loadMoreRef.current)
+        return () => observer.disconnect()
+    }, [hasNextPage, loadingMore, fetchMoreComments])
 
     if (loading) {
-        return (
-            <CommentsLoading />
-        )
+        return <CommentsLoading />
     }
 
     const sortLabel = sortOptions.find((o) => o.value === currentSort)?.label || "Sort"
@@ -58,7 +89,7 @@ export default function CommentsList() {
                 <div className="flex items-center gap-3">
                     <h2 className="text-xl font-medium text-foreground">Comments</h2>
                     <span className="text-secondary-foreground font-medium">
-                        ({comments.length})
+                        ({total})
                     </span>
                 </div>
 
@@ -95,7 +126,23 @@ export default function CommentsList() {
                         <p className="text-sm mt-1">Be the first to share your thoughts!</p>
                     </div>
                 ) : (
-                    sortedComments.map((comment) => <CommentCard key={comment.id} comment={comment} />)
+                    <>
+                        {sortedComments.map((comment, index) => (
+                            <div
+                                key={comment.id}
+                                ref={index === sortedComments.length - PRELOAD_THRESHOLD ? loadMoreRef : null}
+                            >
+                                <CommentCard comment={comment} />
+                            </div>
+                        ))}
+                        {(hasNextPage || loadingMore) && remainingCount > 0 && (
+                            <div className="gap-4 flex flex-col py-4">
+                                {[...Array(remainingCount)].map((_, idx) => (
+                                    <SingleCommentLoading key={idx} />
+                                ))}
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
         </section>

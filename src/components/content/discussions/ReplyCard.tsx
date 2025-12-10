@@ -124,7 +124,7 @@ export default function ReplyCard({ reply, parentCommentId, authUsername }: Read
                         type="up"
                         count={thumbsUp}
                         active={hasThumbsUp}
-                        onClick={() => toggleReaction(reply.id, "+1", hasThumbsUp, true, parentCommentId)}
+                        onClick={() => toggleReaction(reply.id, "+1", hasThumbsUp, true, parentCommentId, hasThumbsDown)}
                         disabled={!user}
                     />
 
@@ -132,7 +132,7 @@ export default function ReplyCard({ reply, parentCommentId, authUsername }: Read
                         type="down"
                         count={thumbsDown}
                         active={hasThumbsDown}
-                        onClick={() => toggleReaction(reply.id, "-1", hasThumbsDown, true, parentCommentId)}
+                        onClick={() => toggleReaction(reply.id, "-1", hasThumbsDown, true, parentCommentId, hasThumbsUp)}
                         disabled={!user}
                     />
                 </div>

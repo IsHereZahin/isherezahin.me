@@ -1,8 +1,11 @@
 // src/lib/github/api.ts
 
 export const discussionApi = {
-  async fetchComments(discussionNumber: number) {
-    const response = await fetch(`/api/discussions/${discussionNumber}`);
+  async fetchComments(discussionNumber: number, last = 10, before?: string) {
+    const params = new URLSearchParams({ last: String(last) });
+    if (before) params.set("before", before);
+    
+    const response = await fetch(`/api/discussions/${discussionNumber}?${params}`);
     if (!response.ok) throw new Error("Failed to fetch comments");
     return await response.json();
   },
