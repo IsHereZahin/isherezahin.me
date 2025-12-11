@@ -10,7 +10,7 @@ import {
 } from "@/components/ui"
 import { useDiscussion } from "@/lib/hooks/useDiscussion"
 import { Settings2 } from "lucide-react"
-import { useEffect, useMemo, useRef } from "react"
+import { useEffect, useRef } from "react"
 import CommentCard from "./CommentCard"
 
 interface SortOption {
@@ -41,25 +41,6 @@ export default function CommentsList() {
     ]
 
     const currentSort = sortBy || "newest"
-
-    // Sort comments based on selected sort option (client-side sorting of loaded comments)
-    const sortedComments = useMemo(() => {
-        return [...comments].sort((a, b) => {
-            switch (currentSort) {
-                case "newest":
-                    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-                case "oldest":
-                    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-                case "popular":
-                    const aScore = (a.reactions["+1"] || 0) - (a.reactions["-1"] || 0)
-                    const bScore = (b.reactions["+1"] || 0) - (b.reactions["-1"] || 0)
-                    return bScore - aScore
-                default:
-                    return 0
-            }
-        })
-    }, [comments, currentSort])
-
     const remainingCount = Math.min(ITEMS_PER_PAGE, total - comments.length)
 
     // Intersection observer for lazy loading from backend
@@ -120,17 +101,17 @@ export default function CommentsList() {
 
             {/* Comments List */}
             <div className="space-y-4">
-                {sortedComments.length === 0 ? (
+                {comments.length === 0 ? (
                     <div className="text-center py-12 text-muted-foreground">
                         <p className="font-medium text-foreground">No comments yet</p>
                         <p className="text-sm mt-1">Be the first to share your thoughts!</p>
                     </div>
                 ) : (
                     <>
-                        {sortedComments.map((comment, index) => (
+                        {comments.map((comment, index) => (
                             <div
                                 key={comment.id}
-                                ref={index === sortedComments.length - PRELOAD_THRESHOLD ? loadMoreRef : null}
+                                ref={index === comments.length - PRELOAD_THRESHOLD ? loadMoreRef : null}
                             >
                                 <CommentCard comment={comment} />
                             </div>

@@ -151,8 +151,10 @@ export interface DiscussionContextType {
     fetchMoreComments: () => Promise<void>;
     fetchReplies: (commentId: string) => Promise<void>;
     addComment: (body: string, userAvatar?: string) => Promise<void>;
+    editComment: (commentId: string, body: string) => Promise<void>;
     deleteComment: (commentId: string) => Promise<void>;
     addReply: (commentId: string, body: string, userAvatar?: string) => Promise<void>;
+    editReply: (commentId: string, replyId: string, body: string) => Promise<void>;
     deleteReply: (commentId: string, replyId: string) => Promise<void>;
     toggleReaction: (
         targetId: string,

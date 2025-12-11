@@ -4,7 +4,8 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import {
     Loader2,
     Mail,
-    Settings as SettingsIcon,
+    MessageSquare,
+    Settings as SettingsIcon
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -12,6 +13,9 @@ import { toast } from "sonner";
 
 interface AdminSettings {
     newsletterEnabled: boolean;
+    allowGitHubLogin: boolean;
+    allowGoogleLogin: boolean;
+    primaryLoginMethod: "github" | "google";
 }
 
 export default function Settings() {
@@ -19,6 +23,9 @@ export default function Settings() {
     const router = useRouter();
     const [settings, setSettings] = useState<AdminSettings>({
         newsletterEnabled: true,
+        allowGitHubLogin: true,
+        allowGoogleLogin: false,
+        primaryLoginMethod: "github",
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState<string | null>(null);
@@ -54,6 +61,14 @@ export default function Settings() {
         setSaving(key);
         const newValue = !settings[key];
 
+        // Prevent disabling both login methods
+        if ((key === "allowGitHubLogin" && !newValue && !settings.allowGoogleLogin) ||
+            (key === "allowGoogleLogin" && !newValue && !settings.allowGitHubLogin)) {
+            toast.error("At least one login method must be enabled");
+            setSaving(null);
+            return;
+        }
+
         try {
             const response = await fetch("/api/admin/settings", {
                 method: "PATCH",
@@ -65,6 +80,38 @@ export default function Settings() {
 
             if (response.ok) {
                 setSettings((prev) => ({ ...prev, [key]: newValue }));
+                toast.success(data.message);
+
+                // Auto-update primary method if the current primary is being disabled
+                if (key === "allowGitHubLogin" && !newValue && settings.primaryLoginMethod === "github") {
+                    handleUpdatePrimaryMethod("google");
+                } else if (key === "allowGoogleLogin" && !newValue && settings.primaryLoginMethod === "google") {
+                    handleUpdatePrimaryMethod("github");
+                }
+            } else {
+                toast.error(data.error || "Failed to update setting");
+            }
+        } catch (error) {
+            console.error("Error updating setting:", error);
+            toast.error("Failed to update setting");
+        } finally {
+            setSaving(null);
+        }
+    };
+
+    const handleUpdatePrimaryMethod = async (value: "github" | "google") => {
+        setSaving("primaryLoginMethod");
+        try {
+            const response = await fetch("/api/admin/settings", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ key: "primaryLoginMethod", value }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setSettings((prev) => ({ ...prev, primaryLoginMethod: value }));
                 toast.success(data.message);
             } else {
                 toast.error(data.error || "Failed to update setting");
@@ -133,6 +180,96 @@ export default function Settings() {
                                 ) : (
                                     <span className="text-amber-600 dark:text-amber-400">
                                         ⚠ Newsletter notifications are disabled. New blog posts will not trigger emails.
+                                    </span>
+                                )}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Login Methods Setting */}
+                    <div className="border border-border rounded-lg p-4">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="p-2 rounded-full shrink-0 bg-muted">
+                                <MessageSquare className="h-5 w-5 icon-bw" />
+                            </div>
+                            <div className="min-w-0">
+                                <p className="font-medium text-sm">Login Methods</p>
+                                <p className="text-xs text-muted-foreground">
+                                    Select which login methods are available
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="space-y-3 ml-12">
+                            {/* GitHub Login */}
+                            <label className="flex items-center gap-3 cursor-pointer">
+                                <button
+                                    type="button"
+                                    onClick={() => handleToggleSetting("allowGitHubLogin")}
+                                    disabled={saving === "allowGitHubLogin"}
+                                    className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 ${settings.allowGitHubLogin ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600"} disabled:opacity-50`}
+                                >
+                                    {saving === "allowGitHubLogin" ? (
+                                        <Loader2 className="h-3 w-3 animate-spin text-white mx-auto" />
+                                    ) : (
+                                        <span className={`inline-block h-3 w-3 transform rounded-full bg-white shadow transition-transform ${settings.allowGitHubLogin ? "translate-x-5" : "translate-x-1"}`} />
+                                    )}
+                                </button>
+                                <span className="text-sm">GitHub</span>
+                            </label>
+
+                            {/* Google Login */}
+                            <label className="flex items-center gap-3 cursor-pointer">
+                                <button
+                                    type="button"
+                                    onClick={() => handleToggleSetting("allowGoogleLogin")}
+                                    disabled={saving === "allowGoogleLogin"}
+                                    className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 ${settings.allowGoogleLogin ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600"} disabled:opacity-50`}
+                                >
+                                    {saving === "allowGoogleLogin" ? (
+                                        <Loader2 className="h-3 w-3 animate-spin text-white mx-auto" />
+                                    ) : (
+                                        <span className={`inline-block h-3 w-3 transform rounded-full bg-white shadow transition-transform ${settings.allowGoogleLogin ? "translate-x-5" : "translate-x-1"}`} />
+                                    )}
+                                </button>
+                                <span className="text-sm">Google</span>
+                            </label>
+
+                            {/* Primary Method Selector - only show when both are enabled */}
+                            {settings.allowGitHubLogin && settings.allowGoogleLogin && (
+                                <div className="pt-3 border-t border-border mt-3">
+                                    <p className="text-xs text-muted-foreground mb-2">Primary login method</p>
+                                    <div className="flex gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => handleUpdatePrimaryMethod("github")}
+                                            disabled={saving === "primaryLoginMethod"}
+                                            className={`px-3 py-1.5 text-xs rounded-md transition-colors ${settings.primaryLoginMethod === "github" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"} disabled:opacity-50`}
+                                        >
+                                            GitHub
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleUpdatePrimaryMethod("google")}
+                                            disabled={saving === "primaryLoginMethod"}
+                                            className={`px-3 py-1.5 text-xs rounded-md transition-colors ${settings.primaryLoginMethod === "google" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"} disabled:opacity-50`}
+                                        >
+                                            Google
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="mt-3 pt-3 border-t border-border">
+                            <p className="text-xs text-muted-foreground">
+                                {settings.allowGitHubLogin && settings.allowGoogleLogin ? (
+                                    <span className="text-green-600 dark:text-green-400">
+                                        ✓ Login modal will show both options
+                                    </span>
+                                ) : (
+                                    <span className="text-muted-foreground">
+                                        Direct {settings.allowGitHubLogin ? "GitHub" : "Google"} login (no modal)
                                     </span>
                                 )}
                             </p>

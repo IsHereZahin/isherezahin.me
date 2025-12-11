@@ -1,13 +1,15 @@
 "use client";
 
 import type { Comment } from "@/lib/github/types";
-import { MessageCircle, MoreVertical } from "lucide-react";
+import { MessageCircle, MoreVertical, Pencil, Trash } from "lucide-react";
 import { useState } from "react";
 
 import { getReactionCount, isCommentDeleted, isCommentEdited } from "@/lib/github/helpers";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useDiscussion } from "@/lib/hooks/useDiscussion";
 import { getFormatDistanceToNow, getRoleBadge } from "@/utils";
+
+const GITHUB_REQUIRED_MESSAGE = "You need a GitHub account to interact";
 
 import {
     BlurImage,
@@ -29,9 +31,10 @@ interface CommentCardProps {
 }
 
 export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
-    const { user, login } = useAuth();
+    const { user, isAdmin, isGitHubUser } = useAuth();
     const {
         deleteComment,
+        editComment,
         toggleReaction,
         toggleExpanded,
         expandedCommentId,
@@ -41,9 +44,12 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
     } = useDiscussion();
 
     const [replyingTo, setReplyingTo] = useState<string | null>(null);
+    const [isEditing, setIsEditing] = useState(false);
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
     const isOwner = user?.username === comment.user.login;
+    const canEdit = isOwner;
+    const canDelete = isOwner || isAdmin;
     const roleBadge = getRoleBadge(comment.author_association, comment.is_owner);
     const thumbsUpCount = getReactionCount(comment.reactions, "+1");
     const thumbsDownCount = getReactionCount(comment.reactions, "-1");
@@ -94,12 +100,33 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
 
     // handle reply
     const handleReply = () => {
-        if (user) {
-            setReplyingTo(comment.id);
-        } else {
-            toast.error("You must be logged in to reply to a comment.");
+        if (!user) {
+            toast.error("You must be logged in to reply");
+            return;
         }
+        if (!isGitHubUser) {
+            toast.error(GITHUB_REQUIRED_MESSAGE);
+            return;
+        }
+        setReplyingTo(comment.id);
     };
+
+    // Edit mode - show only the form
+    if (isEditing) {
+        return (
+            <div className="group rounded-xl border border-border/30 p-5 hover:border-border transition-all duration-200">
+                <CommentForm
+                    initialValue={comment.body}
+                    onSubmit={async (body) => {
+                        await editComment(comment.id, body);
+                        setIsEditing(false);
+                    }}
+                    onCancel={() => setIsEditing(false)}
+                    submitLabel="Save"
+                />
+            </div>
+        );
+    }
 
     return (
         <div className="group rounded-xl border border-border/30 p-5 hover:border-border transition-all duration-200">
@@ -150,20 +177,36 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
                 </div>
 
                 {/* Menu */}
-                {isOwner && (
+                {(canEdit || canDelete) && !isDeleted && (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <button className="text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg p-1.5 transition-all">
+                            <button
+                                className="rounded-md p-1.5 text-muted-foreground hover:text-foreground hover:bg-secondary transition cursor-pointer"
+                            >
                                 <MoreVertical className="w-4 h-4" />
                             </button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-32">
-                            <DropdownMenuItem
-                                onClick={() => setShowDeleteDialog(true)}
-                                className="text-destructive focus:text-destructive focus:bg-destructive/10 cursor-pointer"
-                            >
-                                Delete
-                            </DropdownMenuItem>
+
+                        <DropdownMenuContent align="end" className="w-40">
+                            {canEdit && (
+                                <DropdownMenuItem
+                                    onClick={() => setIsEditing(true)}
+                                    className="cursor-pointer"
+                                >
+                                    <Pencil className="w-4 h-4 mr-2 text-muted-foreground" />
+                                    <span>Edit</span>
+                                </DropdownMenuItem>
+                            )}
+
+                            {canDelete && (
+                                <DropdownMenuItem
+                                    onClick={() => setShowDeleteDialog(true)}
+                                    className="cursor-pointer text-destructive focus:text-destructive data-[highlighted]:bg-destructive/10"
+                                >
+                                    <Trash className="w-4 h-4 mr-2 text-destructive" />
+                                    <span>Delete</span>
+                                </DropdownMenuItem>
+                            )}
                         </DropdownMenuContent>
                     </DropdownMenu>
                 )}
@@ -172,7 +215,7 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
             {/* Body */}
             <div className="text-sm sm:text-base mb-4 leading-relaxed prose prose-sm max-w-none text-muted-foreground group-hover:text-foreground/80 transition-colors">
                 {isDeleted ? (
-                    <span className="italic">This message was deleted.</span>
+                    <span className="italic">[This message was deleted.]</span>
                 ) : (
                     <MarkdownPreview content={comment.body} />
                 )}
@@ -185,14 +228,16 @@ export default function CommentCard({ comment }: Readonly<CommentCardProps>) {
                     count={thumbsUpCount}
                     active={hasThumbsUp}
                     onClick={() => toggleReaction(comment.id, "+1", hasThumbsUp, false, undefined, hasThumbsDown)}
-                    disabled={isDeleted || !user}
+                    disabled={isDeleted || !user || !isGitHubUser}
+                    disabledReason={user && !isGitHubUser ? GITHUB_REQUIRED_MESSAGE : undefined}
                 />
                 <ReactionButton
                     type="down"
                     count={thumbsDownCount}
                     active={hasThumbsDown}
                     onClick={() => toggleReaction(comment.id, "-1", hasThumbsDown, false, undefined, hasThumbsUp)}
-                    disabled={isDeleted || !user}
+                    disabled={isDeleted || !user || !isGitHubUser}
+                    disabledReason={user && !isGitHubUser ? GITHUB_REQUIRED_MESSAGE : undefined}
                 />
 
                 <div className="flex-1" />

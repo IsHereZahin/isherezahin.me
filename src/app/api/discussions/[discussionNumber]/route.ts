@@ -7,7 +7,7 @@ import type { CommentNode } from "@/lib/github/types";
 import { NextRequest, NextResponse } from "next/server";
 
 // GraphQL Queries & Mutations - using last/before for newest first ordering
-const GET_DISCUSSION_QUERY = `
+const GET_DISCUSSION_QUERY_NEWEST = `
   query($owner: String!, $name: String!, $number: Int!, $last: Int!, $before: String) {
     repository(owner: $owner, name: $name) {
       discussion(number: $number) {
@@ -50,6 +50,101 @@ const GET_DISCUSSION_QUERY = `
   }
 `;
 
+// Query for oldest first (forward pagination)
+const GET_DISCUSSION_QUERY_OLDEST = `
+  query($owner: String!, $name: String!, $number: Int!, $first: Int!, $after: String) {
+    repository(owner: $owner, name: $name) {
+      discussion(number: $number) {
+        id
+        comments(first: $first, after: $after) {
+          totalCount
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
+          nodes {
+            id
+            body
+            createdAt
+            updatedAt
+            lastEditedAt
+            authorAssociation
+            author {
+              login
+              avatarUrl
+              url
+            }
+            reactions(first: 100) {
+              nodes {
+                content
+                user {
+                  login
+                  avatarUrl
+                  url
+                }
+              }
+            }
+            replies(first: 100) {
+              totalCount
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+// Query for fetching all comments (for popular sorting)
+const GET_ALL_COMMENTS_QUERY = `
+  query($owner: String!, $name: String!, $number: Int!) {
+    repository(owner: $owner, name: $name) {
+      discussion(number: $number) {
+        id
+        comments(first: 100) {
+          totalCount
+          nodes {
+            id
+            body
+            createdAt
+            updatedAt
+            lastEditedAt
+            authorAssociation
+            author {
+              login
+              avatarUrl
+              url
+            }
+            reactions(first: 100) {
+              nodes {
+                content
+                user {
+                  login
+                  avatarUrl
+                  url
+                }
+              }
+            }
+            replies(first: 100) {
+              totalCount
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+// Simple query to get discussion ID
+const GET_DISCUSSION_ID_QUERY = `
+  query($owner: String!, $name: String!, $number: Int!) {
+    repository(owner: $owner, name: $name) {
+      discussion(number: $number) {
+        id
+      }
+    }
+  }
+`;
+
 const ADD_COMMENT_MUTATION = `
   mutation($discussionId: ID!, $body: String!) {
     addDiscussionComment(input: {discussionId: $discussionId, body: $body}) {
@@ -72,7 +167,20 @@ const DELETE_COMMENT_MUTATION = `
   }
 `;
 
-interface DiscussionData {
+const UPDATE_COMMENT_MUTATION = `
+  mutation($commentId: ID!, $body: String!) {
+    updateDiscussionComment(input: {commentId: $commentId, body: $body}) {
+      comment {
+        id
+        body
+        updatedAt
+        lastEditedAt
+      }
+    }
+  }
+`;
+
+interface DiscussionDataNewest {
   repository: {
     discussion: {
       id: string;
@@ -88,9 +196,58 @@ interface DiscussionData {
   };
 }
 
+interface DiscussionDataOldest {
+  repository: {
+    discussion: {
+      id: string;
+      comments: {
+        totalCount: number;
+        pageInfo: {
+          hasNextPage: boolean;
+          endCursor: string | null;
+        };
+        nodes: CommentNode[];
+      };
+    };
+  };
+}
+
+interface DiscussionDataAll {
+  repository: {
+    discussion: {
+      id: string;
+      comments: {
+        totalCount: number;
+        nodes: CommentNode[];
+      };
+    };
+  };
+}
+
+interface DiscussionIdData {
+  repository: {
+    discussion: {
+      id: string;
+    };
+  };
+}
+
+type SortBy = "newest" | "oldest" | "popular";
+
 const DEFAULT_PAGE_SIZE = 10;
 
-// GET comments for a discussion with pagination (newest first)
+// Helper to get reaction score
+function getReactionScore(comment: CommentNode): number {
+  const reactions = comment.reactions?.nodes || [];
+  let score = 0;
+  for (const r of reactions) {
+    if (r.content === "THUMBS_UP") score++;
+    else if (r.content === "THUMBS_DOWN") score--;
+  }
+  return score;
+}
+
+// GET comments for a discussion with pagination and sorting
 export async function GET(request: NextRequest, context: { params: Promise<{ discussionNumber: string }> }) {
   try {
     const session = await auth();
@@ -98,34 +255,93 @@ export async function GET(request: NextRequest, context: { params: Promise<{ dis
     const discussionNumber = parseInt(discussionNumberStr);
 
     const { searchParams } = new URL(request.url);
-    const last = parseInt(searchParams.get("last") || String(DEFAULT_PAGE_SIZE));
-    const before = searchParams.get("before") || undefined;
+    const sortBy = (searchParams.get("sort") || "newest") as SortBy;
+    const pageSize = parseInt(searchParams.get("pageSize") || String(DEFAULT_PAGE_SIZE));
+    const cursor = searchParams.get("cursor") || undefined;
 
-    const data = await callGraphQL<DiscussionData>(
-      GET_DISCUSSION_QUERY,
+    // For "popular" sort, fetch all and sort client-side
+    if (sortBy === "popular") {
+      const data = await callGraphQL<DiscussionDataAll>(
+        GET_ALL_COMMENTS_QUERY,
+        { owner: GITHUB_REPO_OWNER, name: GITHUB_REPO_NAME, number: discussionNumber },
+        GITHUB_ACCESS_TOKEN as string
+      );
+
+      if (!data.repository?.discussion) {
+        return NextResponse.json({ error: "Discussion not found" }, { status: 404 });
+      }
+
+      const { comments, id: discussionId } = data.repository.discussion;
+      
+      // Sort by reaction score (thumbs up - thumbs down)
+      const sortedNodes = [...comments.nodes].sort((a, b) => getReactionScore(b) - getReactionScore(a));
+      
+      const formattedComments = sortedNodes.map((comment) =>
+        formatComment(comment, session?.user?.name ?? undefined, { includeReplyCount: true })
+      );
+
+      return NextResponse.json({
+        comments: formattedComments,
+        discussionId,
+        total: comments.totalCount,
+        hasNextPage: false,
+        endCursor: null,
+      });
+    }
+
+    // For "oldest" sort, use forward pagination
+    if (sortBy === "oldest") {
+      const data = await callGraphQL<DiscussionDataOldest>(
+        GET_DISCUSSION_QUERY_OLDEST,
+        { 
+          owner: GITHUB_REPO_OWNER, 
+          name: GITHUB_REPO_NAME, 
+          number: discussionNumber,
+          first: pageSize,
+          after: cursor,
+        },
+        GITHUB_ACCESS_TOKEN as string
+      );
+
+      if (!data.repository?.discussion) {
+        return NextResponse.json({ error: "Discussion not found" }, { status: 404 });
+      }
+
+      const { comments, id: discussionId } = data.repository.discussion;
+      const formattedComments = comments.nodes.map((comment) =>
+        formatComment(comment, session?.user?.name ?? undefined, { includeReplyCount: true })
+      );
+
+      return NextResponse.json({
+        comments: formattedComments,
+        discussionId,
+        total: comments.totalCount,
+        hasNextPage: comments.pageInfo.hasNextPage,
+        endCursor: comments.pageInfo.endCursor,
+      });
+    }
+
+    // Default: "newest" sort, use backward pagination
+    const data = await callGraphQL<DiscussionDataNewest>(
+      GET_DISCUSSION_QUERY_NEWEST,
       { 
         owner: GITHUB_REPO_OWNER, 
         name: GITHUB_REPO_NAME, 
         number: discussionNumber,
-        last,
-        before,
+        last: pageSize,
+        before: cursor,
       },
       GITHUB_ACCESS_TOKEN as string
     );
 
     if (!data.repository?.discussion) {
-      return NextResponse.json(
-        { error: "Discussion not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Discussion not found" }, { status: 404 });
     }
 
     const { comments, id: discussionId } = data.repository.discussion;
-    // Reverse to get newest first (last/before returns oldest at end)
+    // Reverse to get newest first
     const formattedComments = comments.nodes.map((comment) =>
-      formatComment(comment, session?.user?.name ?? undefined, {
-        includeReplyCount: true,
-      })
+      formatComment(comment, session?.user?.name ?? undefined, { includeReplyCount: true })
     ).reverse();
 
     return NextResponse.json({
@@ -176,8 +392,8 @@ export async function POST(request: NextRequest, context: { params: Promise<{ di
 
     let finalDiscussionId = discussionId;
     if (!finalDiscussionId) {
-      const data = await callGraphQL<DiscussionData>(
-        GET_DISCUSSION_QUERY,
+      const data = await callGraphQL<DiscussionIdData>(
+        GET_DISCUSSION_ID_QUERY,
         { owner: GITHUB_REPO_OWNER, name: GITHUB_REPO_NAME, number: discussionNumber },
         session.accessToken
       );
@@ -231,6 +447,56 @@ export async function DELETE(request: NextRequest) {
     console.error("Error deleting comment:", error);
     const message =
       error instanceof Error ? error.message : "Failed to delete comment!";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
+
+
+// PATCH - Edit a comment
+export async function PATCH(request: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.accessToken)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    // Only GitHub users can edit comments
+    if (session.user?.provider !== "github") {
+      return NextResponse.json(
+        { error: "GitHub authentication required" },
+        { status: 403 }
+      );
+    }
+
+    const { commentId, body } = (await request.json()) as { 
+      commentId: string; 
+      body: string;
+    };
+
+    if (!body?.trim()) {
+      return NextResponse.json(
+        { error: "Comment body is required" },
+        { status: 400 }
+      );
+    }
+
+    const data = await callGraphQL<{
+      updateDiscussionComment: {
+        comment: { id: string; body: string; updatedAt: string; lastEditedAt: string };
+      };
+    }>(
+      UPDATE_COMMENT_MUTATION,
+      { commentId, body },
+      session.accessToken
+    );
+
+    return NextResponse.json({ 
+      comment: data.updateDiscussionComment.comment,
+      success: true 
+    });
+  } catch (error: unknown) {
+    console.error("Error updating comment:", error);
+    const message =
+      error instanceof Error ? error.message : "Failed to update comment!";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

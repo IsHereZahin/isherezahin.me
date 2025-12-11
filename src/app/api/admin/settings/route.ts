@@ -9,6 +9,18 @@ const DEFAULT_SETTINGS = {
         value: true,
         description: "Send newsletter emails to subscribers when new blog is published",
     },
+    allowGitHubLogin: {
+        value: true,
+        description: "Allow GitHub login for guestbook",
+    },
+    allowGoogleLogin: {
+        value: false,
+        description: "Allow Google login for guestbook",
+    },
+    primaryLoginMethod: {
+        value: "github",
+        description: "Primary login method when only one is enabled",
+    },
 };
 
 export async function GET() {

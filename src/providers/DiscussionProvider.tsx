@@ -35,11 +35,11 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
         dispatch({ type: "SET_AUTH_USERNAME", payload: authUsername });
     }, [authUsername]);
 
-    // Fetch comments for the discussion (initial load)
-    const fetchComments = useCallback(async () => {
+    // Fetch comments for the discussion (initial load or sort change)
+    const fetchComments = useCallback(async (sort: "newest" | "oldest" | "popular" = state.sortBy) => {
         try {
             dispatch({ type: "SET_LOADING", payload: true });
-            const data = await discussionApi.fetchComments(discussionNumber);
+            const data = await discussionApi.fetchComments(discussionNumber, 10, undefined, sort);
             dispatch({ type: "SET_COMMENTS", payload: data.comments });
             dispatch({ type: "SET_DISCUSSION_ID", payload: data.discussionId });
             dispatch({
@@ -58,7 +58,7 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
         } finally {
             dispatch({ type: "SET_LOADING", payload: false });
         }
-    }, [discussionNumber]);
+    }, [discussionNumber, state.sortBy]);
 
     // Fetch more comments (pagination)
     const fetchMoreComments = useCallback(async () => {
@@ -66,7 +66,7 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
 
         try {
             dispatch({ type: "SET_LOADING_MORE", payload: true });
-            const data = await discussionApi.fetchComments(discussionNumber, 10, state.endCursor || undefined);
+            const data = await discussionApi.fetchComments(discussionNumber, 10, state.endCursor || undefined, state.sortBy);
             dispatch({ type: "APPEND_COMMENTS", payload: data.comments });
             dispatch({
                 type: "SET_PAGINATION", payload: {
@@ -81,7 +81,14 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
         } finally {
             dispatch({ type: "SET_LOADING_MORE", payload: false });
         }
-    }, [discussionNumber, state.hasNextPage, state.loadingMore, state.endCursor]);
+    }, [discussionNumber, state.hasNextPage, state.loadingMore, state.endCursor, state.sortBy]);
+
+    // Handle sort change - refetch from backend
+    const handleSetSortBy = useCallback((sort: "newest" | "oldest" | "popular") => {
+        if (sort === state.sortBy) return;
+        dispatch({ type: "SET_SORT", payload: sort });
+        fetchComments(sort);
+    }, [state.sortBy, fetchComments]);
 
     // Fetch replies for a comment
     const fetchReplies = useCallback(
@@ -143,6 +150,36 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
         [discussionNumber, state.discussionId, state.authUsername, avatarUrl]
     );
 
+    // Edit comment
+    const editComment = useCallback(
+        async (commentId: string, body: string) => {
+            const previousComment = state.comments.find((c) => c.id === commentId);
+
+            // Optimistic update
+            dispatch({
+                type: "UPDATE_COMMENT",
+                payload: { id: commentId, updates: { body, last_edited_at: new Date().toISOString() } },
+            });
+
+            try {
+                await discussionApi.editComment(discussionNumber, commentId, body);
+                toast.success("Comment updated successfully");
+            } catch (err) {
+                console.error(err);
+                // Revert on error
+                if (previousComment) {
+                    dispatch({
+                        type: "UPDATE_COMMENT",
+                        payload: { id: commentId, updates: { body: previousComment.body, last_edited_at: previousComment.last_edited_at } },
+                    });
+                }
+                toast.error("Failed to update comment");
+                throw err;
+            }
+        },
+        [discussionNumber, state.comments]
+    );
+
     const addReply = useCallback(
         async (commentId: string, body: string) => {
             try {
@@ -187,6 +224,36 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
             }
         },
         [discussionNumber, state.discussionId, state.comments, state.authUsername, avatarUrl]
+    );
+
+    // Edit reply
+    const editReply = useCallback(
+        async (commentId: string, replyId: string, body: string) => {
+            const previousReply = state.loadedReplies[commentId]?.find((r) => r.id === replyId);
+
+            // Optimistic update
+            dispatch({
+                type: "UPDATE_REPLY",
+                payload: { commentId, replyId, updates: { body, last_edited_at: new Date().toISOString() } },
+            });
+
+            try {
+                await discussionApi.editComment(discussionNumber, replyId, body);
+                toast.success("Reply updated successfully");
+            } catch (err) {
+                console.error(err);
+                // Revert on error
+                if (previousReply) {
+                    dispatch({
+                        type: "UPDATE_REPLY",
+                        payload: { commentId, replyId, updates: { body: previousReply.body, last_edited_at: previousReply.last_edited_at } },
+                    });
+                }
+                toast.error("Failed to update reply");
+                throw err;
+            }
+        },
+        [discussionNumber, state.loadedReplies]
     );
 
     // Delete comment
@@ -353,13 +420,14 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
             hasNextPage: state.hasNextPage,
 
             // Actions
-            setSortBy: (sort: "newest" | "oldest" | "popular") =>
-                dispatch({ type: "SET_SORT", payload: sort }),
+            setSortBy: handleSetSortBy,
             fetchComments,
             fetchMoreComments,
             fetchReplies,
             addComment,
+            editComment,
             addReply,
+            editReply,
             deleteComment,
             deleteReply,
             toggleReaction,
@@ -375,11 +443,14 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
         }),
         [
             state,
+            handleSetSortBy,
             fetchComments,
             fetchMoreComments,
             fetchReplies,
             addComment,
+            editComment,
             addReply,
+            editReply,
             deleteComment,
             deleteReply,
             toggleReaction,

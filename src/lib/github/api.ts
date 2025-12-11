@@ -1,9 +1,17 @@
 // src/lib/github/api.ts
 
 export const discussionApi = {
-  async fetchComments(discussionNumber: number, last = 10, before?: string) {
-    const params = new URLSearchParams({ last: String(last) });
-    if (before) params.set("before", before);
+  async fetchComments(
+    discussionNumber: number, 
+    pageSize = 10, 
+    cursor?: string,
+    sort: "newest" | "oldest" | "popular" = "newest"
+  ) {
+    const params = new URLSearchParams({ 
+      pageSize: String(pageSize),
+      sort,
+    });
+    if (cursor) params.set("cursor", cursor);
     
     const response = await fetch(`/api/discussions/${discussionNumber}?${params}`);
     if (!response.ok) throw new Error("Failed to fetch comments");
@@ -48,6 +56,16 @@ export const discussionApi = {
       body: JSON.stringify({ commentId }),
     });
     if (!response.ok) throw new Error("Failed to delete comment");
+    return await response.json();
+  },
+
+  async editComment(discussionNumber: number, commentId: string, body: string) {
+    const response = await fetch(`/api/discussions/${discussionNumber}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ commentId, body }),
+    });
+    if (!response.ok) throw new Error("Failed to edit comment");
     return await response.json();
   },
 
