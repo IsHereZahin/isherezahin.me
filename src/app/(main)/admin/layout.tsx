@@ -3,7 +3,7 @@
 import MotionWrapper from "@/components/motion/MotionWrapper";
 import { BlurImage, PageTitle, Section } from "@/components/ui";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { LogOut, Mail, Settings, Users } from "lucide-react";
+import { BarChart3, LogOut, Mail, Settings, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ReactNode, useEffect } from "react";
@@ -11,6 +11,7 @@ import { ReactNode, useEffect } from "react";
 const adminNavItems = [
     { id: "users", label: "Manage Users", icon: Users, href: "/admin/users" },
     { id: "subscribers", label: "Subscribers", icon: Mail, href: "/admin/subscribers" },
+    { id: "statistics", label: "Statistics", icon: BarChart3, href: "/admin/statistics" },
     { id: "settings", label: "Settings", icon: Settings, href: "/admin/settings" },
 ];
 
