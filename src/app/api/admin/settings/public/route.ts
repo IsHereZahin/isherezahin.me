@@ -1,4 +1,4 @@
-import { AdminSettingsModel } from "@/database/models/admin-settings-model";
+import { SiteSettingsModel } from "@/database/models/site-settings-model";
 import dbConnect from "@/database/services/mongo";
 import { NextResponse } from "next/server";
 
@@ -15,7 +15,7 @@ export async function GET() {
     try {
         await dbConnect();
 
-        const settings = await AdminSettingsModel.find({ 
+        const settings = await SiteSettingsModel.find({ 
             key: { $in: PUBLIC_SETTINGS } 
         }).lean();
 

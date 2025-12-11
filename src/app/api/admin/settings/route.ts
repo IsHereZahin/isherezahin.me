@@ -1,4 +1,4 @@
-import { AdminSettingsModel } from "@/database/models/admin-settings-model";
+import { SiteSettingsModel } from "@/database/models/site-settings-model";
 import dbConnect from "@/database/services/mongo";
 import { checkIsAdmin } from "@/lib/auth-utils";
 import { NextRequest, NextResponse } from "next/server";
@@ -21,6 +21,10 @@ const DEFAULT_SETTINGS = {
         value: "github",
         description: "Primary login method when only one is enabled",
     },
+    allowAnyUserStartConversation: {
+        value: true,
+        description: "Allow any GitHub user to start conversations, or restrict to admins only",
+    },
 };
 
 export async function GET() {
@@ -33,7 +37,7 @@ export async function GET() {
         }
 
         // Get all settings
-        const settings = await AdminSettingsModel.find({}).lean();
+        const settings = await SiteSettingsModel.find({}).lean();
         
         // Build settings object with defaults
         const settingsMap: Record<string, unknown> = {};
@@ -72,7 +76,7 @@ export async function PATCH(request: NextRequest) {
         }
 
         // Upsert the setting
-        await AdminSettingsModel.findOneAndUpdate(
+        await SiteSettingsModel.findOneAndUpdate(
             { key },
             { 
                 key, 
@@ -97,7 +101,7 @@ export async function PATCH(request: NextRequest) {
 export async function getAdminSetting(key: string): Promise<unknown> {
     try {
         await dbConnect();
-        const setting = await AdminSettingsModel.findOne({ key }).lean();
+        const setting = await SiteSettingsModel.findOne({ key }).lean();
         
         if (setting) {
             return (setting as Record<string, unknown>).value;

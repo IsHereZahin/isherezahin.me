@@ -268,7 +268,14 @@ export async function GET(request: NextRequest, context: { params: Promise<{ dis
       );
 
       if (!data.repository?.discussion) {
-        return NextResponse.json({ error: "Discussion not found" }, { status: 404 });
+        // Return empty state instead of 404 - discussion may not exist yet
+        return NextResponse.json({
+          comments: [],
+          discussionId: null,
+          total: 0,
+          hasNextPage: false,
+          endCursor: null,
+        });
       }
 
       const { comments, id: discussionId } = data.repository.discussion;
@@ -304,7 +311,14 @@ export async function GET(request: NextRequest, context: { params: Promise<{ dis
       );
 
       if (!data.repository?.discussion) {
-        return NextResponse.json({ error: "Discussion not found" }, { status: 404 });
+        // Return empty state instead of 404
+        return NextResponse.json({
+          comments: [],
+          discussionId: null,
+          total: 0,
+          hasNextPage: false,
+          endCursor: null,
+        });
       }
 
       const { comments, id: discussionId } = data.repository.discussion;
@@ -335,7 +349,14 @@ export async function GET(request: NextRequest, context: { params: Promise<{ dis
     );
 
     if (!data.repository?.discussion) {
-      return NextResponse.json({ error: "Discussion not found" }, { status: 404 });
+      // Return empty state instead of 404
+      return NextResponse.json({
+        comments: [],
+        discussionId: null,
+        total: 0,
+        hasNextPage: false,
+        endCursor: null,
+      });
     }
 
     const { comments, id: discussionId } = data.repository.discussion;
@@ -353,6 +374,20 @@ export async function GET(request: NextRequest, context: { params: Promise<{ dis
     });
   } catch (error: unknown) {
     console.error("Error fetching discussion comments:", error);
+    
+    // Check if it's a "not found" type error from GitHub
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (errorMessage.includes("Could not resolve") || errorMessage.includes("not found")) {
+      // Return empty state for non-existent discussions
+      return NextResponse.json({
+        comments: [],
+        discussionId: null,
+        total: 0,
+        hasNextPage: false,
+        endCursor: null,
+      });
+    }
+    
     const message =
       error instanceof Error
         ? error.message

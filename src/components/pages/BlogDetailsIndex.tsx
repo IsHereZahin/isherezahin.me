@@ -29,6 +29,7 @@ import {
     TextGradient,
 } from "@/components/ui";
 import { useAuth } from "@/lib/hooks/useAuth";
+import ContentDiscussions from "../content/discussions/ContentDiscussions";
 
 export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
     const [showTOC, setShowTOC] = useState(false);
@@ -139,6 +140,16 @@ export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
                 </div>
                 <div className="block lg:hidden">
                     <LikeButton slug={slug} />
+                </div>
+
+                {/* Comments Section */}
+                <div className="mt-12 pt-8 border-t border-border/50">
+                    <ContentDiscussions
+                        contentType="blog"
+                        slug={slug}
+                        title={data.title}
+                        initialDiscussionNumber={data.discussionNumber}
+                    />
                 </div>
 
                 {/* Subscribe Section */}

@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-const adminSettingsSchema = new Schema(
+const siteSettingsSchema = new Schema(
     {
         key: {
             type: String,
@@ -19,5 +19,5 @@ const adminSettingsSchema = new Schema(
     { timestamps: true }
 );
 
-export const AdminSettingsModel =
-    mongoose.models.AdminSettings || mongoose.model("AdminSettings", adminSettingsSchema);
+export const SiteSettingsModel =
+    mongoose.models.SiteSettings || mongoose.model("SiteSettings", siteSettingsSchema);

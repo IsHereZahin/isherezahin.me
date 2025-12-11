@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import {
     Loader2,
     Mail,
+    MessageCirclePlus,
     MessageSquare,
     Settings as SettingsIcon
 } from "lucide-react";
@@ -16,6 +17,7 @@ interface AdminSettings {
     allowGitHubLogin: boolean;
     allowGoogleLogin: boolean;
     primaryLoginMethod: "github" | "google";
+    allowAnyUserStartConversation: boolean;
 }
 
 export default function Settings() {
@@ -26,6 +28,7 @@ export default function Settings() {
         allowGitHubLogin: true,
         allowGoogleLogin: false,
         primaryLoginMethod: "github",
+        allowAnyUserStartConversation: true,
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState<string | null>(null);
@@ -270,6 +273,53 @@ export default function Settings() {
                                 ) : (
                                     <span className="text-muted-foreground">
                                         Direct {settings.allowGitHubLogin ? "GitHub" : "Google"} login (no modal)
+                                    </span>
+                                )}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Start Conversation Permission Setting */}
+                    <div className="border border-border rounded-lg p-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div className="flex items-center gap-3">
+                                <div className={`p-2 rounded-full shrink-0 ${settings.allowAnyUserStartConversation ? "bg-muted" : "bg-muted/50"}`}>
+                                    <MessageCirclePlus className={`h-5 w-5 icon-bw ${!settings.allowAnyUserStartConversation ? "opacity-50" : ""}`} />
+                                </div>
+                                <div className="min-w-0">
+                                    <p className="font-medium text-sm">Allow Any User to Start Conversations</p>
+                                    <p className="text-xs text-muted-foreground">
+                                        Control who can start new discussions on blogs and projects
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => handleToggleSetting("allowAnyUserStartConversation")}
+                                disabled={saving === "allowAnyUserStartConversation"}
+                                className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 self-start sm:self-center ${settings.allowAnyUserStartConversation ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600"
+                                    } disabled:opacity-50`}
+                            >
+                                {saving === "allowAnyUserStartConversation" ? (
+                                    <span className="absolute inset-0 flex items-center justify-center">
+                                        <Loader2 className="h-4 w-4 animate-spin text-white" />
+                                    </span>
+                                ) : (
+                                    <span
+                                        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-all duration-300 ease-in-out ${settings.allowAnyUserStartConversation ? "translate-x-6" : "translate-x-1"
+                                            }`}
+                                    />
+                                )}
+                            </button>
+                        </div>
+                        <div className="mt-3 pt-3 border-t border-border">
+                            <p className="text-xs text-muted-foreground">
+                                {settings.allowAnyUserStartConversation ? (
+                                    <span className="text-green-600 dark:text-green-400">
+                                        ✓ Any GitHub user can start conversations on blogs and projects
+                                    </span>
+                                ) : (
+                                    <span className="text-amber-600 dark:text-amber-400">
+                                        ⚠ Only admins can start conversations. Other users can still comment on existing ones.
                                     </span>
                                 )}
                             </p>

@@ -76,6 +76,10 @@ const projectSchema = new Schema(
             required: true,
             default: false,
         },
+        discussionNumber: {
+            type: Number,
+            default: null,
+        },
     },
     { timestamps: true }
 );

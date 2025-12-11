@@ -12,8 +12,8 @@ export async function GET(request: NextRequest) {
 
         // If checking newsletter status only
         if (checkStatus === "true") {
-            const { AdminSettingsModel } = await import("@/database/models/admin-settings-model");
-            const newsletterSetting = await AdminSettingsModel.findOne({ key: 'newsletterEnabled' }).lean() as { value: boolean } | null;
+            const { SiteSettingsModel } = await import("@/database/models/site-settings-model");
+            const newsletterSetting = await SiteSettingsModel.findOne({ key: 'newsletterEnabled' }).lean() as { value: boolean } | null;
             const isNewsletterEnabled = newsletterSetting?.value ?? true;
             return NextResponse.json({ newsletterEnabled: isNewsletterEnabled });
         }
@@ -28,8 +28,8 @@ export async function GET(request: NextRequest) {
         });
 
         // Also get newsletter enabled status
-        const { AdminSettingsModel } = await import("@/database/models/admin-settings-model");
-        const newsletterSetting = await AdminSettingsModel.findOne({ key: 'newsletterEnabled' }).lean() as { value: boolean } | null;
+        const { SiteSettingsModel } = await import("@/database/models/site-settings-model");
+        const newsletterSetting = await SiteSettingsModel.findOne({ key: 'newsletterEnabled' }).lean() as { value: boolean } | null;
         const isNewsletterEnabled = newsletterSetting?.value ?? true;
 
         return NextResponse.json({ 

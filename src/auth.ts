@@ -63,7 +63,7 @@ export const authConfig: NextAuthConfig = {
             clientSecret: AUTH_GITHUB_SECRET,
             authorization: {
                 params: {
-                    scope: "read:user user:email public_repo",
+                    scope: "read:user user:email public_repo write:discussion",
                 },
             },
         }),

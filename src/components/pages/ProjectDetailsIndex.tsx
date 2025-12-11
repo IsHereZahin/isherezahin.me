@@ -29,6 +29,7 @@ import { ApiError, deleteProject, getProject, projectViews } from "@/lib/api";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { extractTocItems, getFormattedDate } from "@/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import ContentDiscussions from "../content/discussions/ContentDiscussions";
 
 export default function ProjectDetailsIndex({ slug }: { readonly slug: string }) {
     const [showTOC, setShowTOC] = useState(false);
@@ -181,6 +182,16 @@ export default function ProjectDetailsIndex({ slug }: { readonly slug: string })
                 </div>
                 <div className="block lg:hidden">
                     <LikeButton slug={slug} type="project" />
+                </div>
+
+                {/* Comments Section */}
+                <div className="mt-12 pt-8 border-t border-border/50">
+                    <ContentDiscussions
+                        contentType="project"
+                        slug={slug}
+                        title={data.title}
+                        initialDiscussionNumber={data.discussionNumber}
+                    />
                 </div>
             </Section>
 

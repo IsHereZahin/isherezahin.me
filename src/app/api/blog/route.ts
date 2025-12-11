@@ -1,6 +1,6 @@
 // src/app/api/blog/route.ts
-import { AdminSettingsModel } from '@/database/models/admin-settings-model';
 import { BlogModel } from '@/database/models/blog-model';
+import { SiteSettingsModel } from '@/database/models/site-settings-model';
 import { SubscriberModel } from '@/database/models/subscriber-model';
 import dbConnect from '@/database/services/mongo';
 import { checkIsAdmin } from '@/lib/auth-utils';
@@ -129,7 +129,7 @@ export async function POST(req: NextRequest) {
         if (published) {
             try {
                 // Check if newsletter is enabled
-                const newsletterSetting = await AdminSettingsModel.findOne({ key: 'newsletterEnabled' }).lean() as { value: boolean } | null;
+                const newsletterSetting = await SiteSettingsModel.findOne({ key: 'newsletterEnabled' }).lean() as { value: boolean } | null;
                 const isNewsletterEnabled = newsletterSetting?.value ?? true;
 
                 console.log('Newsletter enabled:', isNewsletterEnabled);

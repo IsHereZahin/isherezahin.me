@@ -42,6 +42,7 @@ export async function GET(req: NextRequest, context: { params: Promise<{ slug: s
             githubUrl: (project as any).githubUrl,
             content: (project as any).content,
             published: (project as any).published ?? true,
+            discussionNumber: (project as any).discussionNumber ?? null,
         };
 
         return NextResponse.json(transformedProject, { status: 200 });

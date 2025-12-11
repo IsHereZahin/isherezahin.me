@@ -9,5 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default function GuestbookPage() {
-    return <GuestbookIndex discussionNumber={4} />;
+    return <GuestbookIndex />;
 }
