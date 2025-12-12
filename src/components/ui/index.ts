@@ -89,12 +89,10 @@ export { default as LikeButton } from "./LikeButton";
 export {
     BlogDetailsLoading,
     BlogsLoading,
-    CommentsLoading,
-    ProjectDetailsLoading,
+    CommentsLoading, ProfileSessionsLoading, ProjectDetailsLoading,
     ProjectsLoading,
     SingleCommentLoading,
-    TagsLoading,
-    ProfileSessionsLoading
+    TagsLoading
 } from "./Loading";
 export { default as Logo } from "./Logo";
 export { default as MarkdownEditor } from "./MarkdownEditor";
@@ -102,6 +100,7 @@ export { default as PageTitle } from "./PageTitle";
 export { default as PublishToggle } from "./PublishToggle";
 export { default as ReferralLink } from "./ReferralLink";
 export { default as ReferralListItem } from "./ReferralListItem";
+export { default as ReferralText } from "./ReferralText";
 export { default as Section } from "./Section";
 export type { SectionProps } from "./Section";
 export { default as SectionHeader } from "./SectionHeader";

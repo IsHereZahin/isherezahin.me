@@ -162,6 +162,21 @@ function getFormattedDate(isoDate: string, options?: Intl.DateTimeFormatOptions)
     return new Intl.DateTimeFormat('en-US', formatOptions).format(date)
 }
 
+// Format ISO date string to readable format (e.g., "Sep 2023")
+function formatMonthYear(dateStr: string): string {
+    if (!dateStr || dateStr === "Present") return "Present";
+
+    // Check if it's already in readable format (not ISO)
+    if (!/^\d{4}-\d{2}-\d{2}/.test(dateStr) && !/^\d{4}-\d{2}/.test(dateStr)) {
+        return dateStr;
+    }
+
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return dateStr;
+
+    return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+}
+
 // dynamic functions
 function getDeviceId(): string {
     const STORAGE_KEY = 'blog_device_id';
@@ -198,6 +213,7 @@ export {
     extractTocItems,
     getReadTime,
     getFormattedDate,
+    formatMonthYear,
     getDeviceId,
     generateSlug,
 };

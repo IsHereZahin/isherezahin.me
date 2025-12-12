@@ -65,7 +65,7 @@ export default function ReferralLink({ href = "", children, ...props }: Readonly
             </Link>
 
             {/* Tooltip */}
-            <div
+            <span
                 className={`absolute left-1/2 px-4 py-2.5 bg-background/95 text-foreground/80 text-xs rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible whitespace-nowrap z-50 pointer-events-none border border-border/50 backdrop-blur-md transition-all duration-300 ease-out ${vClasses}`}
                 style={{
                     transform: `translateX(calc(-50% + ${hShift}px))`,
@@ -76,11 +76,11 @@ export default function ReferralLink({ href = "", children, ...props }: Readonly
                     <span className="truncate font-medium">{href}</span>
                     <ExternalLink className="size-3 flex-shrink-0 text-muted-foreground" />
                 </span>
-                <div
+                <span
                     className={`absolute left-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-b-4 border-transparent ${arrowVClasses} -z-10`}
                     style={{ transform: `translateX(calc(-50% + ${hShift}px))` }}
                 />
-            </div>
+            </span>
         </span>
     );
 }

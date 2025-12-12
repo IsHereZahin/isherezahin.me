@@ -428,9 +428,186 @@ const newsletter = {
     },
 };
 
+// Testimonials API
+const testimonials = {
+    async getAll(includeInactive = false) {
+        const url = includeInactive ? '/api/admin/testimonials?all=true' : '/api/admin/testimonials';
+        const response = await fetch(url);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch testimonials", response.status);
+        }
+        return await response.json();
+    },
+
+    async create(data: { quote: string; name: string; role: string; order?: number; isActive?: boolean }) {
+        const response = await fetch('/api/admin/testimonials', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to create testimonial", response.status);
+        }
+        return await response.json();
+    },
+
+    async update(id: string, data: { quote: string; name: string; role: string; order?: number; isActive?: boolean }) {
+        const response = await fetch(`/api/admin/testimonials/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to update testimonial", response.status);
+        }
+        return await response.json();
+    },
+
+    async delete(id: string) {
+        const response = await fetch(`/api/admin/testimonials/${id}`, { method: 'DELETE' });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to delete testimonial", response.status);
+        }
+        return await response.json();
+    },
+};
+
+// Current Status API
+const currentStatus = {
+    async getAll(includeInactive = false) {
+        const url = includeInactive ? '/api/admin/current-status?all=true' : '/api/admin/current-status';
+        const response = await fetch(url);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch current status", response.status);
+        }
+        return await response.json();
+    },
+
+    async create(data: { text: string; order?: number; isActive?: boolean }) {
+        const response = await fetch('/api/admin/current-status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to create current status", response.status);
+        }
+        return await response.json();
+    },
+
+    async update(id: string, data: { text: string; order?: number; isActive?: boolean }) {
+        const response = await fetch(`/api/admin/current-status/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to update current status", response.status);
+        }
+        return await response.json();
+    },
+
+    async delete(id: string) {
+        const response = await fetch(`/api/admin/current-status/${id}`, { method: 'DELETE' });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to delete current status", response.status);
+        }
+        return await response.json();
+    },
+};
+
+// Contact Info API
+const contactInfo = {
+    async get() {
+        const response = await fetch('/api/admin/contact-info');
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch contact info", response.status);
+        }
+        return await response.json();
+    },
+
+    async update(data: { email?: string; headline: string; subheadline: string; highlightText?: string; skills: string[] }) {
+        const response = await fetch('/api/admin/contact-info', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to update contact info", response.status);
+        }
+        return await response.json();
+    },
+};
+
+// Work Experience API
+const workExperience = {
+    async getAll(includeInactive = false) {
+        const url = includeInactive ? '/api/admin/work-experience?all=true' : '/api/admin/work-experience';
+        const response = await fetch(url);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch work experience", response.status);
+        }
+        return await response.json();
+    },
+
+    async create(data: {
+        start: string; end?: string; title: string; company: string; companyUrl: string;
+        location: string; type?: string; description: string; highlights: { text: string }[];
+        logo: string; order?: number; isActive?: boolean;
+    }) {
+        const response = await fetch('/api/admin/work-experience', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to create work experience", response.status);
+        }
+        return await response.json();
+    },
+
+    async update(id: string, data: {
+        start: string; end?: string; title: string; company: string; companyUrl: string;
+        location: string; type?: string; description: string; highlights: { text: string }[];
+        logo: string; order?: number; isActive?: boolean;
+    }) {
+        const response = await fetch(`/api/admin/work-experience/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to update work experience", response.status);
+        }
+        return await response.json();
+    },
+
+    async delete(id: string) {
+        const response = await fetch(`/api/admin/work-experience/${id}`, { method: 'DELETE' });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to delete work experience", response.status);
+        }
+        return await response.json();
+    },
+};
+
 export {
-    blogLikes, blogViews, createBlog, createProject, deleteBlog, deleteProject,
+    blogLikes, blogViews, contactInfo, createBlog, createProject, currentStatus, deleteBlog, deleteProject,
     getBlog, getBlogs, getBlogTags, getProject, getProjects, getProjectTags,
-    newsletter, projectLikes, projectViews, updateBlog, updateProject
+    newsletter, projectLikes, projectViews, testimonials, updateBlog, updateProject, workExperience
 };
 

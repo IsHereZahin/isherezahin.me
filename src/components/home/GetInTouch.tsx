@@ -1,36 +1,132 @@
 'use client'
 
+import SendMessageModal from '@/components/home/SendMessageModal'
+import { Skeleton } from '@/components/ui'
 import Logo from '@/components/ui/Logo'
 import Section from '@/components/ui/Section'
-import { MY_MAIL, MY_USERNAME } from '@/lib/constants'
+import { contactInfo as contactInfoApi } from '@/lib/api'
+import { MY_USERNAME } from '@/lib/constants'
+import { useAuth } from '@/lib/hooks/useAuth'
+import { useQuery } from '@tanstack/react-query'
+import { MessageCircle } from 'lucide-react'
 import { useAnimate } from 'motion/react'
-import { useEffect } from 'react'
+import { signIn } from 'next-auth/react'
+import { useEffect, useMemo, useState } from 'react'
+
+interface ContactInfoData {
+    email?: string;
+    headline: string;
+    subheadline: string;
+    highlightText?: string;
+    skills: string[];
+}
+
+interface PublicSettings {
+    allowGitHubLogin: boolean;
+    allowGoogleLogin: boolean;
+    primaryLoginMethod: 'github' | 'google';
+}
+
+const defaultSkills = ['Next.js', 'React.js', 'TypeScript', 'Laravel'];
+const skillPositions = [
+    { id: 'skill-0', className: 'absolute top-10 right-8' },
+    { id: 'skill-1', className: 'absolute top-20 left-2' },
+    { id: 'skill-2', className: 'absolute right-1 bottom-20' },
+    { id: 'skill-3', className: 'absolute bottom-12 left-14' },
+];
 
 export default function GetInTouch() {
     const [scope, animate] = useAnimate()
+    const { user, status, openLoginModal } = useAuth()
+    const [isMessageModalOpen, setIsMessageModalOpen] = useState(false)
+
+    const { data, isLoading } = useQuery<ContactInfoData>({
+        queryKey: ["contact-info"],
+        queryFn: contactInfoApi.get,
+    });
+
+    const { data: settingsData } = useQuery<{ settings: PublicSettings }>({
+        queryKey: ["public-settings"],
+        queryFn: async () => {
+            const res = await fetch('/api/admin/settings/public')
+            return res.json()
+        },
+    });
+
+    const contactData = useMemo(() => ({
+        email: data?.email || undefined,
+        headline: data?.headline || "Any questions about software?",
+        subheadline: data?.subheadline || "Feel free to reach out to me!",
+        highlightText: data?.highlightText || undefined,
+        skills: data?.skills?.length ? data.skills.slice(0, 4) : defaultSkills,
+    }), [data]);
+
+    const handleSendMessageClick = () => {
+        if (status === 'authenticated' && user) {
+            setIsMessageModalOpen(true)
+            return
+        }
+
+        const settings = settingsData?.settings
+        const bothEnabled = settings?.allowGitHubLogin && settings?.allowGoogleLogin
+
+        if (bothEnabled) {
+            openLoginModal()
+        } else {
+            const provider = settings?.allowGitHubLogin ? 'github' : 'google'
+            signIn(provider)
+        }
+    }
 
     useEffect(() => {
-        animate(
-            [
-                ['#pointer', { left: 200, top: 60 }, { duration: 0 }],
-                ['#laravel', { opacity: 1 }, { duration: 0.3 }],
-                ['#pointer', { left: 50, top: 102 }, { at: '+0.5', duration: 0.5, ease: 'easeInOut' }],
-                ['#laravel', { opacity: 0.4 }, { at: '-0.3', duration: 0.1 }],
-                ['#react-js', { opacity: 1 }, { duration: 0.3 }],
-                ['#pointer', { left: 224, top: 170 }, { at: '+0.5', duration: 0.5, ease: 'easeInOut' }],
-                ['#react-js', { opacity: 0.4 }, { at: '-0.3', duration: 0.1 }],
-                ['#typescript', { opacity: 1 }, { duration: 0.3 }],
-                ['#pointer', { left: 88, top: 198 }, { at: '+0.5', duration: 0.5, ease: 'easeInOut' }],
-                ['#typescript', { opacity: 0.4 }, { at: '-0.3', duration: 0.1 }],
-                ['#next-js', { opacity: 1 }, { duration: 0.3 }],
-                ['#pointer', { left: 200, top: 60 }, { at: '+0.5', duration: 0.5, ease: 'easeInOut' }],
-                ['#next-js', { opacity: 0.4 }, { at: '-0.3', duration: 0.1 }]
-            ],
-            {
-                repeat: Number.POSITIVE_INFINITY
+        if (!scope.current) return;
+
+        const skills = contactData.skills;
+        if (skills.length < 2) return;
+
+        const positions = [
+            { left: 200, top: 60 },
+            { left: 50, top: 102 },
+            { left: 224, top: 170 },
+            { left: 88, top: 198 },
+        ];
+
+        const animationSequence = skills.flatMap((_, index) => {
+            const pos = positions[index % positions.length];
+            const nextIndex = (index + 1) % skills.length;
+            const nextPos = positions[nextIndex % positions.length];
+
+            const steps: [string, Record<string, unknown>, Record<string, unknown>?][] = [];
+
+            if (index === 0) {
+                steps.push(['#pointer', pos, { duration: 0 }]);
             }
-        )
-    }, [animate])
+            steps.push([`#skill-${index}`, { opacity: 1 }, { duration: 0.3 }]);
+            steps.push(['#pointer', nextPos, { at: '+0.5', duration: 0.5, ease: 'easeInOut' }]);
+            steps.push([`#skill-${index}`, { opacity: 0.4 }, { at: '-0.3', duration: 0.1 }]);
+
+            return steps;
+        });
+
+        animate(animationSequence as Parameters<typeof animate>[0], { repeat: Number.POSITIVE_INFINITY });
+    }, [animate, contactData.skills, scope])
+
+    if (isLoading) {
+        return (
+            <Section id="get-in-touch" animate={true}>
+                <div className='flex flex-col gap-4 sm:gap-6 p-4 lg:p-6 rounded-xl shadow-feature-card'>
+                    <div className='flex gap-12 max-md:flex-col'>
+                        <Skeleton className="size-64 rounded-xl" />
+                        <div className='flex flex-col justify-center px-4 space-y-4'>
+                            <Skeleton className="h-8 w-64" />
+                            <Skeleton className="h-4 w-48" />
+                            <Skeleton className="h-10 w-40 rounded-full" />
+                        </div>
+                    </div>
+                </div>
+            </Section>
+        );
+    }
 
     return (
         <Section id="get-in-touch" animate={true}>
@@ -41,30 +137,15 @@ export default function GetInTouch() {
                             size={40}
                             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-3xl p-4 bg-foreground"
                         />
-                        <div
-                            id='next-js'
-                            className='absolute bottom-12 left-14 rounded-3xl border bg-accent px-2 py-1.5 text-xs opacity-40'
-                        >
-                            Next.js
-                        </div>
-                        <div
-                            id='react-js'
-                            className='absolute top-20 left-2 rounded-3xl border bg-accent px-2 py-1.5 text-xs opacity-40'
-                        >
-                            React.js
-                        </div>
-                        <div
-                            id='typescript'
-                            className='absolute right-1 bottom-20 rounded-3xl border bg-accent px-2 py-1.5 text-xs opacity-40'
-                        >
-                            TypeScript
-                        </div>
-                        <div
-                            id='laravel'
-                            className='absolute top-10 right-8 rounded-3xl border bg-accent px-2 py-1.5 text-xs opacity-40'
-                        >
-                            Laravel
-                        </div>
+                        {contactData.skills.map((skill, index) => (
+                            <div
+                                key={skill}
+                                id={`skill-${index}`}
+                                className={`${skillPositions[index]?.className || skillPositions[0].className} rounded-3xl border bg-accent px-2 py-1.5 text-xs opacity-40`}
+                            >
+                                {skill}
+                            </div>
+                        ))}
 
                         <div id='pointer' className='absolute'>
                             <svg
@@ -92,24 +173,44 @@ export default function GetInTouch() {
                                 bg-gradient-to-r from-foreground/90 to-foreground/60
                                 bg-clip-text text-transparent"
                         >
-                            Any questions about software?
+                            {contactData.headline}
                         </p>
                         <p className="text-sm sm:text-base text-muted-foreground hover:text-foreground/80 transition-colors">
-                            Feel free to reach out to me!{' '}
-                            <span className="text-primary">I&apos;m available for collaboration.</span>
+                            {contactData.subheadline}
+                            {contactData.highlightText && (
+                                <>
+                                    {' '}
+                                    <span className="text-primary font-medium">{contactData.highlightText}</span>
+                                </>
+                            )}
                         </p>
                         <div className="my-4">
-                            <a
-                                href={`mailto:${MY_MAIL}`}
-                                target="_blank"
-                                className="inline-block text-white px-4 py-2 rounded-full text-sm bg-gradient-to-b from-red-600 to-red-400 hover:from-red-700 hover:to-red-400 transition-all duration-300"
-                            >
-                                {MY_MAIL}
-                            </a>
+                            {contactData.email ? (
+                                <a
+                                    href={`mailto:${contactData.email}`}
+                                    target="_blank"
+                                    className="inline-block text-white px-4 py-2 rounded-full text-sm bg-gradient-to-b from-red-600 to-red-400 hover:from-red-700 hover:to-red-400 transition-all duration-300"
+                                >
+                                    {contactData.email}
+                                </a>
+                            ) : (
+                                <button
+                                    onClick={handleSendMessageClick}
+                                    className="inline-flex items-center gap-2 text-white px-4 py-2 rounded-full text-sm bg-gradient-to-b from-red-600 to-red-400 hover:from-red-700 hover:to-red-400 transition-all duration-300"
+                                >
+                                    <MessageCircle className="h-4 w-4" />
+                                    Send Message
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
+
+            <SendMessageModal
+                isOpen={isMessageModalOpen}
+                onClose={() => setIsMessageModalOpen(false)}
+            />
         </Section>
     )
 }

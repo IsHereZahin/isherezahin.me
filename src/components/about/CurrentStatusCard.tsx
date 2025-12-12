@@ -1,8 +1,27 @@
-import { ReferralListItem, Section } from "@/components/ui";
-import { currentStatus } from "@/data";
+"use client";
+
+import { ReferralListItem, Section, Skeleton } from "@/components/ui";
+import { currentStatus as staticCurrentStatus } from "@/data";
+import { currentStatus as currentStatusApi } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 import { CircleHelp } from "lucide-react";
 
+interface StatusItem {
+    _id: string;
+    text: string;
+    isActive: boolean;
+}
+
 export default function CurrentStatusCard() {
+    const { data, isLoading } = useQuery<StatusItem[]>({
+        queryKey: ["current-status"],
+        queryFn: () => currentStatusApi.getAll(),
+    });
+
+    const displayStatus = data && data.length > 0
+        ? data.map(s => ({ text: s.text }))
+        : staticCurrentStatus;
+
     return (
         <Section
             animate delay={0.2}
@@ -23,9 +42,17 @@ export default function CurrentStatusCard() {
 
                 {/* Right Section - Content */}
                 <article className="text-left">
-                    <ul className="list-disc list-outside space-y-1.5 sm:space-y-2 text-sm sm:text-base text-muted-foreground hover:text-foreground/80 transition-colors leading-relaxed pl-5 marker:text-secondary-foreground break-words">
-                        <ReferralListItem listItems={currentStatus} />
-                    </ul>
+                    {isLoading ? (
+                        <div className="space-y-2">
+                            {[1, 2, 3].map((i) => (
+                                <Skeleton key={i} className="h-4 w-64" />
+                            ))}
+                        </div>
+                    ) : (
+                        <ul className="list-disc list-outside space-y-1.5 sm:space-y-2 text-sm sm:text-base text-muted-foreground hover:text-foreground/80 transition-colors leading-relaxed pl-5 marker:text-secondary-foreground break-words">
+                            <ReferralListItem listItems={displayStatus} />
+                        </ul>
+                    )}
                 </article>
             </div>
         </Section>

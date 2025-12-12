@@ -20,8 +20,8 @@ export default function ReferralListItem({
                 const parts = item.text.split(/(\([^)]+\)\[[^\]]+\])/g);
 
                 const listContent = (
-                    <li className="flex items-start">
-                        <span className="mr-3 mt-2 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-secondary-foreground"></span>
+                    <li className="flex items-baseline">
+                        <span className="mr-3 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-secondary-foreground relative top-[-0.15em]"></span>
                         <span>
                             {parts.map((part, partIdx) => {
                                 const match = part.match(/\(([^)]+)\)\[([^\]]+)\]/);

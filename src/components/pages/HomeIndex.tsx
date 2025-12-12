@@ -5,7 +5,6 @@ import Hero from "@/components/home/Hero";
 import ProfileHero from "@/components/home/ProfileHero";
 import Projects from "@/components/home/Projects";
 import Testimonials from "@/components/home/Testimonials";
-import { testimonials } from "@/data";
 import { HERO_SECTION_ID } from "@/lib/constants";
 
 export default function HomeIndex() {
@@ -17,7 +16,7 @@ export default function HomeIndex() {
             <AboutMe />
             <Blogs />
             <Projects />
-            <Testimonials testimonials={testimonials} />
+            <Testimonials />
             <GetInTouch />
         </>
     );
