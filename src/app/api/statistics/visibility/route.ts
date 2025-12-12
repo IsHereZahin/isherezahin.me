@@ -13,9 +13,60 @@ export async function PATCH(request: NextRequest) {
         }
 
         const body = await request.json();
-        const { isPublic, isRefPublic, setting } = body;
+        const { isPublic, isRefPublic, isPathPublic, isCardsPublic, isTrendsPublic, isDevicesPublic, setting } = body;
 
         // Handle specific setting update
+        if (setting === "statsCards" && typeof isCardsPublic === "boolean") {
+            await SiteSettingsModel.findOneAndUpdate(
+                { key: "statsCardsPublic" },
+                {
+                    key: "statsCardsPublic",
+                    value: isCardsPublic,
+                    description: "Whether stats cards are publicly visible",
+                },
+                { upsert: true, new: true }
+            );
+
+            return NextResponse.json({
+                message: `Stats cards are now ${isCardsPublic ? "public" : "private"}`,
+                isCardsPublic,
+            });
+        }
+
+        if (setting === "visitorTrends" && typeof isTrendsPublic === "boolean") {
+            await SiteSettingsModel.findOneAndUpdate(
+                { key: "visitorTrendsPublic" },
+                {
+                    key: "visitorTrendsPublic",
+                    value: isTrendsPublic,
+                    description: "Whether visitor trends chart is publicly visible",
+                },
+                { upsert: true, new: true }
+            );
+
+            return NextResponse.json({
+                message: `Visitor trends are now ${isTrendsPublic ? "public" : "private"}`,
+                isTrendsPublic,
+            });
+        }
+
+        if (setting === "deviceTypes" && typeof isDevicesPublic === "boolean") {
+            await SiteSettingsModel.findOneAndUpdate(
+                { key: "deviceTypesPublic" },
+                {
+                    key: "deviceTypesPublic",
+                    value: isDevicesPublic,
+                    description: "Whether device types chart is publicly visible",
+                },
+                { upsert: true, new: true }
+            );
+
+            return NextResponse.json({
+                message: `Device types are now ${isDevicesPublic ? "public" : "private"}`,
+                isDevicesPublic,
+            });
+        }
+
         if (setting === "referralSources" && typeof isRefPublic === "boolean") {
             await SiteSettingsModel.findOneAndUpdate(
                 { key: "referralSourcesPublic" },
@@ -30,6 +81,23 @@ export async function PATCH(request: NextRequest) {
             return NextResponse.json({
                 message: `Referral sources are now ${isRefPublic ? "public" : "private"}`,
                 isRefPublic,
+            });
+        }
+
+        if (setting === "topPages" && typeof isPathPublic === "boolean") {
+            await SiteSettingsModel.findOneAndUpdate(
+                { key: "topPagesPublic" },
+                {
+                    key: "topPagesPublic",
+                    value: isPathPublic,
+                    description: "Whether top pages are publicly visible",
+                },
+                { upsert: true, new: true }
+            );
+
+            return NextResponse.json({
+                message: `Top pages are now ${isPathPublic ? "public" : "private"}`,
+                isPathPublic,
             });
         }
 
