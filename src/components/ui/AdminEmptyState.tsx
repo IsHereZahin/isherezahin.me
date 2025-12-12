@@ -46,7 +46,7 @@ export default function AdminEmptyState({ type, onAdd }: Readonly<AdminEmptyStat
 
                     {/* Content */}
                     <div className="space-y-3 mb-6">
-                        <p className="text-sm font-medium text-primary uppercase tracking-wider">
+                        <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
                             {config.subtitle}
                         </p>
                         <h3 className="text-2xl sm:text-3xl font-bold text-foreground">

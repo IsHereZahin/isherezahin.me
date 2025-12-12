@@ -17,7 +17,7 @@ export default function Connect() {
 
           return (
             <ReferralLink key={href} href={href}>
-              <div className='flex w-fit items-center gap-2 sm:gap-3 text-muted-foreground transition-colors hover:text-primary'>
+              <div className='flex w-fit items-center gap-2 sm:gap-3 text-muted-foreground transition-colors hover:text-foreground'>
                 <Icon className='size-4 sm:size-[18px]' />
                 <span className='text-sm sm:text-base'>{title}</span>
               </div>

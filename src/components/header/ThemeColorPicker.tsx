@@ -40,7 +40,7 @@ export default function ThemeColorPicker({
                 </span>
                 <button
                     onClick={onClose}
-                    className="text-foreground cursor-pointer hover:text-primary transition-colors p-1 -m-1"
+                    className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors p-1 -m-1"
                     aria-label="Close color picker"
                 >
                     <X className="size-4" />

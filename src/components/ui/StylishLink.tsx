@@ -8,7 +8,7 @@ export interface StylishLinkProps {
     seed?: string;
 }
 
-export default function StylishLink({ slug, label = "View Project", color = "#22c55e", seed = label }: Readonly<StylishLinkProps>) {
+export default function StylishLink({ slug, label = "View Project", color = "var(--primary)", seed = label }: Readonly<StylishLinkProps>) {
     const pathD = generateProfessionalUnderline(seed);
 
     return (

@@ -114,7 +114,7 @@ export default function Attribution() {
                     For questions about this project or collaboration inquiries, contact{" "}
                     <a
                         href="mailto:isherezahin@gmail.com"
-                        className="text-foreground font-medium underline hover:text-primary transition-opacity"
+                        className="text-foreground font-medium underline hover:opacity-80 transition-opacity"
                     >
                         isherezahin@gmail.com
                     </a>

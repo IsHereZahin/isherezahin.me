@@ -79,7 +79,7 @@ export default function SideQuests() {
                                                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                                                             <div className="size-5 xs:size-6 sm:size-7 md:size-8 lg:size-9 rounded-full bg-foreground/90 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
                                                                 <Play
-                                                                    className="size-3 xs:size-3.5 sm:size-4 md:size-5 lg:size-5 ml-0.5 text-primary"
+                                                                    className="size-3 xs:size-3.5 sm:size-4 md:size-5 lg:size-5 ml-0.5 text-background"
                                                                     fill="currentColor"
                                                                 />
                                                             </div>

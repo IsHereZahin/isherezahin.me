@@ -25,7 +25,7 @@ export default function StyledImage({
     width,
     height,
     className = "",
-    overlayColor = "var(--theme-color, #FF6B35)",
+    overlayColor = "var(--primary)",
     overlayRotation = "rotate(-15deg)",
     overlayBorderRadius = "var(--radius-10, 10px)",
     overlayPosition = {

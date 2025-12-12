@@ -43,8 +43,8 @@ export default function Footer() {
                             {SOCIAL_LINKS.map((link) => {
                                 const Icon = link.icon;
                                 return (
-                                    <ReferralLink key={link.href} href={link.href} className="hover:text-primary transition-colors">
-                                        <Icon className="w-5 h-5 text-secondary-foreground hover:text-primary" />
+                                    <ReferralLink key={link.href} href={link.href} className="text-secondary-foreground hover:text-foreground transition-colors">
+                                        <Icon className="w-5 h-5" />
                                     </ReferralLink>
                                 );
                             })}
@@ -61,7 +61,7 @@ export default function Footer() {
                                         <li key={item.href}>
                                             <Link
                                                 href={item.href}
-                                                className="text-secondary-foreground hover:text-primary transition-colors block"
+                                                className="text-secondary-foreground hover:text-foreground transition-colors block"
                                             >
                                                 {item.label}
                                             </Link>
@@ -86,8 +86,8 @@ export default function Footer() {
                 <div className="border-t border-border pt-6 text-center flex flex-col md:flex-row justify-between items-center text-sm text-secondary-foreground">
                     <p>&copy; {currentYear} {MY_NAME}, all rights reserved.</p>
                     <div className="flex space-x-6 mt-4 md:mt-0">
-                        <Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link>
-                        <Link href="#" className="hover:text-primary transition-colors">Terms of Service</Link>
+                        <Link href="#" className="hover:text-foreground transition-colors">Privacy Policy</Link>
+                        <Link href="#" className="hover:text-foreground transition-colors">Terms of Service</Link>
                     </div>
                 </div>
             </footer>

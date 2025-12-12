@@ -43,9 +43,6 @@ const skills: Record<string, string[]> = {
 export default function Skills() {
     const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
     const [hoverPosition, setHoverPosition] = useState<HoverPosition>({ x: 0, y: 0, transform: '' });
-    const [isSectionHovered, setIsSectionHovered] = useState(false);
-
-    const specialSkills = ["Figma", "Tailwind", "Typescript", "React", "Next.js", "Laravel", "REST APIs", "Docker"];
 
     const handleSkillHover = (skill: string, e: React.MouseEvent<HTMLElement>) => {
         const rect = e.currentTarget.getBoundingClientRect();
@@ -79,9 +76,7 @@ export default function Skills() {
 
     return (
         <Section id="skills" animate={true}>
-            <div onMouseEnter={() => setIsSectionHovered(true)}
-                onMouseLeave={() => setIsSectionHovered(false)}
-            >
+            <div>
                 <SectionHeader
                     title="Technical Expertise"
                     subtitle="Some of the languages, tools and concepts I have experience with."
@@ -97,8 +92,8 @@ export default function Skills() {
                                 {items.map(skill => (
                                     <li
                                         key={skill}
-                                        className={`cursor-pointer transition-colors ${isSectionHovered && specialSkills.includes(skill)
-                                            ? 'text-primary'
+                                        className={`cursor-pointer transition-colors ${hoveredSkill === skill
+                                            ? 'text-foreground'
                                             : 'text-foreground/70 hover:text-foreground'
                                             }`}
                                         onMouseEnter={(e) => handleSkillHover(skill, e)}

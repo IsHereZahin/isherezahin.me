@@ -24,7 +24,7 @@ export default function Testimonial({ quote, name, role }: Readonly<TestimonialT
             </div>
 
             {/* Footer */}
-            <footer className="mt-2 sm:mt-3 text-sm sm:text-base text-secondary-foreground group-hover:text-primary transition-colors duration-200 ease-in-out">
+            <footer className="mt-2 sm:mt-3 text-sm sm:text-base">
                 <span className="font-semibold text-foreground">{name}</span>{" "}
                 <span className="font-normal text-muted-foreground">· {role}</span>
             </footer>

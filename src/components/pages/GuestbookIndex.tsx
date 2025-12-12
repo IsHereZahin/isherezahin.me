@@ -119,7 +119,7 @@ export default function GuestbookIndex() {
                         You can also view this guestbook on{" "}
                         <ReferralLink
                             href={`https://github.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/discussions/${discussionNumber}`}
-                            className="underline hover:text-primary transition-colors"
+                            className="underline hover:text-foreground transition-colors"
                         >
                             GitHub Discussions
                         </ReferralLink>

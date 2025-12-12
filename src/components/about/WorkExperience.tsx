@@ -61,7 +61,7 @@ export function WorkExperienceItem({
                 <p className="text-sm sm:text-base text-muted-foreground hover:text-foreground transition-all duration-200 leading-relaxed">{description}</p>
 
                 {/* Highlights */}
-                <ul className="list-disc pl-5 sm:pl-6 mt-2 space-y-1.5 text-base marker:text-primary/60">
+                <ul className="list-disc pl-5 sm:pl-6 mt-2 space-y-1.5 text-base marker:text-muted-foreground">
                     <ReferralListItem listItems={highlights} />
                 </ul>
             </div>
