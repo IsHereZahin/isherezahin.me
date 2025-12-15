@@ -116,7 +116,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                         {adminNavItems.map((item) => {
                             const Icon = item.icon;
                             const hasChildren = item.children && item.children.length > 0;
-                            const isParentActive = hasChildren && pathname.startsWith(item.href);
+                            const isParentActive = !!(hasChildren && pathname.startsWith(item.href));
                             const isActive = pathname === item.href || currentSection === item.id;
 
                             if (hasChildren) {
