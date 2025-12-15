@@ -1,9 +1,7 @@
 'use client'
 
 import SendMessageModal from '@/components/home/SendMessageModal'
-import { Skeleton } from '@/components/ui'
-import Logo from '@/components/ui/Logo'
-import Section from '@/components/ui/Section'
+import { Logo, Section, Skeleton } from "@/components/ui"
 import { contactInfo as contactInfoApi } from '@/lib/api'
 import { MY_USERNAME } from '@/lib/constants'
 import { useAuth } from '@/lib/hooks/useAuth'

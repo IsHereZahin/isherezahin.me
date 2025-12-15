@@ -1,4 +1,4 @@
-import ReferralLink from '@/components/ui/ReferralLink'
+import { ReferralLink } from "@/components/ui"
 import { SOCIAL_LINKS } from '@/config/links'
 import { LinkIcon } from 'lucide-react'
 

@@ -1,12 +1,12 @@
 "use client"
 
-import { Calendar } from "@/components/ui/calendar"
 import {
+    ShadcnButton as Button,
+    Calendar,
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from "@/components/ui/popover"
-import { Button } from "@/components/ui/shadcn-button"
+} from "@/components/ui"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"

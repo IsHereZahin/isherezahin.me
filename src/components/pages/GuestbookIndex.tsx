@@ -1,10 +1,7 @@
 "use client";
 
 import GithubDiscussions from "@/components/content/discussions/GithubDiscussions";
-import { GitHubSignInButton } from "@/components/ui";
-import PageTitle from "@/components/ui/PageTitle";
-import ReferralLink from "@/components/ui/ReferralLink";
-import Section from "@/components/ui/Section";
+import { GitHubSignInButton, PageTitle, ReferralLink, Section } from "@/components/ui";
 import { GITHUB_REPO_NAME, GITHUB_REPO_OWNER } from "@/lib/constants";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Loader2, MessageSquare } from "lucide-react";

@@ -5,8 +5,8 @@ import {
     FormActions,
     FormControl, FormField, FormItem, FormLabel, FormMessage,
     FormModal,
+    MarkdownTextarea,
 } from "@/components/ui";
-import MarkdownTextarea from "@/components/ui/MarkdownTextarea";
 import { currentStatus } from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";

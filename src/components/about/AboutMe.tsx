@@ -5,9 +5,8 @@
 //
 // Modified by: Zahin Mohammad
 
-import Section from '@/components/ui/Section'
+import { Section, SeeMore } from "@/components/ui"
 // import SectionHeader from '@/components/ui/SectionHeader'
-import SeeMore from '@/components/ui/SeeMore'
 import CodingHours from './CodingHours'
 import Connect from './Connect'
 import FavoriteFramework from './FavoriteFramework'

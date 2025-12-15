@@ -1,15 +1,15 @@
 'use client'
 
 import {
+    ShadcnButton as Button,
     Dialog,
     DialogContent,
     DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from '@/components/ui/dialog'
-import MarkdownTextarea from '@/components/ui/MarkdownTextarea'
-import { Button } from '@/components/ui/shadcn-button'
+    MarkdownTextarea,
+} from "@/components/ui"
 import { useAuth } from '@/lib/hooks/useAuth'
 import { Loader2, Send } from 'lucide-react'
 import { useState } from 'react'

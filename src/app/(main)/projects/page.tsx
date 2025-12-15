@@ -24,5 +24,5 @@ export default function ProjectsPage() {
         <Suspense fallback={<ProjectsPageFallback />}>
             <ProjectsIndex />
         </Suspense>
-    )
+    );
 }

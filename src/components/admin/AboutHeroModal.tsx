@@ -14,8 +14,8 @@ import {
     ImageUploadField,
     Input,
     isCloudinaryUrl,
+    MarkdownTextarea,
 } from "@/components/ui";
-import MarkdownTextarea from "@/components/ui/MarkdownTextarea";
 import { aboutHero } from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";

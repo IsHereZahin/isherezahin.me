@@ -639,9 +639,220 @@ const aboutHero = {
     },
 };
 
+// Statistics API
+const statistics = {
+    async get() {
+        const response = await fetch("/api/statistics");
+        if (response.status === 403) throw new ApiError("Statistics are currently private", 403);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to load statistics", response.status);
+        }
+        return await response.json();
+    },
+
+    async getSettings() {
+        const response = await fetch("/api/admin/statistics-settings");
+        if (response.status === 403) throw new ApiError("Access denied", 403);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to load settings", response.status);
+        }
+        return await response.json();
+    },
+
+    async updateVisibility(body: Record<string, unknown>) {
+        const response = await fetch("/api/statistics/visibility", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to update visibility", response.status);
+        }
+        return await response.json();
+    },
+};
+
+// Profile API
+const profile = {
+    async update(data: { bio: string }) {
+        const response = await fetch("/api/profile", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to update profile", response.status);
+        }
+        return await response.json();
+    },
+};
+
+// Sessions API
+const sessions = {
+    async getAll() {
+        const response = await fetch("/api/sessions");
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to load sessions", response.status);
+        }
+        return await response.json();
+    },
+
+    async revoke(sessionId: string) {
+        const response = await fetch(`/api/sessions/${sessionId}`, { method: "DELETE" });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to revoke session", response.status);
+        }
+        return await response.json();
+    },
+};
+
+// Admin Settings API
+const adminSettings = {
+    async get() {
+        const response = await fetch("/api/admin/settings");
+        if (response.status === 403) throw new ApiError("Access denied", 403);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to load settings", response.status);
+        }
+        return await response.json();
+    },
+
+    async update(key: string, value: boolean | string) {
+        const response = await fetch("/api/admin/settings", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ key, value }),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to update setting", response.status);
+        }
+        return await response.json();
+    },
+
+    async getPublic() {
+        const response = await fetch("/api/admin/settings/public");
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to load public settings", response.status);
+        }
+        return await response.json();
+    },
+};
+
+// Admin Users API
+const adminUsers = {
+    async getAll(search: string, filter: string, page: number) {
+        const params = new URLSearchParams({ search, filter, page: page.toString() });
+        const response = await fetch(`/api/users?${params}`);
+        if (response.status === 403) throw new ApiError("Access denied", 403);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to load users", response.status);
+        }
+        return await response.json();
+    },
+
+    async toggleBan(userId: string, action: "ban" | "unban") {
+        const response = await fetch(`/api/users/${userId}/ban`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action }),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to update user", response.status);
+        }
+        return await response.json();
+    },
+};
+
+// Admin Subscribers API
+const adminSubscribers = {
+    async getAll(search: string, filter: string, page: number) {
+        const params = new URLSearchParams({ search, filter, page: page.toString() });
+        const response = await fetch(`/api/admin/subscribers?${params}`);
+        if (response.status === 403) throw new ApiError("Access denied", 403);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to load subscribers", response.status);
+        }
+        return await response.json();
+    },
+
+    async toggleStatus(subscriberId: string, action: "activate" | "deactivate") {
+        const response = await fetch(`/api/admin/subscribers/${subscriberId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action }),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to update subscriber", response.status);
+        }
+        return await response.json();
+    },
+
+    async delete(subscriberId: string) {
+        const response = await fetch(`/api/admin/subscribers/${subscriberId}`, { method: "DELETE" });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to delete subscriber", response.status);
+        }
+        return await response.json();
+    },
+};
+
+// Contact Message API
+const contactMessage = {
+    async send(data: { name: string; email: string; message: string }) {
+        const response = await fetch("/api/contact/message", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to send message", response.status);
+        }
+        return await response.json();
+    },
+};
+
+// Cloudinary API
+const cloudinary = {
+    async upload(file: File) {
+        const formData = new FormData();
+        formData.append("file", file);
+        const response = await fetch("/api/cloudinary", { method: "POST", body: formData });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to upload image", response.status);
+        }
+        return await response.json();
+    },
+
+    async delete(url: string) {
+        const response = await fetch(`/api/cloudinary?url=${encodeURIComponent(url)}`, { method: "DELETE" });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to delete image", response.status);
+        }
+        return await response.json();
+    },
+};
+
 export {
-    aboutHero, blogLikes, blogViews, contactInfo, createBlog, createProject, currentStatus, deleteBlog, deleteProject,
-    getBlog, getBlogs, getBlogTags, getProject, getProjects, getProjectTags,
-    newsletter, projectLikes, projectViews, testimonials, updateBlog, updateProject, workExperience
+    aboutHero, adminSettings, adminSubscribers, adminUsers, blogLikes, blogViews, cloudinary, contactInfo, contactMessage,
+    createBlog, createProject, currentStatus, deleteBlog, deleteProject, getBlog, getBlogs, getBlogTags, getProject,
+    getProjects, getProjectTags, newsletter, profile, projectLikes, projectViews, sessions, statistics, testimonials,
+    updateBlog, updateProject, workExperience
 };
 

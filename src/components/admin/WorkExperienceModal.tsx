@@ -2,6 +2,7 @@
 
 import {
     ConfirmDialog,
+    DatePicker,
     Form,
     FormActions,
     FormControl, FormField, FormItem, FormLabel, FormMessage,
@@ -10,8 +11,8 @@ import {
     ImageUploadField,
     Input,
     isCloudinaryUrl,
+    MarkdownTextarea,
 } from "@/components/ui";
-import MarkdownTextarea from "@/components/ui/MarkdownTextarea";
 import { workExperience } from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
@@ -20,7 +21,6 @@ import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { DatePicker } from "../ui/date-picker";
 
 const formSchema = z.object({
     start: z.string().min(1, "Start date is required"),

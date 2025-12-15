@@ -1,4 +1,4 @@
-import BlogIndex from '@/components/pages/BlogsIndex';
+import BlogsIndex from '@/components/pages/BlogsIndex';
 import { BlogsLoading, TagsLoading } from '@/components/ui';
 import { MY_FULL_NAME } from "@/lib/constants";
 import type { Metadata } from "next";
@@ -22,7 +22,7 @@ function BlogsPageFallback() {
 export default function BlogsPage() {
     return (
         <Suspense fallback={<BlogsPageFallback />}>
-            <BlogIndex />
+            <BlogsIndex />
         </Suspense>
-    )
+    );
 }
