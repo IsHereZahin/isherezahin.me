@@ -1,90 +1,188 @@
-import HeroBanner from "@/components/home/HeroBanner";
+"use client";
+
 import MotionWrapper from "@/components/motion/MotionWrapper";
-import {
-    BlurImage,
-    Button,
-    HighlightedWord,
-    ReferralLink,
-    Section,
-} from "@/components/ui";
-import { MY_NAME } from "@/lib/constants";
+import { BlurImage, Button, ImageZoom, Section, Skeleton } from "@/components/ui";
+import { hero as heroApi } from "@/lib/api";
+import { MY_NAME, SITE_USER_LOGO } from "@/lib/constants";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowDown } from "lucide-react";
-import Link from "next/link";
-import iconicLogo from "../../../public/assets/images/iconic.png";
-import src from "../../../public/assets/images/profile.png";
+import { type ReactNode } from "react";
+
+interface HeroButton {
+    text: string;
+    href: string;
+    icon?: string;
+    variant?: string;
+}
+
+interface HeroData {
+    _id?: string;
+    profileImage: string;
+    greeting: string;
+    name: string;
+    tagline: string;
+    description: string;
+    highlightedSkills: string[];
+    buttons: HeroButton[];
+    isActive: boolean;
+}
+
+// Default fallback data
+const defaultHero: HeroData = {
+    profileImage: SITE_USER_LOGO || "",
+    greeting: "Hey, I'm",
+    name: MY_NAME,
+    tagline: "Coder & Thinker",
+    description: "I work with React & Laravel Ecosystem, and write to teach people how to rebuild and redefine fundamental concepts through mental models.",
+    highlightedSkills: ["React", "Laravel"],
+    buttons: [
+        { text: "Learn More", href: "#about-me", icon: "ArrowDown", variant: "default" },
+        { text: "More about me", href: "/about", icon: "", variant: "default" },
+    ],
+    isActive: true,
+};
+
+// Helper to render icon based on icon name
+const renderIcon = (iconName?: string) => {
+    if (iconName === "ArrowDown") {
+        return <ArrowDown className="size-[70%] text-foreground" />;
+    }
+    return undefined;
+};
+
+// Helper to render description with highlighted skills
+const renderDescription = (description: string, skills: string[]) => {
+    if (!skills || skills.length === 0) {
+        return description;
+    }
+
+    let result: ReactNode[] = [description];
+
+    skills.forEach((skill, index) => {
+        const newResult: ReactNode[] = [];
+        result.forEach((part) => {
+            if (typeof part === "string") {
+                const parts = part.split(new RegExp(`(${skill})`, "gi"));
+                parts.forEach((p, i) => {
+                    if (p.toLowerCase() === skill.toLowerCase()) {
+                        newResult.push(
+                            <b key={`${skill}-${index}-${i}`} className="text-foreground">
+                                {p}
+                            </b>
+                        );
+                    } else if (p) {
+                        newResult.push(p);
+                    }
+                });
+            } else {
+                newResult.push(part);
+            }
+        });
+        result = newResult;
+    });
+
+    return result;
+};
 
 export default function Hero() {
-    return (
-        <Section id="hero" animate={true}>
-            <div className="flex flex-row items-center gap-6 sm:gap-8 lg:gap-12">
-                <div className="flex-1 min-w-0">
-                    {/* Badge */}
-                    <MotionWrapper direction="top" delay={0.2}>
-                        <div className="rounded-l-full p-2 sm:p-3 inline-flex bg-gradient-to-r from-primary/10 dark:from-primary/20 to-transparent -ml-2 sm:-ml-3 mb-4 sm:mb-6">
-                            <div className="rounded-l-full px-3 py-2 sm:px-6 sm:py-3.5 inline-flex items-center gap-2 sm:gap-4 bg-gradient-to-r from-primary/70 to-transparent">
-                                <span className="shrink-0 rounded-full block size-1.5 sm:size-2 bg-background shadow-[0_0_5px_rgba(var(--primary-rgb),0.4),0_0_10px_rgba(var(--primary-rgb),0.3)]"></span>
-                                <div className="text-xs sm:text-sm md:text-base text-background flex gap-1.5 flex-wrap items-center">
-                                    <span className="shrink-0">Crafting Experiences at</span>
-                                    <ReferralLink
-                                        href="http://www.iconicsolutionsbd.com"
-                                        className="font-medium text-primary"
-                                    >
-                                        Iconic
-                                    </ReferralLink>
-                                    <BlurImage
-                                        alt="Iconic Logo"
-                                        loading="lazy"
-                                        width={20}
-                                        height={20}
-                                        className="w-3 sm:w-4 rounded"
-                                        src={iconicLogo}
-                                        suppressHydrationWarning={true}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </MotionWrapper>
+    const { data, isLoading } = useQuery<HeroData>({
+        queryKey: ["hero"],
+        queryFn: () => heroApi.get(),
+    });
 
-                    {/* Heading */}
-                    <MotionWrapper direction="top" delay={0.3}>
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-2 sm:mb-4 text-foreground flex flex-wrap">
-                            <span className="mr-2">Hi! I&apos;m</span>
-                            <HighlightedWord>{MY_NAME}</HighlightedWord>
-                        </h1>
-                    </MotionWrapper>
+    const heroData = {
+        ...defaultHero,
+        ...data,
+        buttons: data?.buttons?.length ? data.buttons : defaultHero.buttons,
+        highlightedSkills: data?.highlightedSkills?.length ? data.highlightedSkills : defaultHero.highlightedSkills,
+    };
+    const profileImage = heroData.profileImage || SITE_USER_LOGO;
 
-                    {/* Description */}
-                    <MotionWrapper direction="top" delay={0.4}>
-                        <div className="space-y-2 sm:space-y-4 leading-relaxed">
-                            <p className="text-sm sm:text-base md:text-lg mb-3 sm:mb-4 text-muted-foreground hover:text-foreground/80 transition-colors">
-                                I work with <span className="text-primary font-medium">React</span> & <span className="text-primary font-medium">Laravel</span> Ecosystem, and write to teach people how to rebuild and redefine fundamental concepts through mental models.
-                            </p>
-                            <p className="text-sm sm:text-base md:text-lg text-muted-foreground hover:text-foreground/80 transition-colors">
-                                Need a modern web app that stands out?{' '}
-                                <span className="relative inline-block">
-                                    <Link href="/contact" className="text-primary hover:underline">Hire me?</Link>
-                                </span>
-                            </p>
-                        </div>
-                    </MotionWrapper>
-
-                    {/* Buttons */}
-                    <MotionWrapper direction="top" delay={0.5}>
-                        <div className="mt-6 sm:mt-8 flex gap-2 sm:gap-4 flex-wrap">
-                            <Button href="#about-me" text="Learn More" icon={<ArrowDown className="size-[70%] text-foreground" />} />
-                            <Button href="/about" text="More about me" />
-                        </div>
-                    </MotionWrapper>
+    if (isLoading) {
+        return (
+            <Section id="profile" animate={true}>
+                <div className="flex flex-col justify-center items-start text-left">
+                    <Skeleton className="size-20 sm:size-25 rounded-full mb-6 sm:mb-8" />
+                    <Skeleton className="h-12 w-80 mb-3 sm:mb-4" />
+                    <Skeleton className="h-6 w-full max-w-xl mb-4 sm:mb-6" />
+                    <div className="mt-4 sm:mt-8 flex gap-2 sm:gap-4">
+                        <Skeleton className="h-10 w-32" />
+                        <Skeleton className="h-10 w-36" />
+                    </div>
                 </div>
+            </Section>
+        );
+    }
 
-                {/* Profile Image */}
-                <MotionWrapper direction="right" delay={0.2}>
-                    <div className="hidden md:flex items-center justify-center w-full max-w-[150px] sm:max-w-[1800px] md:max-w-[200px] lg:max-w-[250px] flex-shrink-0">
-                        <HeroBanner
-                            src={src}
-                            alt="Zahin"
-                            className="w-full h-auto rounded-full object-cover shadow-lg ring-1 ring-border dark:ring-border/50"
-                        />
+    return (
+        <Section id="profile" animate={true}>
+            <div className="flex flex-col justify-center items-start text-left">
+                {/* Profile Picture */}
+                <MotionWrapper
+                    delay={0.1}
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                >
+                    {profileImage && (
+                        <div className="relative size-20 sm:size-25 rounded-full overflow-hidden shadow-lg mb-6 sm:mb-8">
+                            <ImageZoom>
+                                <BlurImage
+                                    src={profileImage}
+                                    alt="Profile Photo"
+                                    className="w-full h-full object-cover"
+                                    width={500}
+                                    height={500}
+                                />
+                            </ImageZoom>
+                        </div>
+                    )}
+                </MotionWrapper>
+
+                {/* Heading */}
+                <MotionWrapper
+                    direction="top"
+                    delay={0.2}
+                    initial={{ y: -20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                >
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-3 sm:mb-4">
+                        {heroData.greeting} <span className="text-primary">{heroData.name}</span>. <br />
+                        {heroData.tagline}
+                    </h1>
+                </MotionWrapper>
+
+                {/* Description */}
+                <MotionWrapper
+                    direction="top"
+                    delay={0.3}
+                    initial={{ y: -10, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                >
+                    <p className="max-w-xl text-sm sm:text-base text-muted-foreground hover:text-foreground/80 transition-colors mb-4 sm:mb-6 leading-relaxed">
+                        {renderDescription(heroData.description, heroData.highlightedSkills)}
+                    </p>
+                </MotionWrapper>
+
+                {/* Buttons */}
+                <MotionWrapper
+                    direction="bottom"
+                    delay={0.4}
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                >
+                    <div className="mt-4 sm:mt-8 flex gap-2 sm:gap-4 flex-wrap">
+                        {heroData.buttons.map((button, index) => (
+                            <Button
+                                key={index}
+                                href={button.href}
+                                text={button.text}
+                                icon={renderIcon(button.icon)}
+                            />
+                        ))}
                     </div>
                 </MotionWrapper>
             </div>

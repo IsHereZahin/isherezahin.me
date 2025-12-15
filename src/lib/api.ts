@@ -549,6 +549,40 @@ const contactInfo = {
     },
 };
 
+// Hero API
+const hero = {
+    async get() {
+        const response = await fetch('/api/admin/hero');
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch hero data", response.status);
+        }
+        return await response.json();
+    },
+
+    async update(data: {
+        profileImage?: string;
+        greeting: string;
+        name: string;
+        tagline: string;
+        description: string;
+        highlightedSkills?: string[];
+        buttons?: { text: string; href: string; icon?: string; variant?: string }[];
+        isActive?: boolean;
+    }) {
+        const response = await fetch('/api/admin/hero', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to update hero data", response.status);
+        }
+        return await response.json();
+    },
+};
+
 // Work Experience API
 const workExperience = {
     async getAll(includeInactive = false) {
@@ -607,7 +641,7 @@ const workExperience = {
 
 export {
     blogLikes, blogViews, contactInfo, createBlog, createProject, currentStatus, deleteBlog, deleteProject,
-    getBlog, getBlogs, getBlogTags, getProject, getProjects, getProjectTags,
+    getBlog, getBlogs, getBlogTags, getProject, getProjects, getProjectTags, hero,
     newsletter, projectLikes, projectViews, testimonials, updateBlog, updateProject, workExperience
 };
 

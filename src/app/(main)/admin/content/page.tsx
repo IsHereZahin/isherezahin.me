@@ -3,9 +3,10 @@
 import CurrentStatusModal from "@/components/admin/CurrentStatusModal";
 import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
 import EditContactInfoModal from "@/components/admin/EditContactInfoModal";
+import HeroModal from "@/components/admin/HeroModal";
 import TestimonialModal from "@/components/admin/TestimonialModal";
 import WorkExperienceModal from "@/components/admin/WorkExperienceModal";
-import { contactInfo, currentStatus, testimonials, workExperience } from "@/lib/api";
+import { contactInfo, currentStatus, hero, testimonials, workExperience } from "@/lib/api";
 import {
     closestCenter,
     DndContext,
@@ -24,7 +25,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Briefcase, CircleHelp, GripVertical, Mail, MessageSquareQuote, Pencil, Plus, Trash2 } from "lucide-react";
+import { Briefcase, CircleHelp, Sparkles, GripVertical, Mail, MessageSquareQuote, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -66,6 +67,25 @@ interface ContactInfoData {
     subheadline: string;
     highlightText?: string;
     skills: string[];
+}
+
+interface HeroButton {
+    text: string;
+    href: string;
+    icon?: string;
+    variant?: string;
+}
+
+interface HeroData {
+    _id?: string;
+    profileImage?: string;
+    greeting: string;
+    name: string;
+    tagline: string;
+    description: string;
+    highlightedSkills: string[];
+    buttons: HeroButton[];
+    isActive: boolean;
 }
 
 interface SortableStatusItemProps {
@@ -131,6 +151,7 @@ export default function ContentPage() {
     const [deleteExperience, setDeleteExperience] = useState<WorkExperienceItem | null>(null);
 
     const [editContactOpen, setEditContactOpen] = useState(false);
+    const [heroModalOpen, setHeroModalOpen] = useState(false);
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -155,6 +176,11 @@ export default function ContentPage() {
     const { data: contactData } = useQuery<ContactInfoData>({
         queryKey: ["admin-contact-info"],
         queryFn: contactInfo.get,
+    });
+
+    const { data: heroData } = useQuery<HeroData>({
+        queryKey: ["admin-hero"],
+        queryFn: hero.get,
     });
 
     const handleDeleteTestimonial = async () => {
@@ -221,6 +247,33 @@ export default function ContentPage() {
 
     return (
         <div className="space-y-6">
+            {/* Hero Section */}
+            <section className="border border-border rounded-xl p-6">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                        <Sparkles className="h-5 w-5 text-muted-foreground" />
+                        <h3 className="text-lg font-semibold">Hero Section</h3>
+                    </div>
+                    <button
+                        onClick={() => setHeroModalOpen(true)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-foreground text-background rounded-lg hover:bg-foreground/90 transition-colors"
+                    >
+                        <Pencil className="h-4 w-4" /> Edit
+                    </button>
+                </div>
+                {heroData ? (
+                    <div className="p-4 bg-muted/30 rounded-lg space-y-2">
+                        <p className="text-sm"><span className="text-muted-foreground">Greeting:</span> {heroData.greeting} <span className="text-primary font-medium">{heroData.name}</span></p>
+                        <p className="text-sm"><span className="text-muted-foreground">Tagline:</span> {heroData.tagline}</p>
+                        <p className="text-sm line-clamp-2"><span className="text-muted-foreground">Description:</span> {heroData.description}</p>
+                        <p className="text-sm"><span className="text-muted-foreground">Skills:</span> {heroData.highlightedSkills?.join(", ") || "None"}</p>
+                        <p className="text-sm"><span className="text-muted-foreground">Buttons:</span> {heroData.buttons?.length || 0} configured</p>
+                    </div>
+                ) : (
+                    <p className="text-sm text-muted-foreground py-4 text-center">Hero section not configured (using defaults)</p>
+                )}
+            </section>
+
             {/* Testimonials Section */}
             <section className="border border-border rounded-xl p-6">
                 <div className="flex items-center justify-between mb-4">
@@ -407,6 +460,12 @@ export default function ContentPage() {
                 open={editContactOpen}
                 onOpenChange={setEditContactOpen}
                 contactData={contactData}
+            />
+
+            <HeroModal
+                open={heroModalOpen}
+                onOpenChange={setHeroModalOpen}
+                heroData={heroData}
             />
         </div>
     );
