@@ -3,18 +3,77 @@
 import MotionWrapper from "@/components/motion/MotionWrapper";
 import { BlurImage, PageTitle, Section } from "@/components/ui";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { BarChart3, FileText, LogOut, Mail, Settings, Users } from "lucide-react";
+import { BarChart3, ChevronDown, Layout, LogOut, Mail, Settings, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
-const adminNavItems = [
+interface NavChild {
+    id: string;
+    label: string;
+    href: string;
+}
+
+interface NavItem {
+    id: string;
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+    href: string;
+    children?: NavChild[];
+}
+
+const adminNavItems: NavItem[] = [
     { id: "users", label: "Manage Users", icon: Users, href: "/admin/users" },
-    { id: "content", label: "Content", icon: FileText, href: "/admin/content" },
+    {
+        id: "pages", label: "Pages", icon: Layout, href: "/admin/pages", children: [
+            { id: "home", label: "Home Page", href: "/admin/pages/home" },
+            { id: "about", label: "About Page", href: "/admin/pages/about" },
+        ]
+    },
     { id: "subscribers", label: "Subscribers", icon: Mail, href: "/admin/subscribers" },
     { id: "statistics", label: "Statistics", icon: BarChart3, href: "/admin/statistics" },
     { id: "settings", label: "Settings", icon: Settings, href: "/admin/settings" },
 ];
+
+function NavItemWithChildren({ item, pathname, isParentActive }: { item: NavItem; pathname: string; isParentActive: boolean }) {
+    const [isOpen, setIsOpen] = useState(isParentActive);
+    const Icon = item.icon;
+
+    return (
+        <div>
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className={`flex items-center justify-between w-full px-3 py-2 rounded-lg font-medium transition-colors ${isParentActive ? "bg-muted" : "text-foreground hover:bg-muted"}`}
+            >
+                <span className="flex items-center gap-2">
+                    <Icon className="h-4 w-4" />
+                    {item.label}
+                </span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+            </button>
+            {isOpen && item.children && (
+                <div className="ml-4 mt-1 space-y-1 border-l border-border pl-2">
+                    {item.children.map((child) => {
+                        const isChildActive = pathname === child.href;
+                        return (
+                            <Link
+                                key={child.id}
+                                href={child.href}
+                                prefetch={true}
+                                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isChildActive
+                                    ? "bg-foreground text-secondary"
+                                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                                    }`}
+                            >
+                                {child.label}
+                            </Link>
+                        );
+                    })}
+                </div>
+            )}
+        </div>
+    );
+}
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
     const { user, logout, isAdmin, status } = useAuth();
@@ -53,10 +112,24 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                         </div>
                     </div>
 
-                    <nav className="space-y-2">
+                    <nav className="space-y-1">
                         {adminNavItems.map((item) => {
                             const Icon = item.icon;
-                            const isActive = currentSection === item.id;
+                            const hasChildren = item.children && item.children.length > 0;
+                            const isParentActive = hasChildren && pathname.startsWith(item.href);
+                            const isActive = pathname === item.href || currentSection === item.id;
+
+                            if (hasChildren) {
+                                return (
+                                    <NavItemWithChildren
+                                        key={item.id}
+                                        item={item}
+                                        pathname={pathname}
+                                        isParentActive={isParentActive}
+                                    />
+                                );
+                            }
+
                             return (
                                 <Link
                                     key={item.id}

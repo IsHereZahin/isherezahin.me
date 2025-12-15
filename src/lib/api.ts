@@ -605,8 +605,42 @@ const workExperience = {
     },
 };
 
+// About Hero API
+const aboutHero = {
+    async get() {
+        const response = await fetch('/api/admin/about');
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch about hero", response.status);
+        }
+        return await response.json();
+    },
+
+    async update(data: {
+        name: string;
+        title: string;
+        location: string;
+        age?: string;
+        imageSrc: string;
+        paragraphs: string[];
+        pageTitle?: string;
+        pageSubtitle?: string;
+    }) {
+        const response = await fetch('/api/admin/about', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to update about hero", response.status);
+        }
+        return await response.json();
+    },
+};
+
 export {
-    blogLikes, blogViews, contactInfo, createBlog, createProject, currentStatus, deleteBlog, deleteProject,
+    aboutHero, blogLikes, blogViews, contactInfo, createBlog, createProject, currentStatus, deleteBlog, deleteProject,
     getBlog, getBlogs, getBlogTags, getProject, getProjects, getProjectTags,
     newsletter, projectLikes, projectViews, testimonials, updateBlog, updateProject, workExperience
 };
