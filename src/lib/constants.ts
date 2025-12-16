@@ -32,8 +32,8 @@ export const OG_IMAGE_TYPE = 'image/png';
 // GitHub Configuration
 export const AUTH_GITHUB_ID = process.env.AUTH_GITHUB_ID!;
 export const AUTH_GITHUB_SECRET = process.env.AUTH_GITHUB_SECRET!;
-export const GITHUB_REPO_OWNER = process.env.GITHUB_REPO_OWNER!;
-export const GITHUB_REPO_NAME = process.env.GITHUB_REPO_NAME!;
+export const GITHUB_REPO_OWNER = process.env.NEXT_PUBLIC_GITHUB_REPO_OWNER;
+export const GITHUB_REPO_NAME = process.env.NEXT_PUBLIC_GITHUB_REPO_NAME;
 export const GITHUB_ACCESS_TOKEN = process.env.GITHUB_ACCESS_TOKEN;
 
 // Google Configuration

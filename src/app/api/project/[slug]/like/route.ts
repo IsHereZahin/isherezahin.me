@@ -33,7 +33,7 @@ export async function GET(req: NextRequest, context: { params: Promise<{ slug: s
         const isAdmin = await checkIsAdmin();
 
         // Get project total likes
-        const project = await ProjectModel.findOne({ slug }, 'likes published').lean<{ likes?: number; published?: boolean }>();
+        const project = await ProjectModel.findOne({ slug }, 'likes published discussionNumber').lean<{ likes?: number; published?: boolean; discussionNumber?: number }>();
         if (!project) {
             return NextResponse.json(
                 { error: 'Project not found' },
@@ -71,6 +71,7 @@ export async function GET(req: NextRequest, context: { params: Promise<{ slug: s
             userLikes: userLike?.likeCount || 0,
             isAuthenticated: !!userEmail,
             userEmail: userEmail,
+            discussionNumber: project.discussionNumber || null,
         });
     } catch (error) {
         console.error('Error fetching likes:', error);

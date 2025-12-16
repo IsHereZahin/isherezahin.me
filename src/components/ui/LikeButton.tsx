@@ -2,8 +2,9 @@
 
 import { AnimatedNumber } from '@/components/ui';
 import { blogLikes, projectLikes } from '@/lib/api';
+import { discussionApi } from '@/lib/github/api';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import confetti from 'canvas-confetti';
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
@@ -22,6 +23,10 @@ export default function LikeButton({ slug, type, maxUserLikes = 3 }: Readonly<Li
 
   const [totalLikes, setTotalLikes] = useState(0);
   const [userLikes, setUserLikes] = useState(0);
+  const [pendingLikes, setPendingLikes] = useState(0); // Track in-flight API calls
+  const [discussionNumber, setDiscussionNumber] = useState<number | null>(null);
+  const hasShownMaxToast = useRef(false);
+  const hasAddedDiscussionReaction = useRef(false);
 
   const likesApi = type === 'project' ? projectLikes : blogLikes;
   const queryKey = [`${type || 'blog'}-likes`, slug];
@@ -36,62 +41,64 @@ export default function LikeButton({ slug, type, maxUserLikes = 3 }: Readonly<Li
     if (data) {
       setTotalLikes(data.totalLikes ?? 0);
       setUserLikes(data.userLikes ?? 0);
+      setDiscussionNumber(data.discussionNumber ?? null);
+      hasShownMaxToast.current = (data.userLikes ?? 0) >= maxUserLikes;
     }
-  }, [data]);
+  }, [data, maxUserLikes]);
 
-  const mutation = useMutation({
-    mutationFn: () => likesApi.addLike(slug),
-
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey });
-
-      setUserLikes(prev => prev + 1);
-      setTotalLikes(prev => prev + 1);
-
-      queryClient.setQueryData(queryKey, (old: any) => ({
-        totalLikes: (old?.totalLikes ?? totalLikes) + 1,
-        userLikes: (old?.userLikes ?? userLikes) + 1,
-      }));
-    },
-
-    onSuccess: (serverData) => {
-      setTotalLikes(serverData.totalLikes ?? 0);
-      setUserLikes(serverData.userLikes ?? 0);
-
-      if ((serverData.userLikes ?? userLikes + 1) >= maxUserLikes && buttonRef.current) {
-        const rect = buttonRef.current.getBoundingClientRect();
-        const { clientWidth, clientHeight } = document.documentElement;
-
-        confetti({
-          particleCount: 100,
-          spread: 80,
-          origin: {
-            x: (rect.left + rect.width / 2) / clientWidth,
-            y: (rect.top + rect.height / 2) / clientHeight,
-          },
-          shapes: [confetti.shapeFromText({ text: '❤️', scalar: 2 })],
-          zIndex: 9999,
-        });
-
-        toast.success('Thank you for the love! 💖', {
-          description: `You've reached the maximum of ${maxUserLikes} likes for this ${type}.`,
-        });
-      }
-    },
-
-    onError: () => {
-      queryClient.invalidateQueries({ queryKey });
-      toast.error('Failed to add like', {
-        description: 'Please try again.',
+  // Fire-and-forget API call
+  const sendLikeToServer = async () => {
+    setPendingLikes(prev => prev + 1);
+    try {
+      await likesApi.addLike(slug);
+    } catch {
+      // Rollback one like on failure
+      setTotalLikes(prev => Math.max(0, prev - 1));
+      setUserLikes(prev => Math.max(0, prev - 1));
+      toast.error('Failed to save like', {
+        description: 'Your like couldn\'t be saved. Please try again.',
       });
-    },
+    } finally {
+      setPendingLikes(prev => prev - 1);
+    }
+  };
 
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey });
-    },
-  });
+  // Add heart reaction to GitHub discussion (for GitHub-authenticated users)
+  const addDiscussionHeartReaction = async () => {
+    if (!discussionNumber || !user?.provider || user.provider !== 'github' || hasAddedDiscussionReaction.current) {
+      return;
+    }
+
+    hasAddedDiscussionReaction.current = true;
+    try {
+      await discussionApi.addHeartReaction(discussionNumber);
+    } catch {
+      // Silently fail - this is a bonus feature, not critical
+      // Reset flag so user can try again on next like
+      hasAddedDiscussionReaction.current = false;
+    }
+  };
+
+  const triggerConfetti = () => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const { clientWidth, clientHeight } = document.documentElement;
+
+      confetti({
+        particleCount: 100,
+        spread: 80,
+        origin: {
+          x: (rect.left + rect.width / 2) / clientWidth,
+          y: (rect.top + rect.height / 2) / clientHeight,
+        },
+        shapes: [confetti.shapeFromText({ text: '❤️', scalar: 2 })],
+        zIndex: 9999,
+      });
+    }
+  };
 
   const handleLike = () => {
+    // Check against local state immediately
     if (userLikes >= maxUserLikes) {
       toast.info(`Maximum likes reached`, {
         description: user
@@ -119,7 +126,31 @@ export default function LikeButton({ slug, type, maxUserLikes = 3 }: Readonly<Li
       return;
     }
 
-    mutation.mutate();
+    // Instantly update local state
+    const newUserLikes = userLikes + 1;
+    setUserLikes(newUserLikes);
+    setTotalLikes(prev => prev + 1);
+
+    // Update cache for consistency
+    queryClient.setQueryData(queryKey, (old: any) => ({
+      totalLikes: (old?.totalLikes ?? totalLikes) + 1,
+      userLikes: newUserLikes,
+    }));
+
+    // Show max toast and confetti when hitting the limit
+    if (newUserLikes >= maxUserLikes && !hasShownMaxToast.current) {
+      hasShownMaxToast.current = true;
+      triggerConfetti();
+      toast.success('Thank you for the love! 💖', {
+        description: `You've reached the maximum of ${maxUserLikes} likes for this ${type}.`,
+      });
+    }
+
+    // Fire API calls in background (no waiting)
+    sendLikeToServer();
+
+    // Also add heart reaction to GitHub discussion if user is GitHub-authenticated
+    addDiscussionHeartReaction();
   };
 
   const fillPercentage = Math.min((userLikes / maxUserLikes) * 100);

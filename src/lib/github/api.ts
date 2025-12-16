@@ -81,4 +81,20 @@ export const discussionApi = {
     if (!response.ok) throw new Error("Failed to toggle reaction");
     return await response.json();
   },
+
+  async addHeartReaction(discussionNumber: number) {
+    const response = await fetch(`/api/discussions/${discussionNumber}/heart`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      if (data.requiresGitHub) {
+        throw new Error("GitHub authentication required");
+      }
+      throw new Error(data.error || "Failed to add heart reaction");
+    }
+    return await response.json();
+  },
 };

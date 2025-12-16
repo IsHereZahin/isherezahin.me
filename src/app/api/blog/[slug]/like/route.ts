@@ -33,7 +33,7 @@ export async function GET( req: NextRequest, context: { params: Promise<{ slug: 
         const isAdmin = await checkIsAdmin();
 
         // Get blog total likes
-        const blog = await BlogModel.findOne({ slug }, 'likes published').lean<{ likes?: number; published?: boolean }>();
+        const blog = await BlogModel.findOne({ slug }, 'likes published discussionNumber').lean<{ likes?: number; published?: boolean; discussionNumber?: number }>();
         if (!blog) {
             return NextResponse.json(
                 { error: 'Blog not found' },
@@ -71,6 +71,7 @@ export async function GET( req: NextRequest, context: { params: Promise<{ slug: 
             userLikes: userLike?.likeCount || 0,
             isAuthenticated: !!userEmail,
             userEmail: userEmail,
+            discussionNumber: blog.discussionNumber || null,
         });
     } catch (error) {
         console.error('Error fetching likes:', error);
