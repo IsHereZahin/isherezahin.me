@@ -1,10 +1,10 @@
 "use client";
 
-import { FileText, FolderOpen, Plus } from "lucide-react";
+import { Compass, FileText, FolderOpen, Plus } from "lucide-react";
 import MotionWrapper from "../motion/MotionWrapper";
 import { Button } from "./shadcn-button";
 
-type ContentType = "blogs" | "projects";
+type ContentType = "blogs" | "projects" | "quests";
 
 interface AdminEmptyStateProps {
     type: ContentType;
@@ -25,6 +25,13 @@ const contentConfig = {
         subtitle: "Let your projects speak for themselves",
         description: "Add your first project to build an impressive portfolio. Highlight your skills, technologies used, and the impact of your work.",
         buttonText: "Add First Project",
+    },
+    quests: {
+        icon: Compass,
+        title: "Share Your Adventures",
+        subtitle: "Document your side quests",
+        description: "Add your first side quest to share your hobbies, adventures, and experiences. These moments add color to life beyond work.",
+        buttonText: "Add First Quest",
     },
 };
 

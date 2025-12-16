@@ -194,27 +194,29 @@ export default function ProjectsIndex() {
                 <AdminAddButton onClick={() => setIsModalOpen(true)} label="Add Project" className="mb-4" />
             )}
 
-            {/* Tags with inline search */}
-            <div className="mb-6">
-                {isTagsLoading ? (
-                    <TagsLoading />
-                ) : hasTags ? (
-                    <MotionWrapper direction="left" delay={0.2}>
-                        <Tags
-                            tags={allTags}
-                            selected={selectedTags}
-                            clickableTags={clickableTags}
-                            onTagClick={handleTagClick}
-                            maxLines={2}
-                            searchElement={searchElement}
-                        />
-                    </MotionWrapper>
-                ) : (
-                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                        {searchElement}
-                    </div>
-                )}
-            </div>
+            {/* Tags with inline search - only show when there are projects or active filters */}
+            {(isLoading || hasProjects || hasFilters) && (
+                <div className="mb-6">
+                    {isTagsLoading ? (
+                        <TagsLoading />
+                    ) : hasTags ? (
+                        <MotionWrapper direction="left" delay={0.2}>
+                            <Tags
+                                tags={allTags}
+                                selected={selectedTags}
+                                clickableTags={clickableTags}
+                                onTagClick={handleTagClick}
+                                maxLines={2}
+                                searchElement={searchElement}
+                            />
+                        </MotionWrapper>
+                    ) : (
+                        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                            {searchElement}
+                        </div>
+                    )}
+                </div>
+            )}
 
             {isLoading ? (
                 <ProjectsLoading count={4} />

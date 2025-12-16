@@ -849,10 +849,82 @@ const cloudinary = {
     },
 };
 
+// Quests API
+const quests = {
+    async getAll() {
+        const response = await fetch('/api/quests');
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch quests", response.status);
+        }
+        return await response.json();
+    },
+
+    async get(id: string) {
+        const response = await fetch(`/api/quests/${id}`);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch quest", response.status);
+        }
+        return await response.json();
+    },
+
+    async create(data: {
+        date: string;
+        title: string;
+        location: string;
+        description: string;
+        media: { type: "image" | "video"; src: string; thumbnail?: string }[];
+        order?: number;
+        isActive?: boolean;
+    }) {
+        const response = await fetch('/api/quests', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to create quest", response.status);
+        }
+        return await response.json();
+    },
+
+    async update(id: string, data: {
+        date: string;
+        title: string;
+        location: string;
+        description: string;
+        media: { type: "image" | "video"; src: string; thumbnail?: string }[];
+        order?: number;
+        isActive?: boolean;
+    }) {
+        const response = await fetch(`/api/quests/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to update quest", response.status);
+        }
+        return await response.json();
+    },
+
+    async delete(id: string) {
+        const response = await fetch(`/api/quests/${id}`, { method: 'DELETE' });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to delete quest", response.status);
+        }
+        return await response.json();
+    },
+};
+
 export {
     aboutHero, adminSettings, adminSubscribers, adminUsers, blogLikes, blogViews, cloudinary, contactInfo, contactMessage,
     createBlog, createProject, currentStatus, deleteBlog, deleteProject, getBlog, getBlogs, getBlogTags, getProject,
-    getProjects, getProjectTags, newsletter, profile, projectLikes, projectViews, sessions, statistics, testimonials,
+    getProjects, getProjectTags, newsletter, profile, projectLikes, projectViews, quests, sessions, statistics, testimonials,
     updateBlog, updateProject, workExperience
 };
 

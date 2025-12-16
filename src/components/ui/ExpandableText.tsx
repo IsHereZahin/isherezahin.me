@@ -15,7 +15,7 @@ export default function ExpandableText({ text, limit = 180 }: Readonly<Expandabl
     const toggle = () => setExpanded(!expanded);
 
     return (
-        <div className="text-secondary-foreground leading-relaxed mb-6">
+        <div className="text-muted-foreground group-hover/card:text-foreground/80 transition-colors leading-relaxed mb-6">
             <p className="inline">
                 {expanded || !isLong ? text : truncateText(text, limit)}
             </p>

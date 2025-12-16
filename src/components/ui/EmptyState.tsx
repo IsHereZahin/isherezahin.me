@@ -1,10 +1,10 @@
 "use client";
 
-import { FileText, FolderOpen } from "lucide-react";
+import { Compass, FileText, FolderOpen } from "lucide-react";
 import MotionWrapper from "../motion/MotionWrapper";
 
 interface EmptyStateProps {
-    type: "blogs" | "projects";
+    type: "blogs" | "projects" | "quests";
     title?: string;
     subtitle?: string;
     description?: string;
@@ -23,6 +23,12 @@ export default function EmptyState({ type, title, subtitle, description }: Reado
             subtitle: "No projects to showcase yet",
             description: "I'm currently working on some exciting projects that showcase modern web development practices. Stay tuned to see what I'm building next.",
             icon: FolderOpen,
+        },
+        quests: {
+            title: "Side Quests & Adventures",
+            subtitle: "No quests shared yet",
+            description: "Life's adventures and side quests are being documented. Check back soon to see hobbies, travels, and experiences that add color beyond the daily grind.",
+            icon: Compass,
         },
     };
 
