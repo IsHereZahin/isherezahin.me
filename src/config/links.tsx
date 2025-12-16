@@ -70,6 +70,13 @@ export const FOOTER_MENU_ITEMS: FooterMenuItems = [
       { href: '/tools', label: 'Tools' },
     ],
   },
+  {
+    category: 'Legal',
+    items: [
+      { href: '/privacy-policy', label: 'Privacy Policy' },
+      { href: '/terms-of-service', label: 'Terms of Service' },
+    ],
+  },
 ] as const
 
 export const SOCIAL_LINKS: SocialLinks = [

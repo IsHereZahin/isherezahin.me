@@ -28,6 +28,7 @@ const adminNavItems: NavItem[] = [
         id: "pages", label: "Pages", icon: Layout, href: "/admin/pages", children: [
             { id: "home", label: "Home Page", href: "/admin/pages/home" },
             { id: "about", label: "About Page", href: "/admin/pages/about" },
+            { id: "legal", label: "Legal Pages", href: "/admin/pages/legal" },
         ]
     },
     { id: "subscribers", label: "Subscribers", icon: Mail, href: "/admin/subscribers" },

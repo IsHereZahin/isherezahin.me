@@ -1,17 +1,25 @@
 "use client";
 
-import { Compass, FileText, FolderOpen, Plus } from "lucide-react";
+import { Compass, FileText, FolderOpen, type LucideIcon, Plus, Scale, Shield } from "lucide-react";
 import MotionWrapper from "../motion/MotionWrapper";
 import { Button } from "./shadcn-button";
 
-type ContentType = "blogs" | "projects" | "quests";
+export type AdminContentType = "blogs" | "projects" | "quests" | "privacy-policy" | "terms-of-service";
 
 interface AdminEmptyStateProps {
-    type: ContentType;
+    type: AdminContentType;
     onAdd: () => void;
 }
 
-const contentConfig = {
+interface ContentConfig {
+    icon: LucideIcon;
+    title: string;
+    subtitle: string;
+    description: string;
+    buttonText: string;
+}
+
+const contentConfig: Record<AdminContentType, ContentConfig> = {
     blogs: {
         icon: FileText,
         title: "Start Your Blog Journey",
@@ -32,6 +40,20 @@ const contentConfig = {
         subtitle: "Document your side quests",
         description: "Add your first side quest to share your hobbies, adventures, and experiences. These moments add color to life beyond work.",
         buttonText: "Add First Quest",
+    },
+    "privacy-policy": {
+        icon: Shield,
+        title: "Create Privacy Policy",
+        subtitle: "Protect your users' data",
+        description: "Add your privacy policy to inform users how their data is collected, used, and protected. This builds trust and ensures compliance.",
+        buttonText: "Create Privacy Policy",
+    },
+    "terms-of-service": {
+        icon: Scale,
+        title: "Create Terms of Service",
+        subtitle: "Define your service terms",
+        description: "Add your terms of service to establish the rules and guidelines for using your website. This protects both you and your users.",
+        buttonText: "Create Terms of Service",
     },
 };
 

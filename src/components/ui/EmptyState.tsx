@@ -1,37 +1,58 @@
 "use client";
 
-import { Compass, FileText, FolderOpen } from "lucide-react";
+import { Compass, FileText, FolderOpen, type LucideIcon, Scale, Shield } from "lucide-react";
 import MotionWrapper from "../motion/MotionWrapper";
 
+export type EmptyStateType = "blogs" | "projects" | "quests" | "privacy-policy" | "terms-of-service";
+
+interface EmptyStateConfig {
+    title: string;
+    subtitle: string;
+    description: string;
+    icon: LucideIcon;
+}
+
 interface EmptyStateProps {
-    type: "blogs" | "projects" | "quests";
+    type: EmptyStateType;
     title?: string;
     subtitle?: string;
     description?: string;
 }
 
-export default function EmptyState({ type, title, subtitle, description }: Readonly<EmptyStateProps>) {
-    const defaultContent = {
-        blogs: {
-            title: "Ideas, insights, & inspiration",
-            subtitle: "No blogs published yet",
-            description: "I'm crafting some thoughtful content about web development, design patterns, and technology insights. Check back soon for fresh perspectives and practical guides.",
-            icon: FileText,
-        },
-        projects: {
-            title: "Projects I've worked on",
-            subtitle: "No projects to showcase yet",
-            description: "I'm currently working on some exciting projects that showcase modern web development practices. Stay tuned to see what I'm building next.",
-            icon: FolderOpen,
-        },
-        quests: {
-            title: "Side Quests & Adventures",
-            subtitle: "No quests shared yet",
-            description: "Life's adventures and side quests are being documented. Check back soon to see hobbies, travels, and experiences that add color beyond the daily grind.",
-            icon: Compass,
-        },
-    };
+const defaultContent: Record<EmptyStateType, EmptyStateConfig> = {
+    blogs: {
+        title: "Ideas, insights, & inspiration",
+        subtitle: "No blogs published yet",
+        description: "I'm crafting some thoughtful content about web development, design patterns, and technology insights. Check back soon for fresh perspectives and practical guides.",
+        icon: FileText,
+    },
+    projects: {
+        title: "Projects I've worked on",
+        subtitle: "No projects to showcase yet",
+        description: "I'm currently working on some exciting projects that showcase modern web development practices. Stay tuned to see what I'm building next.",
+        icon: FolderOpen,
+    },
+    quests: {
+        title: "Side Quests & Adventures",
+        subtitle: "No quests shared yet",
+        description: "Life's adventures and side quests are being documented. Check back soon to see hobbies, travels, and experiences that add color beyond the daily grind.",
+        icon: Compass,
+    },
+    "privacy-policy": {
+        title: "Privacy Policy",
+        subtitle: "Coming soon",
+        description: "This page is currently being prepared. Please check back soon for our privacy policy.",
+        icon: Shield,
+    },
+    "terms-of-service": {
+        title: "Terms of Service",
+        subtitle: "Coming soon",
+        description: "This page is currently being prepared. Please check back soon for our terms of service.",
+        icon: Scale,
+    },
+};
 
+export default function EmptyState({ type, title, subtitle, description }: Readonly<EmptyStateProps>) {
     const content = defaultContent[type];
     const Icon = content.icon;
 
@@ -45,6 +66,12 @@ export default function EmptyState({ type, title, subtitle, description }: Reado
                 <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
                     {title || content.title}
                 </h3>
+
+                {subtitle && (
+                    <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">
+                        {subtitle}
+                    </p>
+                )}
 
                 <p className="text-muted-foreground max-w-lg leading-relaxed text-base sm:text-lg">
                     {description || content.description}
