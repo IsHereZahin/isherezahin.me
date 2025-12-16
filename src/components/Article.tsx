@@ -57,13 +57,13 @@ export default function Article({ date, views, title, slug, excerpt, imageSrc, c
                 <div className="flex items-center gap-3 sm:gap-6 flex-1">
                     {/* Read Time */}
                     <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
-                        <Clock size={14} className="sm:w-4 sm:h-4" />
+                        <Clock size={14} className="sm:w-4 sm:h-4 text-primary/60 group-hover/article:text-primary transition-colors duration-300" />
                         <span>{getReadTime(content)} min read</span>
                     </div>
 
                     {/* Views */}
                     <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
-                        <Eye size={14} className="sm:w-4 sm:h-4" />
+                        <Eye size={14} className="sm:w-4 sm:h-4 text-primary/60 group-hover/article:text-primary transition-colors duration-300" />
                         <span>{views.toLocaleString()} views</span>
                     </div>
                 </div>

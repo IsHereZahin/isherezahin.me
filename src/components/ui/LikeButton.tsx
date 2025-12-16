@@ -156,7 +156,7 @@ export default function LikeButton({ slug, type, maxUserLikes = 3 }: Readonly<Li
             height="28"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="var(--primary)"
+            stroke="#ef4444"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -177,7 +177,7 @@ export default function LikeButton({ slug, type, maxUserLikes = 3 }: Readonly<Li
               width="28"
               height="28"
               viewBox="0 0 24 24"
-              fill="var(--primary)"
+              fill="#ef4444"
               stroke="none"
               className="transition-colors duration-300"
             >

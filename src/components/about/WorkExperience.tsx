@@ -80,7 +80,7 @@ export function WorkExperienceItem({
                 <h3 className="text-lg sm:text-xl font-semibold text-foreground/90">{title}</h3>
 
                 {/* Description */}
-                <p className="text-sm sm:text-base text-muted-foreground hover:text-foreground transition-all duration-200 leading-relaxed">
+                <p className="text-base text-muted-foreground hover:text-foreground transition-all duration-200 leading-relaxed">
                     <ReferralText text={description} />
                 </p>
 

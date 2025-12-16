@@ -120,7 +120,7 @@ export default function Tags({
         <div className={`${className ?? ""}`}>
             <div
                 ref={containerRef}
-                className="flex flex-wrap items-center justify-start gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground"
+                className="flex flex-wrap items-center justify-start gap-2 text-sm text-muted-foreground"
             >
                 <a
                     href="#skip-tags"
@@ -144,7 +144,7 @@ export default function Tags({
                             data-tag-item={tag}
                             onClick={isClickable && onTagClick ? () => onTagClick(tag) : undefined}
                             className={`
-                                inline-block rounded-md px-1.5 sm:px-2 py-0.5 sm:py-1 font-medium transition
+                                inline-block rounded-md px-2 py-0.5 font-medium transition
                                 ${isSelected
                                     ? "bg-primary/10 text-primary"
                                     : "bg-muted text-muted-foreground"}
@@ -164,7 +164,7 @@ export default function Tags({
                 {(needsExpand || isExpanded) && (
                     <button
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className="inline-block rounded-md px-1.5 sm:px-2 py-0.5 sm:py-1 font-medium transition bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer focus:outline-none focus-visible:ring focus-visible:ring-primary-300 whitespace-nowrap"
+                        className="inline-block rounded-md px-2 py-0.5 font-medium transition bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer focus:outline-none focus-visible:ring focus-visible:ring-primary-300 whitespace-nowrap"
                         data-tag-item="expand"
                     >
                         {isExpanded ? "Show less" : `+${hiddenCount} more`}

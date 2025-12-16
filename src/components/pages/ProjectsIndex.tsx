@@ -160,27 +160,27 @@ export default function ProjectsIndex() {
     // Search button styled like a tag
     const searchElement = isSearchOpen ? (
         <div className="relative inline-flex items-center" data-tag="search">
-            <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 sm:w-3.5 sm:h-3.5 text-muted-foreground" />
+            <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
             <input
                 ref={searchInputRef}
                 type="text"
                 placeholder="Search..."
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                className="w-32 sm:w-40 h-6 sm:h-7 pl-6 sm:pl-7 pr-6 text-xs sm:text-sm rounded-md bg-muted border-none text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 transition-colors"
+                className="w-32 sm:w-40 h-7 pl-7 pr-6 text-sm rounded-md bg-muted border-none text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 transition-colors"
             />
             <button onClick={clearSearch} className="absolute right-1.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
-                <X className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                <X className="w-3 h-3" />
             </button>
         </div>
     ) : (
         <button
             onClick={() => setIsSearchOpen(true)}
-            className="inline-flex items-center justify-center h-6 sm:h-7 w-6 sm:w-7 rounded-md bg-muted text-muted-foreground hover:text-foreground transition-colors"
+            className="inline-flex items-center justify-center h-7 w-7 rounded-md bg-muted text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Search projects"
             data-tag="search"
         >
-            <Search className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+            <Search className="w-3.5 h-3.5" />
         </button>
     );
 

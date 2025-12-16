@@ -49,7 +49,7 @@ export default function CurrentStatusCard() {
                             ))}
                         </div>
                     ) : (
-                        <ul className="list-disc list-outside space-y-1.5 sm:space-y-2 text-sm sm:text-base text-muted-foreground hover:text-foreground/80 transition-colors leading-relaxed pl-5 marker:text-secondary-foreground break-words">
+                        <ul className="list-disc list-outside space-y-1.5 sm:space-y-2 text-base text-muted-foreground hover:text-foreground/80 transition-colors leading-relaxed pl-5 marker:text-secondary-foreground break-words">
                             <ReferralListItem listItems={displayStatus} />
                         </ul>
                     )}

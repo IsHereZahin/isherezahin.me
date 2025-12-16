@@ -3,6 +3,7 @@ import { BlurImage, Frame, StylishLink } from "@/components/ui";
 import { getRandomTheme } from "@/utils";
 import { Project as ProjectType } from "@/utils/types";
 import { EyeOff } from "lucide-react";
+import Link from "next/link";
 
 interface ProjectProps extends ProjectType {
     showUnpublishedBadge?: boolean;
@@ -26,7 +27,9 @@ export default function Project({ showUnpublishedBadge, disableAnimation, ...pro
             {/* Content */}
             <div>
                 <header className="flex items-center gap-2 mb-2 flex-wrap">
-                    <h3 className="text-base sm:text-lg font-semibold text-foreground">{project.title}</h3>
+                    <Link href={`/projects/${project.slug}`} className="group/link">
+                        <h3 className="text-base sm:text-lg font-semibold text-foreground group-hover/link:text-primary transition-colors duration-300">{project.title}</h3>
+                    </Link>
                     {showUnpublishedBadge && (
                         <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border border-yellow-500/20">
                             <EyeOff size={12} />

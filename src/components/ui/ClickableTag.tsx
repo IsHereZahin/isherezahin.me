@@ -14,7 +14,7 @@ export default function ClickableTag({ tag, type, className }: Readonly<Clickabl
     return (
         <Link
             href={href}
-            className={`text-xs sm:text-sm lowercase px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md bg-muted/50 text-muted-foreground/80 hover:bg-primary/10 hover:text-primary transition-colors duration-200 cursor-pointer ${className ?? ""}`}
+            className={`text-sm lowercase px-2 py-0.5 rounded-md bg-muted/50 text-muted-foreground/80 hover:bg-primary/10 hover:text-primary transition-colors duration-200 cursor-pointer ${className ?? ""}`}
         >
             {tag}
         </Link>
