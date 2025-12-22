@@ -7,8 +7,86 @@ import dbConnect from "@/database/services/mongo";
 import { MY_MAIL } from "@/lib/constants";
 import { NextResponse } from "next/server";
 
+// Timeout for considering a user offline (30 seconds)
+const ONLINE_TIMEOUT_MS = 30 * 1000;
+
 interface RouteParams {
     params: Promise<{ conversationId: string }>;
+}
+
+interface ConversationDoc {
+    _id: unknown;
+    participantId: { toString(): string };
+    participantName: string;
+    participantEmail: string;
+    participantImage?: string;
+    lastMessage?: string;
+    lastMessageAt?: Date;
+    lastMessageBy?: string;
+    unreadCountUser?: number;
+    unreadCountAdmin?: number;
+    isActive: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
+}
+
+interface MessageDoc {
+    _id: unknown;
+    conversationId: unknown;
+    senderId?: unknown;
+    senderType: string;
+    senderName: string;
+    senderImage?: string;
+    content: string;
+    isRead: boolean;
+    readAt?: Date;
+    isEdited: boolean;
+    editHistory?: unknown[];
+    createdAt: Date;
+    updatedAt?: Date;
+}
+
+// Helper to sanitize conversation for non-admin users
+function sanitizeConversationForUser(conversation: ConversationDoc) {
+    return {
+        _id: conversation._id,
+        participantId: conversation.participantId,
+        participantName: conversation.participantName,
+        participantImage: conversation.participantImage,
+        lastMessage: conversation.lastMessage,
+        lastMessageAt: conversation.lastMessageAt,
+        lastMessageBy: conversation.lastMessageBy,
+        unreadCountUser: conversation.unreadCountUser || 0,
+        isActive: conversation.isActive,
+        createdAt: conversation.createdAt,
+        updatedAt: conversation.updatedAt,
+    };
+}
+
+// Helper to sanitize messages - remove senderId for non-admin
+function sanitizeMessagesForUser(messages: MessageDoc[]) {
+    return messages.map((msg) => ({
+        _id: msg._id,
+        conversationId: msg.conversationId,
+        senderType: msg.senderType,
+        senderName: msg.senderName,
+        senderImage: msg.senderImage,
+        content: msg.content,
+        isRead: msg.isRead,
+        readAt: msg.readAt,
+        isEdited: msg.isEdited,
+        createdAt: msg.createdAt,
+        updatedAt: msg.updatedAt,
+    }));
+}
+
+// Helper to check if user is actually online based on lastSeen
+function isUserActuallyOnline(
+    isOnline: boolean | undefined,
+    lastSeen: Date | undefined
+): boolean {
+    if (!isOnline || !lastSeen) return false;
+    return new Date(lastSeen).getTime() >= Date.now() - ONLINE_TIMEOUT_MS;
 }
 
 // GET: Get messages for a conversation with pagination
@@ -22,14 +100,16 @@ export async function GET(request: Request, { params }: RouteParams) {
         const { conversationId } = await params;
         const { searchParams } = new URL(request.url);
         const cursor = searchParams.get("cursor");
-        const limit = 30; // Messages per page
+        const limit = 30;
 
         await dbConnect();
 
         const isAdmin = session.user.email?.toLowerCase() === MY_MAIL.toLowerCase();
 
         // Verify access to conversation
-        const conversation = await ChatConversationModel.findById(conversationId);
+        const conversation = (await ChatConversationModel.findById(
+            conversationId
+        ).lean()) as unknown as ConversationDoc | null;
         if (!conversation) {
             return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
         }
@@ -44,65 +124,78 @@ export async function GET(request: Request, { params }: RouteParams) {
             isDeleted: boolean;
             createdAt?: { $lt: Date };
         }
-        
+
         const query: MessageQuery = {
             conversationId,
             isDeleted: false,
         };
 
-        // If cursor provided, get messages older than cursor
         if (cursor) {
             query.createdAt = { $lt: new Date(cursor) };
         }
 
-        // Get messages (fetch one extra to check if there are more)
-        const messages = await ChatMessageModel.find(query)
-            .sort({ createdAt: -1 }) // Newest first for pagination
+        const messages = (await ChatMessageModel.find(query)
+            .sort({ createdAt: -1 })
             .limit(limit + 1)
-            .lean();
+            .lean()) as unknown as MessageDoc[];
 
-        // Check if there are more messages
         const hasMore = messages.length > limit;
         if (hasMore) {
-            messages.pop(); // Remove the extra message
+            messages.pop();
         }
 
-        // Reverse to get chronological order for display
         messages.reverse();
 
-        // Get next cursor (oldest message in current batch)
-        const nextCursor = hasMore && messages.length > 0 
-            ? (messages[0] as unknown as { createdAt: Date }).createdAt.toISOString() 
-            : undefined;
+        const nextCursor =
+            hasMore && messages.length > 0 ? messages[0].createdAt.toISOString() : undefined;
 
-        // Get admin presence for user view
-        const adminUser = await UserModel.findOne({ 
-            email: { $regex: new RegExp(`^${MY_MAIL}$`, 'i') }
-        });
-        let adminPresence = null;
-        
-        if (adminUser) {
-            const presence = await UserPresenceModel.findOne({
-                userId: adminUser._id,
-            }).lean() as { isOnline: boolean; lastSeen: Date; hideLastSeen: boolean } | null;
-            
-            // Use global setting (hideLastSeen) for status visibility
-            const shouldHideStatus = presence?.hideLastSeen ?? false;
-            
-            // Always return adminPresence object (even if presence record doesn't exist)
-            adminPresence = {
-                isOnline: shouldHideStatus ? false : (presence?.isOnline ?? false),
-                lastSeen: shouldHideStatus ? null : (presence?.lastSeen ?? null),
-                hideLastSeen: shouldHideStatus,
-            };
+        // Get presence data based on role
+        let presenceData = null;
+
+        if (isAdmin) {
+            // Admin sees participant's presence
+            const participantPresence = (await UserPresenceModel.findOne({
+                userId: conversation.participantId,
+            }).lean()) as { isOnline: boolean; lastSeen: Date; hideLastSeen: boolean } | null;
+
+            if (participantPresence) {
+                presenceData = {
+                    isOnline: isUserActuallyOnline(
+                        participantPresence.isOnline,
+                        participantPresence.lastSeen
+                    ),
+                    lastSeen: participantPresence.hideLastSeen
+                        ? null
+                        : participantPresence.lastSeen,
+                    hideLastSeen: participantPresence.hideLastSeen,
+                };
+            }
+        } else {
+            // User sees admin's presence (respecting hideLastSeen setting)
+            const adminUser = await UserModel.findOne({
+                email: { $regex: new RegExp("^" + MY_MAIL + "$", "i") },
+            });
+
+            if (adminUser) {
+                const adminPresence = (await UserPresenceModel.findOne({
+                    userId: adminUser._id,
+                }).lean()) as { isOnline: boolean; lastSeen: Date; hideLastSeen: boolean } | null;
+
+                const shouldHideStatus = adminPresence?.hideLastSeen ?? false;
+                const actuallyOnline = isUserActuallyOnline(
+                    adminPresence?.isOnline,
+                    adminPresence?.lastSeen
+                );
+
+                presenceData = {
+                    isOnline: shouldHideStatus ? false : actuallyOnline,
+                    lastSeen: shouldHideStatus ? null : (adminPresence?.lastSeen ?? null),
+                    hideLastSeen: shouldHideStatus,
+                };
+            }
         }
 
-        // Get participant presence (for admin view)
-        const participantPresence = await UserPresenceModel.findOne({
-            userId: conversation.participantId,
-        }).lean() as { isOnline: boolean; lastSeen: Date; hideLastSeen: boolean } | null;
-
-        // Only mark as read on first page (no cursor)
+        // Mark messages as read on first page
         if (!cursor) {
             const updateField = isAdmin ? "unreadCountAdmin" : "unreadCountUser";
             await ChatConversationModel.findByIdAndUpdate(conversationId, {
@@ -120,18 +213,17 @@ export async function GET(request: Request, { params }: RouteParams) {
             );
         }
 
+        // Sanitize response based on role
+        const responseConversation = isAdmin
+            ? conversation
+            : sanitizeConversationForUser(conversation);
+
+        const responseMessages = isAdmin ? messages : sanitizeMessagesForUser(messages);
+
         return NextResponse.json({
-            conversation,
-            messages,
-            presence: isAdmin 
-                ? (participantPresence
-                    ? {
-                          isOnline: participantPresence.isOnline,
-                          lastSeen: participantPresence.hideLastSeen ? null : participantPresence.lastSeen,
-                          hideLastSeen: participantPresence.hideLastSeen,
-                      }
-                    : null)
-                : adminPresence,
+            conversation: responseConversation,
+            messages: responseMessages,
+            presence: presenceData,
             hasMore,
             nextCursor,
         });
@@ -164,7 +256,10 @@ export async function POST(request: Request, { params }: RouteParams) {
         if (!isAdmin) {
             const user = await UserModel.findById(session.user.id);
             if (user?.isBanned) {
-                return NextResponse.json({ error: "Your account has been suspended" }, { status: 403 });
+                return NextResponse.json(
+                    { error: "Your account has been suspended" },
+                    { status: 403 }
+                );
             }
         }
 
@@ -204,7 +299,23 @@ export async function POST(request: Request, { params }: RouteParams) {
             { upsert: true }
         );
 
-        return NextResponse.json({ success: true, message: chatMessage });
+        // Sanitize message response for non-admin
+        const responseMessage = isAdmin
+            ? chatMessage
+            : {
+                  _id: chatMessage._id,
+                  conversationId: chatMessage.conversationId,
+                  senderType: chatMessage.senderType,
+                  senderName: chatMessage.senderName,
+                  senderImage: chatMessage.senderImage,
+                  content: chatMessage.content,
+                  isRead: chatMessage.isRead,
+                  isEdited: chatMessage.isEdited,
+                  createdAt: chatMessage.createdAt,
+                  updatedAt: chatMessage.updatedAt,
+              };
+
+        return NextResponse.json({ success: true, message: responseMessage });
     } catch (error) {
         console.error("Error sending message:", error);
         return NextResponse.json({ error: "Failed to send message" }, { status: 500 });
@@ -233,10 +344,7 @@ export async function DELETE(request: Request, { params }: RouteParams) {
         });
 
         // Mark all messages as deleted
-        await ChatMessageModel.updateMany(
-            { conversationId },
-            { isDeleted: true }
-        );
+        await ChatMessageModel.updateMany({ conversationId }, { isDeleted: true });
 
         return NextResponse.json({ success: true });
     } catch (error) {

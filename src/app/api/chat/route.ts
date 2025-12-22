@@ -7,6 +7,22 @@ import dbConnect from "@/database/services/mongo";
 import { MY_MAIL } from "@/lib/constants";
 import { NextResponse } from "next/server";
 
+interface ConversationDoc {
+    _id: unknown;
+    participantId: unknown;
+    participantName: string;
+    participantEmail?: string;
+    participantImage?: string;
+    lastMessage?: string;
+    lastMessageAt?: Date;
+    lastMessageBy?: string;
+    unreadCountUser?: number;
+    unreadCountAdmin?: number;
+    isActive: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
+}
+
 // GET: Get conversations (admin gets all, user gets their own)
 export async function GET() {
     try {
@@ -27,11 +43,29 @@ export async function GET() {
             return NextResponse.json({ conversations });
         } else {
             // User gets their own conversation
-            const conversation = await ChatConversationModel.findOne({
+            const conversation = (await ChatConversationModel.findOne({
                 participantId: session.user.id,
                 isActive: true,
-            }).lean();
-            return NextResponse.json({ conversation });
+            }).lean()) as unknown as ConversationDoc | null;
+
+            // Sanitize response - remove admin-specific data
+            if (conversation) {
+                const sanitizedConversation = {
+                    _id: conversation._id,
+                    participantId: conversation.participantId,
+                    participantName: conversation.participantName,
+                    participantImage: conversation.participantImage,
+                    lastMessage: conversation.lastMessage,
+                    lastMessageAt: conversation.lastMessageAt,
+                    lastMessageBy: conversation.lastMessageBy,
+                    unreadCountUser: conversation.unreadCountUser || 0,
+                    isActive: conversation.isActive,
+                    createdAt: conversation.createdAt,
+                    updatedAt: conversation.updatedAt,
+                };
+                return NextResponse.json({ conversation: sanitizedConversation });
+            }
+            return NextResponse.json({ conversation: null });
         }
     } catch (error) {
         console.error("Error fetching conversations:", error);
@@ -118,10 +152,39 @@ export async function POST(request: Request) {
             { upsert: true }
         );
 
+        // Sanitize response - remove admin-specific data for user
+        const sanitizedConversation = {
+            _id: conversation._id,
+            participantId: conversation.participantId,
+            participantName: conversation.participantName,
+            participantImage: conversation.participantImage,
+            lastMessage: conversation.lastMessage,
+            lastMessageAt: conversation.lastMessageAt,
+            lastMessageBy: conversation.lastMessageBy,
+            unreadCountUser: conversation.unreadCountUser || 0,
+            isActive: conversation.isActive,
+            createdAt: conversation.createdAt,
+            updatedAt: conversation.updatedAt,
+        };
+
+        // Sanitize message - remove sensitive fields
+        const sanitizedMessage = {
+            _id: chatMessage._id,
+            conversationId: chatMessage.conversationId,
+            senderType: chatMessage.senderType,
+            senderName: chatMessage.senderName,
+            senderImage: chatMessage.senderImage,
+            content: chatMessage.content,
+            isRead: chatMessage.isRead,
+            isEdited: chatMessage.isEdited,
+            createdAt: chatMessage.createdAt,
+            updatedAt: chatMessage.updatedAt,
+        };
+
         return NextResponse.json({
             success: true,
-            conversation,
-            message: chatMessage,
+            conversation: sanitizedConversation,
+            message: sanitizedMessage,
         });
     } catch (error) {
         console.error("Error creating conversation:", error);

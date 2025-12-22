@@ -113,7 +113,23 @@ export async function PATCH(request: Request, { params }: RouteParams) {
             });
         }
 
-        return NextResponse.json({ success: true, message });
+        // Sanitize response for non-admin users
+        const responseMessage = isAdmin
+            ? message
+            : {
+                  _id: message._id,
+                  conversationId: message.conversationId,
+                  senderType: message.senderType,
+                  senderName: message.senderName,
+                  senderImage: message.senderImage,
+                  content: message.content,
+                  isRead: message.isRead,
+                  isEdited: message.isEdited,
+                  createdAt: message.createdAt,
+                  updatedAt: message.updatedAt,
+              };
+
+        return NextResponse.json({ success: true, message: responseMessage });
     } catch (error) {
         console.error("Error editing message:", error);
         return NextResponse.json({ error: "Failed to edit message" }, { status: 500 });

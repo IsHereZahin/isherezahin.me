@@ -5,7 +5,10 @@ import dbConnect from "@/database/services/mongo";
 import { MY_MAIL } from "@/lib/constants";
 import { NextResponse } from "next/server";
 
-// GET: Get active users (for admin) or admin presence (for users)
+// Timeout for considering a user offline (30 seconds - slightly more than heartbeat interval)
+const ONLINE_TIMEOUT_MS = 30 * 1000;
+
+// GET: Get active users (for admin) or user's own presence
 export async function GET() {
     try {
         const session = await auth();
@@ -18,20 +21,22 @@ export async function GET() {
         const isAdmin = session.user.email?.toLowerCase() === MY_MAIL.toLowerCase();
 
         if (isAdmin) {
-            // Admin gets all active users (online in last 5 minutes), excluding admin
-            const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-            
-            // First get admin user ID to exclude
-            const adminUser = await UserModel.findOne({ 
-                email: { $regex: new RegExp(`^${MY_MAIL}$`, 'i') }
-            }).lean() as { _id: { toString(): string } } | null;
-            
+            // Admin gets all active users, excluding admin
+            const timeoutThreshold = new Date(Date.now() - ONLINE_TIMEOUT_MS);
+
+            // Get admin user ID to exclude
+            const escapedMail = MY_MAIL.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            const adminUser = (await UserModel.findOne({
+                email: { $regex: new RegExp("^" + escapedMail + "$", "i") },
+            }).lean()) as { _id: { toString(): string } } | null;
+
             const adminUserId = adminUser?._id?.toString();
 
+            // Find users who are online OR were seen recently
             const activeUsersQuery: Record<string, unknown> = {
                 $or: [
-                    { isOnline: true },
-                    { lastSeen: { $gte: fiveMinutesAgo } },
+                    { isOnline: true, lastSeen: { $gte: timeoutThreshold } },
+                    { lastSeen: { $gte: new Date(Date.now() - 5 * 60 * 1000) } }, // Show recently active
                 ],
             };
 
@@ -44,11 +49,21 @@ export async function GET() {
                 .populate("userId", "name email image")
                 .lean();
 
-            // Filter out any null userId entries and admin
-            const filteredUsers = activeUsers.filter(u => {
-                const userEmail = (u.userId as { email?: string })?.email;
-                return u.userId && userEmail?.toLowerCase() !== MY_MAIL.toLowerCase();
-            });
+            // Filter and mark actual online status based on timeout
+            const filteredUsers = activeUsers
+                .filter((u) => {
+                    const userEmail = (u.userId as { email?: string })?.email;
+                    return u.userId && userEmail?.toLowerCase() !== MY_MAIL.toLowerCase();
+                })
+                .map((u) => {
+                    const lastSeen = new Date(u.lastSeen as Date);
+                    const isActuallyOnline =
+                        u.isOnline && lastSeen.getTime() >= timeoutThreshold.getTime();
+                    return {
+                        ...u,
+                        isOnline: isActuallyOnline,
+                    };
+                });
 
             return NextResponse.json({ activeUsers: filteredUsers });
         } else {

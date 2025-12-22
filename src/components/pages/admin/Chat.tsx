@@ -39,7 +39,7 @@ function AdminChatContent() {
         };
 
         updatePresence();
-        const interval = setInterval(updatePresence, 30000);
+        const interval = setInterval(updatePresence, 15000);
 
         return () => {
             clearInterval(interval);

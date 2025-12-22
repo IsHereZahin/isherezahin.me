@@ -1,7 +1,6 @@
 "use client";
 
 import { chat } from "@/lib/api";
-import { MY_MAIL } from "@/lib/constants";
 import { ChatContext } from "@/lib/contexts";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useQueryClient } from "@tanstack/react-query";
@@ -19,10 +18,9 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     const [globalHideStatus, setGlobalHideStatus] = useState(false);
     const [isStatusLoading, setIsStatusLoading] = useState(false);
 
-    // ============ PRESENCE TRACKING (for non-admin users) ============
+    // ============ PRESENCE TRACKING (for ALL users including admin) ============
     useEffect(() => {
-        const isUserAdmin = user?.email?.toLowerCase() === MY_MAIL.toLowerCase();
-        if (!user || isUserAdmin) return;
+        if (!user) return;
 
         const updatePresence = async (isOnline: boolean) => {
             try {
@@ -32,8 +30,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
             }
         };
 
+        // Set online immediately
         updatePresence(true);
-        const interval = setInterval(() => updatePresence(true), 30000);
+
+        // Heartbeat every 15 seconds for more responsive tracking
+        const interval = setInterval(() => updatePresence(true), 15000);
 
         const handleVisibilityChange = () => {
             updatePresence(!document.hidden);
@@ -51,10 +52,22 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         };
         window.addEventListener("beforeunload", handleBeforeUnload);
 
+        // Handle page hide (mobile browsers)
+        const handlePageHide = () => {
+            fetch("/api/chat/presence", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ isOnline: false }),
+                keepalive: true,
+            });
+        };
+        window.addEventListener("pagehide", handlePageHide);
+
         return () => {
             clearInterval(interval);
             document.removeEventListener("visibilitychange", handleVisibilityChange);
             window.removeEventListener("beforeunload", handleBeforeUnload);
+            window.removeEventListener("pagehide", handlePageHide);
             updatePresence(false);
         };
     }, [user]);

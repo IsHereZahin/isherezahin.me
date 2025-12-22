@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { ChatConversationModel } from "@/database/models/chat-conversation-model";
 import dbConnect from "@/database/services/mongo";
 import { MY_MAIL } from "@/lib/constants";
 import { NextResponse } from "next/server";
@@ -36,6 +37,16 @@ export async function GET(request: Request) {
 
         const isAdmin = session.user.email?.toLowerCase() === MY_MAIL.toLowerCase();
 
+        // Verify access to conversation
+        const conversation = await ChatConversationModel.findById(conversationId);
+        if (!conversation) {
+            return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
+        }
+
+        if (!isAdmin && conversation.participantId.toString() !== session.user.id) {
+            return NextResponse.json({ error: "Access denied" }, { status: 403 });
+        }
+
         // Get the other party's typing status
         const otherPartyKey = isAdmin
             ? `user-${conversationId}`
@@ -65,7 +76,19 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "Conversation ID required" }, { status: 400 });
         }
 
+        await dbConnect();
+
         const isAdmin = session.user.email?.toLowerCase() === MY_MAIL.toLowerCase();
+
+        // Verify access to conversation
+        const conversation = await ChatConversationModel.findById(conversationId);
+        if (!conversation) {
+            return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
+        }
+
+        if (!isAdmin && conversation.participantId.toString() !== session.user.id) {
+            return NextResponse.json({ error: "Access denied" }, { status: 403 });
+        }
 
         // Set typing status
         const key = isAdmin ? `admin-${conversationId}` : `user-${conversationId}`;

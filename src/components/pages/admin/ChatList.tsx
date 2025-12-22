@@ -56,7 +56,7 @@ export default function ChatList({
     const { data: presenceData } = useQuery({
         queryKey: ["admin-active-users"],
         queryFn: () => chat.getActiveUsers(),
-        refetchInterval: 30000,
+        refetchInterval: 5000,
     });
 
     const conversations: Conversation[] = conversationsData?.conversations || [];

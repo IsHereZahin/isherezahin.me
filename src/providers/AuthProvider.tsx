@@ -46,7 +46,19 @@ function AuthProviderInner({ children }: { readonly children: React.ReactNode })
         await signIn(provider);
     }, [closeLoginModal]);
 
-    const logout = useCallback(() => signOut(), []);
+    const logout = useCallback(async () => {
+        // Update presence to offline before signing out
+        try {
+            await fetch("/api/chat/presence", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ isOnline: false }),
+            });
+        } catch {
+            // Ignore errors, proceed with logout
+        }
+        signOut();
+    }, []);
 
     const isAdmin = session?.user?.email?.toLowerCase() === MY_MAIL.toLowerCase();
     const isGitHubUser = session?.user?.provider === "github";

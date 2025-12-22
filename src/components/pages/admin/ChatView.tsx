@@ -348,7 +348,7 @@ export default function ChatView({ conversation, onBack, onDelete }: ChatViewPro
                                         isEdited={msg.isEdited}
                                         editHistory={msg.editHistory}
                                         createdAt={msg.createdAt}
-                                        canEdit={msg.senderType === "admin" && msg.senderId === user?.id}
+                                        canEdit={msg.senderType === "admin"}
                                         isAdmin={true}
                                         onStartEdit={(id, content) => setEditingMessage({ id, content })}
                                         onViewHistory={handleViewHistory}

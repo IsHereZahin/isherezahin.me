@@ -24,7 +24,6 @@ interface Message {
     senderName: string;
     senderImage?: string;
     senderType: "user" | "admin";
-    senderId: string;
     isRead: boolean;
     readAt?: string;
     isEdited: boolean;
@@ -249,14 +248,16 @@ export default function ProfileChat() {
     );
 
     const canEditMessage = (message: Message) => {
-        if (message.senderId !== user?.id) return false;
+        // User can only edit their own messages (senderType === "user")
+        if (message.senderType !== "user") return false;
         const messageAge = Date.now() - new Date(message.createdAt).getTime();
         const tenMinutes = 10 * 60 * 1000;
         return messageAge <= tenMinutes;
     };
 
     const shouldShowReadStatus = (message: Message) => {
-        if (message.senderId === user?.id) {
+        // Show read status for user's own messages if admin hasn't hidden their status
+        if (message.senderType === "user") {
             return !adminPresence?.hideLastSeen;
         }
         return true;
@@ -343,7 +344,7 @@ export default function ProfileChat() {
                                         senderName={msg.senderName}
                                         senderImage={msg.senderImage}
                                         senderType={msg.senderType}
-                                        isOwn={msg.senderId === user?.id}
+                                        isOwn={msg.senderType === "user"}
                                         isRead={shouldShowReadStatus(msg) ? msg.isRead : false}
                                         readAt={msg.readAt}
                                         isEdited={msg.isEdited}
