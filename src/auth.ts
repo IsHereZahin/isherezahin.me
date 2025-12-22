@@ -156,7 +156,16 @@ export const authConfig: NextAuthConfig = {
                         token.userId = dbUser._id.toString();
                         token.bio = dbUser.bio;
 
-                        // Create session record with real device info
+                        // First, revoke any existing sessions for the same device type (one device = one session)
+                        await SessionModel.updateMany(
+                            {
+                                userId: dbUser._id,
+                                deviceType: sessionInfo?.deviceType || "Unknown",
+                                isRevoked: false,
+                            },
+                            { isRevoked: true }
+                        );
+
                         const sessionToken = crypto.randomUUID();
                         token.sessionToken = sessionToken;
 
@@ -164,6 +173,7 @@ export const authConfig: NextAuthConfig = {
                             userId: dbUser._id,
                             sessionToken,
                             deviceType: sessionInfo?.deviceType || "Unknown",
+                            ipAddress: sessionInfo?.ipAddress || null,
                             expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
                         });
                     }

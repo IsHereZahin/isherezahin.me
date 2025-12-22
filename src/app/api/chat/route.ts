@@ -36,8 +36,11 @@ export async function GET() {
         const isAdmin = session.user.email?.toLowerCase() === MY_MAIL.toLowerCase();
 
         if (isAdmin) {
-            // Admin gets all conversations
-            const conversations = await ChatConversationModel.find({ isActive: true })
+            // Admin gets all conversations except their own (no self-chat)
+            const conversations = await ChatConversationModel.find({
+                isActive: true,
+                participantEmail: { $ne: MY_MAIL.toLowerCase() },
+            })
                 .sort({ lastMessageAt: -1 })
                 .lean();
             return NextResponse.json({ conversations });

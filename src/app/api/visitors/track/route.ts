@@ -1,5 +1,6 @@
 import { VisitorModel } from "@/database/models/visitor-model";
 import dbConnect from "@/database/services/mongo";
+import { getClientIp } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -14,8 +15,7 @@ export async function POST(request: NextRequest) {
         }
 
         const userAgent = request.headers.get("user-agent") || null;
-        const forwarded = request.headers.get("x-forwarded-for");
-        const ip = forwarded ? forwarded.split(",")[0].trim() : null;
+        const ip = getClientIp(request);
 
         await VisitorModel.create({
             fingerprint,

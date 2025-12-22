@@ -33,6 +33,7 @@ export async function GET() {
         const formattedSessions = sessions.map((s) => ({
             id: s._id.toString(),
             deviceType: s.deviceType,
+            ipAddress: s.ipAddress || null,
             createdAt: s.createdAt,
             lastActiveAt: s.lastActiveAt,
             isCurrent: s.sessionToken === session.sessionToken,

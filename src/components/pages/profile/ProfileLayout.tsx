@@ -66,31 +66,33 @@ export default function ProfileLayout({ children }: { children: ReactNode }) {
                     </div>
 
                     <nav className="space-y-2">
-                        {navItems.map((item) => {
-                            const Icon = item.icon;
-                            const isActive = currentSection === item.id;
-                            return (
-                                <Link
-                                    key={item.id}
-                                    href={item.href}
-                                    prefetch={true}
-                                    className={`flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${isActive
-                                        ? "bg-foreground text-secondary"
-                                        : "text-foreground hover:bg-muted"
-                                        }`}
-                                >
-                                    <span className="flex items-center gap-2">
-                                        <Icon className="h-4 w-4" />
-                                        {item.label}
-                                    </span>
-                                    {item.id === "chat" && unreadCount > 0 && (
-                                        <span className="h-5 min-w-5 px-1.5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-medium">
-                                            {unreadCount > 99 ? "99+" : unreadCount}
+                        {navItems
+                            .filter((item) => !(item.id === "chat" && isAdmin))
+                            .map((item) => {
+                                const Icon = item.icon;
+                                const isActive = currentSection === item.id;
+                                return (
+                                    <Link
+                                        key={item.id}
+                                        href={item.href}
+                                        prefetch={true}
+                                        className={`flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${isActive
+                                            ? "bg-foreground text-secondary"
+                                            : "text-foreground hover:bg-muted"
+                                            }`}
+                                    >
+                                        <span className="flex items-center gap-2">
+                                            <Icon className="h-4 w-4" />
+                                            {item.label}
                                         </span>
-                                    )}
-                                </Link>
-                            );
-                        })}
+                                        {item.id === "chat" && unreadCount > 0 && (
+                                            <span className="h-5 min-w-5 px-1.5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-medium">
+                                                {unreadCount > 99 ? "99+" : unreadCount}
+                                            </span>
+                                        )}
+                                    </Link>
+                                );
+                            })}
 
                         {isAdmin && (
                             <>

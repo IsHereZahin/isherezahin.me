@@ -1,11 +1,12 @@
 import { authConfig } from "@/auth";
-import { parseSessionInfo } from "@/lib/utils";
+import { getClientIp, parseSessionInfo } from "@/lib/utils";
 import NextAuth from "next-auth";
 import { NextRequest } from "next/server";
 
 async function handler(request: NextRequest) {
     const userAgent = request.headers.get("user-agent");
-    const sessionInfo = parseSessionInfo(userAgent);
+    const ipAddress = getClientIp(request);
+    const sessionInfo = parseSessionInfo(userAgent, ipAddress);
 
     // Create NextAuth instance with session info in the config
     const { handlers } = NextAuth({
@@ -18,10 +19,12 @@ async function handler(request: NextRequest) {
                     ...params,
                     sessionInfo,
                 };
-                
+
                 // Call the original jwt callback with session info
                 if (authConfig.callbacks?.jwt) {
-                    return authConfig.callbacks.jwt(extendedParams as Parameters<typeof authConfig.callbacks.jwt>[0]);
+                    return authConfig.callbacks.jwt(
+                        extendedParams as Parameters<typeof authConfig.callbacks.jwt>[0]
+                    );
                 }
                 return params.token;
             },

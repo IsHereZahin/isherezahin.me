@@ -11,6 +11,7 @@ import { toast } from "sonner";
 interface Session {
     id: string;
     deviceType: string;
+    ipAddress: string | null;
     createdAt: string;
     lastActiveAt: string;
     isCurrent: boolean;
@@ -83,6 +84,9 @@ export default function ProfileSessions() {
                                         <p className="font-semibold text-sm">{session.deviceType}</p>
                                         {session.isCurrent && <span className="px-2 py-0.5 text-xs bg-foreground text-background rounded-full font-medium">Current</span>}
                                     </div>
+                                    {session.ipAddress && (
+                                        <p className="text-xs text-muted-foreground">IP: {session.ipAddress}</p>
+                                    )}
                                     <p className="text-xs text-muted-foreground">{formatDate(session.createdAt)}</p>
                                 </div>
                             </div>
