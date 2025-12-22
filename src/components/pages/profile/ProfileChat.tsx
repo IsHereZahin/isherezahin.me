@@ -153,8 +153,12 @@ export default function ProfileChat() {
 
     // Scroll to bottom on new messages (only if already at bottom)
     useEffect(() => {
-        if (shouldScrollToBottom) {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        if (shouldScrollToBottom && messagesContainerRef.current) {
+            const container = messagesContainerRef.current;
+            container.scrollTo({
+                top: container.scrollHeight,
+                behavior: "smooth",
+            });
         }
     }, [allMessages, isAdminTyping, shouldScrollToBottom]);
 

@@ -13,75 +13,275 @@
   <img src="https://img.shields.io/github/license/isherezahin/isherezahin.me?style=for-the-badge&labelColor=2b2b2b" alt="MIT License" />
 </div> 
 
-Welcome to my personal blog repository! This is an open-source project where I share my thoughts, projects, and insights. Feel free to explore, contribute, and learn from the code. Get inspired and join the community of developers enhancing this project.
+A modern, full-featured personal portfolio and blog platform built with Next.js 16. Features a complete content management system, real-time chat, GitHub Discussions integration, and comprehensive analytics.
 
 ## Features
 
-### Core Technologies
-- Next.js 15 with App Router
-- TypeScript (strict configuration)
-- Tailwind CSS for styling
+### Blog Module
+- Create, edit, and publish blog posts with markdown support
+- Tag-based filtering and categorization
+- Full-text search functionality
+- Like system for blog posts
+- Auto-generated table of contents
+- Infinite scroll for seamless content loading
+- Comment notifications via email
 
-### UI/UX
-- Responsive design
-- Light/Dark mode
-- Image zoom with blur effect
-- Smooth motion animations
-- Table of contents for blog posts
+<!-- ![Blog Module](public/assets/images/web/blog.png) -->
 
-### Upcoming Features
+---
 
-- Fully functional comment system with real-time notifications
-- Like functionality
-- Post view counter
-- Advanced search for blogs and projects
-- Category-based email notifications for subscribers
-- Dynamic content support
-- High performance with near-perfect Lighthouse scores
-- SEO optimization with unique meta tags and dynamic Open Graph images
-- And more exciting features coming soon…
+### Project Module
+- Portfolio project showcase with images and descriptions
+- Tag-based filtering and search
+- Like system for projects
+- Cloudinary integration for image optimization
+
+<!-- ![Project Module](public/assets/images/web/project.png) -->
+
+---
+
+### Content Pages
+- **Home** - Hero section, featured blogs, projects, and testimonials
+- **About** - Personal bio, tech stack, coding hours, location, and work experience
+- **Uses** - Tools and technologies used
+- **Side Quests** - Personal projects and hobbies
+- **Bucket List** - Goals and aspirations
+- **Guestbook** - GitHub Discussions-powered guestbook with reactions
+- **Attribution** - Credits and acknowledgments
+- **Legal** - Privacy Policy and Terms of Service
+
+<!-- ![Content Pages](public/assets/images/web/pages.png) -->
+
+---
+
+### Live Chat Module
+- Real-time direct messaging
+- Typing indicators
+- Online/offline presence status
+- Admin chat interface
+
+<!-- ![Live Chat](public/assets/images/web/chat.png) -->
+
+---
+
+### User Session Module
+- Multi-provider OAuth (GitHub & Google) via NextAuth.js v5
+- Session management across devices
+- User profiles with bio and avatar customization
+- Admin role system with protected routes
+- User banning capabilities
+
+<!-- ![User Session](public/assets/images/web/session.png) -->
+
+---
+
+### Statistics Module
+- Visitor tracking (page views & unique visitors)
+- Device analytics (Android, iOS, Windows, macOS, Linux)
+- Referral source tracking
+- Popular pages analytics
+- 30-day visitor trends with charts
+- Privacy controls for public/private visibility
+
+<!-- ![Statistics](public/assets/images/web/statistics.png) -->
+
+---
+
+### Admin Settings Module
+- **Content Management** - Add, edit, delete blogs and projects
+- **User Management** - View, ban/unban users
+- **Subscriber Management** - Newsletter subscribers list
+- **Chat Management** - Admin chat interface
+- **Statistics Settings** - Toggle visibility of analytics sections
+- **Site Settings** - Contact info, about page, work experience configuration
+
+<!-- ![Admin Settings](public/assets/images/web/admin.png) -->
+
+---
+
+### Email Templates
+
+#### Blog Mail
+
+<div align="center">
+  <img src="public/assets/images/web/blog-mail-temp.png" alt="Blog Mail Template" width="600" />
+</div>
+
+#### Subscription OTP Mail
+
+<div align="center">
+  <img src="public/assets/images/web/otp-temp.png" alt="Subscription OTP Mail Template" width="600" />
+</div>
+
+---
+
+### UI/UX Features
+- Built with **shadcn/ui** component library
+- Light/Dark mode with system preference detection
+- Theme color picker for customizable accent colors
+- Responsive mobile-first design
+- Smooth animations powered by Framer Motion
+- Click-to-zoom images with blur effect
+- Command palette for quick navigation
+
+---
+
+### Security & API Protection
+This application implements role-based access control with secure API responses:
+
+- **Admin APIs** - Protected endpoints accessible only to authenticated admin users
+- **User APIs** - Authenticated user endpoints with session validation
+- **Public APIs** - Open endpoints with rate limiting and validation
+- **Role-based middleware** - Automatic request filtering based on user roles
+- **Session verification** - All protected routes verify session tokens via NextAuth.js
+- **Banned user handling** - Blocked users are automatically denied API access
+
+## Tech Stack
+
+| Category | Technologies |
+|----------|-------------|
+| Framework | Next.js 16, React 19 |
+| Language | TypeScript |
+| Styling | Tailwind CSS 4, tw-animate-css |
+| Database | MongoDB, Mongoose |
+| Authentication | NextAuth.js v5 (GitHub, Google OAuth) |
+| State Management | React Query (TanStack Query) |
+| Forms | React Hook Form, Zod validation |
+| UI Components | shadcn/ui, Radix UI, Lucide Icons |
+| Charts | Recharts |
+| Animations | Framer Motion |
+| Image Upload | Cloudinary |
+| Email | Nodemailer (SMTP) |
+| Drag & Drop | dnd-kit |
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js (version 18 or higher recommended)
-- npm (or yarn/pnpm)
-- Code editor (VS Code recommended)
+- Node.js 18 or higher
+- MongoDB database
+- GitHub OAuth App (for authentication)
+- Google OAuth credentials (optional)
+- Cloudinary account (for image uploads)
+- SMTP credentials (for newsletter)
 
-### Development Setup
-To run this project locally, follow these steps to set up the development environment.
+### Installation
 
-1. Clone the repository:  
+1. Clone the repository:
    ```bash
    git clone https://github.com/isherezahin/isherezahin.me
-2. Navigate to the project directory:
-   ```bash
    cd isherezahin.me
-3. Install dependencies:
+   ```
+
+2. Install dependencies:
    ```bash
    npm install
-4. Copy `.env.example` to `.env` and update the environment variables as needed (e.g., API keys or configuration values).
+   ```
+
+3. Configure environment variables:
+   ```bash
+   cp .env.example .env
+   ```
+
+4. Update `.env` with your credentials:
+   ```env
+   # User Info
+   NEXT_PUBLIC_MY_NAME="Your Name"
+   NEXT_PUBLIC_MY_FULL_NAME="Your Full Name"
+   NEXT_PUBLIC_MY_USERNAME="yourusername"
+   
+   # Database
+   MONGODB_URI="your_mongodb_connection_string"
+   
+   # Authentication
+   NEXTAUTH_SECRET="your_nextauth_secret"
+   AUTH_GITHUB_ID="your_github_oauth_client_id"
+   AUTH_GITHUB_SECRET="your_github_oauth_client_secret"
+   
+   # GitHub (for Guestbook)
+   NEXT_PUBLIC_GITHUB_REPO_OWNER="your_github_username"
+   NEXT_PUBLIC_GITHUB_REPO_NAME="your_repo_name"
+   GITHUB_ACCESS_TOKEN="your_github_personal_access_token"
+   
+   # Cloudinary
+   CLOUDINARY_CLOUD_NAME="your_cloud_name"
+   CLOUDINARY_API_KEY="your_api_key"
+   CLOUDINARY_API_SECRET="your_api_secret"
+   ```
+
 5. Run the development server:
    ```bash
    npm run dev
+   ```
 
-The application will be available at http://localhost:3000.
+6. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Contribution
-Contributions are welcome! If you would like to contribute ideas, designs, code, or other improvements, please feel free to open an issue or submit a pull request. All contributions should adhere to the project's code of conduct and follow existing patterns for consistency.
+### Scripts
 
-### Author
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server with Turbopack |
+| `npm run build` | Build for production |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
 
-- **Zahin** – [GitHub Profile](https://github.com/isherezahin)
+## Project Structure
 
-### Support / Sponsorship
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── (admin)/           # Admin dashboard routes
+│   ├── (main)/            # Public routes
+│   │   ├── about/         # About page
+│   │   ├── admin/         # Admin panel
+│   │   ├── blogs/         # Blog listing and details
+│   │   ├── guestbook/     # Guestbook page
+│   │   ├── profile/       # User profile pages
+│   │   ├── projects/      # Project showcase
+│   │   ├── statistics/    # Analytics dashboard
+│   │   └── ...
+│   └── api/               # API routes
+├── components/            # React components
+│   ├── admin/            # Admin-specific components
+│   ├── auth/             # Authentication components
+│   ├── chat/             # Chat system components
+│   ├── content/          # Content display components
+│   ├── home/             # Homepage sections
+│   ├── layouts/          # Layout components
+│   ├── pages/            # Page-level components
+│   └── ui/               # Reusable UI components
+├── database/             # MongoDB models and services
+├── lib/                  # Utilities and helpers
+└── providers/            # React context providers
+```
 
-If you find this project valuable, you can support its continued development by [becoming a sponsor](https://github.com/sponsors/isherezahin).
+## Contributing
 
-### License
+Contributions are welcome! Please feel free to open an issue or submit a pull request. All contributions should adhere to the project's code of conduct.
+
+## Author
+
+**Zahin** – [GitHub Profile](https://github.com/isherezahin)
+
+## Support
+
+If you find this project valuable, consider [becoming a sponsor](https://github.com/sponsors/isherezahin).
+
+## License
 
 This project is licensed under the [MIT License](LICENSE).
 
+---
+
+<div align="center">
+
+### Star & Fork
+
+If you find this project useful, please consider giving it a **star** and **fork** to stay updated with the latest features and improvements!
+
+[![GitHub stars](https://img.shields.io/github/stars/isherezahin/isherezahin.me?style=social)](https://github.com/isherezahin/isherezahin.me/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/isherezahin/isherezahin.me?style=social)](https://github.com/isherezahin/isherezahin.me/fork)
+
+</div>
 
 <p align="center">
 Built with <strong>TypeScript</strong>, <strong>React</strong>, <strong>Tailwind CSS</strong>, and <strong>Next.js</strong> 💚 Crafted in Bangladesh
