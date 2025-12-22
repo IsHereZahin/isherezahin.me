@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode, Suspense } from "react";
 import AuthProvider from "./AuthProvider";
+import { ChatProvider } from "./ChatProvider";
 
 const queryClient = new QueryClient();
 
@@ -22,7 +23,9 @@ export default function ProviderIndex({
                 <Suspense fallback={null}>
                     <BannedUserCheck />
                 </Suspense>
-                {children}
+                <ChatProvider>
+                    {children}
+                </ChatProvider>
             </QueryClientProvider>
         </AuthProvider>
     );

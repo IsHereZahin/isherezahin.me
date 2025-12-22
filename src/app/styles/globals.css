@@ -447,3 +447,46 @@ html:has(a[href^="#"]:target) {
 .icon-bw {
     color: var(--foreground);
 }
+
+/* Professional Chat Scrollbar - Hidden by default, visible on hover */
+.chat-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+}
+
+.chat-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 3px;
+    transition: background 0.2s ease;
+}
+
+/* Show scrollbar on hover */
+.chat-scrollbar:hover {
+    scrollbar-color: var(--border) transparent;
+}
+
+.chat-scrollbar:hover::-webkit-scrollbar-thumb {
+    background: var(--border);
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground);
+}
+
+/* Show scrollbar when actively scrolling */
+.chat-scrollbar:active {
+    scrollbar-color: var(--muted-foreground) transparent;
+}
+
+.chat-scrollbar:active::-webkit-scrollbar-thumb {
+    background: var(--muted-foreground);
+}

@@ -71,3 +71,11 @@ export interface ProjectDocument {
     content: string;
     published: boolean;
 }
+
+export interface ChatContextType {
+    unreadCount: number;
+    refreshUnreadCount: () => Promise<void>;
+    globalHideStatus: boolean;
+    isStatusLoading: boolean;
+    toggleGlobalStatus: () => Promise<void>;
+}

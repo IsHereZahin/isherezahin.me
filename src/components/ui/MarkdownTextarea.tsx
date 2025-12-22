@@ -1,39 +1,8 @@
 "use client"
 
-import {
-    AtSign,
-    Bold,
-    ChevronDown,
-    Code,
-    Code2,
-    Heading,
-    Italic,
-    Link2,
-    List,
-    Quote,
-} from "lucide-react"
+import { markdownTools, parseMarkdown, type MarkdownTool } from "@/lib/markdown"
+import { Bold, ChevronDown } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
-
-interface Tool {
-    key: string
-    title: string
-    icon: React.ReactNode
-    before: string
-    after: string
-    placeholder: string
-}
-
-const allTools: Tool[] = [
-    { key: 'bold', title: "Bold", icon: <Bold className="w-3.5 h-3.5" />, before: "**", after: "**", placeholder: "bold text" },
-    { key: 'italic', title: "Italic", icon: <Italic className="w-3.5 h-3.5" />, before: "*", after: "*", placeholder: "italic text" },
-    { key: 'heading', title: "Heading", icon: <Heading className="w-3.5 h-3.5" />, before: "# ", after: "", placeholder: "Heading" },
-    { key: 'quote', title: "Quote", icon: <Quote className="w-3.5 h-3.5" />, before: "> ", after: "", placeholder: "Quote" },
-    { key: 'inlineCode', title: "Inline Code", icon: <Code className="w-3.5 h-3.5" />, before: "`", after: "`", placeholder: "code" },
-    { key: 'codeBlock', title: "Code Block", icon: <Code2 className="w-3.5 h-3.5" />, before: "```\n", after: "\n```", placeholder: "code block" },
-    { key: 'link', title: "Link", icon: <Link2 className="w-3.5 h-3.5" />, before: "(", after: ")[url]", placeholder: "display text" },
-    { key: 'list', title: "List", icon: <List className="w-3.5 h-3.5" />, before: "- ", after: "", placeholder: "list item" },
-    { key: 'mention', title: "Mention", icon: <AtSign className="w-3.5 h-3.5" />, before: "@", after: "", placeholder: "username" },
-]
 
 interface MarkdownTextareaProps {
     value: string
@@ -44,64 +13,6 @@ interface MarkdownTextareaProps {
     showPreview?: boolean
     className?: string
     id?: string
-}
-
-function parseMarkdown(text: string): string {
-    let html = text
-
-    // Escape HTML
-    html = html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-
-    // Headers
-    html = html.replace(/^### (.*?)$/gm, "<h3 class='text-lg font-semibold mt-4 mb-2 text-foreground'>$1</h3>")
-    html = html.replace(/^## (.*?)$/gm, "<h2 class='text-xl font-semibold mt-4 mb-2 text-foreground'>$1</h2>")
-    html = html.replace(/^# (.*?)$/gm, "<h1 class='text-2xl font-semibold mt-4 mb-2 text-foreground'>$1</h1>")
-
-    // Bold & Italic
-    html = html.replace(/\*\*(.*?)\*\*/g, "<strong class='font-semibold text-foreground'>$1</strong>")
-    html = html.replace(/\*(.*?)\*/g, "<em class='italic text-foreground'>$1</em>")
-
-    // Code blocks
-    html = html.replace(
-        /```([\s\S]*?)```/g,
-        "<pre class='bg-muted p-3 rounded-lg text-sm overflow-x-auto text-secondary-foreground my-2'><code>$1</code></pre>"
-    )
-
-    // Inline code
-    html = html.replace(
-        /`([^`]+)`/g,
-        "<code class='bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-secondary-foreground'>$1</code>"
-    )
-
-    // Custom link format: (display text)[url]
-    html = html.replace(
-        /\(([^)]+)\)\[([^\]]+)\]/g,
-        "<a href='$2' class='text-primary hover:underline' target='_blank' rel='noopener noreferrer'>$1</a>"
-    )
-
-    // Standard markdown links: [display text](url)
-    html = html.replace(
-        /\[([^\]]+)\]\(([^)]+)\)/g,
-        "<a href='$2' class='text-primary hover:underline' target='_blank' rel='noopener noreferrer'>$1</a>"
-    )
-
-    // Blockquotes
-    html = html.replace(
-        /^&gt; (.*?)$/gm,
-        "<blockquote class='border-l-2 border-primary pl-3 italic text-muted-foreground my-2'>$1</blockquote>"
-    )
-
-    // Lists
-    html = html.replace(/^- (.*?)$/gm, "<li class='ml-4 text-secondary-foreground'>$1</li>")
-    html = html.replace(/(<li[\s\S]*?<\/li>)/g, "<ul class='list-disc my-1'>$1</ul>")
-
-    // Mentions
-    html = html.replace(/@(\w+)/g, "<span class='text-primary font-semibold'>@$1</span>")
-
-    // Line breaks
-    html = html.replace(/\n/g, "<br />")
-
-    return html
 }
 
 export default function MarkdownTextarea({
@@ -171,7 +82,7 @@ export default function MarkdownTextarea({
 
     const isToolDisabled = disabled || showPreview
 
-    const renderToolButton = (tool: Tool, showLabel = false) => (
+    const renderToolButton = (tool: MarkdownTool, showLabel = false) => (
         <button
             key={tool.key}
             type="button"
@@ -215,14 +126,14 @@ export default function MarkdownTextarea({
 
                         {dropdownOpen && (
                             <div className="absolute left-0 top-full mt-1 z-50 min-w-[160px] max-h-[200px] overflow-y-auto rounded-lg border bg-background shadow-lg py-1 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border">
-                                {allTools.map(tool => renderToolButton(tool, true))}
+                                {markdownTools.map(tool => renderToolButton(tool, true))}
                             </div>
                         )}
                     </div>
                 ) : (
                     /* Inline toolbar for larger screens */
                     <div className="flex items-center gap-0.5 flex-wrap">
-                        {allTools.map(tool => renderToolButton(tool))}
+                        {markdownTools.map(tool => renderToolButton(tool))}
                     </div>
                 )}
 

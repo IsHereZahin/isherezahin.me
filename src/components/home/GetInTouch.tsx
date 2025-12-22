@@ -35,7 +35,7 @@ const skillPositions = [
 
 export default function GetInTouch() {
     const [scope, animate] = useAnimate()
-    const { user, status, openLoginModal } = useAuth()
+    const { user, status, openLoginModal, isAdmin } = useAuth()
     const [isMessageModalOpen, setIsMessageModalOpen] = useState(false)
 
     const { data, isLoading } = useQuery<ContactInfoData>({
@@ -60,6 +60,9 @@ export default function GetInTouch() {
     }), [data]);
 
     const handleSendMessageClick = () => {
+        // Admin cannot send messages to themselves
+        if (isAdmin) return;
+
         if (status === 'authenticated' && user) {
             setIsMessageModalOpen(true)
             return
@@ -191,7 +194,7 @@ export default function GetInTouch() {
                                 >
                                     {contactData.email}
                                 </a>
-                            ) : (
+                            ) : !isAdmin ? (
                                 <button
                                     onClick={handleSendMessageClick}
                                     className="inline-flex items-center gap-2 text-white px-4 py-2 rounded-full text-sm bg-gradient-to-b from-red-600 to-red-400 hover:from-red-700 hover:to-red-400 transition-all duration-300"
@@ -199,16 +202,18 @@ export default function GetInTouch() {
                                     <MessageCircle className="h-4 w-4" />
                                     Send Message
                                 </button>
-                            )}
+                            ) : null}
                         </div>
                     </div>
                 </div>
             </div>
 
-            <SendMessageModal
-                isOpen={isMessageModalOpen}
-                onClose={() => setIsMessageModalOpen(false)}
-            />
+            {!isAdmin && (
+                <SendMessageModal
+                    isOpen={isMessageModalOpen}
+                    onClose={() => setIsMessageModalOpen(false)}
+                />
+            )}
         </Section>
     )
 }

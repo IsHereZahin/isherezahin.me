@@ -3,13 +3,15 @@
 import MotionWrapper from "@/components/motion/MotionWrapper";
 import { BlurImage, Button, PageTitle, Section } from "@/components/ui";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { LogIn, LogOut, Monitor, Settings, Shield, User } from "lucide-react";
+import { useChatUnread } from "@/lib/hooks/useChat";
+import { LogIn, LogOut, MessageCircle, Monitor, Settings, Shield, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 
 const navItems = [
     { id: "personal", label: "Personal Information", icon: User, href: "/profile/personal" },
+    { id: "chat", label: "Chat with Admin", icon: MessageCircle, href: "/profile/chat" },
     { id: "sessions", label: "Sessions", icon: Monitor, href: "/profile/sessions" },
     { id: "settings", label: "Settings", icon: Settings, href: "/profile/settings" },
 ];
@@ -17,6 +19,7 @@ const navItems = [
 export default function ProfileLayout({ children }: { children: ReactNode }) {
     const { user, logout, login, isAdmin } = useAuth();
     const pathname = usePathname();
+    const { unreadCount } = useChatUnread();
 
     const currentSection = pathname.split("/").pop() || "personal";
 
@@ -71,13 +74,20 @@ export default function ProfileLayout({ children }: { children: ReactNode }) {
                                     key={item.id}
                                     href={item.href}
                                     prefetch={true}
-                                    className={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-colors ${isActive
+                                    className={`flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${isActive
                                         ? "bg-foreground text-secondary"
                                         : "text-foreground hover:bg-muted"
                                         }`}
                                 >
-                                    <Icon className="h-4 w-4" />
-                                    {item.label}
+                                    <span className="flex items-center gap-2">
+                                        <Icon className="h-4 w-4" />
+                                        {item.label}
+                                    </span>
+                                    {item.id === "chat" && unreadCount > 0 && (
+                                        <span className="h-5 min-w-5 px-1.5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-medium">
+                                            {unreadCount > 99 ? "99+" : unreadCount}
+                                        </span>
+                                    )}
                                 </Link>
                             );
                         })}

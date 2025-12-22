@@ -1,13 +1,14 @@
 "use client";
 
 import { useAuth } from "@/lib/hooks/useAuth";
+import { useChatUnread } from "@/lib/hooks/useChat";
 import type { PopupState, ThemeMode } from "@/utils/types";
 import { Command, Languages, Moon, Palette, Sun, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import CommandPopup from "./CommandPopup";
 import LanguageDropdown from "./LanguageDropdown";
-import ThemeColorPicker from "./ThemeColorPicker";
 import ProfileDropdown from "./ProfileDropdown";
+import ThemeColorPicker from "./ThemeColorPicker";
 
 const defaultHex = "#000000";
 
@@ -31,7 +32,8 @@ function adjustLightness(hex: string, factor: number): string {
 }
 
 export default function HeaderActions() {
-    const { user } = useAuth();
+    const { user, isAdmin } = useAuth();
+    const { unreadCount } = useChatUnread();
     const [state, setState] = useState<{
         mode: ThemeMode;
         colorTheme: string;
@@ -269,6 +271,11 @@ export default function HeaderActions() {
                         aria-label="User profile"
                     >
                         <User className="size-4" />
+                        {unreadCount > 0 && (
+                            <span className="absolute -top-1 -right-1 h-4 min-w-4 px-1 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-medium">
+                                {unreadCount > 9 ? "9+" : unreadCount}
+                            </span>
+                        )}
                     </button>
 
                     {state.activePopup === "profile" && (

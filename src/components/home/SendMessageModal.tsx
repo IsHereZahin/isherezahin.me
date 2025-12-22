@@ -10,8 +10,10 @@ import {
     DialogTitle,
     MarkdownTextarea,
 } from "@/components/ui"
+import { ApiError, chat } from '@/lib/api'
 import { useAuth } from '@/lib/hooks/useAuth'
-import { Loader2, Send } from 'lucide-react'
+import { Loader2, MessageCircle, Send } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -22,8 +24,8 @@ interface SendMessageModalProps {
 
 export default function SendMessageModal({ isOpen, onClose }: SendMessageModalProps) {
     const { user } = useAuth()
+    const router = useRouter()
     const [message, setMessage] = useState('')
-    const [subject, setSubject] = useState('')
     const [sending, setSending] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -36,26 +38,18 @@ export default function SendMessageModal({ isOpen, onClose }: SendMessageModalPr
 
         setSending(true)
         try {
-            const response = await fetch('/api/contact/message', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    subject: subject.trim() || 'No Subject',
-                    message: message.trim()
-                }),
-            })
+            // Send message via chat API (creates conversation if needed)
+            await chat.sendMessage(null, message.trim())
 
-            if (!response.ok) {
-                const data = await response.json()
-                throw new Error(data.error || 'Failed to send message')
-            }
-
-            toast.success('Message sent successfully!')
+            toast.success('Message sent! Redirecting to chat...')
             setMessage('')
-            setSubject('')
             onClose()
+
+            // Redirect to live chat
+            router.push('/profile/chat')
         } catch (error) {
-            toast.error(error instanceof Error ? error.message : 'Failed to send message')
+            const errorMessage = error instanceof ApiError ? error.message : 'Failed to send message'
+            toast.error(errorMessage)
         } finally {
             setSending(false)
         }
@@ -64,9 +58,13 @@ export default function SendMessageModal({ isOpen, onClose }: SendMessageModalPr
     const handleClose = () => {
         if (!sending) {
             setMessage('')
-            setSubject('')
             onClose()
         }
+    }
+
+    const handleGoToChat = () => {
+        onClose()
+        router.push('/profile/chat')
     }
 
     return (
@@ -76,26 +74,11 @@ export default function SendMessageModal({ isOpen, onClose }: SendMessageModalPr
                     <DialogTitle>Send a Message</DialogTitle>
                     <DialogDescription>
                         {user?.name ? `Hi ${user.name.split(' ')[0]}, ` : ''}
-                        Send me a message and I&apos;ll get back to you soon.
+                        Start a conversation and I&apos;ll get back to you soon.
                     </DialogDescription>
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label htmlFor="subject" className="block text-sm font-medium mb-1.5">
-                            Subject <span className="text-muted-foreground">(optional)</span>
-                        </label>
-                        <input
-                            id="subject"
-                            type="text"
-                            value={subject}
-                            onChange={(e) => setSubject(e.target.value)}
-                            placeholder="What's this about?"
-                            disabled={sending}
-                            className="w-full px-3 py-2 rounded-lg border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
-                        />
-                    </div>
-
                     <div>
                         <label htmlFor="message" className="block text-sm font-medium mb-1.5">
                             Message <span className="text-red-500">*</span>
@@ -110,19 +93,21 @@ export default function SendMessageModal({ isOpen, onClose }: SendMessageModalPr
                         />
                     </div>
 
-                    <DialogFooter className="gap-2 sm:gap-0">
+                    <DialogFooter className="flex-col sm:flex-row gap-2">
                         <Button
                             type="button"
-                            variant="ghost"
-                            onClick={handleClose}
+                            variant="outline"
+                            onClick={handleGoToChat}
                             disabled={sending}
+                            className="gap-2 w-full sm:w-auto"
                         >
-                            Cancel
+                            <MessageCircle className="h-4 w-4" />
+                            Go to Chat
                         </Button>
                         <Button
                             type="submit"
                             disabled={sending || !message.trim()}
-                            className="gap-2"
+                            className="gap-2 w-full sm:w-auto"
                         >
                             {sending ? (
                                 <>
@@ -132,7 +117,7 @@ export default function SendMessageModal({ isOpen, onClose }: SendMessageModalPr
                             ) : (
                                 <>
                                     <Send className="h-4 w-4" />
-                                    Send Message
+                                    Send & Open Chat
                                 </>
                             )}
                         </Button>
