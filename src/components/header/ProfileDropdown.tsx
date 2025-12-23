@@ -2,11 +2,13 @@
 
 import MotionPopup from "@/components/motion/MotionPopup";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { LogOut, Settings, User } from "lucide-react";
+import { useChatUnread } from "@/lib/hooks/useChat";
+import { LogOut, MessageCircle, Settings, User } from "lucide-react";
 import Link from "next/link";
 
 export default function ProfileDropdown({ onClose }: { readonly onClose: () => void }) {
     const { user, logout, isAdmin } = useAuth();
+    const { unreadCount } = useChatUnread();
 
     if (!user) return null;
 
@@ -23,6 +25,23 @@ export default function ProfileDropdown({ onClose }: { readonly onClose: () => v
                     <p className="text-xs sm:text-sm font-medium text-foreground">{user.name || user.email}</p>
                     <p className="text-[10px] sm:text-xs text-muted-foreground">{user.email}</p>
                 </div>
+            </Link>
+
+            {/* Chat Option */}
+            <Link
+                href={isAdmin ? "/admin/chat" : "/profile/chat"}
+                className="flex items-center justify-between gap-2 px-3 py-2 rounded-md hover:bg-muted mt-1"
+                onClick={onClose}
+            >
+                <div className="flex items-center gap-2">
+                    <MessageCircle className="h-4 w-4" />
+                    Chat
+                </div>
+                {unreadCount > 0 && (
+                    <span className="h-5 min-w-5 px-1.5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-medium animate-pulse">
+                        {unreadCount > 99 ? "99+" : unreadCount}
+                    </span>
+                )}
             </Link>
 
             {/* Admin Route */}
