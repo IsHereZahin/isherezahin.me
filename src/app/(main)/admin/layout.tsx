@@ -149,7 +149,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                                         {item.label}
                                     </span>
                                     {item.id === "chat" && totalUnread > 0 && (
-                                        <span className="h-5 min-w-5 px-1.5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-medium">
+                                        <span className="h-5 min-w-5 px-1.5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-medium animate-pulse">
                                             {totalUnread > 99 ? "99+" : totalUnread}
                                         </span>
                                     )}

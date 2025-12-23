@@ -1,6 +1,6 @@
 'use client'
 
-import SendMessageModal from '@/components/home/SendMessageModal'
+import { SendMessageModal } from '@/components/chat'
 import { Logo, Section, Skeleton } from "@/components/ui"
 import { contactInfo as contactInfoApi } from '@/lib/api'
 import { MY_USERNAME } from '@/lib/constants'
@@ -210,8 +210,9 @@ export default function GetInTouch() {
 
             {!isAdmin && (
                 <SendMessageModal
-                    isOpen={isMessageModalOpen}
-                    onClose={() => setIsMessageModalOpen(false)}
+                    open={isMessageModalOpen}
+                    onOpenChange={setIsMessageModalOpen}
+                    redirectToChat
                 />
             )}
         </Section>

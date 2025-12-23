@@ -1,6 +1,6 @@
 "use client";
 
-import { chat } from "@/lib/api";
+import { FirebaseConversation, setupPresenceWithDisconnect } from "@/lib/firebase";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useChatStatus } from "@/lib/hooks/useChat";
 import { Loader2, MessageCircle, Settings } from "lucide-react";
@@ -8,16 +8,8 @@ import { useEffect, useState } from "react";
 import ChatList from "./ChatList";
 import ChatView from "./ChatView";
 
-interface Conversation {
-    _id: string;
-    participantId: string;
-    participantName: string;
-    participantEmail: string;
-    participantImage?: string;
-    lastMessage: string;
-    lastMessageAt: string;
-    lastMessageBy: "user" | "admin";
-    unreadCountAdmin: number;
+interface Conversation extends FirebaseConversation {
+    id: string;
 }
 
 function AdminChatContent() {
@@ -26,32 +18,12 @@ function AdminChatContent() {
     const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
     const [showSettings, setShowSettings] = useState(false);
 
-    // Update presence heartbeat
+    // Setup presence with Firebase (handles disconnect automatically)
     useEffect(() => {
-        if (!user) return;
-
-        const updatePresence = async () => {
-            try {
-                await chat.updatePresence(true);
-            } catch (error) {
-                console.error("Failed to update presence:", error);
-            }
-        };
-
-        updatePresence();
-        const interval = setInterval(updatePresence, 15000);
-
-        return () => {
-            clearInterval(interval);
-            // Use raw fetch with keepalive for cleanup
-            fetch("/api/chat/presence", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ isOnline: false }),
-                keepalive: true,
-            }).catch(() => { });
-        };
-    }, [user]);
+        if (!user?.id) return;
+        const cleanup = setupPresenceWithDisconnect(user.id);
+        return cleanup;
+    }, [user?.id]);
 
     return (
         <div className="border border-border rounded-xl overflow-hidden">
@@ -86,7 +58,7 @@ function AdminChatContent() {
                                 <div className="p-4">
                                     <h4 className="font-medium text-sm mb-4">Chat Settings</h4>
 
-                                    {/* Status Visibility Toggle - Newsletter style */}
+                                    {/* Status Visibility Toggle */}
                                     <div className="border border-border rounded-lg p-4">
                                         <div className="flex items-center justify-between gap-3">
                                             <div className="min-w-0">
@@ -111,7 +83,9 @@ function AdminChatContent() {
                                                     </span>
                                                 ) : (
                                                     <span
-                                                        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-all duration-300 ease-in-out ${!globalHideStatus ? "translate-x-6" : "translate-x-1"
+                                                        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-all duration-300 ease-in-out ${!globalHideStatus
+                                                            ? "translate-x-6"
+                                                            : "translate-x-1"
                                                             }`}
                                                     />
                                                 )}
@@ -126,8 +100,8 @@ function AdminChatContent() {
                                                     </span>
                                                 ) : (
                                                     <span className="text-amber-600 dark:text-amber-400">
-                                                        ⚠ Your online status and read receipts are hidden from
-                                                        users
+                                                        ⚠ Your online status and read receipts are hidden
+                                                        from users
                                                     </span>
                                                 )}
                                             </p>
@@ -148,7 +122,7 @@ function AdminChatContent() {
                         }`}
                 >
                     <ChatList
-                        selectedConversationId={selectedConversation?._id}
+                        selectedConversationId={selectedConversation?.id}
                         onSelectConversation={setSelectedConversation}
                     />
                 </div>

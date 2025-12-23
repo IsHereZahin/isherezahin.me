@@ -272,7 +272,7 @@ export default function HeaderActions() {
                     >
                         <User className="size-4" />
                         {unreadCount > 0 && (
-                            <span className="absolute -top-1 -right-1 h-4 min-w-4 px-1 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-medium">
+                            <span className="absolute -top-1 -right-1 h-4 min-w-4 px-1 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-medium animate-pulse">
                                 {unreadCount > 9 ? "9+" : unreadCount}
                             </span>
                         )}

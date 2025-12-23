@@ -1,15 +1,19 @@
 "use client";
 
-import { chat } from "@/lib/api";
 import { ChatContext } from "@/lib/contexts";
+import {
+    getPresence,
+    setupPresenceWithDisconnect,
+    subscribeToConversations,
+    subscribeToUserConversation,
+    updatePresenceSettings
+} from "@/lib/firebase";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
     const { user, isAdmin } = useAuth();
-    const queryClient = useQueryClient();
 
     // Unread count state
     const [unreadCount, setUnreadCount] = useState(0);
@@ -18,133 +22,75 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     const [globalHideStatus, setGlobalHideStatus] = useState(false);
     const [isStatusLoading, setIsStatusLoading] = useState(false);
 
-    // ============ PRESENCE TRACKING (for ALL users including admin) ============
+    // ============ PRESENCE TRACKING (Firebase handles disconnect automatically) ============
     useEffect(() => {
-        if (!user) return;
+        if (!user?.id) return;
 
-        const updatePresence = async (isOnline: boolean) => {
-            try {
-                await chat.updatePresence(isOnline);
-            } catch {
-                // Silently fail
-            }
-        };
+        // Setup presence with automatic disconnect handling
+        const cleanup = setupPresenceWithDisconnect(user.id);
 
-        // Set online immediately
-        updatePresence(true);
+        return cleanup;
+    }, [user?.id]);
 
-        // Heartbeat every 15 seconds for more responsive tracking
-        const interval = setInterval(() => updatePresence(true), 15000);
-
-        const handleVisibilityChange = () => {
-            updatePresence(!document.hidden);
-        };
-        document.addEventListener("visibilitychange", handleVisibilityChange);
-
-        const handleBeforeUnload = () => {
-            // Use raw fetch with keepalive for beforeunload
-            fetch("/api/chat/presence", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ isOnline: false }),
-                keepalive: true,
-            });
-        };
-        window.addEventListener("beforeunload", handleBeforeUnload);
-
-        // Handle page hide (mobile browsers)
-        const handlePageHide = () => {
-            fetch("/api/chat/presence", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ isOnline: false }),
-                keepalive: true,
-            });
-        };
-        window.addEventListener("pagehide", handlePageHide);
-
-        return () => {
-            clearInterval(interval);
-            document.removeEventListener("visibilitychange", handleVisibilityChange);
-            window.removeEventListener("beforeunload", handleBeforeUnload);
-            window.removeEventListener("pagehide", handlePageHide);
-            updatePresence(false);
-        };
-    }, [user]);
-
-    // ============ UNREAD COUNT ============
-    const fetchUnreadCount = useCallback(async () => {
-        if (!user) {
+    // ============ UNREAD COUNT (Real-time with Firebase) ============
+    useEffect(() => {
+        if (!user?.id) {
             setUnreadCount(0);
             return;
         }
 
         try {
-            const data = await chat.getConversations();
-
             if (isAdmin) {
-                const total =
-                    data.conversations?.reduce(
-                        (sum: number, conv: { unreadCountAdmin?: number }) =>
-                            sum + (conv.unreadCountAdmin || 0),
-                        0
-                    ) || 0;
-                setUnreadCount(total);
+                // Admin subscribes to all conversations
+                const unsubscribe = subscribeToConversations((conversations) => {
+                    const total = conversations
+                        .filter((c) => c.participantId !== user.id)
+                        .reduce((sum, conv) => sum + (conv.unreadCountAdmin || 0), 0);
+                    setUnreadCount(total);
+                });
+                return unsubscribe;
             } else {
-                setUnreadCount(data.conversation?.unreadCountUser || 0);
+                // User subscribes to their own conversation
+                const unsubscribe = subscribeToUserConversation(user.id, (conversation) => {
+                    setUnreadCount(conversation?.unreadCountUser || 0);
+                });
+                return unsubscribe;
             }
-        } catch {
-            setUnreadCount(0);
+        } catch (error) {
+            console.error("Failed to subscribe to chat updates:", error);
         }
-    }, [user, isAdmin]);
+    }, [user?.id, isAdmin]);
 
     const refreshUnreadCount = useCallback(async () => {
-        await fetchUnreadCount();
-        queryClient.invalidateQueries({ queryKey: ["user-unread-count"] });
-        queryClient.invalidateQueries({ queryKey: ["admin-unread-total"] });
-        queryClient.invalidateQueries({ queryKey: ["user-chat-unread"] });
-    }, [fetchUnreadCount, queryClient]);
-
-    useEffect(() => {
-        if (!user) return;
-
-        fetchUnreadCount();
-        const interval = setInterval(fetchUnreadCount, 3000);
-
-        const handleVisibilityChange = () => {
-            if (!document.hidden) {
-                fetchUnreadCount();
-            }
-        };
-        document.addEventListener("visibilitychange", handleVisibilityChange);
-
-        return () => {
-            clearInterval(interval);
-            document.removeEventListener("visibilitychange", handleVisibilityChange);
-        };
-    }, [user, fetchUnreadCount]);
+        // With Firebase real-time, this is handled automatically
+        // Keep this for API compatibility
+    }, []);
 
     // ============ STATUS VISIBILITY (admin only) ============
     useEffect(() => {
+        const userId = user?.id;
+        if (!userId) return;
+
         const fetchSettings = async () => {
             try {
-                const data = await chat.getActiveUsers();
-                if (data.presence?.hideLastSeen !== undefined) {
-                    setGlobalHideStatus(data.presence.hideLastSeen);
+                const presence = await getPresence(userId);
+                if (presence?.hideLastSeen !== undefined) {
+                    setGlobalHideStatus(presence.hideLastSeen);
                 }
             } catch (error) {
                 console.error("Failed to fetch presence settings:", error);
             }
         };
         fetchSettings();
-    }, []);
+    }, [user?.id]);
 
     const toggleGlobalStatus = useCallback(async () => {
-        if (isStatusLoading) return;
+        const userId = user?.id;
+        if (isStatusLoading || !userId) return;
 
         setIsStatusLoading(true);
         try {
-            await chat.toggleLastSeenVisibility(!globalHideStatus);
+            await updatePresenceSettings(userId, !globalHideStatus);
             setGlobalHideStatus(!globalHideStatus);
             toast.success(
                 !globalHideStatus
@@ -156,7 +102,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         } finally {
             setIsStatusLoading(false);
         }
-    }, [globalHideStatus, isStatusLoading]);
+    }, [globalHideStatus, isStatusLoading, user?.id]);
 
     return (
         <ChatContext.Provider

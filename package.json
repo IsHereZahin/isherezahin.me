@@ -27,6 +27,8 @@
     "clsx": "^2.1.1",
     "cobe": "^0.6.4",
     "date-fns": "^4.1.0",
+    "firebase": "^12.7.0",
+    "firebase-admin": "^13.6.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.544.0",
     "mongoose": "^8.19.3",

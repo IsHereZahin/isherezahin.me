@@ -1,10 +1,15 @@
 "use client";
 
+import { SendMessageModal } from "@/components/chat";
 import { BlurImage, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui";
 import { adminUsers, ApiError } from "@/lib/api";
+import {
+    FirebasePresence,
+    subscribeToPresence,
+} from "@/lib/firebase";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Ban, ChevronLeft, ChevronRight, Crown, Loader2, Search, ShieldCheck } from "lucide-react";
+import { Ban, ChevronLeft, ChevronRight, Circle, Crown, Loader2, MessageCircle, Search, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -24,6 +29,51 @@ interface User {
 interface Pagination { page: number; limit: number; total: number; totalPages: number; }
 interface UsersResponse { users: User[]; pagination: Pagination; }
 
+// Hook to subscribe to a user's presence
+function useUserPresence(userId: string) {
+    const [presence, setPresence] = useState<FirebasePresence | null>(null);
+
+    useEffect(() => {
+        if (!userId) return;
+        const unsubscribe = subscribeToPresence(userId, setPresence);
+        return () => unsubscribe();
+    }, [userId]);
+
+    return presence;
+}
+
+// Component for individual user's online status
+function UserPresenceIndicator({ userId }: { userId: string }) {
+    const presence = useUserPresence(userId);
+    const isOnline = presence?.isOnline ?? false;
+    const lastSeen = typeof presence?.lastSeen === "number" ? presence.lastSeen : null;
+
+    const formatLastSeen = (timestamp: number | null) => {
+        if (!timestamp) return "Never";
+        const diff = Date.now() - timestamp;
+        const minutes = Math.floor(diff / 60000);
+        const hours = Math.floor(diff / 3600000);
+        const days = Math.floor(diff / 86400000);
+
+        if (minutes < 1) return "Just now";
+        if (minutes < 60) return `${minutes}m ago`;
+        if (hours < 24) return `${hours}h ago`;
+        return `${days}d ago`;
+    };
+
+    return (
+        <div className="flex items-center gap-1.5">
+            <Circle
+                className={`h-2.5 w-2.5 ${isOnline ? "fill-green-500 text-green-500" : "fill-gray-400 text-gray-400"}`}
+            />
+            <span className={`text-xs ${isOnline ? "text-green-600 dark:text-green-400" : "text-muted-foreground"}`}>
+                {isOnline ? "Online" : formatLastSeen(lastSeen)}
+            </span>
+        </div>
+    );
+}
+
+
 export default function Users() {
     const { isAdmin } = useAuth();
     const router = useRouter();
@@ -32,6 +82,7 @@ export default function Users() {
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const [filter, setFilter] = useState<"all" | "active" | "banned">("all");
     const [page, setPage] = useState(1);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
@@ -110,16 +161,31 @@ export default function Users() {
                                             {user.isBanned && <span className="px-2 py-0.5 text-xs bg-destructive text-destructive-foreground rounded-full">Banned</span>}
                                         </div>
                                         <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                                        <p className="text-xs text-muted-foreground">{user.provider} · Joined {new Date(user.createdAt).toLocaleDateString()}</p>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <span className="text-xs text-muted-foreground">{user.provider} · Joined {new Date(user.createdAt).toLocaleDateString()}</span>
+                                            <span className="text-muted-foreground">·</span>
+                                            <UserPresenceIndicator userId={user.id} />
+                                        </div>
                                     </div>
                                 </div>
-                                {user.isAdmin ? (
-                                    <span className="text-xs text-muted-foreground italic self-start sm:self-auto">Protected</span>
-                                ) : (
-                                    <button onClick={() => banMutation.mutate({ userId: user.id, currentlyBanned: user.isBanned })} disabled={banMutation.isPending && banMutation.variables?.userId === user.id} className={`flex items-center gap-2 text-sm font-medium rounded-md px-4 py-2 transition self-start sm:self-auto ${user.isBanned ? "bg-green-600 text-white hover:bg-green-700" : "bg-destructive text-destructive-foreground hover:bg-destructive/90"} disabled:opacity-50`}>
-                                        {banMutation.isPending && banMutation.variables?.userId === user.id ? <Loader2 className="h-4 w-4 animate-spin" /> : user.isBanned ? <><ShieldCheck className="h-4 w-4" />Unban</> : <><Ban className="h-4 w-4" />Ban</>}
-                                    </button>
-                                )}
+                                <div className="flex items-center gap-2 self-start sm:self-auto">
+                                    {!user.isAdmin && (
+                                        <button
+                                            onClick={() => setSelectedUser(user)}
+                                            className="flex items-center gap-2 text-sm font-medium rounded-md px-3 py-2 border border-border hover:bg-muted transition"
+                                            title="Send message"
+                                        >
+                                            <MessageCircle className="h-4 w-4" />
+                                        </button>
+                                    )}
+                                    {user.isAdmin ? (
+                                        <span className="text-xs text-muted-foreground italic">Protected</span>
+                                    ) : (
+                                        <button onClick={() => banMutation.mutate({ userId: user.id, currentlyBanned: user.isBanned })} disabled={banMutation.isPending && banMutation.variables?.userId === user.id} className={`flex items-center gap-2 text-sm font-medium rounded-md px-4 py-2 transition ${user.isBanned ? "bg-green-600 text-white hover:bg-green-700" : "bg-destructive text-destructive-foreground hover:bg-destructive/90"} disabled:opacity-50`}>
+                                            {banMutation.isPending && banMutation.variables?.userId === user.id ? <Loader2 className="h-4 w-4 animate-spin" /> : user.isBanned ? <><ShieldCheck className="h-4 w-4" />Unban</> : <><Ban className="h-4 w-4" />Ban</>}
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -133,6 +199,15 @@ export default function Users() {
                         </div>
                     )}
                 </>
+            )}
+
+            {/* Send Message Modal */}
+            {selectedUser && (
+                <SendMessageModal
+                    targetUser={selectedUser}
+                    open={!!selectedUser}
+                    onOpenChange={(open) => !open && setSelectedUser(null)}
+                />
             )}
         </section>
     );

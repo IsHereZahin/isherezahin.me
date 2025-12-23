@@ -8,50 +8,34 @@ import {
     PresenceIndicator,
     TypingIndicator,
 } from "@/components/chat";
-import { BlurImage, Skeleton } from "@/components/ui";
-import { chat } from "@/lib/api";
+import { BlurImage, ConfirmDialog } from "@/components/ui";
+import {
+    deleteConversationPermanently,
+    editMessage,
+    FirebaseConversation,
+    FirebaseMessage,
+    FirebasePresence,
+    getMessage,
+    markMessagesAsRead,
+    sendMessage,
+    setTypingStatus,
+    subscribeToMessages,
+    subscribeToPresence,
+    subscribeToTyping,
+    updateConversation
+} from "@/lib/firebase";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { useChatUnread } from "@/lib/hooks/useChat";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { ArrowLeft, ChevronUp, Loader2, MoreVertical, RefreshCw, Trash2 } from "lucide-react";
+import { ArrowLeft, Loader2, MoreVertical, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
-interface Message {
-    _id: string;
-    content: string;
-    senderName: string;
-    senderImage?: string;
-    senderType: "user" | "admin";
-    senderId: string;
-    isRead: boolean;
-    readAt?: string;
-    isEdited: boolean;
-    editHistory?: { content: string; editedAt: string }[];
-    createdAt: string;
+interface Message extends FirebaseMessage {
+    id: string;
 }
 
-interface Conversation {
-    _id: string;
-    participantId: string;
-    participantName: string;
-    participantEmail: string;
-    participantImage?: string;
-}
-
-interface Presence {
-    isOnline: boolean;
-    lastSeen: string | null;
-    hideLastSeen: boolean;
-}
-
-interface MessagesResponse {
-    messages: Message[];
-    conversation: Conversation;
-    presence: Presence | null;
-    hasMore: boolean;
-    nextCursor?: string;
+interface Conversation extends FirebaseConversation {
+    id: string;
 }
 
 interface ChatViewProps {
@@ -62,83 +46,71 @@ interface ChatViewProps {
 
 export default function ChatView({ conversation, onBack, onDelete }: ChatViewProps) {
     const { user } = useAuth();
-    const queryClient = useQueryClient();
-    const { refreshUnreadCount } = useChatUnread();
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [showMenu, setShowMenu] = useState(false);
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [presence, setPresence] = useState<FirebasePresence | null>(null);
     const [isUserTyping, setIsUserTyping] = useState(false);
     const [editingMessage, setEditingMessage] = useState<{ id: string; content: string } | null>(null);
     const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
+    const [loading, setLoading] = useState(true);
     const [historyModal, setHistoryModal] = useState<{
         isOpen: boolean;
         content: string;
         history: { content: string; editedAt: string }[];
     }>({ isOpen: false, content: "", history: [] });
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-    // Fetch messages with infinite query
-    const {
-        data,
-        isLoading,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-        refetch,
-    } = useInfiniteQuery<MessagesResponse>({
-        queryKey: ["admin-chat-messages", conversation._id],
-        queryFn: async ({ pageParam }) => {
-            return await chat.getMessages(conversation._id, pageParam as string | undefined);
-        },
-        getNextPageParam: (lastPage) => lastPage.nextCursor,
-        initialPageParam: undefined as string | undefined,
-        refetchInterval: 3000,
-    });
+    // Subscribe to messages (real-time)
+    useEffect(() => {
+        const unsubscribe = subscribeToMessages(conversation.id, (msgs) => {
+            setMessages(msgs);
+            setLoading(false);
+        });
 
-    // Flatten messages from all pages
-    const allMessages = useMemo(() => {
-        if (!data?.pages) return [];
-        const messages: Message[] = [];
-        for (let i = data.pages.length - 1; i >= 0; i--) {
-            messages.push(...(data.pages[i].messages || []));
+        return unsubscribe;
+    }, [conversation.id]);
+
+    // Subscribe to participant's presence
+    useEffect(() => {
+        const unsubscribe = subscribeToPresence(conversation.participantId, setPresence);
+        return unsubscribe;
+    }, [conversation.participantId]);
+
+    // Subscribe to typing status
+    useEffect(() => {
+        if (!user?.id) return;
+        const unsubscribe = subscribeToTyping(conversation.id, user.id, setIsUserTyping);
+        return unsubscribe;
+    }, [conversation.id, user?.id]);
+
+    // Mark messages as read when viewing
+    useEffect(() => {
+        if (messages.length > 0) {
+            markMessagesAsRead(conversation.id, "user");
+            updateConversation(conversation.id, { unreadCountAdmin: 0 });
         }
-        return messages;
-    }, [data]);
-
-    const presence: Presence | null = data?.pages[0]?.presence || null;
+    }, [conversation.id, messages]);
 
     // Group messages by date
     const groupedMessages = useMemo(() => {
         const groups: { date: string; messages: Message[] }[] = [];
         let currentDate = "";
 
-        for (const msg of allMessages) {
-            const msgDate = format(new Date(msg.createdAt), "yyyy-MM-dd");
+        for (const msg of messages) {
+            const createdAt = typeof msg.createdAt === "number" ? msg.createdAt : Date.now();
+            const msgDate = format(new Date(createdAt), "yyyy-MM-dd");
             if (msgDate !== currentDate) {
                 currentDate = msgDate;
-                groups.push({ date: msg.createdAt, messages: [msg] });
+                groups.push({ date: new Date(createdAt).toISOString(), messages: [msg] });
             } else {
                 groups[groups.length - 1].messages.push(msg);
             }
         }
 
         return groups;
-    }, [allMessages]);
-
-    // Poll for typing status
-    useEffect(() => {
-        const checkTyping = async () => {
-            try {
-                const data = await chat.getTypingStatus(conversation._id);
-                setIsUserTyping(data.isTyping);
-            } catch {
-                // Ignore errors
-            }
-        };
-
-        const interval = setInterval(checkTyping, 2000);
-        checkTyping();
-        return () => clearInterval(interval);
-    }, [conversation._id]);
+    }, [messages]);
 
     // Scroll to bottom
     useEffect(() => {
@@ -149,7 +121,7 @@ export default function ChatView({ conversation, onBack, onDelete }: ChatViewPro
                 behavior: "smooth",
             });
         }
-    }, [allMessages, isUserTyping, shouldScrollToBottom]);
+    }, [messages, isUserTyping, shouldScrollToBottom]);
 
     // Track scroll position
     const handleScroll = useCallback(() => {
@@ -159,81 +131,106 @@ export default function ChatView({ conversation, onBack, onDelete }: ChatViewPro
         const { scrollTop, scrollHeight, clientHeight } = container;
         const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
         setShouldScrollToBottom(isAtBottom);
-
-        if (scrollTop < 50 && hasNextPage && !isFetchingNextPage) {
-            fetchNextPage();
-        }
-    }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+    }, []);
 
     const handleTyping = useCallback(
         async (isTyping: boolean) => {
+            if (!user?.id) return;
             try {
-                await chat.setTypingStatus(conversation._id, isTyping);
+                await setTypingStatus(conversation.id, user.id, isTyping);
             } catch {
                 // Ignore errors
             }
         },
-        [conversation._id]
+        [conversation.id, user?.id]
     );
 
     const handleSendMessage = useCallback(
-        async (message: string) => {
+        async (content: string) => {
+            if (!user?.id) return;
+
             try {
-                await chat.sendMessage(conversation._id, message);
+                await sendMessage({
+                    conversationId: conversation.id,
+                    senderId: user.id,
+                    senderType: "admin",
+                    senderName: user.name || "Admin",
+                    senderImage: user.image || "",
+                    content,
+                    isRead: false,
+                    isEdited: false,
+                    isDeleted: false,
+                });
+
+                // Update conversation metadata
+                await updateConversation(conversation.id, {
+                    lastMessage: content.substring(0, 100),
+                    lastMessageAt: Date.now(),
+                    lastMessageBy: "admin",
+                    unreadCountUser: (conversation.unreadCountUser || 0) + 1,
+                });
+
                 setShouldScrollToBottom(true);
-                refetch();
-                queryClient.invalidateQueries({ queryKey: ["admin-chat-conversations"] });
-                refreshUnreadCount();
             } catch (error) {
                 toast.error(error instanceof Error ? error.message : "Failed to send message");
                 throw error;
             }
         },
-        [conversation._id, queryClient, refetch, refreshUnreadCount]
+        [conversation, user]
     );
 
     const handleSaveEdit = useCallback(
         async (messageId: string, content: string) => {
+            const originalMessage = messages.find((m) => m.id === messageId);
+            if (!originalMessage) return;
+
             try {
-                await chat.editMessage(conversation._id, messageId, content);
+                await editMessage(conversation.id, messageId, content, originalMessage.content);
                 toast.success("Message updated");
-                refetch();
             } catch (error) {
                 toast.error(error instanceof Error ? error.message : "Failed to edit message");
                 throw error;
             }
         },
-        [conversation._id, refetch]
+        [conversation.id, messages]
     );
 
     const handleViewHistory = useCallback(
         async (messageId: string) => {
             try {
-                const data = await chat.getMessage(conversation._id, messageId);
-                setHistoryModal({
-                    isOpen: true,
-                    content: data.message.content,
-                    history: data.message.editHistory || [],
-                });
+                const msg = await getMessage(conversation.id, messageId);
+                if (msg) {
+                    setHistoryModal({
+                        isOpen: true,
+                        content: msg.content,
+                        history:
+                            msg.editHistory?.map((h) => ({
+                                content: h.content,
+                                editedAt: new Date(h.editedAt).toISOString(),
+                            })) || [],
+                    });
+                }
             } catch {
                 toast.error("Failed to load edit history");
             }
         },
-        [conversation._id]
+        [conversation.id]
     );
 
     const handleDeleteConversation = async () => {
-        if (!confirm("Are you sure you want to delete this conversation?")) return;
-
         try {
-            await chat.deleteConversation(conversation._id);
-            toast.success("Conversation deleted");
-            queryClient.invalidateQueries({ queryKey: ["admin-chat-conversations"] });
+            await deleteConversationPermanently(conversation.id);
+            toast.success("Conversation deleted permanently");
             onDelete();
         } catch {
             toast.error("Failed to delete conversation");
         }
     };
+
+    const presenceLastSeen =
+        presence && typeof presence.lastSeen === "number"
+            ? new Date(presence.lastSeen).toISOString()
+            : null;
 
     return (
         <div className="flex flex-col h-full w-full">
@@ -258,20 +255,13 @@ export default function ChatView({ conversation, onBack, onDelete }: ChatViewPro
                         {presence && (
                             <PresenceIndicator
                                 isOnline={presence.isOnline}
-                                lastSeen={presence.lastSeen}
+                                lastSeen={presenceLastSeen}
                                 size="sm"
                             />
                         )}
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    <button
-                        onClick={() => refetch()}
-                        className="p-2 rounded-lg hover:bg-muted transition-colors"
-                        title="Refresh"
-                    >
-                        <RefreshCw className="h-4 w-4" />
-                    </button>
                     <div className="relative">
                         <button
                             onClick={() => setShowMenu(!showMenu)}
@@ -289,7 +279,7 @@ export default function ChatView({ conversation, onBack, onDelete }: ChatViewPro
                                     <button
                                         onClick={() => {
                                             setShowMenu(false);
-                                            handleDeleteConversation();
+                                            setDeleteDialogOpen(true);
                                         }}
                                         className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-500 hover:bg-muted transition-colors rounded-lg"
                                     >
@@ -309,55 +299,51 @@ export default function ChatView({ conversation, onBack, onDelete }: ChatViewPro
                 onScroll={handleScroll}
                 className="flex-1 overflow-y-auto p-4 bg-background/50 chat-scrollbar"
             >
-                {/* Load more button */}
-                {hasNextPage && (
-                    <div className="flex justify-center mb-4">
-                        <button
-                            onClick={() => fetchNextPage()}
-                            disabled={isFetchingNextPage}
-                            className="flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted rounded-full transition-colors disabled:opacity-50"
-                        >
-                            {isFetchingNextPage ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                                <ChevronUp className="h-4 w-4" />
-                            )}
-                            Load previous messages
-                        </button>
-                    </div>
-                )}
-
-                {isLoading && !data ? (
-                    <div className="space-y-4">
-                        {[1, 2, 3].map((i) => (
-                            <Skeleton key={i} className="h-16 w-3/4" />
-                        ))}
+                {loading ? (
+                    <div className="flex items-center justify-center h-full">
+                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                     </div>
                 ) : (
                     <>
                         {groupedMessages.map((group, groupIndex) => (
                             <div key={groupIndex}>
                                 <DateDivider date={group.date} />
-                                {group.messages.map((msg) => (
-                                    <ChatMessage
-                                        key={msg._id}
-                                        id={msg._id}
-                                        content={msg.content}
-                                        senderName={msg.senderName}
-                                        senderImage={msg.senderImage}
-                                        senderType={msg.senderType}
-                                        isOwn={msg.senderType === "admin"}
-                                        isRead={msg.isRead}
-                                        readAt={msg.readAt}
-                                        isEdited={msg.isEdited}
-                                        editHistory={msg.editHistory}
-                                        createdAt={msg.createdAt}
-                                        canEdit={msg.senderType === "admin"}
-                                        isAdmin={true}
-                                        onStartEdit={(id, content) => setEditingMessage({ id, content })}
-                                        onViewHistory={handleViewHistory}
-                                    />
-                                ))}
+                                {group.messages.map((msg) => {
+                                    const createdAt =
+                                        typeof msg.createdAt === "number"
+                                            ? new Date(msg.createdAt).toISOString()
+                                            : new Date().toISOString();
+                                    const readAt =
+                                        msg.readAt && typeof msg.readAt === "number"
+                                            ? new Date(msg.readAt).toISOString()
+                                            : undefined;
+
+                                    return (
+                                        <ChatMessage
+                                            key={msg.id}
+                                            id={msg.id}
+                                            content={msg.content}
+                                            senderName={msg.senderName}
+                                            senderImage={msg.senderImage}
+                                            senderType={msg.senderType}
+                                            isOwn={msg.senderType === "admin"}
+                                            isRead={msg.isRead}
+                                            readAt={readAt}
+                                            isEdited={msg.isEdited}
+                                            editHistory={msg.editHistory?.map((h) => ({
+                                                content: h.content,
+                                                editedAt: new Date(h.editedAt).toISOString(),
+                                            }))}
+                                            createdAt={createdAt}
+                                            canEdit={msg.senderType === "admin"}
+                                            isAdmin={true}
+                                            onStartEdit={(id, content) =>
+                                                setEditingMessage({ id, content })
+                                            }
+                                            onViewHistory={handleViewHistory}
+                                        />
+                                    );
+                                })}
                             </div>
                         ))}
                         {isUserTyping && <TypingIndicator name={conversation.participantName} />}
@@ -381,6 +367,17 @@ export default function ChatView({ conversation, onBack, onDelete }: ChatViewPro
                 onClose={() => setHistoryModal({ isOpen: false, content: "", history: [] })}
                 currentContent={historyModal.content}
                 editHistory={historyModal.history}
+            />
+
+            <ConfirmDialog
+                open={deleteDialogOpen}
+                onOpenChange={setDeleteDialogOpen}
+                title="Delete Conversation"
+                description="Are you sure you want to permanently delete this conversation? All messages will be deleted and this action cannot be undone."
+                confirmText="Delete"
+                cancelText="Cancel"
+                variant="danger"
+                onConfirm={handleDeleteConversation}
             />
         </div>
     );

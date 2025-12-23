@@ -1,37 +1,21 @@
 "use client";
 
 import { PresenceIndicator } from "@/components/chat";
-import { BlurImage, Skeleton } from "@/components/ui";
-import { chat } from "@/lib/api";
-import { useChatUnread } from "@/lib/hooks/useChat";
+import { BlurImage } from "@/components/ui";
+import {
+    FirebaseConversation,
+    FirebasePresence,
+    subscribeToConversations,
+    subscribeToPresence
+} from "@/lib/firebase";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
-import { MessageCircle, Users } from "lucide-react";
+import { Loader2, MessageCircle, Users } from "lucide-react";
+import { useEffect, useState } from "react";
 
-interface Conversation {
-    _id: string;
-    participantId: string;
-    participantName: string;
-    participantEmail: string;
-    participantImage?: string;
-    lastMessage: string;
-    lastMessageAt: string;
-    lastMessageBy: "user" | "admin";
-    unreadCountAdmin: number;
-    statusVisibilityOverride?: "show" | "hide" | null;
-}
-
-interface ActiveUser {
-    _id: string;
-    userId: {
-        _id: string;
-        name: string;
-        email: string;
-        image?: string;
-    };
-    isOnline: boolean;
-    lastSeen: string;
+interface Conversation extends FirebaseConversation {
+    id: string;
 }
 
 interface ChatListProps {
@@ -43,34 +27,52 @@ export default function ChatList({
     selectedConversationId,
     onSelectConversation,
 }: ChatListProps) {
-    const { refreshUnreadCount } = useChatUnread();
+    const { user } = useAuth();
+    const [conversations, setConversations] = useState<Conversation[]>([]);
+    const [presenceMap, setPresenceMap] = useState<Record<string, FirebasePresence>>({});
+    const [loading, setLoading] = useState(true);
 
-    // Fetch conversations
-    const { data: conversationsData, isLoading: loadingConversations } = useQuery({
-        queryKey: ["admin-chat-conversations"],
-        queryFn: () => chat.getConversations(),
-        refetchInterval: 3000,
-    });
+    // Subscribe to conversations (real-time)
+    useEffect(() => {
+        if (!user?.id) return;
 
-    // Fetch active users
-    const { data: presenceData } = useQuery({
-        queryKey: ["admin-active-users"],
-        queryFn: () => chat.getActiveUsers(),
-        refetchInterval: 5000,
-    });
+        const unsubscribe = subscribeToConversations((convs) => {
+            // Filter out admin's own conversation
+            const filtered = convs.filter((c) => c.participantId !== user.id);
+            setConversations(filtered);
+            setLoading(false);
+        });
 
-    const conversations: Conversation[] = conversationsData?.conversations || [];
-    const activeUsers: ActiveUser[] = presenceData?.activeUsers || [];
+        return unsubscribe;
+    }, [user?.id]);
 
-    const onlineCount = activeUsers.filter((u) => u.isOnline).length;
+    // Subscribe to presence for each participant
+    useEffect(() => {
+        const unsubscribes: (() => void)[] = [];
 
-    if (loadingConversations) {
+        conversations.forEach((conv) => {
+            const unsubscribe = subscribeToPresence(conv.participantId, (presence) => {
+                if (presence) {
+                    setPresenceMap((prev) => ({
+                        ...prev,
+                        [conv.participantId]: presence,
+                    }));
+                }
+            });
+            unsubscribes.push(unsubscribe);
+        });
+
+        return () => {
+            unsubscribes.forEach((unsub) => unsub());
+        };
+    }, [conversations]);
+
+    const onlineCount = Object.values(presenceMap).filter((p) => p.isOnline).length;
+
+    if (loading) {
         return (
-            <div className="space-y-4">
-                <Skeleton className="h-10 w-full" />
-                {[1, 2, 3].map((i) => (
-                    <Skeleton key={i} className="h-16 w-full" />
-                ))}
+            <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
         );
     }
@@ -97,19 +99,17 @@ export default function ChatList({
                     </div>
                 ) : (
                     conversations.map((conv) => {
-                        const userPresence = activeUsers.find(
-                            (u) => u.userId?._id === conv.participantId
-                        );
-                        const isSelected = selectedConversationId === conv._id;
+                        const userPresence = presenceMap[conv.participantId];
+                        const isSelected = selectedConversationId === conv.id;
+                        const lastMessageAt =
+                            typeof conv.lastMessageAt === "number"
+                                ? new Date(conv.lastMessageAt)
+                                : new Date();
 
                         return (
                             <button
-                                key={conv._id}
-                                onClick={() => {
-                                    onSelectConversation(conv);
-                                    // Refresh unread count when conversation is opened (will be marked as read)
-                                    setTimeout(() => refreshUnreadCount(), 500);
-                                }}
+                                key={conv.id}
+                                onClick={() => onSelectConversation(conv)}
                                 className={cn(
                                     "w-full flex items-start gap-3 p-3 rounded-lg transition-colors text-left",
                                     isSelected
@@ -135,7 +135,7 @@ export default function ChatList({
                                             {conv.participantName}
                                         </span>
                                         <span className="text-xs text-muted-foreground">
-                                            {formatDistanceToNow(new Date(conv.lastMessageAt), {
+                                            {formatDistanceToNow(lastMessageAt, {
                                                 addSuffix: false,
                                             })}
                                         </span>
@@ -147,7 +147,11 @@ export default function ChatList({
                                     {userPresence && (
                                         <PresenceIndicator
                                             isOnline={userPresence.isOnline}
-                                            lastSeen={userPresence.lastSeen}
+                                            lastSeen={
+                                                typeof userPresence.lastSeen === "number"
+                                                    ? new Date(userPresence.lastSeen).toISOString()
+                                                    : null
+                                            }
                                             size="sm"
                                         />
                                     )}

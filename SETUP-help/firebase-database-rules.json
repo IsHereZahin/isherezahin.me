@@ -1,0 +1,31 @@
+{
+    "rules": {
+        "conversations": {
+            ".read": true,
+            ".write": true,
+            ".indexOn": [
+                "participantId",
+                "lastMessageAt"
+            ]
+        },
+        "messages": {
+            ".read": true,
+            ".write": true,
+            "$conversationId": {
+                ".indexOn": [
+                    "createdAt"
+                ]
+            }
+        },
+        "presence": {
+            ".read": true,
+            "$odId": {
+                ".write": true
+            }
+        },
+        "typing": {
+            ".read": true,
+            ".write": true
+        }
+    }
+}

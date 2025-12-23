@@ -9,149 +9,141 @@ import {
     TypingIndicator,
 } from "@/components/chat";
 import { Skeleton } from "@/components/ui";
-import { chat } from "@/lib/api";
+import {
+    createConversation,
+    editMessage,
+    FirebaseConversation,
+    FirebaseMessage,
+    FirebasePresence,
+    markMessagesAsRead,
+    sendMessage,
+    setTypingStatus,
+    subscribeToMessages,
+    subscribeToPresence,
+    subscribeToTyping,
+    subscribeToUserConversation,
+    updateConversation
+} from "@/lib/firebase";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { useChatUnread } from "@/lib/hooks/useChat";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { ChevronUp, Loader2, MessageCircle, RefreshCw } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
-interface Message {
-    _id: string;
-    content: string;
-    senderName: string;
-    senderImage?: string;
-    senderType: "user" | "admin";
-    isRead: boolean;
-    readAt?: string;
-    isEdited: boolean;
-    editHistory?: { content: string; editedAt: string }[];
-    createdAt: string;
+interface Message extends FirebaseMessage {
+    id: string;
 }
 
-interface Conversation {
-    _id: string;
-    lastMessage: string;
-    lastMessageAt: string;
-    unreadCountUser: number;
-}
-
-interface Presence {
-    isOnline: boolean;
-    lastSeen: string | null;
-    hideLastSeen: boolean;
-}
-
-interface MessagesResponse {
-    messages: Message[];
-    conversation: Conversation;
-    presence: Presence | null;
-    hasMore: boolean;
-    nextCursor?: string;
+interface Conversation extends FirebaseConversation {
+    id: string;
 }
 
 export default function ProfileChat() {
     const { user } = useAuth();
-    const queryClient = useQueryClient();
-    const { refreshUnreadCount } = useChatUnread();
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const [conversation, setConversation] = useState<Conversation | null>(null);
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [adminPresence, setAdminPresence] = useState<FirebasePresence | null>(null);
+    const [adminUserId, setAdminUserId] = useState<string | null>(null);
     const [isAdminTyping, setIsAdminTyping] = useState(false);
-    const [editingMessage, setEditingMessage] = useState<{ id: string; content: string } | null>(null);
+    const [editingMessage, setEditingMessage] = useState<{ id: string; content: string } | null>(
+        null
+    );
     const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
-    const [conversationId, setConversationId] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
     const [historyModal, setHistoryModal] = useState<{
         isOpen: boolean;
         content: string;
         history: { content: string; editedAt: string }[];
     }>({ isOpen: false, content: "", history: [] });
 
-    // Fetch conversation first
+    // Subscribe to user's conversation
     useEffect(() => {
-        const fetchConversation = async () => {
-            try {
-                const data = await chat.getConversations();
-                if (data.conversation?._id) {
-                    setConversationId(data.conversation._id);
+        if (!user?.id) return;
+
+        const unsubscribe = subscribeToUserConversation(user.id, (conv) => {
+            setConversation(conv);
+            setLoading(false);
+        });
+
+        return unsubscribe;
+    }, [user?.id]);
+
+    // Subscribe to messages when conversation exists
+    useEffect(() => {
+        if (!conversation?.id) {
+            setMessages([]);
+            return;
+        }
+
+        const unsubscribe = subscribeToMessages(conversation.id, setMessages);
+        return unsubscribe;
+    }, [conversation?.id]);
+
+    // Find admin user ID and subscribe to their presence
+    useEffect(() => {
+        // We need to find the admin's presence
+        // For simplicity, we'll look for presence entries and find the admin
+        // In a real app, you might store the admin ID in a config
+        const findAdminPresence = async () => {
+            // Try to get admin presence by checking conversations
+            // The admin is whoever responds to user messages
+            if (messages.length > 0) {
+                const adminMessage = messages.find((m) => m.senderType === "admin");
+                if (adminMessage) {
+                    setAdminUserId(adminMessage.senderId);
                 }
-            } catch {
-                // Ignore
             }
         };
-        if (user) fetchConversation();
-    }, [user]);
 
-    // Fetch messages with infinite query for lazy loading
-    const {
-        data,
-        isLoading: loadingMessages,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-        refetch: refetchMessages,
-    } = useInfiniteQuery<MessagesResponse>({
-        queryKey: ["user-chat-messages", conversationId],
-        queryFn: async ({ pageParam }) => {
-            if (!conversationId) throw new Error("No conversation");
-            return await chat.getMessages(conversationId, pageParam as string | undefined);
-        },
-        getNextPageParam: (lastPage) => lastPage.nextCursor,
-        initialPageParam: undefined as string | undefined,
-        enabled: !!conversationId,
-        refetchInterval: 5000,
-    });
+        findAdminPresence();
+    }, [messages]);
 
-    // Flatten messages from all pages and reverse for correct order
-    const allMessages = useMemo(() => {
-        if (!data?.pages) return [];
-        const messages: Message[] = [];
-        // Pages are in reverse order (newest first), so we need to reverse
-        for (let i = data.pages.length - 1; i >= 0; i--) {
-            messages.push(...(data.pages[i].messages || []));
+    // Subscribe to admin presence
+    useEffect(() => {
+        if (!adminUserId) return;
+
+        const unsubscribe = subscribeToPresence(adminUserId, setAdminPresence);
+        return unsubscribe;
+    }, [adminUserId]);
+
+    // Subscribe to typing status
+    useEffect(() => {
+        if (!conversation?.id || !user?.id) return;
+
+        const unsubscribe = subscribeToTyping(conversation.id, user.id, setIsAdminTyping);
+        return unsubscribe;
+    }, [conversation?.id, user?.id]);
+
+    // Mark messages as read when viewing
+    useEffect(() => {
+        if (conversation?.id && messages.length > 0) {
+            markMessagesAsRead(conversation.id, "admin");
+            updateConversation(conversation.id, { unreadCountUser: 0 });
         }
-        return messages;
-    }, [data]);
-
-    const adminPresence: Presence | null = data?.pages[0]?.presence || null;
+    }, [conversation?.id, messages]);
 
     // Group messages by date
     const groupedMessages = useMemo(() => {
         const groups: { date: string; messages: Message[] }[] = [];
         let currentDate = "";
 
-        for (const msg of allMessages) {
-            const msgDate = format(new Date(msg.createdAt), "yyyy-MM-dd");
+        for (const msg of messages) {
+            const createdAt = typeof msg.createdAt === "number" ? msg.createdAt : Date.now();
+            const msgDate = format(new Date(createdAt), "yyyy-MM-dd");
             if (msgDate !== currentDate) {
                 currentDate = msgDate;
-                groups.push({ date: msg.createdAt, messages: [msg] });
+                groups.push({ date: new Date(createdAt).toISOString(), messages: [msg] });
             } else {
                 groups[groups.length - 1].messages.push(msg);
             }
         }
 
         return groups;
-    }, [allMessages]);
+    }, [messages]);
 
-    // Poll for typing status
-    useEffect(() => {
-        if (!conversationId) return;
-
-        const checkTyping = async () => {
-            try {
-                const data = await chat.getTypingStatus(conversationId);
-                setIsAdminTyping(data.isTyping);
-            } catch {
-                // Ignore errors
-            }
-        };
-
-        const interval = setInterval(checkTyping, 2000);
-        return () => clearInterval(interval);
-    }, [conversationId]);
-
-    // Scroll to bottom on new messages (only if already at bottom)
+    // Scroll to bottom
     useEffect(() => {
         if (shouldScrollToBottom && messagesContainerRef.current) {
             const container = messagesContainerRef.current;
@@ -160,7 +152,7 @@ export default function ProfileChat() {
                 behavior: "smooth",
             });
         }
-    }, [allMessages, isAdminTyping, shouldScrollToBottom]);
+    }, [messages, isAdminTyping, shouldScrollToBottom]);
 
     // Track scroll position
     const handleScroll = useCallback(() => {
@@ -170,102 +162,112 @@ export default function ProfileChat() {
         const { scrollTop, scrollHeight, clientHeight } = container;
         const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
         setShouldScrollToBottom(isAtBottom);
-
-        // Load more when scrolled to top
-        if (scrollTop < 50 && hasNextPage && !isFetchingNextPage) {
-            fetchNextPage();
-        }
-    }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-    // Update presence heartbeat
-    useEffect(() => {
-        if (!user) return;
-
-        const updatePresence = async () => {
-            try {
-                await chat.updatePresence(true);
-            } catch {
-                // Ignore errors
-            }
-        };
-
-        updatePresence();
-        const interval = setInterval(updatePresence, 30000);
-
-        return () => {
-            clearInterval(interval);
-            // Use raw fetch with keepalive for cleanup
-            fetch("/api/chat/presence", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ isOnline: false }),
-                keepalive: true,
-            }).catch(() => { });
-        };
-    }, [user]);
+    }, []);
 
     const handleTyping = useCallback(
         async (isTyping: boolean) => {
-            if (!conversationId) return;
+            if (!conversation?.id || !user?.id) return;
             try {
-                await chat.setTypingStatus(conversationId, isTyping);
+                await setTypingStatus(conversation.id, user.id, isTyping);
             } catch {
                 // Ignore errors
             }
         },
-        [conversationId]
+        [conversation?.id, user?.id]
     );
 
     const handleSendMessage = useCallback(
-        async (message: string) => {
+        async (content: string) => {
+            if (!user?.id) return;
+
             try {
-                const data = await chat.sendMessage(conversationId, message);
-                if (!conversationId && data.conversation?._id) {
-                    setConversationId(data.conversation._id);
+                let convId = conversation?.id;
+
+                // Create conversation if it doesn't exist
+                if (!convId) {
+                    convId = await createConversation({
+                        participantId: user.id,
+                        participantName: user.name || "Anonymous",
+                        participantEmail: user.email || "",
+                        participantImage: user.image || "",
+                        lastMessage: content.substring(0, 100),
+                        lastMessageAt: Date.now(),
+                        lastMessageBy: "user",
+                        unreadCountUser: 0,
+                        unreadCountAdmin: 1,
+                        isActive: true,
+                        createdAt: Date.now(),
+                    });
+                }
+
+                await sendMessage({
+                    conversationId: convId,
+                    senderId: user.id,
+                    senderType: "user",
+                    senderName: user.name || "Anonymous",
+                    senderImage: user.image || "",
+                    content,
+                    isRead: false,
+                    isEdited: false,
+                    isDeleted: false,
+                });
+
+                // Update conversation metadata
+                if (conversation) {
+                    await updateConversation(convId, {
+                        lastMessage: content.substring(0, 100),
+                        lastMessageAt: Date.now(),
+                        lastMessageBy: "user",
+                        unreadCountAdmin: (conversation.unreadCountAdmin || 0) + 1,
+                    });
                 }
 
                 setShouldScrollToBottom(true);
-                refetchMessages();
-                refreshUnreadCount();
             } catch (error) {
                 toast.error(error instanceof Error ? error.message : "Failed to send message");
                 throw error;
             }
         },
-        [conversationId, refetchMessages, refreshUnreadCount]
+        [conversation, user]
     );
 
     const handleSaveEdit = useCallback(
         async (messageId: string, content: string) => {
-            if (!conversationId) return;
+            if (!conversation?.id) return;
+
+            const originalMessage = messages.find((m) => m.id === messageId);
+            if (!originalMessage) return;
 
             try {
-                await chat.editMessage(conversationId, messageId, content);
+                await editMessage(conversation.id, messageId, content, originalMessage.content);
                 toast.success("Message updated");
-                refetchMessages();
             } catch (error) {
                 toast.error(error instanceof Error ? error.message : "Failed to edit message");
                 throw error;
             }
         },
-        [conversationId, refetchMessages]
+        [conversation?.id, messages]
     );
 
     const canEditMessage = (message: Message) => {
-        // User can only edit their own messages (senderType === "user")
         if (message.senderType !== "user") return false;
-        const messageAge = Date.now() - new Date(message.createdAt).getTime();
+        const createdAt = typeof message.createdAt === "number" ? message.createdAt : Date.now();
+        const messageAge = Date.now() - createdAt;
         const tenMinutes = 10 * 60 * 1000;
         return messageAge <= tenMinutes;
     };
 
     const shouldShowReadStatus = (message: Message) => {
-        // Show read status for user's own messages if admin hasn't hidden their status
         if (message.senderType === "user") {
             return !adminPresence?.hideLastSeen;
         }
         return true;
     };
+
+    const presenceLastSeen =
+        adminPresence && typeof adminPresence.lastSeen === "number"
+            ? new Date(adminPresence.lastSeen).toISOString()
+            : null;
 
     return (
         <div className="border border-border rounded-xl overflow-hidden flex flex-col h-[600px]">
@@ -280,7 +282,7 @@ export default function ProfileChat() {
                         {adminPresence && !adminPresence.hideLastSeen && (
                             <PresenceIndicator
                                 isOnline={adminPresence.isOnline}
-                                lastSeen={adminPresence.lastSeen}
+                                lastSeen={presenceLastSeen}
                                 hideLastSeen={adminPresence.hideLastSeen}
                                 size="sm"
                             />
@@ -288,15 +290,11 @@ export default function ProfileChat() {
                         {adminPresence?.hideLastSeen && (
                             <span className="text-xs text-muted-foreground">Admin</span>
                         )}
+                        {!adminPresence && (
+                            <span className="text-xs text-muted-foreground">Admin</span>
+                        )}
                     </div>
                 </div>
-                <button
-                    onClick={() => refetchMessages()}
-                    className="p-2 rounded-lg hover:bg-muted transition-colors"
-                    title="Refresh"
-                >
-                    <RefreshCw className="h-4 w-4" />
-                </button>
             </div>
 
             {/* Messages */}
@@ -305,31 +303,13 @@ export default function ProfileChat() {
                 onScroll={handleScroll}
                 className="flex-1 overflow-y-auto p-4 bg-background/50 chat-scrollbar"
             >
-                {/* Load more button */}
-                {hasNextPage && (
-                    <div className="flex justify-center mb-4">
-                        <button
-                            onClick={() => fetchNextPage()}
-                            disabled={isFetchingNextPage}
-                            className="flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted rounded-full transition-colors disabled:opacity-50"
-                        >
-                            {isFetchingNextPage ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                                <ChevronUp className="h-4 w-4" />
-                            )}
-                            Load previous messages
-                        </button>
-                    </div>
-                )}
-
-                {loadingMessages && !data ? (
+                {loading ? (
                     <div className="space-y-4">
                         {[1, 2, 3].map((i) => (
                             <Skeleton key={i} className="h-16 w-3/4" />
                         ))}
                     </div>
-                ) : allMessages.length === 0 ? (
+                ) : messages.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-center text-muted-foreground">
                         <MessageCircle className="h-12 w-12 mb-4 opacity-50" />
                         <p>No messages yet</p>
@@ -340,26 +320,42 @@ export default function ProfileChat() {
                         {groupedMessages.map((group, groupIndex) => (
                             <div key={groupIndex}>
                                 <DateDivider date={group.date} />
-                                {group.messages.map((msg) => (
-                                    <ChatMessage
-                                        key={msg._id}
-                                        id={msg._id}
-                                        content={msg.content}
-                                        senderName={msg.senderName}
-                                        senderImage={msg.senderImage}
-                                        senderType={msg.senderType}
-                                        isOwn={msg.senderType === "user"}
-                                        isRead={shouldShowReadStatus(msg) ? msg.isRead : false}
-                                        readAt={msg.readAt}
-                                        isEdited={msg.isEdited}
-                                        editHistory={msg.editHistory}
-                                        createdAt={msg.createdAt}
-                                        canEdit={canEditMessage(msg)}
-                                        isAdmin={false}
-                                        onStartEdit={(id, content) => setEditingMessage({ id, content })}
-                                        showReadStatus={shouldShowReadStatus(msg)}
-                                    />
-                                ))}
+                                {group.messages.map((msg) => {
+                                    const createdAt =
+                                        typeof msg.createdAt === "number"
+                                            ? new Date(msg.createdAt).toISOString()
+                                            : new Date().toISOString();
+                                    const readAt =
+                                        msg.readAt && typeof msg.readAt === "number"
+                                            ? new Date(msg.readAt).toISOString()
+                                            : undefined;
+
+                                    return (
+                                        <ChatMessage
+                                            key={msg.id}
+                                            id={msg.id}
+                                            content={msg.content}
+                                            senderName={msg.senderName}
+                                            senderImage={msg.senderImage}
+                                            senderType={msg.senderType}
+                                            isOwn={msg.senderType === "user"}
+                                            isRead={shouldShowReadStatus(msg) ? msg.isRead : false}
+                                            readAt={readAt}
+                                            isEdited={msg.isEdited}
+                                            editHistory={msg.editHistory?.map((h) => ({
+                                                content: h.content,
+                                                editedAt: new Date(h.editedAt).toISOString(),
+                                            }))}
+                                            createdAt={createdAt}
+                                            canEdit={canEditMessage(msg)}
+                                            isAdmin={false}
+                                            onStartEdit={(id, content) =>
+                                                setEditingMessage({ id, content })
+                                            }
+                                            showReadStatus={shouldShowReadStatus(msg)}
+                                        />
+                                    );
+                                })}
                             </div>
                         ))}
                         {isAdminTyping && <TypingIndicator name="Admin" />}
