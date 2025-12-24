@@ -54,7 +54,7 @@ A modern, full-featured personal portfolio and blog platform built with Next.js 
 
 ---
 
-### Live Chat Module
+### Live Chat Module (Firebase Realtime Database)
 - Real-time direct messaging
 - Typing indicators
 - Online/offline presence status
@@ -163,6 +163,7 @@ This application implements role-based access control with secure API responses:
 - Google OAuth credentials (optional)
 - Cloudinary account (for image uploads)
 - SMTP credentials (for newsletter)
+- Firebase account (for admin–user live chat)
 
 ### Installation
 
@@ -182,31 +183,7 @@ This application implements role-based access control with secure API responses:
    cp .env.example .env
    ```
 
-4. Update `.env` with your credentials:
-   ```env
-   # User Info
-   NEXT_PUBLIC_MY_NAME="Your Name"
-   NEXT_PUBLIC_MY_FULL_NAME="Your Full Name"
-   NEXT_PUBLIC_MY_USERNAME="yourusername"
-   
-   # Database
-   MONGODB_URI="your_mongodb_connection_string"
-   
-   # Authentication
-   NEXTAUTH_SECRET="your_nextauth_secret"
-   AUTH_GITHUB_ID="your_github_oauth_client_id"
-   AUTH_GITHUB_SECRET="your_github_oauth_client_secret"
-   
-   # GitHub (for Guestbook)
-   NEXT_PUBLIC_GITHUB_REPO_OWNER="your_github_username"
-   NEXT_PUBLIC_GITHUB_REPO_NAME="your_repo_name"
-   GITHUB_ACCESS_TOKEN="your_github_personal_access_token"
-   
-   # Cloudinary
-   CLOUDINARY_CLOUD_NAME="your_cloud_name"
-   CLOUDINARY_API_KEY="your_api_key"
-   CLOUDINARY_API_SECRET="your_api_secret"
-   ```
+4. Update `.env` with your credentials
 
 5. Run the development server:
    ```bash
@@ -229,7 +206,6 @@ This application implements role-based access control with secure API responses:
 ```
 src/
 ├── app/                    # Next.js App Router
-│   ├── (admin)/           # Admin dashboard routes
 │   ├── (main)/            # Public routes
 │   │   ├── about/         # About page
 │   │   ├── admin/         # Admin panel
