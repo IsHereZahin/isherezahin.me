@@ -4,13 +4,14 @@ import MotionWrapper from "@/components/motion/MotionWrapper";
 import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent, ErrorState, PageTitle, Section, Skeleton } from "@/components/ui";
 import { statistics } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
-import { BarChart3, BookOpen, Eye, FileText, FolderKanban, Link2, Lock, Monitor, Users } from "lucide-react";
+import { BarChart3, BookOpen, Eye, FileText, FolderKanban, Globe, Link2, Lock, Monitor, Users } from "lucide-react";
 import { useState } from "react";
 import { Area, AreaChart, CartesianGrid, Cell, Pie, PieChart, XAxis, YAxis } from "recharts";
 
 interface RefStat { ref: string; count: number; }
 interface PathStat { path: string; count: number; }
-interface DeviceStat { device: string; count: number; uniqueVisitors: number; }
+interface DeviceStat { device: string; count: number; uniqueVisitors?: number; }
+interface CountryStat { country: string; count: number; }
 interface TrendData { date: string; visitors: number; uniqueVisitors: number; }
 
 interface StatisticsData {
@@ -19,6 +20,7 @@ interface StatisticsData {
     refStats?: RefStat[];
     pathStats?: PathStat[];
     deviceStats?: DeviceStat[];
+    countryStats?: CountryStat[];
     visitorTrends?: TrendData[];
     totalBlogs?: number;
     totalProjects?: number;
@@ -30,6 +32,7 @@ interface StatisticsData {
     isCardsPublic: boolean;
     isTrendsPublic: boolean;
     isDevicesPublic: boolean;
+    isCountriesPublic?: boolean;
     isRefPublic: boolean;
     isPathPublic: boolean;
     isAdmin: boolean;
@@ -99,6 +102,7 @@ export default function Statistics() {
     const showTrends = data.isAdmin || data.isTrendsPublic;
     const showDevices = data.isAdmin || data.isDevicesPublic;
     const showCards = data.isAdmin || data.isCardsPublic;
+    const showCountries = data.isAdmin || data.isCountriesPublic;
     const showBothCharts = showTrends && showDevices;
     const showOnlyTrends = showTrends && !showDevices;
     const showOnlyDevices = showDevices && !showTrends;
@@ -190,11 +194,31 @@ export default function Statistics() {
                                         </div>
                                         <div className="text-right">
                                             <span className="text-sm text-foreground font-mono">{stat.count.toLocaleString()}</span>
-                                            <span className="text-xs text-muted-foreground ml-2">({stat.uniqueVisitors.toLocaleString()} unique)</span>
+                                            {stat.uniqueVisitors !== undefined && (
+                                                <span className="text-xs text-muted-foreground ml-2">({stat.uniqueVisitors.toLocaleString()} unique)</span>
+                                            )}
                                         </div>
                                     </div>
                                 ))}
                             </div>
+                        </div>
+                    </section>
+                )}
+
+                {showCountries && data.countryStats && data.countryStats.length > 0 && (
+                    <section className="border border-border rounded-xl p-6">
+                        <div className="flex items-center gap-2 mb-6">
+                            <Globe className="h-5 w-5 icon-bw" />
+                            <h3 className="text-base font-semibold">Visitors by Country</h3>
+                            {data.isAdmin && !data.isCountriesPublic && <span className="text-xs text-amber-600 dark:text-amber-400 ml-2">(Private)</span>}
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                            {data.countryStats.slice(0, 12).map((stat) => (
+                                <div key={stat.country} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                                    <span className="text-sm font-medium">{stat.country}</span>
+                                    <span className="text-sm text-muted-foreground font-mono">{stat.count.toLocaleString()}</span>
+                                </div>
+                            ))}
                         </div>
                     </section>
                 )}

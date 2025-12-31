@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc --noEmit)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}
