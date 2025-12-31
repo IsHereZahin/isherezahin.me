@@ -921,8 +921,82 @@ const quests = {
     },
 };
 
+// Bucket List API
+const bucketList = {
+    async getAll() {
+        const response = await fetch('/api/bucket-list');
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch bucket list", response.status);
+        }
+        return await response.json();
+    },
+
+    async get(id: string) {
+        const response = await fetch(`/api/bucket-list/${id}`);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch bucket list item", response.status);
+        }
+        return await response.json();
+    },
+
+    async create(data: {
+        title: string;
+        description: string;
+        category: string;
+        status?: string;
+        location?: string;
+        completedDate?: string;
+        order?: number;
+        isActive?: boolean;
+    }) {
+        const response = await fetch('/api/bucket-list', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to create bucket list item", response.status);
+        }
+        return await response.json();
+    },
+
+    async update(id: string, data: {
+        title: string;
+        description: string;
+        category: string;
+        status?: string;
+        location?: string;
+        completedDate?: string;
+        order?: number;
+        isActive?: boolean;
+    }) {
+        const response = await fetch(`/api/bucket-list/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to update bucket list item", response.status);
+        }
+        return await response.json();
+    },
+
+    async delete(id: string) {
+        const response = await fetch(`/api/bucket-list/${id}`, { method: 'DELETE' });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to delete bucket list item", response.status);
+        }
+        return await response.json();
+    },
+};
+
 export {
-    aboutHero, adminSettings, adminSubscribers, adminUsers, blogLikes, blogViews, cloudinary, contactInfo, contactMessage,
+    aboutHero, adminSettings, adminSubscribers, adminUsers, blogLikes, blogViews, bucketList, cloudinary, contactInfo, contactMessage,
     createBlog, createProject, currentStatus, deleteBlog, deleteProject, getBlog, getBlogs, getBlogTags, getProject,
     getProjects, getProjectTags, newsletter, profile, projectLikes, projectViews, quests, sessions, statistics, testimonials,
     updateBlog, updateProject, workExperience
