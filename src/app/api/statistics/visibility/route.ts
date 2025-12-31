@@ -13,92 +13,60 @@ export async function PATCH(request: NextRequest) {
         }
 
         const body = await request.json();
-        const { isPublic, isRefPublic, isPathPublic, isCardsPublic, isTrendsPublic, isDevicesPublic, setting } = body;
+        const { isPublic, isRefPublic, isPathPublic, isCardsPublic, isTrendsPublic, isDevicesPublic, isCountriesPublic, setting } = body;
 
-        // Handle specific setting update
         if (setting === "statsCards" && typeof isCardsPublic === "boolean") {
             await SiteSettingsModel.findOneAndUpdate(
                 { key: "statsCardsPublic" },
-                {
-                    key: "statsCardsPublic",
-                    value: isCardsPublic,
-                    description: "Whether stats cards are publicly visible",
-                },
+                { key: "statsCardsPublic", value: isCardsPublic },
                 { upsert: true, new: true }
             );
-
-            return NextResponse.json({
-                message: `Stats cards are now ${isCardsPublic ? "public" : "private"}`,
-                isCardsPublic,
-            });
+            return NextResponse.json({ message: `Stats cards are now ${isCardsPublic ? "public" : "private"}`, isCardsPublic });
         }
 
         if (setting === "visitorTrends" && typeof isTrendsPublic === "boolean") {
             await SiteSettingsModel.findOneAndUpdate(
                 { key: "visitorTrendsPublic" },
-                {
-                    key: "visitorTrendsPublic",
-                    value: isTrendsPublic,
-                    description: "Whether visitor trends chart is publicly visible",
-                },
+                { key: "visitorTrendsPublic", value: isTrendsPublic },
                 { upsert: true, new: true }
             );
-
-            return NextResponse.json({
-                message: `Visitor trends are now ${isTrendsPublic ? "public" : "private"}`,
-                isTrendsPublic,
-            });
+            return NextResponse.json({ message: `Visitor trends are now ${isTrendsPublic ? "public" : "private"}`, isTrendsPublic });
         }
 
         if (setting === "deviceTypes" && typeof isDevicesPublic === "boolean") {
             await SiteSettingsModel.findOneAndUpdate(
                 { key: "deviceTypesPublic" },
-                {
-                    key: "deviceTypesPublic",
-                    value: isDevicesPublic,
-                    description: "Whether device types chart is publicly visible",
-                },
+                { key: "deviceTypesPublic", value: isDevicesPublic },
                 { upsert: true, new: true }
             );
+            return NextResponse.json({ message: `Device types are now ${isDevicesPublic ? "public" : "private"}`, isDevicesPublic });
+        }
 
-            return NextResponse.json({
-                message: `Device types are now ${isDevicesPublic ? "public" : "private"}`,
-                isDevicesPublic,
-            });
+        if (setting === "countries" && typeof isCountriesPublic === "boolean") {
+            await SiteSettingsModel.findOneAndUpdate(
+                { key: "countriesPublic" },
+                { key: "countriesPublic", value: isCountriesPublic },
+                { upsert: true, new: true }
+            );
+            return NextResponse.json({ message: `Countries are now ${isCountriesPublic ? "public" : "private"}`, isCountriesPublic });
         }
 
         if (setting === "referralSources" && typeof isRefPublic === "boolean") {
             await SiteSettingsModel.findOneAndUpdate(
                 { key: "referralSourcesPublic" },
-                {
-                    key: "referralSourcesPublic",
-                    value: isRefPublic,
-                    description: "Whether referral sources are publicly visible",
-                },
+                { key: "referralSourcesPublic", value: isRefPublic },
                 { upsert: true, new: true }
             );
-
-            return NextResponse.json({
-                message: `Referral sources are now ${isRefPublic ? "public" : "private"}`,
-                isRefPublic,
-            });
+            return NextResponse.json({ message: `Referral sources are now ${isRefPublic ? "public" : "private"}`, isRefPublic });
         }
 
         if (setting === "topPages" && typeof isPathPublic === "boolean") {
             await SiteSettingsModel.findOneAndUpdate(
                 { key: "topPagesPublic" },
-                {
-                    key: "topPagesPublic",
-                    value: isPathPublic,
-                    description: "Whether top pages are publicly visible",
-                },
+                { key: "topPagesPublic", value: isPathPublic },
                 { upsert: true, new: true }
             );
-
-            return NextResponse.json({
-                message: `Top pages are now ${isPathPublic ? "public" : "private"}`,
-                isPathPublic,
-            });
+            return NextResponse.json({ message: `Top pages are now ${isPathPublic ? "public" : "private"}`, isPathPublic });
         }
 
         if (typeof isPublic !== "boolean") {
@@ -107,18 +75,11 @@ export async function PATCH(request: NextRequest) {
 
         await SiteSettingsModel.findOneAndUpdate(
             { key: "statisticsPublic" },
-            {
-                key: "statisticsPublic",
-                value: isPublic,
-                description: "Whether statistics page is publicly visible",
-            },
+            { key: "statisticsPublic", value: isPublic },
             { upsert: true, new: true }
         );
 
-        return NextResponse.json({
-            message: `Statistics are now ${isPublic ? "public" : "private"}`,
-            isPublic,
-        });
+        return NextResponse.json({ message: `Statistics are now ${isPublic ? "public" : "private"}`, isPublic });
     } catch (error) {
         console.error("Error updating statistics visibility:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
