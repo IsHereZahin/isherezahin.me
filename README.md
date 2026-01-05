@@ -185,7 +185,9 @@ This application implements role-based access control with secure API responses:
 
 4. Update `.env` with your credentials
 
-5. Run the development server:
+5. Update `src/config/seo.config.ts` with your own data before publishing the site.
+
+6. Run the development server:
    ```bash
    npm run dev
    ```

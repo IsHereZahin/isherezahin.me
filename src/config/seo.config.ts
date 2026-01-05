@@ -16,9 +16,24 @@ export const PERSON = {
     last: "Mohammad",
     full: "Zahin Mohammad",
     display: "Zahin Mohammad",
+    alternativeNames: ["Zahin", "isherezahin", "Zahin Mohammad", "Abu Zahin Mohammad Nowsin"],
   },
   username: "isherezahin",
   email: "isherezahin@gmail.com",
+  birthDate: "2003-01-01", // Format: "YYYY-MM-DD" e.g., "1995-05-15"
+  birthPlace: {
+    city: "Cox's Bazar",
+    country: "Bangladesh",
+  },
+  gender: "Male",
+
+  // Profile Image (Important for Knowledge Panel - use a clear, professional photo)
+  image: {
+    url: process.env.NEXT_PUBLIC_PROFILE_IMAGE || "https://res.cloudinary.com/dsh30sjju/image/upload/v1761056901/darklogo_eos1ps.png",
+    width: 400,
+    height: 400,
+    altText: "Zahin Mohammad - Software Developer",
+  },
 
   // Professional Info
   profession: {
@@ -49,6 +64,49 @@ export const PERSON = {
       "A Software Developer specializing in building high-performance web applications using React, Next.js, Node.js, and Laravel.",
     long: "Zahin Mohammad is a Software Developer from Cox's Bazar, Bangladesh, specializing in building high-performance and elegant web applications using React, Node.js, Laravel, and other modern web technologies.",
   },
+
+  // ==========================================================================
+  // OPTIONAL: Additional fields for richer Knowledge Panel
+  // Uncomment and fill in the sections that apply to you
+  // ==========================================================================
+
+  // Education (uncomment and fill if applicable)
+  education: [
+    {
+      institution: "East Delta University",
+      degree: "Bachelor of Science in Computer Science and Engineering",
+      field: "Computer Science",
+      startDate: "2026",
+      endDate: "2029 (expected)",
+    },
+  ],
+
+  // Spouse
+  // spouse: {
+  //   name: "Spouse Name",
+  //   marriageDate: "YYYY-MM-DD",
+  // },
+
+  // Awards & Achievements (uncomment if applicable)
+  // awards: [
+  //   {
+  //     name: "Award Name",
+  //     date: "YYYY",
+  //     description: "Award description",
+  //   },
+  // ],
+
+  // Notable Works/Projects for Knowledge Panel (like songs/movies for artists)
+  // These will appear as "Notable works" in your Knowledge Panel
+  notableWorks: [
+    // Add your most significant projects here
+    {
+      name: "BAS CRM System",
+      url: "https://bostonappraisal.com",
+      description: "A comprehensive CRM system built for Boston Appraisal Services to streamline their client management and appraisal processes.",
+      dateCreated: "2025-01-01",
+    },
+  ],
 } as const;
 
 // =============================================================================
@@ -246,20 +304,42 @@ export const PAGE_SEO = {
 // =============================================================================
 
 export const SCHEMA = {
-  // Person schema data
+  // Person schema data - Enhanced for Google Knowledge Panel
   person: {
     "@type": "Person" as const,
     name: PERSON.name.full,
     givenName: PERSON.name.first,
     familyName: PERSON.name.last,
-    alternateName: [PERSON.username, "isherezahin", PERSON.name.first],
+    alternateName: PERSON.name.alternativeNames,
     email: `mailto:${PERSON.email}`,
     jobTitle: PERSON.profession.title,
     description: PERSON.bio.medium,
+    // Birth information (important for Knowledge Panel identity)
+    ...(PERSON.birthDate && { birthDate: PERSON.birthDate }),
+    birthPlace: {
+      "@type": "Place" as const,
+      name: `${PERSON.birthPlace.city}, ${PERSON.birthPlace.country}`,
+      address: {
+        "@type": "PostalAddress" as const,
+        addressLocality: PERSON.birthPlace.city,
+        addressCountry: PERSON.birthPlace.country,
+      },
+    },
+    gender: PERSON.gender,
     nationality: {
       "@type": "Country" as const,
       name: PERSON.location.country,
       sameAs: "https://en.wikipedia.org/wiki/Bangladesh",
+    },
+    homeLocation: {
+      "@type": "Place" as const,
+      name: `${PERSON.location.city}, ${PERSON.location.country}`,
+      address: {
+        "@type": "PostalAddress" as const,
+        addressLocality: PERSON.location.city,
+        addressRegion: PERSON.location.region,
+        addressCountry: PERSON.location.countryCode,
+      },
     },
     address: {
       "@type": "PostalAddress" as const,
@@ -288,6 +368,7 @@ export const SCHEMA = {
       name: lang.name,
       alternateName: lang.code,
     })),
+    // sameAs is critical for Knowledge Panel - include all authoritative profiles
     sameAs: Object.values(SOCIAL_LINKS),
   },
 

@@ -16,28 +16,33 @@ export function PersonJsonLd() {
     name: PERSON.name.full,
     givenName: PERSON.name.first,
     familyName: PERSON.name.last,
-    alternateName: SCHEMA.person.alternateName,
+    alternateName: PERSON.name.alternativeNames,
     url: getFullUrl(),
+    // Profile Image - Critical for Knowledge Panel
     image: {
       "@type": "ImageObject",
-      url: SITE.logo,
-      width: 400,
-      height: 400,
-      caption: `${PERSON.name.full} - ${PERSON.profession.title}`,
+      "@id": `${getFullUrl()}/#primaryimage`,
+      url: PERSON.image.url,
+      width: PERSON.image.width,
+      height: PERSON.image.height,
+      caption: PERSON.image.altText,
+      contentUrl: PERSON.image.url,
     },
     email: `mailto:${PERSON.email}`,
     jobTitle: PERSON.profession.title,
-    description: PERSON.bio.medium,
+    description: PERSON.bio.long,
+    // Birth information - Important for identity
+    ...(PERSON.birthDate && { birthDate: PERSON.birthDate }),
+    birthPlace: SCHEMA.person.birthPlace,
+    gender: PERSON.gender,
     nationality: SCHEMA.person.nationality,
+    homeLocation: SCHEMA.person.homeLocation,
     address: SCHEMA.person.address,
     worksFor: SCHEMA.person.worksFor,
-    alumniOf: {
-      "@type": "EducationalOrganization",
-      name: "University",
-    },
     knowsAbout: SKILLS.all,
     knowsLanguage: SCHEMA.person.knowsLanguage,
     hasOccupation: SCHEMA.person.hasOccupation,
+    // sameAs links - Critical for Knowledge Panel recognition
     sameAs: Object.values(SOCIAL_LINKS),
     mainEntityOfPage: {
       "@type": "WebPage",
@@ -136,60 +141,180 @@ export function ProfilePageJsonLd() {
   );
 }
 
-// Complete Knowledge Graph Schema - combines all schemas
+// Complete Knowledge Graph Schema - combines all schemas for Google Knowledge Panel
 export function KnowledgeGraphJsonLd() {
+  // Build person entity with optional fields
+  const personEntity: Record<string, unknown> = {
+    "@type": "Person",
+    "@id": `${getFullUrl()}/#person`,
+    name: PERSON.name.full,
+    givenName: PERSON.name.first,
+    familyName: PERSON.name.last,
+    alternateName: PERSON.name.alternativeNames,
+    url: getFullUrl(),
+    // Profile Image - Important for Knowledge Panel display
+    image: {
+      "@type": "ImageObject",
+      "@id": `${getFullUrl()}/#primaryimage`,
+      url: PERSON.image.url,
+      width: PERSON.image.width,
+      height: PERSON.image.height,
+      caption: PERSON.image.altText,
+      contentUrl: PERSON.image.url,
+      inLanguage: SITE.locale,
+    },
+    email: `mailto:${PERSON.email}`,
+    jobTitle: PERSON.profession.title,
+    description: PERSON.bio.long,
+    // Birth information - Critical for identity verification
+    ...(PERSON.birthDate && { birthDate: PERSON.birthDate }),
+    birthPlace: {
+      "@type": "Place",
+      name: `${PERSON.birthPlace.city}, ${PERSON.birthPlace.country}`,
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: PERSON.birthPlace.city,
+        addressCountry: PERSON.birthPlace.country,
+      },
+    },
+    gender: PERSON.gender,
+    nationality: {
+      "@type": "Country",
+      name: PERSON.location.country,
+      sameAs: "https://en.wikipedia.org/wiki/Bangladesh",
+    },
+    homeLocation: {
+      "@type": "Place",
+      name: `${PERSON.location.city}, ${PERSON.location.country}`,
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: PERSON.location.city,
+        addressRegion: PERSON.location.region,
+        addressCountry: PERSON.location.countryCode,
+      },
+    },
+    address: SCHEMA.person.address,
+    worksFor: {
+      "@type": "Organization",
+      name: PERSON.profession.company,
+      description: PERSON.profession.description,
+    },
+    hasOccupation: {
+      "@type": "Occupation",
+      name: PERSON.profession.title,
+      occupationLocation: {
+        "@type": "Country",
+        name: PERSON.location.country,
+      },
+      description: "Develops web applications and software solutions",
+      skills: SKILLS.primary.join(", "),
+    },
+    knowsAbout: SKILLS.all,
+    knowsLanguage: PERSON.languages.map((lang) => ({
+      "@type": "Language",
+      name: lang.name,
+      alternateName: lang.code,
+    })),
+    // sameAs - Critical for Knowledge Panel (links to verified profiles)
+    sameAs: Object.values(SOCIAL_LINKS),
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${getFullUrl()}/about`,
+    },
+  };
+
+  // Add education if provided (alumniOf - shown in Knowledge Panel)
+  if ("education" in PERSON && Array.isArray(PERSON.education) && PERSON.education.length > 0) {
+    personEntity.alumniOf = PERSON.education.map((edu: { institution: string; degree?: string; field?: string; startDate?: string; endDate?: string }) => ({
+      "@type": "EducationalOrganization",
+      name: edu.institution,
+      ...(edu.degree && {
+        alumni: {
+          "@type": "Person",
+          "@id": `${getFullUrl()}/#person`,
+        },
+      }),
+    }));
+  }
+
+  // Add spouse if provided (shown in Knowledge Panel like Tahsan's)
+  if ("spouse" in PERSON && PERSON.spouse && typeof PERSON.spouse === "object" && "name" in PERSON.spouse) {
+    const spouseData = PERSON.spouse as { name: string; marriageDate?: string };
+    personEntity.spouse = {
+      "@type": "Person",
+      name: spouseData.name,
+      ...(spouseData.marriageDate && { marriageDate: spouseData.marriageDate }),
+    };
+  }
+
+  // Add awards if provided
+  if ("awards" in PERSON && Array.isArray(PERSON.awards) && PERSON.awards.length > 0) {
+    personEntity.award = PERSON.awards.map((award: { name: string; date?: string; description?: string }) => award.name);
+  }
+
+  // Add notable works if provided (like songs/movies for artists)
+  if (PERSON.notableWorks && PERSON.notableWorks.length > 0) {
+    personEntity.hasCreated = PERSON.notableWorks.map((work: { name: string; url?: string; description?: string; dateCreated?: string }) => ({
+      "@type": "CreativeWork",
+      name: work.name,
+      ...(work.url && { url: work.url }),
+      ...(work.description && { description: work.description }),
+      ...(work.dateCreated && { dateCreated: work.dateCreated }),
+      creator: {
+        "@id": `${getFullUrl()}/#person`,
+      },
+    }));
+  }
+
   const graphSchema = {
     "@context": "https://schema.org",
     "@graph": [
-      // Person Entity
-      {
-        "@type": "Person",
-        "@id": `${getFullUrl()}/#person`,
-        name: PERSON.name.full,
-        givenName: PERSON.name.first,
-        familyName: PERSON.name.last,
-        alternateName: SCHEMA.person.alternateName,
-        url: getFullUrl(),
-        image: {
-          "@type": "ImageObject",
-          "@id": `${getFullUrl()}/#personimage`,
-          url: SITE.logo,
-          width: 400,
-          height: 400,
-          caption: PERSON.name.full,
-          inLanguage: SITE.locale,
-        },
-        email: `mailto:${PERSON.email}`,
-        jobTitle: PERSON.profession.title,
-        description: PERSON.bio.medium,
-        nationality: {
-          "@type": "Country",
-          name: PERSON.location.country,
-        },
-        address: SCHEMA.person.address,
-        worksFor: {
-          "@type": "Organization",
-          name: PERSON.profession.company,
-        },
-        knowsAbout: SKILLS.all,
-        sameAs: Object.values(SOCIAL_LINKS),
-      },
+      // Person Entity - Primary entity for Knowledge Panel
+      personEntity,
       // Website Entity
       {
         "@type": "WebSite",
         "@id": `${getFullUrl()}/#website`,
         url: getFullUrl(),
         name: `${PERSON.name.full} - Portfolio`,
-        description: `Official portfolio of ${PERSON.name.full}`,
+        description: `Official portfolio and blog of ${PERSON.name.full}, a ${PERSON.profession.title} from ${PERSON.location.city}, ${PERSON.location.country}`,
         publisher: {
           "@id": `${getFullUrl()}/#person`,
         },
+        author: {
+          "@id": `${getFullUrl()}/#person`,
+        },
         inLanguage: SITE.locale,
+        copyrightYear: new Date().getFullYear(),
+        copyrightHolder: {
+          "@id": `${getFullUrl()}/#person`,
+        },
         potentialAction: {
           "@type": "SearchAction",
-          target: `${getFullUrl()}/blogs?search={search_term_string}`,
+          target: {
+            "@type": "EntryPoint",
+            urlTemplate: `${getFullUrl()}/blogs?search={search_term_string}`,
+          },
           "query-input": "required name=search_term_string",
         },
+      },
+      // WebPage Entity for homepage
+      {
+        "@type": "WebPage",
+        "@id": `${getFullUrl()}/#webpage`,
+        url: getFullUrl(),
+        name: `${PERSON.name.full} | ${PERSON.profession.title}`,
+        description: PERSON.bio.long,
+        isPartOf: {
+          "@id": `${getFullUrl()}/#website`,
+        },
+        about: {
+          "@id": `${getFullUrl()}/#person`,
+        },
+        primaryImageOfPage: {
+          "@id": `${getFullUrl()}/#primaryimage`,
+        },
+        inLanguage: SITE.locale,
       },
       // Organization (for professional context)
       {
