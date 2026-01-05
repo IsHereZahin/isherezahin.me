@@ -3,11 +3,13 @@ import { SimpleFooter } from "@/components/layouts/Footer";
 import Header from "@/components/layouts/Header";
 import { DecorativeBlobBottom, DecorativeBlobTop, Hello } from "@/components/ui";
 import VisitorTracker from "@/components/VisitorTracker";
+import { KnowledgeGraphJsonLd } from "@/components/seo/JsonLd";
 import { Suspense } from "react";
 
 export default function MainLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
         <div className="flex flex-col min-h-screen relative selection:bg-primary/20 selection:text-primary">
+            <KnowledgeGraphJsonLd />
             <Suspense fallback={null}>
                 <VisitorTracker />
             </Suspense>

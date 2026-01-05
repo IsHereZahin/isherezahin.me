@@ -11,7 +11,9 @@ export const MY_DESIGNATION = process.env.NEXT_PUBLIC_MY_DESIGNATION || "Softwar
 export const SITE_USER_LOGO = process.env.NEXT_PUBLIC_SITE_USER_LOGO || "https://res.cloudinary.com/dsh30sjju/image/upload/v1761056901/darklogo_eos1ps.png";
 
 export const MY_MAIL = `${MY_USERNAME}@gmail.com`;
+export const MY_LOCATION = "Cox's Bazar, Bangladesh";
 
+// Social Media Links
 export const SITE_GITHUB_URL = `https://github.com/${MY_USERNAME}`;
 export const SITE_INSTAGRAM_URL = `https://www.instagram.com/${MY_USERNAME}`;
 export const SITE_X_URL = `https://x.com/${MY_USERNAME}`;
@@ -20,6 +22,29 @@ export const SITE_LINKEDIN_URL = `https://www.linkedin.com/in/${MY_USERNAME}`;
 
 // Base Domain
 export const BASE_DOMAIN = process.env.NEXT_PUBLIC_BASE_DOMAIN || "isherezahin.me";
+export const BASE_URL = `https://${BASE_DOMAIN}`;
+
+// SEO Keywords
+export const SEO_KEYWORDS = [
+  MY_FULL_NAME,
+  MY_USERNAME,
+  MY_DESIGNATION,
+  "Web Developer",
+  "Full Stack Developer",
+  "React Developer",
+  "Node.js Developer",
+  "Laravel Developer",
+  "JavaScript Developer",
+  "TypeScript Developer",
+  "Next.js Developer",
+  "Bangladesh Developer",
+  "Cox's Bazar Developer",
+  "Portfolio",
+  "Web Development",
+  "Software Engineering",
+  "Frontend Developer",
+  "Backend Developer",
+];
 
 // Section IDs
 export const HERO_SECTION_ID = process.env.NEXT_PUBLIC_HERO_SECTION_ID || '1';

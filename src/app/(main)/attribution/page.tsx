@@ -1,14 +1,8 @@
-import AttributionIndex from '@/components/pages/AttributionIndex';
-import { MY_FULL_NAME } from "@/lib/constants";
-import type { Metadata } from "next";
+import AttributionIndex from "@/components/pages/AttributionIndex";
+import { METADATA } from "@/config/seo.config";
 
-export const metadata: Metadata = {
-  title: `Attribution | ${MY_FULL_NAME}`,
-  description: "Journey to create isherezahin.me personal portfolio.",
-};
+export const metadata = METADATA.attribution;
 
 export default function AttributionPage() {
-  return (
-    <AttributionIndex />
-  )
+  return <AttributionIndex />;
 }

@@ -1,12 +1,8 @@
 import BucketListIndex from "@/components/pages/BucketListIndex";
-import { MY_FULL_NAME } from "@/lib/constants";
-import type { Metadata } from "next";
+import { METADATA } from "@/config/seo.config";
 
-export const metadata: Metadata = {
-    title: `Bucket List | ${MY_FULL_NAME}`,
-    description: "Dreams, goals, and adventures I'm chasing in this lifetime.",
-};
+export const metadata = METADATA.bucketList;
 
 export default function BucketListPage() {
-    return <BucketListIndex />;
+  return <BucketListIndex />;
 }

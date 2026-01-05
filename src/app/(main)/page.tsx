@@ -1,13 +1,8 @@
-import HomeIndex from '@/components/pages/HomeIndex';
-import { MY_FULL_NAME } from '@/lib/constants';
-import type { Metadata } from "next";
+import HomeIndex from "@/components/pages/HomeIndex";
+import { METADATA } from "@/config/seo.config";
 
-export const metadata: Metadata = {
-  title: `${MY_FULL_NAME}`,
-};
+export const metadata = METADATA.home;
 
 export default function App() {
-  return (
-    <HomeIndex />
-  )
+  return <HomeIndex />;
 }

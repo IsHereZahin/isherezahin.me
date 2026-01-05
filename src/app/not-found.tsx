@@ -1,14 +1,11 @@
 // src/app/not-found.tsx
-import type { Metadata } from "next";
-
 import MainLayout from "@/components/layouts/MainLayout";
 import MotionWrapper from "@/components/motion/MotionWrapper";
 import { Button, Heading } from "@/components/ui";
+import { METADATA } from "@/config/seo.config";
 import { Home } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "404 | Page Not Found",
-};
+export const metadata = METADATA.notFound;
 
 export default function NotFound() {
   return (

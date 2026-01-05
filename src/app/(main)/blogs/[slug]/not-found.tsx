@@ -1,13 +1,10 @@
-// src/app/not-found.tsx
-import type { Metadata } from "next";
-
+// src/app/(main)/blogs/[slug]/not-found.tsx
 import MotionWrapper from "@/components/motion/MotionWrapper";
 import { Button, Heading } from "@/components/ui";
+import { METADATA } from "@/config/seo.config";
 import { Home } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "404 | Blog is Not Found",
-};
+export const metadata = METADATA.blogNotFound;
 
 export default function NotFound() {
   return (
