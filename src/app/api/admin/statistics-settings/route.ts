@@ -1,10 +1,8 @@
-// src/app/api/admin/statistics-settings/route.ts
 import { SiteSettingsModel } from "@/database/models/site-settings-model";
 import dbConnect from "@/database/services/mongo";
 import { checkIsAdmin } from "@/lib/auth-utils";
 import { NextResponse } from "next/server";
 
-// Lightweight endpoint for admin statistics settings only
 export async function GET() {
     try {
         const isAdmin = await checkIsAdmin();
@@ -22,6 +20,7 @@ export async function GET() {
                     "statsCardsPublic",
                     "visitorTrendsPublic",
                     "deviceTypesPublic",
+                    "countriesPublic",
                     "topPagesPublic",
                     "referralSourcesPublic",
                 ],
@@ -40,6 +39,7 @@ export async function GET() {
             isCardsPublic: settingsMap.statsCardsPublic ?? true,
             isTrendsPublic: settingsMap.visitorTrendsPublic ?? true,
             isDevicesPublic: settingsMap.deviceTypesPublic ?? true,
+            isCountriesPublic: settingsMap.countriesPublic ?? true,
             isPathPublic: settingsMap.topPagesPublic ?? false,
             isRefPublic: settingsMap.referralSourcesPublic ?? false,
         });

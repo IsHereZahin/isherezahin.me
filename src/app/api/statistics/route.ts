@@ -1,21 +1,29 @@
 import { BlogModel } from "@/database/models/blog-model";
 import { ProjectModel } from "@/database/models/project-model";
 import { SiteSettingsModel } from "@/database/models/site-settings-model";
-import { VisitorModel } from "@/database/models/visitor-model";
+import { DailyStatsModel, GlobalStatsModel } from "@/database/models/visitor-model";
 import dbConnect from "@/database/services/mongo";
 import { checkIsAdmin } from "@/lib/auth-utils";
 import { NextRequest, NextResponse } from "next/server";
 
-function parseDeviceType(userAgent: string | null): string {
-    if (!userAgent) return "Unknown";
-    const ua = userAgent.toLowerCase();
-    if (ua.includes("iphone") || ua.includes("ipad") || ua.includes("ipod")) return "iOS";
-    if (ua.includes("android")) return "Android";
-    if (ua.includes("windows")) return "Windows";
-    if (ua.includes("macintosh") || ua.includes("mac os")) return "macOS";
-    if (ua.includes("linux")) return "Linux";
-    if (ua.includes("bot") || ua.includes("crawler") || ua.includes("spider")) return "Bot";
-    return "Other";
+interface GlobalStatsDoc {
+    totalPageViews?: number;
+    totalUniqueVisitors?: number;
+    devices?: Map<string, number> | Record<string, number>;
+    countries?: Map<string, number> | Record<string, number>;
+    pages?: Map<string, number> | Record<string, number>;
+    referrals?: Map<string, number> | Record<string, number>;
+}
+
+function mapToSortedArray<T extends string>(
+    data: Map<string, number> | Record<string, number> | undefined,
+    keyName: T
+): Array<{ [K in T]: string } & { count: number }> {
+    if (!data) return [];
+    const obj = data instanceof Map ? Object.fromEntries(data) : data;
+    return Object.entries(obj)
+        .map(([key, count]) => ({ [keyName]: key.replaceAll("_", "."), count } as { [K in T]: string } & { count: number }))
+        .sort((a, b) => b.count - a.count);
 }
 
 export async function GET(request: NextRequest) {
@@ -28,31 +36,36 @@ export async function GET(request: NextRequest) {
         const pathPage = parseInt(searchParams.get("pathPage") || "1");
         const limit = 10;
 
-        // Check all visibility settings
-        const publicSetting = await SiteSettingsModel.findOne({ key: "statisticsPublic" }).lean();
-        const isPublic = (publicSetting as { value?: boolean } | null)?.value === true;
+        const settingsKeys = [
+            "statisticsPublic",
+            "referralSourcesPublic",
+            "topPagesPublic",
+            "statsCardsPublic",
+            "visitorTrendsPublic",
+            "deviceTypesPublic",
+            "countriesPublic",
+        ];
 
-        const refPublicSetting = await SiteSettingsModel.findOne({ key: "referralSourcesPublic" }).lean();
-        const isRefPublic = (refPublicSetting as { value?: boolean } | null)?.value === true;
+        const settings = await SiteSettingsModel.find({ key: { $in: settingsKeys } }).lean();
+        const settingsMap = new Map(
+            settings.map((s) => {
+                const setting = s as unknown as { key: string; value?: boolean };
+                return [setting.key, setting.value];
+            })
+        );
 
-        const pathPublicSetting = await SiteSettingsModel.findOne({ key: "topPagesPublic" }).lean();
-        const isPathPublic = (pathPublicSetting as { value?: boolean } | null)?.value === true;
+        const isPublic = settingsMap.get("statisticsPublic") === true;
+        const isRefPublic = settingsMap.get("referralSourcesPublic") === true;
+        const isPathPublic = settingsMap.get("topPagesPublic") === true;
+        const isCardsPublic = settingsMap.has("statsCardsPublic") ? settingsMap.get("statsCardsPublic") === true : true;
+        const isTrendsPublic = settingsMap.has("visitorTrendsPublic") ? settingsMap.get("visitorTrendsPublic") === true : true;
+        const isDevicesPublic = settingsMap.has("deviceTypesPublic") ? settingsMap.get("deviceTypesPublic") === true : true;
+        const isCountriesPublic = settingsMap.has("countriesPublic") ? settingsMap.get("countriesPublic") === true : true;
 
-        const cardsPublicSetting = await SiteSettingsModel.findOne({ key: "statsCardsPublic" }).lean();
-        const isCardsPublic = cardsPublicSetting ? (cardsPublicSetting as { value?: boolean }).value === true : true;
-
-        const trendsPublicSetting = await SiteSettingsModel.findOne({ key: "visitorTrendsPublic" }).lean();
-        const isTrendsPublic = trendsPublicSetting ? (trendsPublicSetting as { value?: boolean }).value === true : true;
-
-        const devicesPublicSetting = await SiteSettingsModel.findOne({ key: "deviceTypesPublic" }).lean();
-        const isDevicesPublic = devicesPublicSetting ? (devicesPublicSetting as { value?: boolean }).value === true : true;
-
-        // Block access if page is private and user is not admin
         if (!isAdmin && !isPublic) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
         }
 
-        // Initialize response with visibility flags
         const response: Record<string, unknown> = {
             isPublic,
             isRefPublic,
@@ -60,47 +73,40 @@ export async function GET(request: NextRequest) {
             isCardsPublic,
             isTrendsPublic,
             isDevicesPublic,
+            isCountriesPublic,
             isAdmin,
         };
 
-        // Only fetch and return data that the user is allowed to see
-        
-        // Stats Cards data - only if admin or cards are public
+        const globalStats = (await GlobalStatsModel.findOne({ key: "global" }).lean()) as GlobalStatsDoc | null;
+
         if (isAdmin || isCardsPublic) {
-            const totalVisitors = await VisitorModel.countDocuments();
-            const uniqueVisitors = await VisitorModel.distinct("fingerprint");
-            const totalBlogs = await BlogModel.countDocuments({ published: true });
-            const totalProjects = await ProjectModel.countDocuments({ published: true });
-            
-            response.totalVisitors = totalVisitors;
-            response.uniqueVisitors = uniqueVisitors.length;
+            const [totalBlogs, totalProjects] = await Promise.all([
+                BlogModel.countDocuments({ published: true }),
+                ProjectModel.countDocuments({ published: true }),
+            ]);
+
+            response.totalVisitors = globalStats?.totalPageViews || 0;
+            response.uniqueVisitors = globalStats?.totalUniqueVisitors || 0;
             response.totalBlogs = totalBlogs;
             response.totalProjects = totalProjects;
         }
 
-        // Visitor Trends data - only if admin or trends are public
         if (isAdmin || isTrendsPublic) {
             const thirtyDaysAgo = new Date();
             thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            const startDate = thirtyDaysAgo.toISOString().split("T")[0];
 
-            const visitorTrends = await VisitorModel.aggregate([
-                { $match: { createdAt: { $gte: thirtyDaysAgo } } },
-                {
-                    $group: {
-                        _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-                        visitors: { $sum: 1 },
-                        uniqueFingerprints: { $addToSet: "$fingerprint" },
-                    },
-                },
-                {
-                    $project: {
-                        _id: 1,
-                        visitors: 1,
-                        uniqueVisitors: { $size: "$uniqueFingerprints" },
-                    },
-                },
-                { $sort: { _id: 1 } },
-            ]);
+            const dailyStats = await DailyStatsModel.find(
+                { date: { $gte: startDate } },
+                { date: 1, pageViews: 1, uniqueVisitors: 1 }
+            ).sort({ date: 1 }).lean();
+
+            const statsMap = new Map(
+                dailyStats.map((s) => {
+                    const stat = s as unknown as { date: string; pageViews?: number; uniqueVisitors?: number };
+                    return [stat.date, { visitors: stat.pageViews || 0, uniqueVisitors: stat.uniqueVisitors || 0 }];
+                })
+            );
 
             const trendData = [];
             const currentDate = new Date(thirtyDaysAgo);
@@ -108,11 +114,11 @@ export async function GET(request: NextRequest) {
 
             while (currentDate <= today) {
                 const dateStr = currentDate.toISOString().split("T")[0];
-                const existing = visitorTrends.find((t) => t._id === dateStr);
+                const existing = statsMap.get(dateStr);
                 trendData.push({
                     date: dateStr,
-                    visitors: existing ? existing.visitors : 0,
-                    uniqueVisitors: existing ? existing.uniqueVisitors : 0,
+                    visitors: existing?.visitors || 0,
+                    uniqueVisitors: existing?.uniqueVisitors || 0,
                 });
                 currentDate.setDate(currentDate.getDate() + 1);
             }
@@ -120,62 +126,37 @@ export async function GET(request: NextRequest) {
             response.visitorTrends = trendData;
         }
 
-        // Device Types data - only if admin or devices are public
         if (isAdmin || isDevicesPublic) {
-            const allVisitors = await VisitorModel.find({}, { userAgent: 1, fingerprint: 1 }).lean();
-            const deviceCounts: Record<string, { total: number; uniqueFingerprints: Set<string> }> = {};
-            
-            allVisitors.forEach((v) => {
-                const visitor = v as { userAgent?: string; fingerprint?: string };
-                const device = parseDeviceType(visitor.userAgent || null);
-                if (!deviceCounts[device]) {
-                    deviceCounts[device] = { total: 0, uniqueFingerprints: new Set() };
-                }
-                deviceCounts[device].total += 1;
-                if (visitor.fingerprint) {
-                    deviceCounts[device].uniqueFingerprints.add(visitor.fingerprint);
-                }
-            });
-
-            response.deviceStats = Object.entries(deviceCounts)
-                .map(([device, data]) => ({ device, count: data.total, uniqueVisitors: data.uniqueFingerprints.size }))
-                .sort((a, b) => b.count - a.count);
+            response.deviceStats = mapToSortedArray(globalStats?.devices, "device");
         }
 
-        // Referral Sources data - only if admin or refs are public
-        if (isAdmin || isRefPublic) {
-            const refStats = await VisitorModel.aggregate([
-                { $match: { ref: { $ne: null } } },
-                { $group: { _id: "$ref", count: { $sum: 1 } } },
-                { $sort: { count: -1 } },
-            ]);
+        if (isAdmin || isCountriesPublic) {
+            response.countryStats = mapToSortedArray(globalStats?.countries, "country");
+        }
 
+        if (isAdmin || isRefPublic) {
+            const refStats = mapToSortedArray(globalStats?.referrals, "ref");
             response.totalRefs = refStats.length;
             response.refPage = refPage;
 
             if (isAdmin) {
                 const start = (refPage - 1) * limit;
-                response.refStats = refStats.slice(start, start + limit).map((r) => ({ ref: r._id, count: r.count }));
+                response.refStats = refStats.slice(start, start + limit);
             } else {
-                response.refStats = refStats.slice(0, 10).map((r) => ({ ref: r._id, count: r.count }));
+                response.refStats = refStats.slice(0, 10);
             }
         }
 
-        // Top Pages data - only if admin or paths are public
         if (isAdmin || isPathPublic) {
-            const pathStats = await VisitorModel.aggregate([
-                { $group: { _id: "$path", count: { $sum: 1 } } },
-                { $sort: { count: -1 } },
-            ]);
-
+            const pathStats = mapToSortedArray(globalStats?.pages, "path");
             response.totalPaths = pathStats.length;
             response.pathPage = pathPage;
 
             if (isAdmin) {
                 const start = (pathPage - 1) * limit;
-                response.pathStats = pathStats.slice(start, start + limit).map((p) => ({ path: p._id, count: p.count }));
+                response.pathStats = pathStats.slice(start, start + limit);
             } else {
-                response.pathStats = pathStats.slice(0, 10).map((p) => ({ path: p._id, count: p.count }));
+                response.pathStats = pathStats.slice(0, 10);
             }
         }
 

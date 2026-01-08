@@ -14,11 +14,12 @@ interface StatisticsSettings {
     isCardsPublic: boolean;
     isTrendsPublic: boolean;
     isDevicesPublic: boolean;
+    isCountriesPublic: boolean;
     isPathPublic: boolean;
     isRefPublic: boolean;
 }
 
-type SettingKey = "statistics" | "statsCards" | "visitorTrends" | "deviceTypes" | "topPages" | "referralSources";
+type SettingKey = "statistics" | "statsCards" | "visitorTrends" | "deviceTypes" | "countries" | "topPages" | "referralSources";
 
 async function fetchSettings(): Promise<StatisticsSettings> {
     return await statistics.getSettings();
@@ -30,6 +31,7 @@ function getVisibilityBody(setting: SettingKey, settings: StatisticsSettings) {
         case "statsCards": return { setting: "statsCards", isCardsPublic: !settings.isCardsPublic };
         case "visitorTrends": return { setting: "visitorTrends", isTrendsPublic: !settings.isTrendsPublic };
         case "deviceTypes": return { setting: "deviceTypes", isDevicesPublic: !settings.isDevicesPublic };
+        case "countries": return { setting: "countries", isCountriesPublic: !settings.isCountriesPublic };
         case "topPages": return { setting: "topPages", isPathPublic: !settings.isPathPublic };
         case "referralSources": return { setting: "referralSources", isRefPublic: !settings.isRefPublic };
     }
@@ -57,6 +59,7 @@ export default function Statistics() {
                     case "statsCards": return { ...old, isCardsPublic: !old.isCardsPublic };
                     case "visitorTrends": return { ...old, isTrendsPublic: !old.isTrendsPublic };
                     case "deviceTypes": return { ...old, isDevicesPublic: !old.isDevicesPublic };
+                    case "countries": return { ...old, isCountriesPublic: !old.isCountriesPublic };
                     case "topPages": return { ...old, isPathPublic: !old.isPathPublic };
                     case "referralSources": return { ...old, isRefPublic: !old.isRefPublic };
                     default: return old;
@@ -101,6 +104,7 @@ export default function Statistics() {
             <SettingCard icon={<Eye className="h-5 w-5 icon-bw" />} title="Stats Cards" description="Show total visits, unique visitors, blogs & projects count" isPublic={settings.isCardsPublic} isToggling={isToggling("statsCards")} onToggle={() => handleToggle("statsCards")} />
             <SettingCard icon={<LineChart className="h-5 w-5 icon-bw" />} title="Visitor Trends" description="Show visitor trends chart (last 30 days)" isPublic={settings.isTrendsPublic} isToggling={isToggling("visitorTrends")} onToggle={() => handleToggle("visitorTrends")} />
             <SettingCard icon={<Monitor className="h-5 w-5 icon-bw" />} title="Device Types" description="Show device breakdown chart" isPublic={settings.isDevicesPublic} isToggling={isToggling("deviceTypes")} onToggle={() => handleToggle("deviceTypes")} />
+            <SettingCard icon={<Globe className="h-5 w-5 icon-bw" />} title="Visitors by Country" description="Show country breakdown data" isPublic={settings.isCountriesPublic} isToggling={isToggling("countries")} onToggle={() => handleToggle("countries")} />
             <SettingCard icon={<FileText className="h-5 w-5 icon-bw" />} title="Top Pages" description="Show page visit data to public visitors" isPublic={settings.isPathPublic} isToggling={isToggling("topPages")} onToggle={() => handleToggle("topPages")} />
             <SettingCard icon={<Link2 className="h-5 w-5 icon-bw" />} title="Referral Sources" description="Show referral tracking data to public visitors" isPublic={settings.isRefPublic} isToggling={isToggling("referralSources")} onToggle={() => handleToggle("referralSources")} />
         </div>
@@ -135,7 +139,7 @@ function StatisticsSkeleton() {
     return (
         <div className="space-y-4">
             <section className="border border-border rounded-xl p-6"><div className="flex items-center gap-2"><Skeleton className="h-5 w-5" /><Skeleton className="h-5 w-40" /></div></section>
-            {[...Array(6)].map((_, i) => (
+            {[...Array(7)].map((_, i) => (
                 <section key={i} className="border border-border rounded-xl p-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3"><Skeleton className="h-9 w-9 rounded-full" /><div><Skeleton className="h-4 w-32 mb-1" /><Skeleton className="h-3 w-48" /></div></div>
