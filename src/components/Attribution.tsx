@@ -11,96 +11,103 @@ import {
 export default function Attribution() {
     const developers = [
         {
-            text: "(Nelson)[https://github.com/nelsonlaidev] Many components were adapted from his blog.",
+            text: "(Nelson Lai)[https://github.com/nelsonlaidev] Component architecture and blog implementation patterns.",
         },
         {
-            text: "(Clarence)[https://github.com/theodorusclarence] Inspired by his blog and the micro-interactions in his portfolio.",
+            text: "(Clarence)[https://github.com/theodorusclarence] Micro-interaction design and portfolio UX patterns.",
         },
         {
-            text: "(Delba de Oliveira)[https://www.linkedin.com/in/delbaoliveira/] Design ideas, including testimonial, BlurImage, and project sections, were adapted from her work.",
+            text: "(Delba de Oliveira)[https://www.linkedin.com/in/delbaoliveira/] Visual design language for testimonials, imagery, and project showcases.",
         },
     ];
 
     const tools = [
-        { text: "(Next.js)[https://nextjs.org/] a React framework for building modern web applications." },
-        { text: "(Tailwind CSS)[https://tailwindcss.com/] a utility-first CSS framework for styling." },
-        { text: "(TypeScript)[https://www.typescriptlang.org/] for type-safe, scalable code." },
-        { text: "(GitHub)[https://github.com/] source code management and version control." },
-        { text: "(Giscus)[https://giscus.app/] comment integration via GitHub Discussions." },
-        { text: "(ESLint)[https://eslint.org/] code quality and consistency tooling." },
-        { text: "(NextAuth.js)[https://next-auth.js.org/] authentication and session management." },
-        { text: "(Framer Motion)[https://framer.com/motion/] interactive animations and transitions." },
-        { text: "(Lucide React)[https://lucide.dev/] modern icon library." },
-        { text: "(React Simple Icons)[https://react-icons.github.io/react-icons/] brand and social icons." },
-        { text: "(Cobe)[https://cobe.vercel.app/] interactive 3D globe visualizations." },
+        { text: "(Next.js)[https://nextjs.org/] React framework for production-grade web applications." },
+        { text: "(Tailwind CSS)[https://tailwindcss.com/] Utility-first CSS framework." },
+        { text: "(TypeScript)[https://www.typescriptlang.org/] Static type checking and enhanced developer experience." },
+        { text: "(GitHub)[https://github.com/] Version control and source code management." },
+        { text: "(GitHub Discussions)[https://docs.github.com/en/discussions] Community engagement via GraphQL API integration." },
+        { text: "(ESLint)[https://eslint.org/] Code quality and consistency enforcement." },
+        { text: "(NextAuth.js)[https://next-auth.js.org/] Authentication and session management." },
+        { text: "(Motion)[https://motion.dev/] Declarative animations and transitions." },
+        { text: "(Lucide React)[https://lucide.dev/] Consistent icon system." },
+        { text: "(Simple Icons)[https://simpleicons.org/] Brand and platform iconography." },
+        { text: "(Cobe)[https://cobe.vercel.app/] Interactive 3D globe visualizations." },
+        { text: "(MongoDB)[https://www.mongodb.com/] Document-based data persistence." },
+        { text: "(Firebase)[https://firebase.google.com/] Real-time database and backend infrastructure." },
+        { text: "(Radix UI)[https://www.radix-ui.com/] Accessible, unstyled component primitives." },
+        { text: "(shadcn/ui)[https://ui.shadcn.com/] Pre-built component library extending Radix UI." },
+        { text: "(TanStack Query)[https://tanstack.com/query/] Server state management and caching." },
+        { text: "(Zod)[https://zod.dev/] Runtime schema validation." },
+        { text: "(React Hook Form)[https://react-hook-form.com/] Performant form state management." },
+        { text: "(Sonner)[https://sonner.emilkowal.ski/] Toast notification system." },
+        { text: "(dnd kit)[https://dndkit.com/] Drag and drop interactions." },
+        { text: "(Cloudinary)[https://cloudinary.com/] Media asset management and optimization." },
     ];
 
     return (
         <Section id="attribution" animate className="mt-[-50px] py-16 max-w-[700px]">
-            {/* Greeting */}
-            <p className="text-foreground text-xl font-medium mb-6">Hey there!👋</p>
+            {/* Header */}
+            <h2 className="text-foreground text-2xl font-semibold mb-8">
+                Acknowledgments & Attribution
+            </h2>
 
             {/* Project Overview */}
             <div className="font-normal text-secondary-foreground mb-6 leading-relaxed">
-                This website was originally created by{" "}
+                This portfolio was developed by{" "}
                 <ReferralLink
                     href="https://github.com/isherezahin"
                     className="text-foreground font-medium transition-opacity"
                 >
                     Zahin
                 </ReferralLink>{" "}
-                as an open-source portfolio template built with Next.js and Tailwind CSS.
-                The complete source code is available on{" "}
+                as an open-source template built with Next.js and Tailwind CSS.
+                The source code is publicly available on{" "}
                 <ReferralLink
                     href="https://github.com/isherezahin/isherezahin.me"
                     className="text-foreground font-medium transition-opacity"
                 >
                     GitHub
                 </ReferralLink>
-                , licensed for free use with proper attribution. This project is intended for
-                personal and educational purposes.
+                {" "}and licensed for personal and educational use with proper attribution.
             </div>
 
             {/* Project History */}
             <div className="font-normal text-secondary-foreground mb-6 leading-relaxed">
-                Development began with the first commit on <b>October 1, 2025</b>. The project
-                remains actively maintained as an open-source resource, with ongoing improvements
-                and feature enhancements.
+                Initial development began on <span className="text-foreground font-medium">October 1, 2025</span>.
+                The project is actively maintained with continuous improvements and new features.
             </div>
 
             {/* Attribution Philosophy */}
             <div className="font-normal text-secondary-foreground mb-8 leading-relaxed">
-                This project stands on the shoulders of countless developers who share their work
-                openly. During development, over <b>500</b> websites were reviewed for inspiration,
-                design patterns, and technical approaches. The following individuals made particularly
-                significant contributions to the web development community that influenced this work.
+                Building on the work of the open-source community, this project draws inspiration
+                from hundreds of portfolios, design systems, and technical implementations.
+                The following contributors have made notable impact on the web development
+                ecosystem and influenced this work.
             </div>
 
             {/* Developers List */}
-            <div className="font-normal text-secondary-foreground mb-6 leading-relaxed">
-                Key inspirations and acknowledgments:
-            </div>
+            <h3 className="text-foreground text-lg font-medium mb-4">
+                Design & Development Inspiration
+            </h3>
             <ul className="space-y-3 mb-12 ml-6">
                 <ReferralListItem listItems={developers} />
             </ul>
 
             {/* Tools List */}
-            <div className="font-normal text-secondary-foreground mb-6 leading-relaxed">
-                Technologies and tools used:
-            </div>
+            <h3 className="text-foreground text-lg font-medium mb-4">
+                Technology Stack
+            </h3>
             <ul className="space-y-3 mb-12 ml-6">
                 <ReferralListItem listItems={tools} />
             </ul>
 
-            {/* Closing */}
+            {/* License Notice */}
             <div className="font-normal text-secondary-foreground mb-8 leading-relaxed">
-                If you use or extend this project, please maintain this attribution section and
-                add your own credits as appropriate. Open-source thrives on recognition and mutual support.
+                This project is released under an open-source license. If you fork or extend
+                this template, please retain this attribution section and acknowledge any
+                additional contributors appropriately.
             </div>
-
-            <p className="mb-8 font-medium text-secondary-foreground">
-                Thank you for respecting the open-source community.
-            </p>
 
             {/* Signature */}
             <p className="mb-8 font-bold">Best,</p>
@@ -108,18 +115,17 @@ export default function Attribution() {
                 <Signature className="size-30" />
             </div>
 
-            {/* Optional Contact Section */}
-            <div className="font-normal text-secondary-foreground border-t border-border pt-8">
-                <div className="text-sm text-secondary-foreground leading-relaxed">
-                    For questions about this project or collaboration inquiries, contact{" "}
+            {/* Contact Section */}
+            <div className="border-t border-border pt-8">
+                <p className="text-sm text-secondary-foreground leading-relaxed">
+                    For inquiries regarding this project or potential collaborations, reach out at{" "}
                     <a
                         href="mailto:isherezahin@gmail.com"
-                        className="text-foreground font-medium underline hover:opacity-80 transition-opacity"
+                        className="text-foreground font-medium hover:underline transition-opacity"
                     >
                         isherezahin@gmail.com
                     </a>
-                    .
-                </div>
+                </p>
             </div>
         </Section>
     );
