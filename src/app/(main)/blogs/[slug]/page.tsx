@@ -1,34 +1,19 @@
 // src/app/(main)/blogs/[slug]/page.tsx
 import BlogDetailsIndex from "@/components/pages/BlogDetailsIndex";
 import { BlogJsonLd, BreadcrumbJsonLd } from "@/components/seo/JsonLd";
-import { BlogModel } from "@/database/models/blog-model";
-import dbConnect from "@/database/services/mongo";
+import { getCachedBlog } from "@/lib/cached-queries";
 import { PERSON, TWITTER, getFullUrl, getBreadcrumbs } from "@/config/seo.config";
 import type { Metadata } from "next";
 
 interface BlogPostPageProps {
-  params: { slug: string };
-}
-
-interface BlogDocument {
-  title: string;
-  excerpt: string;
-  imageSrc: string;
-  tags?: string[];
-  date?: Date;
-  updatedAt?: Date;
-  createdAt?: Date;
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({
   params,
 }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  await dbConnect();
-  const blog = (await BlogModel.findOne({
-    slug,
-    published: true,
-  }).lean()) as BlogDocument | null;
+  const blog = await getCachedBlog(slug);
 
   if (!blog) {
     return {
@@ -81,11 +66,7 @@ export default async function BlogPostPage({
   params,
 }: Readonly<BlogPostPageProps>) {
   const { slug } = await params;
-  await dbConnect();
-  const blog = (await BlogModel.findOne({
-    slug,
-    published: true,
-  }).lean()) as BlogDocument | null;
+  const blog = await getCachedBlog(slug);
 
   return (
     <>

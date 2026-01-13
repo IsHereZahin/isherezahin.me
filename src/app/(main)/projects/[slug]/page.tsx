@@ -1,34 +1,19 @@
 // src/app/(main)/projects/[slug]/page.tsx
 import ProjectDetailsIndex from "@/components/pages/ProjectDetailsIndex";
 import { ProjectJsonLd, BreadcrumbJsonLd } from "@/components/seo/JsonLd";
-import { ProjectModel } from "@/database/models/project-model";
-import dbConnect from "@/database/services/mongo";
+import { getCachedProject } from "@/lib/cached-queries";
 import { PERSON, TWITTER, getFullUrl, getBreadcrumbs } from "@/config/seo.config";
 import type { Metadata } from "next";
 
 interface ProjectDetailsPageProps {
-  params: { slug: string };
-}
-
-interface ProjectDocument {
-  title: string;
-  excerpt: string;
-  imageSrc: string;
-  tags?: string[];
-  date?: Date;
-  updatedAt?: Date;
-  createdAt?: Date;
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({
   params,
 }: ProjectDetailsPageProps): Promise<Metadata> {
   const { slug } = await params;
-  await dbConnect();
-  const project = (await ProjectModel.findOne({
-    slug,
-    published: true,
-  }).lean()) as ProjectDocument | null;
+  const project = await getCachedProject(slug);
 
   if (!project) {
     return {
@@ -81,11 +66,7 @@ export default async function ProjectDetailsPage({
   params,
 }: Readonly<ProjectDetailsPageProps>) {
   const { slug } = await params;
-  await dbConnect();
-  const project = (await ProjectModel.findOne({
-    slug,
-    published: true,
-  }).lean()) as ProjectDocument | null;
+  const project = await getCachedProject(slug);
 
   return (
     <>

@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Enable React Compiler for automatic memoization (Next.js 16 stable)
+  reactCompiler: true,
+
   // Enable React strict mode for better development practices
   reactStrictMode: true,
 
@@ -82,6 +85,9 @@ const nextConfig: NextConfig = {
 
   // Experimental features for performance
   experimental: {
+    // Enable 'use cache' directive for Cache Components (Next.js 16)
+    useCache: true,
+
     // Optimize package imports for smaller bundles
     optimizePackageImports: [
       "lucide-react",
