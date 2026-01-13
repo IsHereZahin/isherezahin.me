@@ -8,7 +8,7 @@ dbConnect();
 
 export default function MainRootLayout({ children }: { readonly children: React.ReactNode }) {
   return (
-    <html lang={SITE.language} suppressHydrationWarning>
+    <html lang={SITE.language} data-theme="black-white" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://res.cloudinary.com" />
         <link rel="preconnect" href="https://avatars.githubusercontent.com" />
