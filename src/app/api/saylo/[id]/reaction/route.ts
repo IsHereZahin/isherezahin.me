@@ -29,7 +29,7 @@ export async function GET(
             const existingReaction = await SayloReactionModel.findOne({
                 sayloId: id,
                 deviceId,
-            }).lean();
+            }).lean() as { type: string } | null;
             userReaction = existingReaction?.type || null;
         }
 

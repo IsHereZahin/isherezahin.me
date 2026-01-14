@@ -12,7 +12,7 @@ export async function GET() {
             .sort({ name: 1 })
             .lean();
 
-        const storedCategoryNames = new Set(storedCategories.map((c) => c.name));
+        const storedCategoryNames = new Set(storedCategories.map((c) => c.name as string));
 
         // Also get distinct categories from saylos that might not be in the collection
         const sayloCategories = await SayloModel.distinct("category", {
@@ -21,9 +21,9 @@ export async function GET() {
 
         // Merge both sources
         const allCategories = [...storedCategories.map((cat) => ({
-            id: cat._id.toString(),
-            name: cat.name,
-            color: cat.color,
+            id: String(cat._id),
+            name: cat.name as string,
+            color: cat.color as string | null,
         }))];
 
         // Add categories from saylos that aren't in the stored categories

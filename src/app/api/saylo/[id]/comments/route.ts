@@ -36,13 +36,13 @@ export async function GET(
             .lean();
 
         const formattedComments = comments.map((comment) => ({
-            id: comment._id.toString(),
-            content: comment.content,
-            authorName: comment.authorName,
-            authorImage: comment.authorImage,
-            authorId: comment.authorId,
-            isAdmin: comment.isAdmin,
-            createdAt: comment.createdAt,
+            id: String(comment._id),
+            content: comment.content as string,
+            authorName: comment.authorName as string,
+            authorImage: comment.authorImage as string | null,
+            authorId: comment.authorId as string | null,
+            isAdmin: comment.isAdmin as boolean,
+            createdAt: comment.createdAt as Date,
         }));
 
         return NextResponse.json({
