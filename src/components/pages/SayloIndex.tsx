@@ -5,7 +5,7 @@ import SayloComposer from "@/components/saylo/SayloComposer";
 import SayloFilters from "@/components/saylo/SayloFilters";
 import { PageTitle, Section } from "@/components/ui";
 import EmptyState from "@/components/ui/EmptyState";
-import { saylo, SortOption } from "@/lib/api";
+import { saylo, SortOption, VisibilityOption } from "@/lib/api";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
@@ -16,6 +16,8 @@ export default function SayloIndex() {
     const isLoggedIn = status === "authenticated";
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [selectedSort, setSelectedSort] = useState<SortOption>("recent");
+    const [selectedVisibility, setSelectedVisibility] = useState<VisibilityOption>("all");
+    const [searchQuery, setSearchQuery] = useState("");
     const [openCommentId, setOpenCommentId] = useState<string | null>(null);
 
     const { data: categoriesData } = useQuery({
@@ -31,8 +33,8 @@ export default function SayloIndex() {
         isLoading,
         isError,
     } = useInfiniteQuery({
-        queryKey: ["saylos", selectedCategory, selectedSort],
-        queryFn: ({ pageParam = 1 }) => saylo.getAll(pageParam, 3, selectedCategory, selectedSort),
+        queryKey: ["saylos", selectedCategory, selectedSort, selectedVisibility, searchQuery],
+        queryFn: ({ pageParam = 1 }) => saylo.getAll(pageParam, 3, selectedCategory, selectedSort, selectedVisibility, searchQuery),
         getNextPageParam: (lastPage) =>
             lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
         initialPageParam: 1,
@@ -66,6 +68,8 @@ export default function SayloIndex() {
 
     const allSaylos = data?.pages.flatMap((page) => page.saylos) || [];
     const totalCount = data?.pages[0]?.total || 0;
+    const distinctCategoriesCount = data?.pages[0]?.distinctCategoriesCount || 0;
+    const distinctVisibilitiesCount = data?.pages[0]?.distinctVisibilitiesCount || 0;
 
     return (
         <Section id="saylo" className="px-4 sm:px-6 py-12 sm:py-16 max-w-2xl">
@@ -88,7 +92,14 @@ export default function SayloIndex() {
                         onCategoryChange={setSelectedCategory}
                         selectedSort={selectedSort}
                         onSortChange={setSelectedSort}
+                        selectedVisibility={selectedVisibility}
+                        onVisibilityChange={setSelectedVisibility}
+                        searchQuery={searchQuery}
+                        onSearchChange={setSearchQuery}
                         totalCount={totalCount}
+                        isAdmin={isAdmin}
+                        distinctCategoriesCount={distinctCategoriesCount}
+                        distinctVisibilitiesCount={distinctVisibilitiesCount}
                     />
                 )}
 

@@ -106,6 +106,8 @@ export { default as ConfirmDialog } from "./ConfirmDialog";
 export { DecorativeBlobBottom, DecorativeBlobTop } from "./DecorativeBlob";
 export { default as EmptyState } from "./EmptyState";
 export { default as ErrorState } from "./ErrorState";
+export { default as FilterDropdown } from "./FilterDropdown";
+export type { FilterOption } from "./FilterDropdown";
 export { default as ExpandableText } from "./ExpandableText";
 export { default as FormActions } from "./FormActions";
 export { default as FormModal } from "./FormModal";

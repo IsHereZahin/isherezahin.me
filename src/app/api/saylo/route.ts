@@ -18,6 +18,8 @@ export async function GET(req: NextRequest) {
         const limit = parseInt(searchParams.get("limit") || "20", 10);
         const category = searchParams.get("category");
         const sort = searchParams.get("sort") || "recent";
+        const visibilityFilter = searchParams.get("visibility");
+        const search = searchParams.get("search");
 
         const session = await auth();
         const isAdmin = await checkIsAdmin();
@@ -25,8 +27,11 @@ export async function GET(req: NextRequest) {
         // Build visibility query based on user authentication and admin status
         let query: Record<string, unknown>;
         if (isAdmin) {
-            // Admin can see everything
+            // Admin can see everything, but can filter by visibility
             query = {};
+            if (visibilityFilter && visibilityFilter !== "all") {
+                query.visibility = visibilityFilter;
+            }
         } else if (session?.user) {
             // Authenticated users can see public, authenticated, and their own private posts
             query = {
@@ -46,6 +51,11 @@ export async function GET(req: NextRequest) {
             query.category = category;
         }
 
+        // Add search filter
+        if (search && search.trim()) {
+            query.content = { $regex: search.trim(), $options: "i" };
+        }
+
         // Determine sort order
         let sortOption: Record<string, 1 | -1>;
         switch (sort) {
@@ -63,6 +73,15 @@ export async function GET(req: NextRequest) {
         }
 
         const total = await SayloModel.countDocuments(query);
+
+        // Get distinct visibility types count (for admin to show/hide filter)
+        let distinctVisibilities: string[] = [];
+        if (isAdmin) {
+            distinctVisibilities = await SayloModel.distinct("visibility");
+        }
+
+        // Get distinct categories count
+        const distinctCategories = await SayloModel.distinct("category", { category: { $ne: null } });
 
         let saylos;
         if (sort === "popular") {
@@ -140,6 +159,8 @@ export async function GET(req: NextRequest) {
             limit,
             totalPages: Math.ceil(total / limit),
             saylos: formattedSaylos,
+            distinctCategoriesCount: distinctCategories.length,
+            distinctVisibilitiesCount: distinctVisibilities.length,
         });
     } catch (error) {
         console.error("Error fetching saylos:", error);

@@ -393,14 +393,13 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
                                 )}
                                 {saylo.visibility && saylo.visibility !== "public" && (
                                     <span
-                                        className={`flex items-center gap-1 px-2 py-0.5 text-xs rounded-full ${saylo.visibility === "private"
+                                        className={`flex items-center p-1 text-xs rounded-full ${saylo.visibility === "private"
                                                 ? "bg-red-500/20 text-red-600 dark:text-red-400"
                                                 : "bg-blue-500/20 text-blue-600 dark:text-blue-400"
                                             }`}
                                         title={saylo.visibility === "private" ? "Only you can see this" : "Only signed in users can see this"}
                                     >
                                         {saylo.visibility === "private" ? <Lock className="w-3 h-3" /> : <Users className="w-3 h-3" />}
-                                        {saylo.visibility === "private" ? "Private" : "Auth Only"}
                                     </span>
                                 )}
                             </div>
@@ -409,13 +408,13 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
                     </div>
 
                     <div className="flex items-center gap-1">
-                        <FavoriteButton className={variant === "list" ? "opacity-0 group-hover:opacity-100" : ""} />
+                        <FavoriteButton className={variant === "list" ? "sm:opacity-0 sm:group-hover:opacity-100" : ""} />
 
                         {isAdmin && (
                             <div className="relative" ref={menuRef}>
                                 <button
                                     onClick={() => setShowMenu(!showMenu)}
-                                    className={`p-2 text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-full transition-colors cursor-pointer ${variant === "list" ? "opacity-0 group-hover:opacity-100" : ""
+                                    className={`p-2 text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-full transition-colors cursor-pointer ${variant === "list" ? "sm:opacity-0 sm:group-hover:opacity-100" : ""
                                         }`}
                                 >
                                     <MoreHorizontal className="w-4 h-4" />

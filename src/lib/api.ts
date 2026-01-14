@@ -14,12 +14,19 @@ export class ApiError extends Error {
 
 // Saylo API
 export type SortOption = "recent" | "popular" | "oldest";
+export type VisibilityOption = "all" | "public" | "authenticated" | "private";
 
 const saylo = {
-    async getAll(page = 1, limit = 10, category: string | null = null, sort: SortOption = "recent") {
+    async getAll(page = 1, limit = 10, category: string | null = null, sort: SortOption = "recent", visibility: VisibilityOption = "all", search: string | null = null) {
         const params = new URLSearchParams({ page: page.toString(), limit: limit.toString(), sort });
         if (category && category !== "all") {
             params.set("category", category);
+        }
+        if (visibility && visibility !== "all") {
+            params.set("visibility", visibility);
+        }
+        if (search?.trim()) {
+            params.set("search", search.trim());
         }
         const response = await fetch(`/api/saylo?${params}`);
         if (!response.ok) {

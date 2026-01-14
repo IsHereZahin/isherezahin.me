@@ -2,24 +2,24 @@
 
 import {
     CommentsLoading,
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+    FilterDropdown,
+    FilterOption,
     SingleCommentLoading,
 } from "@/components/ui"
 import { useDiscussion } from "@/lib/hooks/useDiscussion"
-import { Settings2 } from "lucide-react"
 import { useEffect, useRef } from "react"
 import CommentCard from "./CommentCard"
 
-interface SortOption {
-    value: string
-    label: string
-}
-
 const ITEMS_PER_PAGE = 10
 const PRELOAD_THRESHOLD = 3
+
+type SortValue = "newest" | "oldest" | "popular"
+
+const SORT_OPTIONS: FilterOption<SortValue>[] = [
+    { value: "newest", label: "Newest" },
+    { value: "oldest", label: "Oldest" },
+    { value: "popular", label: "Most Popular" },
+]
 
 export default function CommentsList() {
     const {
@@ -34,13 +34,7 @@ export default function CommentsList() {
     } = useDiscussion()
     const loadMoreRef = useRef<HTMLDivElement>(null)
 
-    const sortOptions: SortOption[] = [
-        { value: "newest", label: "Newest" },
-        { value: "oldest", label: "Oldest" },
-        { value: "popular", label: "Most Popular" },
-    ]
-
-    const currentSort = sortBy || "newest"
+    const currentSort = (sortBy || "newest") as SortValue
     const remainingCount = Math.min(ITEMS_PER_PAGE, total - comments.length)
 
     // Intersection observer for lazy loading from backend
@@ -61,8 +55,6 @@ export default function CommentsList() {
         return <CommentsLoading />
     }
 
-    const sortLabel = sortOptions.find((o) => o.value === currentSort)?.label || "Sort"
-
     return (
         <section className="space-y-6">
             {/* Header */}
@@ -75,28 +67,11 @@ export default function CommentsList() {
                 </div>
 
                 {/* Sort Dropdown */}
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium cursor-pointer rounded-lg border border-border bg-background text-foreground hover:bg-secondary hover:text-secondary-foreground transition">
-                            <Settings2 className="w-4 h-4" />
-                            {sortLabel}
-                        </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48">
-                        {sortOptions.map((option) => (
-                            <DropdownMenuItem
-                                key={option.value}
-                                onClick={() => setSortBy(option.value as typeof sortBy)}
-                                className={`cursor-pointer ${currentSort === option.value
-                                    ? "bg-secondary text-secondary-foreground"
-                                    : ""
-                                    }`}
-                            >
-                                {option.label}
-                            </DropdownMenuItem>
-                        ))}
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <FilterDropdown
+                    options={SORT_OPTIONS}
+                    value={currentSort}
+                    onChange={(value) => setSortBy(value as typeof sortBy)}
+                />
             </div>
 
             {/* Comments List */}
