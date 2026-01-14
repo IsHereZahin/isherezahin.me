@@ -38,7 +38,7 @@ const saylo = {
         return await response.json();
     },
 
-    async create(data: { content: string; category?: string | null; newCategory?: string | null; images?: string[]; videos?: string[]; published?: boolean }) {
+    async create(data: { content: string; category?: string | null; newCategory?: string | null; images?: string[]; videos?: string[]; published?: boolean; visibility?: "public" | "authenticated" | "private" }) {
         const response = await fetch("/api/saylo", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -51,7 +51,7 @@ const saylo = {
         return await response.json();
     },
 
-    async update(id: string, data: { content?: string; category?: string | null; published?: boolean }) {
+    async update(id: string, data: { content?: string; category?: string | null; published?: boolean; visibility?: "public" | "authenticated" | "private" }) {
         const response = await fetch(`/api/saylo/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },

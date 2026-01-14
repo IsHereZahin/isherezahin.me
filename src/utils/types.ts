@@ -128,6 +128,7 @@ export interface Saylo {
     commentCount: number;
     shareCount: number;
     published: boolean;
+    visibility: "public" | "authenticated" | "private";
     createdAt: string;
     updatedAt: string;
 }

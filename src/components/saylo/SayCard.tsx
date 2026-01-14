@@ -4,9 +4,10 @@ import MarkdownTextarea from "@/components/ui/MarkdownTextarea";
 import { PERSON } from "@/config/seo.config";
 import { parseMarkdown } from "@/lib/markdown";
 import { getDeviceId } from "@/utils";
+import { cloudinary } from "@/lib/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
-import { Bookmark, MessageCircle, MoreHorizontal, Pencil, Share2, Trash2 } from "lucide-react";
+import { Bookmark, Globe, ImagePlus, Loader2, Lock, MessageCircle, MoreHorizontal, Pencil, Share2, Trash2, Users, Video, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -14,10 +15,14 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { Comment, MediaItem, Reactions, ReactionType, Saylo } from "@/utils/types";
+import CategorySelector from "./CategorySelector";
 import CommentsSection from "./CommentsSection";
 import MediaGallery from "./MediaGallery";
 import MediaModal from "./MediaModal";
 import ReactionButton, { ReactionsSummary } from "./ReactionButton";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import { saylo as sayloApi } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 
 // Re-export Saylo type for backwards compatibility
 export type { Saylo } from "@/utils/types";
@@ -52,12 +57,37 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
     const router = useRouter();
     const queryClient = useQueryClient();
 
+    // Visibility options
+    const visibilityOptions = [
+        { value: "public", label: "Public", icon: Globe, description: "Anyone can see" },
+        { value: "authenticated", label: "Signed In", icon: Users, description: "Only signed in users" },
+        { value: "private", label: "Only Me", icon: Lock, description: "Only you can see" },
+    ] as const;
+
     // UI state
     const [showMenu, setShowMenu] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [editContent, setEditContent] = useState(saylo.content);
+    const [editMedia, setEditMedia] = useState<MediaItem[]>([
+        ...(saylo.images || []).map((url) => ({ url, type: "image" as const })),
+        ...(saylo.videos || []).map((url) => ({ url, type: "video" as const })),
+    ]);
+    const [editVisibility, setEditVisibility] = useState<"public" | "authenticated" | "private">(
+        (saylo.visibility as "public" | "authenticated" | "private") || "public"
+    );
+    const [editCategory, setEditCategory] = useState<string | null>(saylo.category);
+    const [isUploadingEdit, setIsUploadingEdit] = useState(false);
     const [mediaModalState, setMediaModalState] = useState<{ media: MediaItem[]; index: number } | null>(null);
     const [showInlineComment, setShowInlineComment] = useState(false);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const editFileInputRef = useRef<HTMLInputElement>(null);
+
+    // Fetch categories for edit mode
+    const { data: categoriesData } = useQuery({
+        queryKey: ["sayloCategories"],
+        queryFn: () => sayloApi.getCategories(),
+        enabled: isEditing,
+    });
 
     // Reactions state
     const [reactions, setReactions] = useState<Reactions>(saylo.reactions || { like: 0, love: 0, haha: 0, fire: 0 });
@@ -205,11 +235,17 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
     });
 
     const updateMutation = useMutation({
-        mutationFn: async (content: string) => {
+        mutationFn: async () => {
             const response = await fetch(`/api/saylo/${saylo.id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ content }),
+                body: JSON.stringify({
+                    content: editContent,
+                    category: editCategory,
+                    images: editMedia.filter((m) => m.type === "image").map((m) => m.url),
+                    videos: editMedia.filter((m) => m.type === "video").map((m) => m.url),
+                    visibility: editVisibility,
+                }),
             });
             if (!response.ok) throw new Error("Failed to update");
             return response.json();
@@ -218,12 +254,46 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
             setIsEditing(false);
             queryClient.invalidateQueries({ queryKey: ["saylos"] });
             queryClient.invalidateQueries({ queryKey: ["saylo", saylo.id] });
+            queryClient.invalidateQueries({ queryKey: ["sayloCategories"] });
             toast.success("Updated successfully");
         },
         onError: () => {
             toast.error("Failed to update");
         },
     });
+
+    const handleEditFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
+
+        setIsUploadingEdit(true);
+        const newMedia: MediaItem[] = [];
+
+        for (const file of Array.from(files)) {
+            const isVideoByType = file.type.startsWith("video/") || /\.(mp4|webm|ogg|mov|avi|mkv)$/i.test(file.name);
+
+            try {
+                const data = await cloudinary.upload(file);
+                const isVideoFile = data.resource_type === "video" || data.url?.includes("/video/") || isVideoByType;
+                newMedia.push({ url: data.url, type: isVideoFile ? "video" : "image" });
+            } catch (err) {
+                console.error("Upload error:", err);
+                toast.error(`Failed to upload ${file.name}`);
+            }
+        }
+
+        setEditMedia((prev) => [...prev, ...newMedia]);
+        setIsUploadingEdit(false);
+        if (editFileInputRef.current) {
+            editFileInputRef.current.value = "";
+        }
+    };
+
+    const removeEditMedia = (index: number) => {
+        setEditMedia((prev) => prev.filter((_, i) => i !== index));
+    };
+
+    const currentEditVisibility = visibilityOptions.find((v) => v.value === editVisibility)!;
 
     const handleShare = async () => {
         const shareUrl = `${window.location.origin}/saylo/${saylo.id}`;
@@ -302,6 +372,18 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
                                         Draft
                                     </span>
                                 )}
+                                {saylo.visibility && saylo.visibility !== "public" && (
+                                    <span
+                                        className={`flex items-center gap-1 px-2 py-0.5 text-xs rounded-full ${saylo.visibility === "private"
+                                                ? "bg-red-500/20 text-red-600 dark:text-red-400"
+                                                : "bg-blue-500/20 text-blue-600 dark:text-blue-400"
+                                            }`}
+                                        title={saylo.visibility === "private" ? "Only you can see this" : "Only signed in users can see this"}
+                                    >
+                                        {saylo.visibility === "private" ? <Lock className="w-3 h-3" /> : <Users className="w-3 h-3" />}
+                                        {saylo.visibility === "private" ? "Private" : "Auth Only"}
+                                    </span>
+                                )}
                             </div>
                             <span className="text-xs text-muted-foreground">{timeAgo}</span>
                         </div>
@@ -334,9 +416,7 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
                                         </button>
                                         <button
                                             onClick={() => {
-                                                if (confirm("Are you sure you want to delete this?")) {
-                                                    deleteMutation.mutate();
-                                                }
+                                                setShowDeleteDialog(true);
                                                 setShowMenu(false);
                                             }}
                                             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
@@ -355,23 +435,119 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
                 {isEditing ? (
                     <div className="space-y-3">
                         <MarkdownTextarea value={editContent} onChange={setEditContent} rows={4} />
-                        <div className="flex justify-end gap-2">
-                            <button
-                                onClick={() => {
-                                    setIsEditing(false);
-                                    setEditContent(saylo.content);
-                                }}
-                                className="px-4 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={() => updateMutation.mutate(editContent)}
-                                disabled={updateMutation.isPending || !editContent.trim()}
-                                className="px-4 py-1.5 bg-primary text-primary-foreground text-sm font-medium rounded-full hover:opacity-90 disabled:opacity-50 transition-all cursor-pointer"
-                            >
-                                {updateMutation.isPending ? "Saving..." : "Save"}
-                            </button>
+
+                        {/* Edit Media Previews */}
+                        {editMedia.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                                {editMedia.map((item, index) => (
+                                    <div key={`edit-media-${item.url}`} className="relative group/media">
+                                        {item.type === "video" ? (
+                                            <div className="relative w-20 h-20 bg-accent rounded-lg flex items-center justify-center overflow-hidden">
+                                                <video src={item.url} className="w-full h-full object-cover" muted />
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                                                    <Video className="w-6 h-6 text-white" />
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <Image
+                                                src={item.url}
+                                                alt={`Media ${index + 1}`}
+                                                width={80}
+                                                height={80}
+                                                className="w-20 h-20 object-cover rounded-lg"
+                                            />
+                                        )}
+                                        <button
+                                            onClick={() => removeEditMedia(index)}
+                                            className="absolute -top-2 -right-2 p-1 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover/media:opacity-100 transition-opacity cursor-pointer"
+                                        >
+                                            <X className="w-3 h-3" />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Edit Actions Row */}
+                        <div className="flex items-center justify-between pt-2 border-t border-border/20">
+                            <div className="flex items-center gap-2">
+                                {/* Media Upload */}
+                                <input
+                                    ref={editFileInputRef}
+                                    type="file"
+                                    accept="image/*,video/*"
+                                    multiple
+                                    onChange={handleEditFileUpload}
+                                    className="hidden"
+                                />
+                                <button
+                                    onClick={() => editFileInputRef.current?.click()}
+                                    disabled={isUploadingEdit}
+                                    className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-lg transition-colors cursor-pointer"
+                                    title="Add images or videos"
+                                >
+                                    {isUploadingEdit ? <Loader2 className="w-5 h-5 animate-spin" /> : <ImagePlus className="w-5 h-5" />}
+                                </button>
+
+                                {/* Category Selector */}
+                                <CategorySelector
+                                    categories={categoriesData?.categories || []}
+                                    selectedCategory={editCategory}
+                                    onCategoryChange={setEditCategory}
+                                    allowCreate={true}
+                                />
+
+                                {/* Visibility Selector */}
+                                <div className="relative group/visibility">
+                                    <button
+                                        className="flex items-center gap-1.5 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-lg transition-colors cursor-pointer"
+                                        title={currentEditVisibility.description}
+                                    >
+                                        <currentEditVisibility.icon className="w-4 h-4" />
+                                        <span className="hidden sm:inline">{currentEditVisibility.label}</span>
+                                    </button>
+                                    <div className="absolute left-0 bottom-full mb-1 bg-popover border border-border rounded-lg shadow-lg opacity-0 invisible group-hover/visibility:opacity-100 group-hover/visibility:visible transition-all z-10 min-w-40">
+                                        {visibilityOptions.map((option) => (
+                                            <button
+                                                key={option.value}
+                                                onClick={() => setEditVisibility(option.value)}
+                                                className={`w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent/50 transition-colors cursor-pointer first:rounded-t-lg last:rounded-b-lg ${editVisibility === option.value ? "text-primary bg-accent/30" : "text-foreground"}`}
+                                            >
+                                                <option.icon className="w-4 h-4" />
+                                                <div className="text-left">
+                                                    <div className="font-medium">{option.label}</div>
+                                                    <div className="text-xs text-muted-foreground">{option.description}</div>
+                                                </div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => {
+                                        setIsEditing(false);
+                                        setEditContent(saylo.content);
+                                        setEditCategory(saylo.category);
+                                        setEditMedia([
+                                            ...(saylo.images || []).map((url) => ({ url, type: "image" as const })),
+                                            ...(saylo.videos || []).map((url) => ({ url, type: "video" as const })),
+                                        ]);
+                                        setEditVisibility((saylo.visibility as "public" | "authenticated" | "private") || "public");
+                                    }}
+                                    className="px-4 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={() => updateMutation.mutate()}
+                                    disabled={updateMutation.isPending || !editContent.trim() || isUploadingEdit}
+                                    className="px-4 py-1.5 bg-primary text-primary-foreground text-sm font-medium rounded-full hover:opacity-90 disabled:opacity-50 transition-all cursor-pointer"
+                                >
+                                    {updateMutation.isPending ? "Saving..." : "Save"}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ) : (
@@ -500,6 +676,20 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
                     </div>
                 )}
             </article>
+
+            {/* Delete Confirmation Dialog */}
+            <ConfirmDialog
+                open={showDeleteDialog}
+                onOpenChange={setShowDeleteDialog}
+                title="Delete Saylo"
+                description="Are you sure you want to delete this saylo? This action cannot be undone."
+                confirmText="Delete"
+                variant="danger"
+                onConfirm={async () => {
+                    await deleteMutation.mutateAsync();
+                }}
+                isLoading={deleteMutation.isPending}
+            />
         </>
     );
 }

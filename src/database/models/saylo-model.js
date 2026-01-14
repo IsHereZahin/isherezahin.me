@@ -107,6 +107,11 @@ const sayloSchema = new Schema(
             required: true,
             default: true,
         },
+        visibility: {
+            type: String,
+            enum: ["public", "authenticated", "private"],
+            default: "public",
+        },
     },
     { timestamps: true }
 );

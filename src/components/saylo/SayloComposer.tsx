@@ -3,7 +3,7 @@
 import MarkdownTextarea from "@/components/ui/MarkdownTextarea";
 import { cloudinary, saylo } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ImagePlus, Loader2, Send, Video, X } from "lucide-react";
+import { Globe, ImagePlus, Loader2, Lock, Send, Users, Video, X } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
@@ -20,9 +20,16 @@ export default function SayloComposer({ onSuccess }: Readonly<SayloComposerProps
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [newCategory, setNewCategory] = useState<string | null>(null);
     const [media, setMedia] = useState<MediaItem[]>([]);
+    const [visibility, setVisibility] = useState<"public" | "authenticated" | "private">("public");
     const [isUploading, setIsUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const queryClient = useQueryClient();
+
+    const visibilityOptions = [
+        { value: "public", label: "Public", icon: Globe, description: "Anyone can see" },
+        { value: "authenticated", label: "Signed In", icon: Users, description: "Only signed in users" },
+        { value: "private", label: "Only Me", icon: Lock, description: "Only you can see" },
+    ] as const;
 
     const { data: categoriesData } = useQuery({
         queryKey: ["sayloCategories"],
@@ -37,6 +44,7 @@ export default function SayloComposer({ onSuccess }: Readonly<SayloComposerProps
                 newCategory: newCategory,
                 images: media.filter((m) => m.type === "image").map((m) => m.url),
                 videos: media.filter((m) => m.type === "video").map((m) => m.url),
+                visibility,
             });
         },
         onSuccess: () => {
@@ -44,6 +52,7 @@ export default function SayloComposer({ onSuccess }: Readonly<SayloComposerProps
             setSelectedCategory(null);
             setNewCategory(null);
             setMedia([]);
+            setVisibility("public");
             queryClient.invalidateQueries({ queryKey: ["saylos"] });
             queryClient.invalidateQueries({ queryKey: ["sayloCategories"] });
             toast.success("Posted successfully");
@@ -53,6 +62,8 @@ export default function SayloComposer({ onSuccess }: Readonly<SayloComposerProps
             toast.error("Failed to post");
         },
     });
+
+    const currentVisibility = visibilityOptions.find((v) => v.value === visibility)!;
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
@@ -159,6 +170,32 @@ export default function SayloComposer({ onSuccess }: Readonly<SayloComposerProps
                         onCategoryChange={handleCategoryChange}
                         allowCreate={true}
                     />
+
+                    {/* Visibility Selector */}
+                    <div className="relative group">
+                        <button
+                            className="flex items-center gap-1.5 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-lg transition-colors cursor-pointer"
+                            title={currentVisibility.description}
+                        >
+                            <currentVisibility.icon className="w-4 h-4" />
+                            <span className="hidden sm:inline">{currentVisibility.label}</span>
+                        </button>
+                        <div className="absolute left-0 bottom-full mb-1 bg-popover border border-border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10 min-w-40">
+                            {visibilityOptions.map((option) => (
+                                <button
+                                    key={option.value}
+                                    onClick={() => setVisibility(option.value)}
+                                    className={`w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent/50 transition-colors cursor-pointer first:rounded-t-lg last:rounded-b-lg ${visibility === option.value ? "text-primary bg-accent/30" : "text-foreground"}`}
+                                >
+                                    <option.icon className="w-4 h-4" />
+                                    <div className="text-left">
+                                        <div className="font-medium">{option.label}</div>
+                                        <div className="text-xs text-muted-foreground">{option.description}</div>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
                 <button

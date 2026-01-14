@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { SayloCommentModel, SayloModel, SayloReactionModel } from "@/database/models/saylo-model";
 import dbConnect from "@/database/services/mongo";
 import { checkIsAdmin } from "@/lib/auth-utils";
@@ -20,12 +21,33 @@ export async function GET(
             );
         }
 
+        const session = await auth();
         const isAdmin = await checkIsAdmin();
-        if (!saylo.published && !isAdmin) {
-            return NextResponse.json(
-                { error: "Saylo not found" },
-                { status: 404 }
-            );
+
+        // Check visibility permissions
+        if (!isAdmin) {
+            if (!saylo.published) {
+                return NextResponse.json(
+                    { error: "Saylo not found" },
+                    { status: 404 }
+                );
+            }
+
+            const visibility = saylo.visibility || "public";
+
+            if (visibility === "private" && saylo.authorId !== session?.user?.id) {
+                return NextResponse.json(
+                    { error: "Saylo not found" },
+                    { status: 404 }
+                );
+            }
+
+            if (visibility === "authenticated" && !session?.user) {
+                return NextResponse.json(
+                    { error: "Authentication required to view this saylo" },
+                    { status: 401 }
+                );
+            }
         }
 
         // Get actual comment count
@@ -43,6 +65,7 @@ export async function GET(
             commentCount,
             shareCount: saylo.shareCount || 0,
             published: saylo.published,
+            visibility: saylo.visibility || "public",
             createdAt: saylo.createdAt,
             updatedAt: saylo.updatedAt,
         });
@@ -71,7 +94,7 @@ export async function PUT(
         await dbConnect();
         const { id } = await context.params;
         const body = await req.json();
-        const { content, category, images, videos, published } = body;
+        const { content, category, images, videos, published, visibility } = body;
 
         const saylo = await SayloModel.findById(id);
 
@@ -106,6 +129,13 @@ export async function PUT(
 
         if (published !== undefined) {
             saylo.published = published;
+        }
+
+        if (visibility !== undefined) {
+            const validVisibilities = ["public", "authenticated", "private"];
+            if (validVisibilities.includes(visibility)) {
+                saylo.visibility = visibility;
+            }
         }
 
         await saylo.save();

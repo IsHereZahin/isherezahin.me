@@ -14,8 +14,28 @@ export async function GET(req: NextRequest) {
         const category = searchParams.get("category");
         const sort = searchParams.get("sort") || "recent";
 
+        const session = await auth();
         const isAdmin = await checkIsAdmin();
-        const query: Record<string, unknown> = isAdmin ? {} : { published: true };
+
+        // Build visibility query based on user authentication and admin status
+        let query: Record<string, unknown>;
+        if (isAdmin) {
+            // Admin can see everything
+            query = {};
+        } else if (session?.user) {
+            // Authenticated users can see public, authenticated, and their own private posts
+            query = {
+                published: true,
+                $or: [
+                    { visibility: "public" },
+                    { visibility: "authenticated" },
+                    { visibility: "private", authorId: session.user.id },
+                ],
+            };
+        } else {
+            // Non-authenticated users can only see public posts
+            query = { published: true, visibility: { $in: ["public", null] } };
+        }
 
         if (category && category !== "all") {
             query.category = category;
@@ -90,6 +110,7 @@ export async function GET(req: NextRequest) {
             commentCount: commentCountMap.get(saylo._id.toString()) || 0,
             shareCount: saylo.shareCount || 0,
             published: saylo.published,
+            visibility: saylo.visibility || "public",
             createdAt: saylo.createdAt,
             updatedAt: saylo.updatedAt,
         }));
@@ -124,7 +145,7 @@ export async function POST(req: NextRequest) {
         await dbConnect();
 
         const body = await req.json();
-        const { content, category, newCategory, images = [], videos = [], published = true } = body;
+        const { content, category, newCategory, images = [], videos = [], published = true, visibility = "public" } = body;
 
         if (!content || content.trim().length === 0) {
             return NextResponse.json(
@@ -150,6 +171,10 @@ export async function POST(req: NextRequest) {
             }
         }
 
+        // Validate visibility
+        const validVisibilities = ["public", "authenticated", "private"];
+        const finalVisibility = validVisibilities.includes(visibility) ? visibility : "public";
+
         const saylo = await SayloModel.create({
             content: content.trim(),
             authorName: session.user.name || "Anonymous",
@@ -159,6 +184,7 @@ export async function POST(req: NextRequest) {
             images: Array.isArray(images) ? images : [],
             videos: Array.isArray(videos) ? videos : [],
             published,
+            visibility: finalVisibility,
         });
 
         return NextResponse.json(
