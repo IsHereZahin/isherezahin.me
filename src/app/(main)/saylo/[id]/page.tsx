@@ -2,26 +2,41 @@ import SayloDetailsIndex from "@/components/pages/SayloDetailsIndex";
 import { PERSON, TWITTER, getFullUrl } from "@/config/seo.config";
 import dbConnect from "@/database/services/mongo";
 import { SayloModel } from "@/database/models/saylo-model";
+import { UserModel } from "@/database/models/user-model";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+
+// Ensure User model is registered for population
+const _UserModel = UserModel;
 
 interface SayloPageProps {
     params: Promise<{ id: string }>;
 }
 
+interface SayloDocument {
+    _id: { toString(): string };
+    content: string;
+    authorId: { name?: string } | null;
+    category: string | null;
+    images: string[];
+    videos: string[];
+    published: boolean;
+    createdAt: Date;
+}
+
 async function getSaylo(id: string) {
     try {
         await dbConnect();
-        const saylo = await SayloModel.findById(id).lean();
-        if (!saylo || !saylo.published) return null;
+        const saylo = await SayloModel.findById(id).populate("authorId", "name").lean() as SayloDocument | null;
+        if (!saylo?.published) return null;
         return {
             id: saylo._id.toString(),
-            content: saylo.content as string,
-            authorName: (saylo.authorName as string) || null,
-            category: (saylo.category as string) || null,
-            images: (saylo.images as string[]) || [],
-            videos: (saylo.videos as string[]) || [],
-            createdAt: saylo.createdAt as Date,
+            content: saylo.content,
+            authorName: saylo.authorId?.name || null,
+            category: saylo.category || null,
+            images: saylo.images || [],
+            videos: saylo.videos || [],
+            createdAt: saylo.createdAt,
         };
     } catch {
         return null;

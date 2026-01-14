@@ -5,6 +5,13 @@ import { NextRequest, NextResponse } from "next/server";
 const VALID_REACTIONS = ["like", "love", "haha", "fire"] as const;
 type ReactionType = typeof VALID_REACTIONS[number];
 
+interface Reactions {
+    like: number;
+    love: number;
+    haha: number;
+    fire: number;
+}
+
 export async function GET(
     req: NextRequest,
     context: { params: Promise<{ id: string }> }
@@ -14,7 +21,7 @@ export async function GET(
         const { id } = await context.params;
         const deviceId = req.headers.get("x-device-id") || "";
 
-        const saylo = await SayloModel.findById(id).select("reactions").lean();
+        const saylo = await SayloModel.findById(id).select("reactions").lean() as { reactions?: Reactions } | null;
 
         if (!saylo) {
             return NextResponse.json(

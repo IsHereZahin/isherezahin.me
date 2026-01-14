@@ -1,8 +1,12 @@
 import { auth } from "@/auth";
 import { SayloCommentModel, SayloModel } from "@/database/models/saylo-model";
+import { UserModel } from "@/database/models/user-model";
 import dbConnect from "@/database/services/mongo";
 import { checkIsAdmin } from "@/lib/auth-utils";
 import { NextRequest, NextResponse } from "next/server";
+
+// Ensure User model is registered for population
+const _UserModel = UserModel;
 
 export async function GET(
     req: NextRequest,
@@ -30,20 +34,24 @@ export async function GET(
         await SayloModel.findByIdAndUpdate(id, { commentCount: total });
 
         const comments = await SayloCommentModel.find({ sayloId: id })
+            .populate("authorId", "name image")
             .sort({ createdAt: -1 })
             .skip((page - 1) * limit)
             .limit(limit)
             .lean();
 
-        const formattedComments = comments.map((comment) => ({
-            id: String(comment._id),
-            content: comment.content as string,
-            authorName: comment.authorName as string,
-            authorImage: comment.authorImage as string | null,
-            authorId: comment.authorId as string | null,
-            isAdmin: comment.isAdmin as boolean,
-            createdAt: comment.createdAt as Date,
-        }));
+        const formattedComments = comments.map((comment) => {
+            const author = comment.authorId as { _id: string; name?: string; image?: string } | null;
+            return {
+                id: String(comment._id),
+                content: comment.content as string,
+                authorName: (author?.name || "Anonymous") as string,
+                authorImage: (author?.image || null) as string | null,
+                authorId: author?._id?.toString() || null,
+                isAdmin: comment.isAdmin as boolean,
+                createdAt: comment.createdAt as Date,
+            };
+        });
 
         return NextResponse.json({
             total,
@@ -101,9 +109,7 @@ export async function POST(
         const comment = await SayloCommentModel.create({
             sayloId: id,
             content: content.trim(),
-            authorName: session.user.name || "Anonymous",
-            authorImage: session.user.image || null,
-            authorId: session.user.id || null,
+            authorId: session.user.id,
             isAdmin,
         });
 
@@ -115,9 +121,9 @@ export async function POST(
             {
                 id: comment._id.toString(),
                 content: comment.content,
-                authorName: comment.authorName,
-                authorImage: comment.authorImage,
-                authorId: comment.authorId,
+                authorName: session.user.name || "Anonymous",
+                authorImage: session.user.image || null,
+                authorId: session.user.id,
                 isAdmin: comment.isAdmin,
                 createdAt: comment.createdAt,
                 message: "Comment added successfully",
@@ -166,7 +172,7 @@ export async function PUT(
             );
         }
 
-        const comment = await SayloCommentModel.findById(commentId);
+        const comment = await SayloCommentModel.findById(commentId).populate("authorId", "name image");
 
         if (!comment) {
             return NextResponse.json(
@@ -176,7 +182,7 @@ export async function PUT(
         }
 
         // Only comment author can edit their own comment
-        if (comment.authorId !== session.user.id) {
+        if (comment.authorId?._id?.toString() !== session.user.id) {
             return NextResponse.json(
                 { error: "Unauthorized - you can only edit your own comments" },
                 { status: 403 }
@@ -194,12 +200,14 @@ export async function PUT(
         comment.content = content.trim();
         await comment.save();
 
+        const author = comment.authorId as { _id: string; name?: string; image?: string } | null;
+
         return NextResponse.json({
             id: comment._id.toString(),
             content: comment.content,
-            authorName: comment.authorName,
-            authorImage: comment.authorImage,
-            authorId: comment.authorId,
+            authorName: author?.name || "Anonymous",
+            authorImage: author?.image || null,
+            authorId: author?._id?.toString() || null,
             isAdmin: comment.isAdmin,
             createdAt: comment.createdAt,
             updatedAt: comment.updatedAt,
@@ -251,7 +259,7 @@ export async function DELETE(
         }
 
         // Only admin or comment author can delete
-        if (!isAdmin && comment.authorId !== session.user.id) {
+        if (!isAdmin && comment.authorId?.toString() !== session.user.id) {
             return NextResponse.json(
                 { error: "Unauthorized" },
                 { status: 403 }

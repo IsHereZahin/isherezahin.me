@@ -36,17 +36,10 @@ const sayloCommentSchema = new Schema(
             type: String,
             required: true,
         },
-        authorName: {
-            type: String,
-            required: true,
-        },
-        authorImage: {
-            type: String,
-            default: null,
-        },
         authorId: {
-            type: String,
-            default: null,
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
         },
         isAdmin: {
             type: Boolean,
@@ -64,17 +57,10 @@ const sayloSchema = new Schema(
             type: String,
             required: true,
         },
-        authorName: {
-            type: String,
-            default: null,
-        },
-        authorImage: {
-            type: String,
-            default: null,
-        },
         authorId: {
-            type: String,
-            default: null,
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
         },
         category: {
             type: String,
@@ -133,11 +119,8 @@ const sayloCategorySchema = new Schema(
     { timestamps: true }
 );
 
-// Delete cached model if schema changed (needed for development hot reload)
-if (mongoose.models.Saylo) {
-    delete mongoose.models.Saylo;
-}
-export const SayloModel = mongoose.model("Saylo", sayloSchema);
+export const SayloModel =
+    mongoose.models.Saylo || mongoose.model("Saylo", sayloSchema);
 
 export const SayloCategoryModel =
     mongoose.models.SayloCategory || mongoose.model("SayloCategory", sayloCategorySchema);

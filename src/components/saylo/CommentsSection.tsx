@@ -148,12 +148,16 @@ export default function CommentsSection({
                                 }}
                             />
                             <div className="flex items-center justify-between mt-2">
-                                <Link
-                                    href={`/saylo/${sayloId}`}
-                                    className="text-xs text-muted-foreground hover:text-primary transition-colors"
-                                >
-                                    View all comments
-                                </Link>
+                                {commentCount > 2 ? (
+                                    <Link
+                                        href={`/saylo/${sayloId}`}
+                                        className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                                    >
+                                        View all comments
+                                    </Link>
+                                ) : (
+                                    <span />
+                                )}
                                 <button
                                     onClick={submitComment}
                                     disabled={!newComment.trim() || isSubmitting}

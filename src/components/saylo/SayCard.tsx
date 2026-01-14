@@ -34,6 +34,8 @@ interface SayCardProps {
     userId?: string;
     variant?: "list" | "detail";
     onDeleted?: () => void;
+    isCommentOpen?: boolean;
+    onCommentToggle?: (isOpen: boolean) => void;
 }
 
 // FavoriteButton Component
@@ -53,7 +55,7 @@ function FavoriteButton({ className }: { readonly className?: string }) {
     );
 }
 
-export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = "list", onDeleted }: Readonly<SayCardProps>) {
+export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = "list", onDeleted, isCommentOpen, onCommentToggle }: Readonly<SayCardProps>) {
     const router = useRouter();
     const queryClient = useQueryClient();
 
@@ -78,8 +80,18 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
     const [editCategory, setEditCategory] = useState<string | null>(saylo.category);
     const [isUploadingEdit, setIsUploadingEdit] = useState(false);
     const [mediaModalState, setMediaModalState] = useState<{ media: MediaItem[]; index: number } | null>(null);
-    const [showInlineComment, setShowInlineComment] = useState(false);
+    const [showInlineCommentInternal, setShowInlineCommentInternal] = useState(false);
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+    // Use controlled state if provided, otherwise use internal state
+    const showInlineComment = isCommentOpen ?? showInlineCommentInternal;
+    const setShowInlineComment = (value: boolean) => {
+        if (onCommentToggle) {
+            onCommentToggle(value);
+        } else {
+            setShowInlineCommentInternal(value);
+        }
+    };
     const editFileInputRef = useRef<HTMLInputElement>(null);
 
     // Fetch categories for edit mode
@@ -197,6 +209,13 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
 
     const loadComments = async () => {
         if (isLoadingComments) return;
+
+        // Skip loading if there are no comments
+        if (commentCount === 0) {
+            setComments([]);
+            return;
+        }
+
         setIsLoadingComments(true);
 
         try {

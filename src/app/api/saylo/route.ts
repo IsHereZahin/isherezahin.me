@@ -1,8 +1,13 @@
 import { auth } from "@/auth";
 import { SayloCategoryModel, SayloCommentModel, SayloModel } from "@/database/models/saylo-model";
+import { UserModel } from "@/database/models/user-model";
 import dbConnect from "@/database/services/mongo";
 import { checkIsAdmin } from "@/lib/auth-utils";
+import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
+
+// Ensure User model is registered for population
+const _UserModel = UserModel;
 
 export async function GET(req: NextRequest) {
     try {
@@ -29,7 +34,7 @@ export async function GET(req: NextRequest) {
                 $or: [
                     { visibility: "public" },
                     { visibility: "authenticated" },
-                    { visibility: "private", authorId: session.user.id },
+                    { visibility: "private", authorId: new mongoose.Types.ObjectId(session.user.id) },
                 ],
             };
         } else {
@@ -79,9 +84,19 @@ export async function GET(req: NextRequest) {
                 { $sort: { totalReactions: -1, createdAt: -1 } },
                 { $skip: (page - 1) * limit },
                 { $limit: limit },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "authorId",
+                        foreignField: "_id",
+                        as: "author",
+                    },
+                },
+                { $unwind: { path: "$author", preserveNullAndEmptyArrays: true } },
             ]);
         } else {
             saylos = await SayloModel.find(query)
+                .populate("authorId", "name image")
                 .sort(sortOption)
                 .skip((page - 1) * limit)
                 .limit(limit)
@@ -98,22 +113,26 @@ export async function GET(req: NextRequest) {
             commentCounts.map((c) => [c._id.toString(), c.count])
         );
 
-        const formattedSaylos = saylos.map((saylo) => ({
-            id: saylo._id.toString(),
-            content: saylo.content,
-            authorName: saylo.authorName || null,
-            authorImage: saylo.authorImage || null,
-            category: saylo.category,
-            images: saylo.images || [],
-            videos: saylo.videos || [],
-            reactions: saylo.reactions || { like: 0, love: 0, haha: 0, fire: 0 },
-            commentCount: commentCountMap.get(saylo._id.toString()) || 0,
-            shareCount: saylo.shareCount || 0,
-            published: saylo.published,
-            visibility: saylo.visibility || "public",
-            createdAt: saylo.createdAt,
-            updatedAt: saylo.updatedAt,
-        }));
+        const formattedSaylos = saylos.map((saylo) => {
+            // Handle both aggregation (author) and populate (authorId) results
+            const author = saylo.author || saylo.authorId;
+            return {
+                id: saylo._id.toString(),
+                content: saylo.content,
+                authorName: author?.name || null,
+                authorImage: author?.image || null,
+                category: saylo.category,
+                images: saylo.images || [],
+                videos: saylo.videos || [],
+                reactions: saylo.reactions || { like: 0, love: 0, haha: 0, fire: 0 },
+                commentCount: commentCountMap.get(saylo._id.toString()) || 0,
+                shareCount: saylo.shareCount || 0,
+                published: saylo.published,
+                visibility: saylo.visibility || "public",
+                createdAt: saylo.createdAt,
+                updatedAt: saylo.updatedAt,
+            };
+        });
 
         return NextResponse.json({
             total,
@@ -177,9 +196,7 @@ export async function POST(req: NextRequest) {
 
         const saylo = await SayloModel.create({
             content: content.trim(),
-            authorName: session.user.name || "Anonymous",
-            authorImage: session.user.image || null,
-            authorId: session.user.id || null,
+            authorId: session.user.id,
             category: finalCategory || null,
             images: Array.isArray(images) ? images : [],
             videos: Array.isArray(videos) ? videos : [],

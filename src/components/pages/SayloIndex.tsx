@@ -15,6 +15,7 @@ export default function SayloIndex() {
     const isLoggedIn = status === "authenticated";
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [selectedSort, setSelectedSort] = useState<SortOption>("recent");
+    const [openCommentId, setOpenCommentId] = useState<string | null>(null);
 
     const { data: categoriesData } = useQuery({
         queryKey: ["sayloCategories"],
@@ -116,14 +117,16 @@ export default function SayloIndex() {
                 {/* Saylo Feed */}
                 {allSaylos.length > 0 && (
                     <div className="space-y-4">
-                        {allSaylos.map((saylo) => (
+                        {allSaylos.map((s) => (
                             <SayCard
-                                key={saylo.id}
-                                saylo={saylo}
+                                key={s.id}
+                                saylo={s}
                                 isAdmin={isAdmin}
                                 isLoggedIn={isLoggedIn}
                                 userId={user?.id}
                                 variant="list"
+                                isCommentOpen={openCommentId === s.id}
+                                onCommentToggle={(isOpen) => setOpenCommentId(isOpen ? s.id : null)}
                             />
                         ))}
                     </div>

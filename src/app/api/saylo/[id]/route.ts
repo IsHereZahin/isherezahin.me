@@ -1,8 +1,28 @@
 import { auth } from "@/auth";
 import { SayloCommentModel, SayloModel, SayloReactionModel } from "@/database/models/saylo-model";
+import { UserModel } from "@/database/models/user-model";
 import dbConnect from "@/database/services/mongo";
 import { checkIsAdmin } from "@/lib/auth-utils";
 import { NextRequest, NextResponse } from "next/server";
+
+// Ensure User model is registered for population
+const _UserModel = UserModel;
+
+interface SayloDocument {
+    _id: { toString(): string };
+    content: string;
+    authorId: { _id?: string; name?: string; image?: string } | null;
+    category: string | null;
+    images: string[];
+    videos: string[];
+    reactions: { like: number; love: number; haha: number; fire: number };
+    commentCount: number;
+    shareCount: number;
+    published: boolean;
+    visibility: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
 
 export async function GET(
     req: NextRequest,
@@ -12,7 +32,7 @@ export async function GET(
         await dbConnect();
         const { id } = await context.params;
 
-        const saylo = await SayloModel.findById(id).lean();
+        const saylo = await SayloModel.findById(id).populate("authorId", "name image").lean() as SayloDocument | null;
 
         if (!saylo) {
             return NextResponse.json(
@@ -35,7 +55,9 @@ export async function GET(
 
             const visibility = saylo.visibility || "public";
 
-            if (visibility === "private" && saylo.authorId !== session?.user?.id) {
+            // authorId is populated, so get the _id for comparison
+            const authorIdValue = saylo.authorId?._id?.toString();
+            if (visibility === "private" && authorIdValue !== session?.user?.id) {
                 return NextResponse.json(
                     { error: "Saylo not found" },
                     { status: 404 }
@@ -56,8 +78,8 @@ export async function GET(
         return NextResponse.json({
             id: saylo._id.toString(),
             content: saylo.content,
-            authorName: saylo.authorName || null,
-            authorImage: saylo.authorImage || null,
+            authorName: saylo.authorId?.name || null,
+            authorImage: saylo.authorId?.image || null,
             category: saylo.category,
             images: saylo.images || [],
             videos: saylo.videos || [],
