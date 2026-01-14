@@ -135,6 +135,62 @@ const saylo = {
         }
         return await response.json();
     },
+
+    // Reactions
+    async getReactions(id: string) {
+        const deviceId = getDeviceId();
+        const response = await fetch(`/api/saylo/${id}/reaction`, {
+            headers: { "x-device-id": deviceId },
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch reactions", response.status);
+        }
+        return await response.json();
+    },
+
+    async toggleReaction(id: string, type: string) {
+        const deviceId = getDeviceId();
+        const response = await fetch(`/api/saylo/${id}/reaction`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "x-device-id": deviceId,
+            },
+            body: JSON.stringify({ type }),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to toggle reaction", response.status);
+        }
+        return await response.json();
+    },
+
+    // Shares
+    async getShareStatus(id: string) {
+        const deviceId = getDeviceId();
+        const response = await fetch(`/api/saylo/${id}/share`, {
+            headers: { "x-device-id": deviceId },
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch share status", response.status);
+        }
+        return await response.json();
+    },
+
+    async share(id: string) {
+        const deviceId = getDeviceId();
+        const response = await fetch(`/api/saylo/${id}/share`, {
+            method: "POST",
+            headers: { "x-device-id": deviceId },
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to share", response.status);
+        }
+        return await response.json();
+    },
 };
 
 const getBlogs = async (page = 1, limit = 10, tags: string[] = [], search = "") => {

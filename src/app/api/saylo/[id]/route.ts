@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { SayloCommentModel, SayloModel, SayloReactionModel } from "@/database/models/saylo-model";
+import { SayloCommentModel, SayloModel, SayloReactionModel, SayloShareModel } from "@/database/models/saylo-model";
 import { UserModel } from "@/database/models/user-model";
 import dbConnect from "@/database/services/mongo";
 import { checkIsAdmin } from "@/lib/auth-utils";
@@ -16,8 +16,6 @@ interface SayloDocument {
     images: string[];
     videos: string[];
     reactions: { like: number; love: number; haha: number; fire: number };
-    commentCount: number;
-    shareCount: number;
     published: boolean;
     visibility: string;
     createdAt: Date;
@@ -72,8 +70,11 @@ export async function GET(
             }
         }
 
-        // Get actual comment count
-        const commentCount = await SayloCommentModel.countDocuments({ sayloId: id });
+        // Get actual comment count and share count
+        const [commentCount, shareCount] = await Promise.all([
+            SayloCommentModel.countDocuments({ sayloId: id }),
+            SayloShareModel.countDocuments({ sayloId: id }),
+        ]);
 
         return NextResponse.json({
             id: saylo._id.toString(),
@@ -85,7 +86,7 @@ export async function GET(
             videos: saylo.videos || [],
             reactions: saylo.reactions || { like: 0, love: 0, haha: 0, fire: 0 },
             commentCount,
-            shareCount: saylo.shareCount || 0,
+            shareCount,
             published: saylo.published,
             visibility: saylo.visibility || "public",
             createdAt: saylo.createdAt,
@@ -200,9 +201,12 @@ export async function DELETE(
             );
         }
 
-        // Clean up related reactions and comments
-        await SayloReactionModel.deleteMany({ sayloId: id });
-        await SayloCommentModel.deleteMany({ sayloId: id });
+        // Clean up related reactions, comments, and shares
+        await Promise.all([
+            SayloReactionModel.deleteMany({ sayloId: id }),
+            SayloCommentModel.deleteMany({ sayloId: id }),
+            SayloShareModel.deleteMany({ sayloId: id }),
+        ]);
 
         return NextResponse.json({
             message: "Saylo deleted successfully",

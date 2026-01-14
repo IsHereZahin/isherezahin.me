@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 
-// Reaction types: like, love, haha, fire
 const reactionSchema = new Schema(
     {
         sayloId: {
@@ -8,9 +7,18 @@ const reactionSchema = new Schema(
             ref: "Saylo",
             required: true,
         },
+        userId: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            default: null,
+        },
         deviceId: {
             type: String,
-            required: true,
+            default: null,
+        },
+        guestName: {
+            type: String,
+            default: null,
         },
         type: {
             type: String,
@@ -21,10 +29,36 @@ const reactionSchema = new Schema(
     { timestamps: true }
 );
 
-// Compound index to ensure one reaction per device per saylo
-reactionSchema.index({ sayloId: 1, deviceId: 1 }, { unique: true });
+reactionSchema.index({ sayloId: 1, userId: 1 });
+reactionSchema.index({ sayloId: 1, deviceId: 1 });
 
-// Comment schema
+const shareSchema = new Schema(
+    {
+        sayloId: {
+            type: Schema.Types.ObjectId,
+            ref: "Saylo",
+            required: true,
+        },
+        userId: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            default: null,
+        },
+        deviceId: {
+            type: String,
+            default: null,
+        },
+        guestName: {
+            type: String,
+            default: null,
+        },
+    },
+    { timestamps: true }
+);
+
+shareSchema.index({ sayloId: 1, userId: 1 });
+shareSchema.index({ sayloId: 1, deviceId: 1 });
+
 const sayloCommentSchema = new Schema(
     {
         sayloId: {
@@ -80,14 +114,6 @@ const sayloSchema = new Schema(
             haha: { type: Number, default: 0 },
             fire: { type: Number, default: 0 },
         },
-        commentCount: {
-            type: Number,
-            default: 0,
-        },
-        shareCount: {
-            type: Number,
-            default: 0,
-        },
         published: {
             type: Boolean,
             required: true,
@@ -102,7 +128,6 @@ const sayloSchema = new Schema(
     { timestamps: true }
 );
 
-// Category model for storing available categories
 const sayloCategorySchema = new Schema(
     {
         name: {
@@ -127,6 +152,9 @@ export const SayloCategoryModel =
 
 export const SayloReactionModel =
     mongoose.models.SayloReaction || mongoose.model("SayloReaction", reactionSchema);
+
+export const SayloShareModel =
+    mongoose.models.SayloShare || mongoose.model("SayloShare", shareSchema);
 
 export const SayloCommentModel =
     mongoose.models.SayloComment || mongoose.model("SayloComment", sayloCommentSchema);

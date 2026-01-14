@@ -109,8 +109,9 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
 
     // Comments state
     const [comments, setComments] = useState<Comment[]>([]);
-    const [commentCount, setCommentCount] = useState(saylo.commentCount || 0);
-    const [shareCount, setShareCount] = useState(saylo.shareCount || 0);
+    const [commentCount, setCommentCount] = useState(0);
+    const [shareCount, setShareCount] = useState(0);
+    const [hasShared, setHasShared] = useState(false);
     const [isLoadingComments, setIsLoadingComments] = useState(false);
 
     // Refs
@@ -118,24 +119,43 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
     const reactionRef = useRef<HTMLDivElement>(null);
     const commentInputRef = useRef<HTMLTextAreaElement>(null);
 
-    // Fetch reaction status on mount
+    // Fetch reaction and share status on mount
     useEffect(() => {
-        const fetchReactionStatus = async () => {
+        const fetchStatus = async () => {
             try {
                 const deviceId = getDeviceId();
-                const response = await fetch(`/api/saylo/${saylo.id}/reaction`, {
+
+                // Fetch reactions
+                const reactionResponse = await fetch(`/api/saylo/${saylo.id}/reaction`, {
                     headers: { "x-device-id": deviceId },
                 });
-                if (response.ok) {
-                    const data = await response.json();
+                if (reactionResponse.ok) {
+                    const data = await reactionResponse.json();
                     setUserReaction(data.userReaction);
                     setReactions(data.reactions);
                 }
+
+                // Fetch share status
+                const shareResponse = await fetch(`/api/saylo/${saylo.id}/share`, {
+                    headers: { "x-device-id": deviceId },
+                });
+                if (shareResponse.ok) {
+                    const data = await shareResponse.json();
+                    setShareCount(data.shareCount);
+                    setHasShared(data.hasShared);
+                }
+
+                // Fetch comment count
+                const commentsResponse = await fetch(`/api/saylo/${saylo.id}/comments?limit=1`);
+                if (commentsResponse.ok) {
+                    const data = await commentsResponse.json();
+                    setCommentCount(data.total);
+                }
             } catch (error) {
-                console.error("Error fetching reaction status:", error);
+                console.error("Error fetching status:", error);
             }
         };
-        fetchReactionStatus();
+        fetchStatus();
     }, [saylo.id]);
 
     // Close menu on outside click
@@ -315,7 +335,7 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
     const currentEditVisibility = visibilityOptions.find((v) => v.value === editVisibility)!;
 
     const handleShare = async () => {
-        const shareUrl = `${window.location.origin}/saylo/${saylo.id}`;
+        const shareUrl = `${globalThis.location.origin}/saylo/${saylo.id}`;
         const shareTitle = "Saylo";
         const shareText = saylo.content.length > 100 ? saylo.content.substring(0, 100) + "..." : saylo.content;
 
@@ -340,9 +360,17 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
         }
 
         if (shared) {
-            setShareCount((prev) => prev + 1);
             try {
-                await fetch(`/api/saylo/${saylo.id}/share`, { method: "POST" });
+                const deviceId = getDeviceId();
+                const response = await fetch(`/api/saylo/${saylo.id}/share`, {
+                    method: "POST",
+                    headers: { "x-device-id": deviceId },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setShareCount(data.shareCount);
+                    setHasShared(true);
+                }
             } catch {
                 // Silent fail
             }
