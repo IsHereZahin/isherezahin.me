@@ -1,9 +1,9 @@
 "use client";
 
-import { Compass, FileText, FolderOpen, type LucideIcon, Scale, Shield } from "lucide-react";
+import { Compass, FileText, FolderOpen, type LucideIcon, Scale, Send, Shield } from "lucide-react";
 import MotionWrapper from "../motion/MotionWrapper";
 
-export type EmptyStateType = "blogs" | "projects" | "quests" | "privacy-policy" | "terms-of-service";
+export type EmptyStateType = "blogs" | "projects" | "quests" | "saylo" | "privacy-policy" | "terms-of-service";
 
 interface EmptyStateConfig {
     title: string;
@@ -37,6 +37,12 @@ const defaultContent: Record<EmptyStateType, EmptyStateConfig> = {
         subtitle: "No quests shared yet",
         description: "Life's adventures and side quests are being documented. Check back soon to see hobbies, travels, and experiences that add color beyond the daily grind.",
         icon: Compass,
+    },
+    saylo: {
+        title: "Thoughts, ideas, & moments",
+        subtitle: "No says yet",
+        description: "I'm gathering thoughts and moments to share. Check back soon for quick updates, ideas, and snippets of what's on my mind.",
+        icon: Send,
     },
     "privacy-policy": {
         title: "Privacy Policy",

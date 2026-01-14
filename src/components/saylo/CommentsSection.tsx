@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/lib/hooks/useAuth";
 import { Comment } from "@/utils/types";
 import { Loader2, Send } from "lucide-react";
 import Link from "next/link";
@@ -36,6 +37,7 @@ export default function CommentsSection({
     commentCount = 0,
     inputRef,
 }: Readonly<CommentsSectionProps>) {
+    const { openLoginModal } = useAuth();
     const [newComment, setNewComment] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
@@ -171,9 +173,12 @@ export default function CommentsSection({
                     </div>
                 ) : (
                     <p className="text-sm text-muted-foreground text-center py-2">
-                        <Link href="/login" className="text-primary hover:underline">
+                        <button
+                            onClick={openLoginModal}
+                            className="text-primary hover:underline cursor-pointer"
+                        >
                             Sign in
-                        </Link>{" "}
+                        </button>{" "}
                         to comment
                     </p>
                 )}
@@ -229,7 +234,15 @@ export default function CommentsSection({
                     </div>
                 </div>
             ) : (
-                <p className="text-sm text-muted-foreground text-center py-2">Sign in to comment</p>
+                <p className="text-sm text-muted-foreground text-center py-2">
+                    <button
+                        onClick={openLoginModal}
+                        className="text-primary hover:underline cursor-pointer"
+                    >
+                        Sign in
+                    </button>{" "}
+                    to comment
+                </p>
             )}
 
             {/* Comments List */}

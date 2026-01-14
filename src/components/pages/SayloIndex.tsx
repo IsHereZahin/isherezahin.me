@@ -1,13 +1,14 @@
 "use client";
 
-import { PageTitle, Section } from "@/components/ui";
 import SayCard from "@/components/saylo/SayCard";
 import SayloComposer from "@/components/saylo/SayloComposer";
 import SayloFilters from "@/components/saylo/SayloFilters";
+import { PageTitle, Section } from "@/components/ui";
+import EmptyState from "@/components/ui/EmptyState";
 import { saylo, SortOption } from "@/lib/api";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { Loader2, Send } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export default function SayloIndex() {
@@ -68,24 +69,28 @@ export default function SayloIndex() {
 
     return (
         <Section id="saylo" className="px-4 sm:px-6 py-12 sm:py-16 max-w-2xl">
-            <PageTitle
-                title="Saylo"
-                subtitle="Thoughts, ideas, and moments shared in the moment."
-            />
+            {totalCount > 0 && (
+                <PageTitle
+                    title="Saylo"
+                    subtitle="Thoughts, ideas, and moments shared in the moment."
+                />
+            )}
 
-            <div className="mt-8 space-y-6">
+            <div className={totalCount > 0 ? "mt-8 space-y-6" : "space-y-6"}>
                 {/* Admin Composer */}
                 {isAdmin && <SayloComposer />}
 
                 {/* Filters Row */}
-                <SayloFilters
-                    categories={categoriesData?.categories || []}
-                    selectedCategory={selectedCategory}
-                    onCategoryChange={setSelectedCategory}
-                    selectedSort={selectedSort}
-                    onSortChange={setSelectedSort}
-                    totalCount={totalCount}
-                />
+                {totalCount > 0 && (
+                    <SayloFilters
+                        categories={categoriesData?.categories || []}
+                        selectedCategory={selectedCategory}
+                        onCategoryChange={setSelectedCategory}
+                        selectedSort={selectedSort}
+                        onSortChange={setSelectedSort}
+                        totalCount={totalCount}
+                    />
+                )}
 
                 {/* Loading State */}
                 {isLoading && (
@@ -103,15 +108,15 @@ export default function SayloIndex() {
 
                 {/* Empty State */}
                 {!isLoading && !isError && allSaylos.length === 0 && (
-                    <div className="text-center py-16">
-                        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-accent/50 flex items-center justify-center">
-                            <Send className="w-7 h-7 text-muted-foreground" />
+                    isAdmin ? (
+                        <div className="text-center py-8">
+                            <p className="text-muted-foreground">
+                                No says yet. Share your first thought above!
+                            </p>
                         </div>
-                        <p className="text-foreground font-medium mb-1">No says yet</p>
-                        <p className="text-sm text-muted-foreground">
-                            {isAdmin ? "Share your first thought!" : "Check back later for new says."}
-                        </p>
-                    </div>
+                    ) : (
+                        <EmptyState type="saylo" />
+                    )
                 )}
 
                 {/* Saylo Feed */}
