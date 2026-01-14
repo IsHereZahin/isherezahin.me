@@ -79,3 +79,75 @@ export interface ChatContextType {
     isStatusLoading: boolean;
     toggleGlobalStatus: () => Promise<void>;
 }
+
+// Start of Saylo Types
+export interface Saylo {
+    id: string;
+    content: string;
+    category: string | null;
+    likes: number;
+    published: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface SayloCategory {
+    id: string;
+    name: string;
+    color: string | null;
+}
+
+export interface Reactions {
+    like: number;
+    love: number;
+    haha: number;
+    fire: number;
+}
+
+export type ReactionType = "like" | "love" | "haha" | "fire";
+
+export interface Comment {
+    id: string;
+    content: string;
+    authorName: string;
+    authorImage: string | null;
+    authorId: string | null;
+    isAdmin: boolean;
+    createdAt: string;
+}
+
+export interface Saylo {
+    id: string;
+    content: string;
+    authorName: string | null;
+    authorImage: string | null;
+    category: string | null;
+    images: string[];
+    videos: string[];
+    reactions: Reactions;
+    commentCount: number;
+    shareCount: number;
+    published: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface Category {
+    id: string;
+    name: string;
+    color: string | null;
+}
+
+export interface SaylosResponse {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    saylos: Saylo[];
+}
+
+export interface MediaItem {
+    url: string;
+    type: "image" | "video";
+}
+// End of Saylo Types

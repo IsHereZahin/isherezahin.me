@@ -269,6 +269,10 @@ export const PAGE_SEO = {
     title: "Side Quests",
     description: `${PERSON.name.full}'s side projects and experimental work outside the main portfolio.`,
   },
+  saylo: {
+    title: "Saylo",
+    description: `Thoughts, ideas, and moments shared by ${PERSON.name.full}. A personal micro-blog of reflections and insights.`,
+  },
   statistics: {
     title: "Statistics",
     description: `View visitor statistics and analytics for ${PERSON.name.full}'s portfolio website.`,
@@ -697,6 +701,19 @@ export const METADATA = {
     },
     alternates: {
       canonical: `https://${SITE.domain}/side-quests`,
+    },
+  } as Metadata,
+
+  saylo: {
+    title: PAGE_SEO.saylo.title,
+    description: PAGE_SEO.saylo.description,
+    openGraph: {
+      title: PAGE_SEO.saylo.title,
+      description: PAGE_SEO.saylo.description,
+      url: `https://${SITE.domain}/saylo`,
+    },
+    alternates: {
+      canonical: `https://${SITE.domain}/saylo`,
     },
   } as Metadata,
 

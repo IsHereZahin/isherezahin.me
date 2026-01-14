@@ -128,6 +128,7 @@ export {
     TagsLoading
 } from "./Loading";
 export { default as Logo } from "./Logo";
+export { default as NotFoundState } from "./NotFoundState";
 export { default as MarkdownEditor } from "./MarkdownEditor";
 export { default as MarkdownTextarea } from "./MarkdownTextarea";
 export { default as PageTitle } from "./PageTitle";

@@ -201,6 +201,11 @@ const generateSlug = (title: string): string => {
         .replace(/^-|-$/g, "");
 };
 
+// Helper to detect if URL is a video
+const isVideoUrl = (url: string): boolean => {
+    return url.includes("/video/") || /\.(mp4|webm|ogg|mov|avi|mkv|m4v)$/i.test(url);
+};
+
 export { 
     generateProfessionalUnderline,
     getRandomTheme,
@@ -216,4 +221,5 @@ export {
     formatMonthYear,
     getDeviceId,
     generateSlug,
+    isVideoUrl,
 };

@@ -12,6 +12,124 @@ export class ApiError extends Error {
     }
 }
 
+// Saylo API
+export type SortOption = "recent" | "popular" | "oldest";
+
+const saylo = {
+    async getAll(page = 1, limit = 10, category: string | null = null, sort: SortOption = "recent") {
+        const params = new URLSearchParams({ page: page.toString(), limit: limit.toString(), sort });
+        if (category && category !== "all") {
+            params.set("category", category);
+        }
+        const response = await fetch(`/api/saylo?${params}`);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch saylos", response.status);
+        }
+        return await response.json();
+    },
+
+    async get(id: string) {
+        const response = await fetch(`/api/saylo/${id}`);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch saylo", response.status);
+        }
+        return await response.json();
+    },
+
+    async create(data: { content: string; category?: string | null; newCategory?: string | null; images?: string[]; videos?: string[]; published?: boolean }) {
+        const response = await fetch("/api/saylo", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to create saylo", response.status);
+        }
+        return await response.json();
+    },
+
+    async update(id: string, data: { content?: string; category?: string | null; published?: boolean }) {
+        const response = await fetch(`/api/saylo/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to update saylo", response.status);
+        }
+        return await response.json();
+    },
+
+    async delete(id: string) {
+        const response = await fetch(`/api/saylo/${id}`, { method: "DELETE" });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to delete saylo", response.status);
+        }
+        return await response.json();
+    },
+
+    async like(id: string) {
+        const deviceId = getDeviceId();
+        const response = await fetch(`/api/saylo/${id}/like`, {
+            method: "POST",
+            headers: { "x-device-id": deviceId },
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to toggle like", response.status);
+        }
+        return await response.json();
+    },
+
+    async getLikes(id: string) {
+        const deviceId = getDeviceId();
+        const response = await fetch(`/api/saylo/${id}/like`, {
+            headers: { "x-device-id": deviceId },
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch likes", response.status);
+        }
+        return await response.json();
+    },
+
+    async getCategories() {
+        const response = await fetch("/api/saylo/categories");
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch categories", response.status);
+        }
+        return await response.json();
+    },
+
+    async createCategory(name: string, color?: string | null) {
+        const response = await fetch("/api/saylo/categories", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, color }),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to create category", response.status);
+        }
+        return await response.json();
+    },
+
+    async deleteCategory(id: string) {
+        const response = await fetch(`/api/saylo/categories?id=${id}`, { method: "DELETE" });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to delete category", response.status);
+        }
+        return await response.json();
+    },
+};
+
 const getBlogs = async (page = 1, limit = 10, tags: string[] = [], search = "") => {
     const params = new URLSearchParams({
         page: page.toString(),
@@ -998,7 +1116,7 @@ const bucketList = {
 export {
     aboutHero, adminSettings, adminSubscribers, adminUsers, blogLikes, blogViews, bucketList, cloudinary, contactInfo, contactMessage,
     createBlog, createProject, currentStatus, deleteBlog, deleteProject, getBlog, getBlogs, getBlogTags, getProject,
-    getProjects, getProjectTags, newsletter, profile, projectLikes, projectViews, quests, sessions, statistics, testimonials,
+    getProjects, getProjectTags, newsletter, profile, projectLikes, projectViews, quests, saylo, sessions, statistics, testimonials,
     updateBlog, updateProject, workExperience
 };
 

@@ -1,6 +1,6 @@
 import { SITE_GITHUB_URL, SITE_INSTAGRAM_URL, SITE_LINKEDIN_URL, SITE_X_URL, SITE_YOUTUBE_URL } from '@/lib/constants';
 import { SiGithub, SiInstagram, SiX, SiYoutube } from '@icons-pack/react-simple-icons';
-import { FlameIcon, LinkedinIcon, MessageCircleIcon, MonitorIcon, PencilIcon, UserCircleIcon } from 'lucide-react';
+import { FlameIcon, LinkedinIcon, MessageCircleIcon, MonitorIcon, PencilIcon, SendIcon, UserCircleIcon } from 'lucide-react';
 import { ComponentType, SVGProps } from 'react';
 
 type SocialLinks = Array<{
@@ -19,6 +19,11 @@ export const HEADER_LINKS = [
     icon: <PencilIcon className='size-3.5' />,
     href: '/blogs',
     key: 'blogs'
+  },
+  {
+    icon: <SendIcon className='size-3.5' />,
+    href: '/saylo',
+    key: 'saylo'
   },
   {
     icon: <MessageCircleIcon className='size-3.5' />,
