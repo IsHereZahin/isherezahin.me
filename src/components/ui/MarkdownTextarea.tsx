@@ -1,7 +1,7 @@
 "use client"
 
 import { markdownTools, parseMarkdown, type MarkdownTool } from "@/lib/markdown"
-import { Bold, ChevronDown } from "lucide-react"
+import ToolDropdown from "./ToolDropdown"
 import { useCallback, useEffect, useRef, useState } from "react"
 
 interface MarkdownTextareaProps {
@@ -26,11 +26,9 @@ export default function MarkdownTextarea({
     id,
 }: Readonly<MarkdownTextareaProps>) {
     const [showPreview, setShowPreview] = useState(initialShowPreview)
-    const [dropdownOpen, setDropdownOpen] = useState(false)
     const [useDropdown, setUseDropdown] = useState(false)
     const textareaRef = useRef<HTMLTextAreaElement>(null)
     const toolbarRef = useRef<HTMLDivElement>(null)
-    const dropdownRef = useRef<HTMLDivElement>(null)
 
     // Check if toolbar needs dropdown mode
     useEffect(() => {
@@ -45,20 +43,6 @@ export default function MarkdownTextarea({
         window.addEventListener('resize', checkWidth)
         return () => window.removeEventListener('resize', checkWidth)
     }, [])
-
-    // Close dropdown when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-                setDropdownOpen(false)
-            }
-        }
-
-        if (dropdownOpen) {
-            document.addEventListener('mousedown', handleClickOutside)
-            return () => document.removeEventListener('mousedown', handleClickOutside)
-        }
-    }, [dropdownOpen])
 
     const insertMarkdown = useCallback((before: string, after: string, placeholder: string) => {
         const input = textareaRef.current
@@ -76,20 +60,29 @@ export default function MarkdownTextarea({
             const newCursorPos = start + before.length + selected.length
             input.setSelectionRange(newCursorPos, newCursorPos)
         }, 0)
-
-        setDropdownOpen(false)
     }, [value, onChange])
+
+    // Auto-resize textarea based on content
+    const adjustTextareaHeight = useCallback(() => {
+        const textarea = textareaRef.current
+        if (!textarea) return
+        textarea.style.height = "auto"
+        textarea.style.height = `${Math.min(textarea.scrollHeight, 300)}px`
+    }, [])
+
+    useEffect(() => {
+        adjustTextareaHeight()
+    }, [value, adjustTextareaHeight])
 
     const isToolDisabled = disabled || showPreview
 
-    const renderToolButton = (tool: MarkdownTool, showLabel = false) => (
+    const renderToolButton = (tool: MarkdownTool) => (
         <button
             key={tool.key}
             type="button"
             onClick={() => !isToolDisabled && insertMarkdown(tool.before, tool.after, tool.placeholder)}
             disabled={isToolDisabled}
             className={`flex items-center gap-2 p-1.5 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20
-                ${showLabel ? "w-full px-3 py-2 hover:bg-muted" : ""}
                 ${isToolDisabled
                     ? "cursor-not-allowed opacity-50"
                     : "cursor-pointer text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -98,7 +91,6 @@ export default function MarkdownTextarea({
             aria-label={`Insert ${tool.title.toLowerCase()}`}
         >
             {tool.icon}
-            {showLabel && <span className="text-sm">{tool.title}</span>}
         </button>
     )
 
@@ -108,28 +100,10 @@ export default function MarkdownTextarea({
             <div ref={toolbarRef} className="flex items-center justify-between gap-2 px-2 py-1.5 border-b bg-muted/30">
                 {useDropdown ? (
                     /* Dropdown mode for small screens */
-                    <div ref={dropdownRef} className="relative">
-                        <button
-                            type="button"
-                            onClick={() => !isToolDisabled && setDropdownOpen(p => !p)}
-                            disabled={isToolDisabled}
-                            className={`flex items-center gap-1.5 px-2 py-1 text-sm rounded transition-colors
-                                ${isToolDisabled
-                                    ? "cursor-not-allowed opacity-50"
-                                    : "cursor-pointer text-muted-foreground hover:bg-muted hover:text-foreground"
-                                }`}
-                        >
-                            <Bold className="w-3.5 h-3.5" />
-                            <span>Format</span>
-                            <ChevronDown className={`w-3.5 h-3.5 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
-                        </button>
-
-                        {dropdownOpen && (
-                            <div className="absolute left-0 top-full mt-1 z-50 min-w-[160px] max-h-[200px] overflow-y-auto rounded-lg border bg-background shadow-lg py-1 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border">
-                                {markdownTools.map(tool => renderToolButton(tool, true))}
-                            </div>
-                        )}
-                    </div>
+                    <ToolDropdown
+                        onInsert={insertMarkdown}
+                        disabled={isToolDisabled}
+                    />
                 ) : (
                     /* Inline toolbar for larger screens */
                     <div className="flex items-center gap-0.5 flex-wrap">
@@ -168,7 +142,7 @@ export default function MarkdownTextarea({
                     placeholder={placeholder}
                     rows={rows}
                     disabled={disabled}
-                    className="w-full px-3 py-2 text-sm resize-none bg-transparent focus:outline-none disabled:opacity-50 placeholder:text-muted-foreground"
+                    className="w-full px-3 py-2 text-sm resize-none bg-transparent focus:outline-none disabled:opacity-50 placeholder:text-muted-foreground modal-scrollbar"
                 />
             )}
         </div>

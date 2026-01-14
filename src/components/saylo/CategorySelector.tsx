@@ -49,11 +49,12 @@ export default function CategorySelector({
     return (
         <div className="relative" ref={dropdownRef}>
             <button
+                type="button"
                 onClick={() => setShowDropdown(!showDropdown)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-lg transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded transition-colors cursor-pointer"
             >
-                {selectedCategory || "Category"}
-                <ChevronDown className="w-4 h-4" />
+                <span className="text-xs">{selectedCategory || "Category"}</span>
+                <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
             </button>
 
             {showDropdown && (
