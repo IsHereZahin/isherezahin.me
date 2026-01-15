@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useReducer } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { DiscussionContext } from "@/lib/contexts";
 import { discussionApi } from "@/lib/github/api";
@@ -10,10 +11,10 @@ import {
     createTempReply,
     formatCommentResponse,
     hasUserReacted,
+    updateReaction,
 } from "@/lib/github/helpers";
 import type { Comment, DiscussionContextType, ReactionKey, ReactionUser, Reply } from "@/lib/github/types";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { discussionReducer, initialDiscussionState } from "@/lib/reducers/DiscussionReducer";
 
 interface DiscussionProviderProps {
     children: React.ReactNode;
@@ -22,221 +23,310 @@ interface DiscussionProviderProps {
     inputOnly?: boolean;  // Skip fetching comments if true
 }
 
+interface CommentsPage {
+    comments: Comment[];
+    discussionId: string;
+    total: number;
+    hasNextPage: boolean;
+    endCursor: string | null;
+}
+
 export function DiscussionProvider({ children, discussionNumber = 1, authUsername = null, inputOnly = false }: Readonly<DiscussionProviderProps>) {
     const { user } = useAuth();
+    const queryClient = useQueryClient();
     const avatarUrl = useMemo(() => user?.image ?? undefined, [user?.image]);
 
-    const [state, dispatch] = useReducer(discussionReducer, {
-        ...initialDiscussionState,
-        authUsername,
+    // Local state for UI-specific things
+    const [sortBy, setSortBy] = useState<"newest" | "oldest" | "popular">("newest");
+    const [expandedCommentId, setExpandedCommentId] = useState<string | null>(null);
+    const [loadedReplies, setLoadedReplies] = useState<Record<string, Reply[]>>({});
+    const [loadedRepliesLoading, setLoadedRepliesLoading] = useState<Record<string, boolean>>({});
+    const [error, setError] = useState<string | null>(null);
+
+    // Query key for comments
+    const commentsQueryKey = useMemo(() => ["discussion-comments", discussionNumber, sortBy], [discussionNumber, sortBy]);
+
+    // Fetch comments using useInfiniteQuery
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        isLoading,
+        isError,
+    } = useInfiniteQuery<CommentsPage>({
+        queryKey: commentsQueryKey,
+        queryFn: async ({ pageParam }) => {
+            const result = await discussionApi.fetchComments(
+                discussionNumber,
+                10,
+                pageParam as string | undefined,
+                sortBy
+            );
+            return result;
+        },
+        getNextPageParam: (lastPage) => lastPage.hasNextPage ? lastPage.endCursor : undefined,
+        initialPageParam: undefined as string | undefined,
+        enabled: !inputOnly,
+        placeholderData: (previousData) => previousData,
     });
 
-    // Sync auth username
-    useEffect(() => {
-        dispatch({ type: "SET_AUTH_USERNAME", payload: authUsername });
-    }, [authUsername]);
+    // Flatten all comments from pages
+    const comments = useMemo(() => {
+        return data?.pages.flatMap((page) => page.comments) || [];
+    }, [data]);
 
-    // Fetch comments for the discussion (initial load or sort change)
-    const fetchComments = useCallback(async (sort: "newest" | "oldest" | "popular" = state.sortBy) => {
-        try {
-            dispatch({ type: "SET_LOADING", payload: true });
-            const data = await discussionApi.fetchComments(discussionNumber, 10, undefined, sort);
-            dispatch({ type: "SET_COMMENTS", payload: data.comments });
-            dispatch({ type: "SET_DISCUSSION_ID", payload: data.discussionId });
-            dispatch({
-                type: "SET_PAGINATION", payload: {
-                    total: data.total,
-                    hasNextPage: data.hasNextPage,
-                    endCursor: data.endCursor
-                }
-            });
-            dispatch({ type: "SET_ERROR", payload: null });
-        } catch (err) {
-            console.error(err);
-            const errorMessage = "Failed to load comments";
-            dispatch({ type: "SET_ERROR", payload: errorMessage });
-            toast.error(errorMessage);
-        } finally {
-            dispatch({ type: "SET_LOADING", payload: false });
-        }
-    }, [discussionNumber, state.sortBy]);
+    // Get discussion ID and total from first page
+    const discussionId = data?.pages[0]?.discussionId || "";
+    const total = data?.pages[0]?.total || 0;
+
+    // Handle sort change - React Query will refetch automatically due to queryKey change
+    const handleSetSortBy = useCallback((sort: "newest" | "oldest" | "popular") => {
+        if (sort === sortBy) return;
+        setSortBy(sort);
+    }, [sortBy]);
 
     // Fetch more comments (pagination)
     const fetchMoreComments = useCallback(async () => {
-        if (!state.hasNextPage || state.loadingMore) return;
-
-        try {
-            dispatch({ type: "SET_LOADING_MORE", payload: true });
-            const data = await discussionApi.fetchComments(discussionNumber, 10, state.endCursor || undefined, state.sortBy);
-            dispatch({ type: "APPEND_COMMENTS", payload: data.comments });
-            dispatch({
-                type: "SET_PAGINATION", payload: {
-                    total: data.total,
-                    hasNextPage: data.hasNextPage,
-                    endCursor: data.endCursor
-                }
-            });
-        } catch (err) {
-            console.error(err);
-            toast.error("Failed to load more comments");
-        } finally {
-            dispatch({ type: "SET_LOADING_MORE", payload: false });
-        }
-    }, [discussionNumber, state.hasNextPage, state.loadingMore, state.endCursor, state.sortBy]);
-
-    // Handle sort change - refetch from backend
-    const handleSetSortBy = useCallback((sort: "newest" | "oldest" | "popular") => {
-        if (sort === state.sortBy) return;
-        dispatch({ type: "SET_SORT", payload: sort });
-        fetchComments(sort);
-    }, [state.sortBy, fetchComments]);
+        if (!hasNextPage || isFetchingNextPage) return;
+        await fetchNextPage();
+    }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
     // Fetch replies for a comment
     const fetchReplies = useCallback(
         async (commentId: string) => {
             try {
-                dispatch({
-                    type: "SET_LOADED_REPLIES_LOADING",
-                    payload: { commentId, loading: true },
-                });
-                const data = await discussionApi.fetchReplies(discussionNumber, commentId);
-                dispatch({
-                    type: "SET_LOADED_REPLIES",
-                    payload: { commentId, replies: data.replies },
-                });
+                setLoadedRepliesLoading((prev) => ({ ...prev, [commentId]: true }));
+                const result = await discussionApi.fetchReplies(discussionNumber, commentId);
+                setLoadedReplies((prev) => ({ ...prev, [commentId]: result.replies }));
             } catch (err) {
                 console.error("Failed to fetch replies:", err);
-                const errorMessage = "Failed to load replies";
-                dispatch({ type: "SET_ERROR", payload: errorMessage });
-                toast.error(errorMessage);
+                toast.error("Failed to load replies");
             } finally {
-                dispatch({
-                    type: "SET_LOADED_REPLIES_LOADING",
-                    payload: { commentId, loading: false },
-                });
+                setLoadedRepliesLoading((prev) => ({ ...prev, [commentId]: false }));
             }
         },
         [discussionNumber]
     );
 
-    // Add new comment
-    const addComment = useCallback(
-        async (body: string) => {
-            try {
-                const tempComment = createTempComment(body, state.authUsername || "You", avatarUrl);
-
-                dispatch({ type: "ADD_COMMENT", payload: tempComment });
-                const result = await discussionApi.addComment(discussionNumber, body, state.discussionId);
-
-                const formattedComment = formatCommentResponse(
-                    result.comment,
-                    state.authUsername || "You",
-                    avatarUrl
-                );
-
-                dispatch({
-                    type: "REPLACE_COMMENT",
-                    payload: { tempId: tempComment.id, comment: formattedComment },
-                });
-
-                toast.success("Comment posted successfully");
-            } catch (err) {
-                console.error(err);
-                const errorMessage = "Failed to post comment";
-                dispatch({ type: "SET_ERROR", payload: errorMessage });
-                toast.error(errorMessage);
-                throw err;
-            }
+    // Add comment mutation
+    const addCommentMutation = useMutation({
+        mutationFn: async (body: string) => {
+            return await discussionApi.addComment(discussionNumber, body, discussionId);
         },
-        [discussionNumber, state.discussionId, state.authUsername, avatarUrl]
-    );
+        onMutate: async (body) => {
+            // Cancel any outgoing refetches
+            await queryClient.cancelQueries({ queryKey: commentsQueryKey });
 
-    // Edit comment
-    const editComment = useCallback(
-        async (commentId: string, body: string) => {
-            const previousComment = state.comments.find((c) => c.id === commentId);
+            // Snapshot the previous value
+            const previousData = queryClient.getQueryData<{ pages: CommentsPage[] }>(commentsQueryKey);
 
-            // Optimistic update
-            dispatch({
-                type: "UPDATE_COMMENT",
-                payload: { id: commentId, updates: { body, last_edited_at: new Date().toISOString() } },
+            // Optimistically add the new comment
+            const tempComment = createTempComment(body, authUsername || "You", avatarUrl);
+
+            queryClient.setQueryData<{ pages: CommentsPage[]; pageParams: unknown[] }>(commentsQueryKey, (old) => {
+                if (!old) return old;
+                const newPages = [...old.pages];
+                if (newPages[0]) {
+                    newPages[0] = {
+                        ...newPages[0],
+                        comments: [tempComment, ...newPages[0].comments],
+                        total: newPages[0].total + 1,
+                    };
+                }
+                return { ...old, pages: newPages };
             });
 
-            try {
-                await discussionApi.editComment(discussionNumber, commentId, body);
-                toast.success("Comment updated successfully");
-            } catch (err) {
-                console.error(err);
-                // Revert on error
-                if (previousComment) {
-                    dispatch({
-                        type: "UPDATE_COMMENT",
-                        payload: { id: commentId, updates: { body: previousComment.body, last_edited_at: previousComment.last_edited_at } },
-                    });
-                }
-                toast.error("Failed to update comment");
-                throw err;
-            }
+            return { previousData, tempComment };
         },
-        [discussionNumber, state.comments]
-    );
+        onError: (_err, _body, context) => {
+            // Rollback on error
+            if (context?.previousData) {
+                queryClient.setQueryData(commentsQueryKey, context.previousData);
+            }
+            toast.error("Failed to post comment");
+        },
+        onSuccess: (result, _body, context) => {
+            // Replace temp comment with real one
+            const formattedComment = formatCommentResponse(
+                result.comment,
+                authUsername || "You",
+                avatarUrl
+            );
 
+            queryClient.setQueryData<{ pages: CommentsPage[]; pageParams: unknown[] }>(commentsQueryKey, (old) => {
+                if (!old) return old;
+                const newPages = old.pages.map((page, index) => {
+                    if (index === 0) {
+                        return {
+                            ...page,
+                            comments: page.comments.map((c) =>
+                                c.id === context?.tempComment.id ? formattedComment : c
+                            ),
+                        };
+                    }
+                    return page;
+                });
+                return { ...old, pages: newPages };
+            });
+
+            toast.success("Comment posted successfully");
+        },
+    });
+
+    // Edit comment mutation
+    const editCommentMutation = useMutation({
+        mutationFn: async ({ commentId, body }: { commentId: string; body: string }) => {
+            return await discussionApi.editComment(discussionNumber, commentId, body);
+        },
+        onMutate: async ({ commentId, body }) => {
+            await queryClient.cancelQueries({ queryKey: commentsQueryKey });
+            const previousData = queryClient.getQueryData<{ pages: CommentsPage[]; pageParams: unknown[] }>(commentsQueryKey);
+
+            // Optimistic update
+            queryClient.setQueryData<{ pages: CommentsPage[]; pageParams: unknown[] }>(commentsQueryKey, (old) => {
+                if (!old) return old;
+                return {
+                    ...old,
+                    pages: old.pages.map((page) => ({
+                        ...page,
+                        comments: page.comments.map((c) =>
+                            c.id === commentId
+                                ? { ...c, body, last_edited_at: new Date().toISOString() }
+                                : c
+                        ),
+                    })),
+                };
+            });
+
+            return { previousData };
+        },
+        onError: (_err, _vars, context) => {
+            if (context?.previousData) {
+                queryClient.setQueryData(commentsQueryKey, context.previousData);
+            }
+            toast.error("Failed to update comment");
+        },
+        onSuccess: () => {
+            toast.success("Comment updated successfully");
+        },
+    });
+
+    // Delete comment mutation
+    const deleteCommentMutation = useMutation({
+        mutationFn: async (commentId: string) => {
+            return await discussionApi.deleteComment(discussionNumber, commentId);
+        },
+        onMutate: async (commentId) => {
+            await queryClient.cancelQueries({ queryKey: commentsQueryKey });
+            const previousData = queryClient.getQueryData<{ pages: CommentsPage[]; pageParams: unknown[] }>(commentsQueryKey);
+
+            // Optimistic delete
+            queryClient.setQueryData<{ pages: CommentsPage[]; pageParams: unknown[] }>(commentsQueryKey, (old) => {
+                if (!old) return old;
+                return {
+                    ...old,
+                    pages: old.pages.map((page) => ({
+                        ...page,
+                        comments: page.comments.filter((c) => c.id !== commentId),
+                        total: Math.max(0, page.total - 1),
+                    })),
+                };
+            });
+
+            // Also remove loaded replies
+            setLoadedReplies((prev) => {
+                const next = { ...prev };
+                delete next[commentId];
+                return next;
+            });
+
+            return { previousData };
+        },
+        onError: (_err, _commentId, context) => {
+            if (context?.previousData) {
+                queryClient.setQueryData(commentsQueryKey, context.previousData);
+            }
+            toast.error("Failed to delete comment");
+        },
+        onSuccess: () => {
+            toast.success("Comment deleted successfully");
+        },
+    });
+
+    // Add reply
     const addReply = useCallback(
         async (commentId: string, body: string) => {
             try {
-                const tempReply = createTempReply(body, state.authUsername || "You", avatarUrl);
+                const tempReply = createTempReply(body, authUsername || "You", avatarUrl);
 
                 // Optimistically add reply
-                dispatch({ type: "ADD_REPLY", payload: { commentId, reply: tempReply } });
+                setLoadedReplies((prev) => ({
+                    ...prev,
+                    [commentId]: [...(prev[commentId] || []), tempReply],
+                }));
 
-                // If this is the first reply, automatically expand
-                const currentComment = state.comments.find((c) => c.id === commentId);
-                if (currentComment && currentComment.reply_count === 0) {
-                    dispatch({ type: "TOGGLE_EXPANDED", payload: commentId });
+                // If first reply, expand
+                const comment = comments.find((c) => c.id === commentId);
+                if (comment && comment.reply_count === 0) {
+                    setExpandedCommentId(commentId);
                 }
 
                 const result = await discussionApi.addReply(
                     discussionNumber,
                     commentId,
                     body,
-                    state.discussionId
+                    discussionId
                 );
 
-                dispatch({
-                    type: "REPLACE_REPLY",
-                    payload: { commentId, tempId: tempReply.id, reply: result.reply },
-                });
+                // Replace temp reply with real one
+                setLoadedReplies((prev) => ({
+                    ...prev,
+                    [commentId]: (prev[commentId] || []).map((r) =>
+                        r.id === tempReply.id ? result.reply : r
+                    ),
+                }));
 
-                dispatch({
-                    type: "UPDATE_COMMENT",
-                    payload: {
-                        id: commentId,
-                        updates: { reply_count: (currentComment?.reply_count ?? 0) + 1 },
-                    },
+                // Update reply count in cache
+                queryClient.setQueryData<{ pages: CommentsPage[]; pageParams: unknown[] }>(commentsQueryKey, (old) => {
+                    if (!old) return old;
+                    return {
+                        ...old,
+                        pages: old.pages.map((page) => ({
+                            ...page,
+                            comments: page.comments.map((c) =>
+                                c.id === commentId
+                                    ? { ...c, reply_count: (c.reply_count || 0) + 1 }
+                                    : c
+                            ),
+                        })),
+                    };
                 });
 
                 toast.success("Reply posted successfully");
             } catch (err) {
                 console.error(err);
-                const errorMessage = "Failed to post reply";
-                dispatch({ type: "SET_ERROR", payload: errorMessage });
-                toast.error(errorMessage);
+                toast.error("Failed to post reply");
                 throw err;
             }
         },
-        [discussionNumber, state.discussionId, state.comments, state.authUsername, avatarUrl]
+        [discussionNumber, discussionId, comments, authUsername, avatarUrl, queryClient, commentsQueryKey]
     );
 
     // Edit reply
     const editReply = useCallback(
         async (commentId: string, replyId: string, body: string) => {
-            const previousReply = state.loadedReplies[commentId]?.find((r) => r.id === replyId);
+            const previousReplies = loadedReplies[commentId];
 
             // Optimistic update
-            dispatch({
-                type: "UPDATE_REPLY",
-                payload: { commentId, replyId, updates: { body, last_edited_at: new Date().toISOString() } },
-            });
+            setLoadedReplies((prev) => ({
+                ...prev,
+                [commentId]: (prev[commentId] || []).map((r) =>
+                    r.id === replyId
+                        ? { ...r, body, last_edited_at: new Date().toISOString() }
+                        : r
+                ),
+            }));
 
             try {
                 await discussionApi.editComment(discussionNumber, replyId, body);
@@ -244,60 +334,56 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
             } catch (err) {
                 console.error(err);
                 // Revert on error
-                if (previousReply) {
-                    dispatch({
-                        type: "UPDATE_REPLY",
-                        payload: { commentId, replyId, updates: { body: previousReply.body, last_edited_at: previousReply.last_edited_at } },
-                    });
+                if (previousReplies) {
+                    setLoadedReplies((prev) => ({ ...prev, [commentId]: previousReplies }));
                 }
                 toast.error("Failed to update reply");
                 throw err;
             }
         },
-        [discussionNumber, state.loadedReplies]
-    );
-
-    // Delete comment
-    const deleteComment = useCallback(
-        async (commentId: string) => {
-            const previous = [...state.comments];
-            dispatch({ type: "DELETE_COMMENT", payload: commentId });
-
-            try {
-                await discussionApi.deleteComment(discussionNumber, commentId);
-                toast.success("Comment deleted successfully");
-            } catch (err) {
-                console.error(err);
-                dispatch({ type: "SET_COMMENTS", payload: previous });
-                const errorMessage = "Failed to delete comment";
-                dispatch({ type: "SET_ERROR", payload: errorMessage });
-                toast.error(errorMessage);
-            }
-        },
-        [discussionNumber, state.comments]
+        [discussionNumber, loadedReplies]
     );
 
     // Delete reply
     const deleteReply = useCallback(
         async (commentId: string, replyId: string) => {
-            const previousReplies = state.loadedReplies[commentId];
-            dispatch({ type: "DELETE_REPLY", payload: { commentId, replyId } });
+            const previousReplies = loadedReplies[commentId];
+
+            // Optimistic delete
+            setLoadedReplies((prev) => ({
+                ...prev,
+                [commentId]: (prev[commentId] || []).filter((r) => r.id !== replyId),
+            }));
+
+            // Update reply count
+            queryClient.setQueryData<{ pages: CommentsPage[]; pageParams: unknown[] }>(commentsQueryKey, (old) => {
+                if (!old) return old;
+                return {
+                    ...old,
+                    pages: old.pages.map((page) => ({
+                        ...page,
+                        comments: page.comments.map((c) =>
+                            c.id === commentId
+                                ? { ...c, reply_count: Math.max(0, (c.reply_count || 0) - 1) }
+                                : c
+                        ),
+                    })),
+                };
+            });
 
             try {
                 await discussionApi.deleteComment(discussionNumber, replyId);
                 toast.success("Reply deleted successfully");
             } catch (err) {
                 console.error(err);
-                dispatch({
-                    type: "SET_LOADED_REPLIES",
-                    payload: { commentId, replies: previousReplies || [] },
-                });
-                const errorMessage = "Failed to delete reply";
-                dispatch({ type: "SET_ERROR", payload: errorMessage });
-                toast.error(errorMessage);
+                // Revert on error
+                if (previousReplies) {
+                    setLoadedReplies((prev) => ({ ...prev, [commentId]: previousReplies }));
+                }
+                toast.error("Failed to delete reply");
             }
         },
-        [discussionNumber, state.loadedReplies]
+        [discussionNumber, loadedReplies, queryClient, commentsQueryKey]
     );
 
     // Toggle reaction (mutually exclusive - like/unlike can't both be active)
@@ -310,38 +396,48 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
             parentCommentId?: string,
             hasOppositeReaction = false
         ) => {
-            if (!state.authUsername) return;
+            if (!authUsername) return;
 
             const oppositeReaction: ReactionKey = reaction === "+1" ? "-1" : "+1";
 
-            // Optimistic updates first for instant UI feedback
-            if (hasOppositeReaction) {
-                dispatch({
-                    type: "OPTIMISTIC_TOGGLE_REACTION",
-                    payload: {
-                        targetId,
-                        reactionType: oppositeReaction,
-                        isReply,
-                        commentId: parentCommentId,
-                        add: false,
-                        username: state.authUsername,
-                    },
+            // Optimistic updates
+            if (isReply && parentCommentId) {
+                setLoadedReplies((prev) => {
+                    const replies = prev[parentCommentId] || [];
+                    let updated = replies;
+
+                    if (hasOppositeReaction) {
+                        updated = updated.map((r) =>
+                            r.id === targetId ? updateReaction(r, oppositeReaction, false, authUsername) : r
+                        );
+                    }
+                    updated = updated.map((r) =>
+                        r.id === targetId ? updateReaction(r, reaction, !hasReacted, authUsername) : r
+                    );
+
+                    return { ...prev, [parentCommentId]: updated };
+                });
+            } else {
+                queryClient.setQueryData<{ pages: CommentsPage[]; pageParams: unknown[] }>(commentsQueryKey, (old) => {
+                    if (!old) return old;
+                    return {
+                        ...old,
+                        pages: old.pages.map((page) => ({
+                            ...page,
+                            comments: page.comments.map((c) => {
+                                if (c.id !== targetId) return c;
+                                let updated = c;
+                                if (hasOppositeReaction) {
+                                    updated = updateReaction(updated, oppositeReaction, false, authUsername);
+                                }
+                                return updateReaction(updated, reaction, !hasReacted, authUsername);
+                            }),
+                        })),
+                    };
                 });
             }
 
-            dispatch({
-                type: "OPTIMISTIC_TOGGLE_REACTION",
-                payload: {
-                    targetId,
-                    reactionType: reaction,
-                    isReply,
-                    commentId: parentCommentId,
-                    add: !hasReacted,
-                    username: state.authUsername,
-                },
-            });
-
-            // API calls in background (don't block UI)
+            // API calls in background
             try {
                 const promises: Promise<unknown>[] = [];
 
@@ -355,72 +451,109 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
                 console.error("Failed to toggle reaction", err);
                 toast.error("Failed to update reaction");
 
-                // Revert all optimistic updates on error
-                if (hasOppositeReaction) {
-                    dispatch({
-                        type: "OPTIMISTIC_TOGGLE_REACTION",
-                        payload: {
-                            targetId,
-                            reactionType: oppositeReaction,
-                            isReply,
-                            commentId: parentCommentId,
-                            add: true,
-                            username: state.authUsername,
-                        },
-                    });
-                }
-                dispatch({
-                    type: "OPTIMISTIC_TOGGLE_REACTION",
-                    payload: {
-                        targetId,
-                        reactionType: reaction,
-                        isReply,
-                        commentId: parentCommentId,
-                        add: hasReacted,
-                        username: state.authUsername,
-                    },
-                });
+                // Revert optimistic updates on error (refetch would be cleaner)
+                queryClient.invalidateQueries({ queryKey: commentsQueryKey });
             }
         },
-        [discussionNumber, state.authUsername]
+        [discussionNumber, authUsername, queryClient, commentsQueryKey]
     );
 
     // Toggle expanded replies
     const toggleExpanded = useCallback(
         (commentId: string) => {
-            const isExpanded = state.expandedCommentId === commentId;
-            dispatch({ type: "TOGGLE_EXPANDED", payload: commentId });
-            if (!isExpanded && !state.loadedReplies[commentId]) {
+            const isExpanded = expandedCommentId === commentId;
+            setExpandedCommentId(isExpanded ? null : commentId);
+            if (!isExpanded && !loadedReplies[commentId]) {
                 fetchReplies(commentId);
             }
         },
-        [state.expandedCommentId, state.loadedReplies, fetchReplies]
+        [expandedCommentId, loadedReplies, fetchReplies]
     );
 
-    // Initial fetch of comments (skip if inputOnly mode)
+    // Wrapper functions for mutations
+    const addComment = useCallback(
+        async (body: string) => {
+            await addCommentMutation.mutateAsync(body);
+        },
+        [addCommentMutation]
+    );
+
+    const editComment = useCallback(
+        async (commentId: string, body: string) => {
+            await editCommentMutation.mutateAsync({ commentId, body });
+        },
+        [editCommentMutation]
+    );
+
+    const deleteComment = useCallback(
+        async (commentId: string) => {
+            await deleteCommentMutation.mutateAsync(commentId);
+        },
+        [deleteCommentMutation]
+    );
+
+    // Optimistic update helpers (for external use if needed)
+    const updateCommentOptimistic = useCallback(
+        (commentId: string, updates: Partial<Comment>) => {
+            queryClient.setQueryData<{ pages: CommentsPage[]; pageParams: unknown[] }>(commentsQueryKey, (old) => {
+                if (!old) return old;
+                return {
+                    ...old,
+                    pages: old.pages.map((page) => ({
+                        ...page,
+                        comments: page.comments.map((c) =>
+                            c.id === commentId ? { ...c, ...updates } : c
+                        ),
+                    })),
+                };
+            });
+        },
+        [queryClient, commentsQueryKey]
+    );
+
+    const updateReplyOptimistic = useCallback(
+        (commentId: string, replyId: string, updates: Partial<Reply>) => {
+            setLoadedReplies((prev) => ({
+                ...prev,
+                [commentId]: (prev[commentId] || []).map((r) =>
+                    r.id === replyId ? { ...r, ...updates } : r
+                ),
+            }));
+        },
+        []
+    );
+
+    // Dummy fetchComments for interface compatibility (React Query handles this)
+    const fetchComments = useCallback(async () => {
+        queryClient.invalidateQueries({ queryKey: commentsQueryKey });
+    }, [queryClient, commentsQueryKey]);
+
+    // Set error from React Query
     useEffect(() => {
-        if (!inputOnly) {
-            fetchComments();
+        if (isError) {
+            setError("Failed to load comments");
+        } else {
+            setError(null);
         }
-    }, [fetchComments, inputOnly]);
+    }, [isError]);
 
     // Memoized context value
     const value = useMemo<DiscussionContextType>(
         () => ({
             // State values
-            comments: state.comments,
-            discussionId: state.discussionId,
-            loading: state.loading,
-            loadingMore: state.loadingMore,
-            error: state.error,
-            sortBy: state.sortBy,
+            comments,
+            discussionId,
+            loading: isLoading,
+            loadingMore: isFetchingNextPage,
+            error,
+            sortBy,
             expandedComments: new Set<string>(),
-            loadedReplies: state.loadedReplies,
-            loadedRepliesLoading: state.loadedRepliesLoading,
-            expandedCommentId: state.expandedCommentId,
+            loadedReplies,
+            loadedRepliesLoading,
+            expandedCommentId,
             // Pagination
-            total: state.total,
-            hasNextPage: state.hasNextPage,
+            total,
+            hasNextPage: hasNextPage || false,
 
             // Actions
             setSortBy: handleSetSortBy,
@@ -436,16 +569,22 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
             toggleReaction,
             toggleExpanded,
             hasUserReacted: (reactionUsers: ReactionUser[], reactionType: ReactionKey) =>
-                hasUserReacted(reactionUsers, state.authUsername || "", reactionType),
-            updateCommentOptimistic: (commentId: string, updates: Partial<Comment>) => {
-                dispatch({ type: "UPDATE_COMMENT", payload: { id: commentId, updates } });
-            },
-            updateReplyOptimistic: (commentId: string, replyId: string, updates: Partial<Reply>) => {
-                dispatch({ type: "UPDATE_REPLY", payload: { commentId, replyId, updates } });
-            },
+                hasUserReacted(reactionUsers, authUsername || "", reactionType),
+            updateCommentOptimistic,
+            updateReplyOptimistic,
         }),
         [
-            state,
+            comments,
+            discussionId,
+            isLoading,
+            isFetchingNextPage,
+            error,
+            sortBy,
+            loadedReplies,
+            loadedRepliesLoading,
+            expandedCommentId,
+            total,
+            hasNextPage,
             handleSetSortBy,
             fetchComments,
             fetchMoreComments,
@@ -458,6 +597,9 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
             deleteReply,
             toggleReaction,
             toggleExpanded,
+            authUsername,
+            updateCommentOptimistic,
+            updateReplyOptimistic,
         ]
     );
 

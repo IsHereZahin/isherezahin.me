@@ -7,6 +7,7 @@ import {
     SingleCommentLoading,
 } from "@/components/ui"
 import { useDiscussion } from "@/lib/hooks/useDiscussion"
+import { Loader2 } from "lucide-react"
 import { useEffect, useRef } from "react"
 import CommentCard from "./CommentCard"
 
@@ -51,7 +52,8 @@ export default function CommentsList() {
         return () => observer.disconnect()
     }, [hasNextPage, loadingMore, fetchMoreComments])
 
-    if (loading) {
+    // Only show full loading skeleton on initial load (no comments yet)
+    if (loading && comments.length === 0) {
         return <CommentsLoading />
     }
 
@@ -64,6 +66,10 @@ export default function CommentsList() {
                     <span className="text-secondary-foreground font-medium">
                         ({total})
                     </span>
+                    {/* Show subtle loading indicator when refetching due to sort change */}
+                    {loading && comments.length > 0 && (
+                        <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                    )}
                 </div>
 
                 {/* Sort Dropdown */}
@@ -75,7 +81,7 @@ export default function CommentsList() {
             </div>
 
             {/* Comments List */}
-            <div className="space-y-4">
+            <div className={`space-y-4 transition-opacity duration-200 ${loading && comments.length > 0 ? "opacity-60" : "opacity-100"}`}>
                 {comments.length === 0 ? (
                     <div className="text-center py-12 text-muted-foreground">
                         <p className="font-medium text-foreground">No comments yet</p>
