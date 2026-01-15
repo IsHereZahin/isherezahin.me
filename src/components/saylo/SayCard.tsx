@@ -5,7 +5,7 @@ import { PERSON } from "@/config/seo.config";
 import { parseMarkdown } from "@/lib/markdown";
 import { getDeviceId } from "@/utils";
 import { cloudinary } from "@/lib/api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { Bookmark, Globe, ImagePlus, Loader2, Lock, MessageCircle, MoreHorizontal, Pencil, Share2, Trash2, Users, Video, X } from "lucide-react";
 import Image from "next/image";
@@ -22,7 +22,6 @@ import MediaModal from "./MediaModal";
 import ReactionButton, { ReactionsSummary } from "./ReactionButton";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { saylo as sayloApi } from "@/lib/api";
-import { useQuery } from "@tanstack/react-query";
 
 // Re-export Saylo type for backwards compatibility
 export type { Saylo } from "@/utils/types";

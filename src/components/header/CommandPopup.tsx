@@ -8,7 +8,7 @@ import MotionPopup from "@/components/motion/MotionPopup";
 import { BlurImage } from "@/components/ui";
 import AdventureImg from "../../../public/assets/images/CommandPopup/Adventure.jpg";
 import StudyImg from "../../../public/assets/images/CommandPopup/Desktop Setup.jpg";
-import TravelImg from "../../../public/assets/images/CommandPopup/Travel.jpg";
+import WritingImg from "../../../public/assets/images/CommandPopup/Writing.jpg";
 
 interface CommandPopupProps {
     onClose: () => void;
@@ -26,6 +26,29 @@ export default function CommandPopup({ onClose }: Readonly<CommandPopupProps>) {
     );
     return (
         <MotionPopup isOpen={true} className="z-50 rounded-xl bg-background/85 shadow-2xl outline-none backdrop-blur-sm border border-border p-3 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2">
+            <Link
+                className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden md:col-span-1 lg:col-span-1"
+                href="/saylo"
+                onClick={onClose}
+            >
+                <div className="absolute inset-0 z-[-1] rounded-xl overflow-hidden">
+                    <figure className="rounded shadow-lg dark:shadow-none isolate absolute inset-0 z-[-1] overflow-hidden select-none pointer-events-none">
+                        <BlurImage
+                            alt="A person writing thoughts"
+                            title="A person writing thoughts"
+                            src={WritingImg}
+                        />
+                    </figure>
+                </div>
+                <div className="rounded-[11px] bg-gradient-to-b from-black/30 to-black/50 absolute inset-0 z-[-1] group-hover/header-link:opacity-0 opacity-100 transition-opacity duration-300"></div>
+                <div className="rounded-md p-2 transition-all duration-300 z-10 relative">
+                    <div className="flex items-center gap-2">
+                        <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-white/50 transition-colors text-white">Saylo</p>
+                        {isActive("/saylo") && <ActiveTag />}
+                    </div>
+                    <p className="text-xs text-white/80">Thoughts and updates</p>
+                </div>
+            </Link>
             <Link
                 className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden md:col-span-1 lg:col-span-1"
                 href="/uses"
@@ -47,29 +70,6 @@ export default function CommandPopup({ onClose }: Readonly<CommandPopupProps>) {
                         {isActive("/uses") && <ActiveTag />}
                     </div>
                     <p className="text-xs text-white/80">A peek into my digital workspace</p>
-                </div>
-            </Link>
-            <Link
-                className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden md:col-span-1 lg:col-span-1"
-                href="/bucket-list"
-                onClick={onClose}
-            >
-                <div className="absolute inset-0 z-[-1] rounded-xl overflow-hidden">
-                    <figure className="rounded shadow-lg dark:shadow-none isolate absolute inset-0 z-[-1] overflow-hidden select-none pointer-events-none">
-                        <BlurImage
-                            alt="A photo of me skydiving"
-                            title="A photo of me skydiving"
-                            src={TravelImg}
-                        />
-                    </figure>
-                </div>
-                <div className="rounded-[11px] bg-gradient-to-b from-black/30 to-black/50 absolute inset-0 z-[-1] group-hover/header-link:opacity-0 opacity-100 transition-opacity duration-300"></div>
-                <div className="rounded-md p-2 transition-all duration-300 z-10 relative">
-                    <div className="flex items-center gap-2">
-                        <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-white/50 transition-colors text-white">Bucket List</p>
-                        {isActive("/bucket-list") && <ActiveTag />}
-                    </div>
-                    <p className="text-xs text-white/80">Things to do at least once in life</p>
                 </div>
             </Link>
             <div className="md:col-span-1 lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-4">
