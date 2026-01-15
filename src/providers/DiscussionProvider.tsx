@@ -19,9 +19,10 @@ interface DiscussionProviderProps {
     children: React.ReactNode;
     discussionNumber?: number;
     authUsername?: string | null;
+    inputOnly?: boolean;  // Skip fetching comments if true
 }
 
-export function DiscussionProvider({ children, discussionNumber = 1, authUsername = null }: Readonly<DiscussionProviderProps>) {
+export function DiscussionProvider({ children, discussionNumber = 1, authUsername = null, inputOnly = false }: Readonly<DiscussionProviderProps>) {
     const { user } = useAuth();
     const avatarUrl = useMemo(() => user?.image ?? undefined, [user?.image]);
 
@@ -396,10 +397,12 @@ export function DiscussionProvider({ children, discussionNumber = 1, authUsernam
         [state.expandedCommentId, state.loadedReplies, fetchReplies]
     );
 
-    // Initial fetch of comments
+    // Initial fetch of comments (skip if inputOnly mode)
     useEffect(() => {
-        fetchComments();
-    }, [fetchComments]);
+        if (!inputOnly) {
+            fetchComments();
+        }
+    }, [fetchComments, inputOnly]);
 
     // Memoized context value
     const value = useMemo<DiscussionContextType>(

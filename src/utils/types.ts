@@ -81,22 +81,6 @@ export interface ChatContextType {
 }
 
 // Start of Saylo Types
-export interface Saylo {
-    id: string;
-    content: string;
-    category: string | null;
-    likes: number;
-    published: boolean;
-    createdAt: string;
-    updatedAt: string;
-}
-
-export interface SayloCategory {
-    id: string;
-    name: string;
-    color: string | null;
-}
-
 export interface Reactions {
     like: number;
     love: number;
@@ -105,16 +89,6 @@ export interface Reactions {
 }
 
 export type ReactionType = "like" | "love" | "haha" | "fire";
-
-export interface Comment {
-    id: string;
-    content: string;
-    authorName: string;
-    authorImage: string | null;
-    authorId: string | null;
-    isAdmin: boolean;
-    createdAt: string;
-}
 
 export interface Saylo {
     id: string;
@@ -127,6 +101,7 @@ export interface Saylo {
     reactions: Reactions;
     published: boolean;
     visibility: "public" | "authenticated" | "private";
+    discussionNumber?: number | null;
     createdAt: string;
     updatedAt: string;
 }

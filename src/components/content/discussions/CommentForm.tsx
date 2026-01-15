@@ -15,6 +15,7 @@ interface CommentFormProps {
     initialValue?: string
     onSubmit?: (body: string) => Promise<void>
     submitLabel?: string
+    onCommentAdded?: () => void  // Callback when a new comment is posted
 }
 
 export default function CommentForm({
@@ -22,7 +23,8 @@ export default function CommentForm({
     onCancel,
     initialValue = "",
     onSubmit,
-    submitLabel
+    submitLabel,
+    onCommentAdded
 }: Readonly<CommentFormProps>) {
     const { user, isGitHubUser } = useAuth()
     const { addComment, addReply } = useDiscussion()
@@ -51,6 +53,8 @@ export default function CommentForm({
                     await addReply(parentId, text.trim())
                 } else {
                     await addComment(text.trim())
+                    // Call callback when a new comment is posted (not for replies or edits)
+                    onCommentAdded?.()
                 }
 
                 if (!onSubmit) {

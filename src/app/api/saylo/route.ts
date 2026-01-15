@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { SayloCategoryModel, SayloCommentModel, SayloModel, SayloShareModel } from "@/database/models/saylo-model";
+import { SayloCategoryModel, SayloModel, SayloShareModel } from "@/database/models/saylo-model";
 import { UserModel } from "@/database/models/user-model";
 import dbConnect from "@/database/services/mongo";
 import { checkIsAdmin } from "@/lib/auth-utils";
@@ -122,17 +122,8 @@ export async function GET(req: NextRequest) {
                 .lean();
         }
 
-        // Get actual comment counts for all saylos
-        const sayloIds = saylos.map((s) => s._id);
-        const commentCounts = await SayloCommentModel.aggregate([
-            { $match: { sayloId: { $in: sayloIds } } },
-            { $group: { _id: "$sayloId", count: { $sum: 1 } } },
-        ]);
-        const commentCountMap = new Map(
-            commentCounts.map((c) => [c._id.toString(), c.count])
-        );
-
         // Get actual share counts for all saylos
+        const sayloIds = saylos.map((s) => s._id);
         const shareCounts = await SayloShareModel.aggregate([
             { $match: { sayloId: { $in: sayloIds } } },
             { $group: { _id: "$sayloId", count: { $sum: 1 } } },
@@ -153,10 +144,10 @@ export async function GET(req: NextRequest) {
                 images: saylo.images || [],
                 videos: saylo.videos || [],
                 reactions: saylo.reactions || { like: 0, love: 0, haha: 0, fire: 0 },
-                commentCount: commentCountMap.get(saylo._id.toString()) || 0,
                 shareCount: shareCountMap.get(saylo._id.toString()) || 0,
                 published: saylo.published,
                 visibility: saylo.visibility || "public",
+                discussionNumber: saylo.discussionNumber || null,
                 createdAt: saylo.createdAt,
                 updatedAt: saylo.updatedAt,
             };

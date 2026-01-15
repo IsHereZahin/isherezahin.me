@@ -146,8 +146,7 @@ export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
                 <div className="mt-12 pt-8 border-t border-border/50">
                     <ContentDiscussions
                         contentType="blog"
-                        slug={slug}
-                        title={data.title}
+                        identifier={slug}
                         initialDiscussionNumber={data.discussionNumber}
                     />
                 </div>

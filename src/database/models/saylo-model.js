@@ -59,32 +59,6 @@ const shareSchema = new Schema(
 shareSchema.index({ sayloId: 1, userId: 1 });
 shareSchema.index({ sayloId: 1, deviceId: 1 });
 
-const sayloCommentSchema = new Schema(
-    {
-        sayloId: {
-            type: Schema.Types.ObjectId,
-            ref: "Saylo",
-            required: true,
-        },
-        content: {
-            type: String,
-            required: true,
-        },
-        authorId: {
-            type: Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
-        isAdmin: {
-            type: Boolean,
-            default: false,
-        },
-    },
-    { timestamps: true }
-);
-
-sayloCommentSchema.index({ sayloId: 1, createdAt: -1 });
-
 const sayloSchema = new Schema(
     {
         content: {
@@ -124,6 +98,10 @@ const sayloSchema = new Schema(
             enum: ["public", "authenticated", "private"],
             default: "public",
         },
+        discussionNumber: {
+            type: Number,
+            default: null,
+        },
     },
     { timestamps: true }
 );
@@ -155,6 +133,3 @@ export const SayloReactionModel =
 
 export const SayloShareModel =
     mongoose.models.SayloShare || mongoose.model("SayloShare", shareSchema);
-
-export const SayloCommentModel =
-    mongoose.models.SayloComment || mongoose.model("SayloComment", sayloCommentSchema);

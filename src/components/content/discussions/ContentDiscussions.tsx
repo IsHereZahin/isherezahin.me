@@ -7,23 +7,28 @@ import { toast } from "sonner";
 import GithubDiscussions from "./GithubDiscussions";
 import { GitHubSignInButton } from "@/components/ui";
 
+type ContentType = "blog" | "project" | "saylo" | "guestbook";
+
 interface ContentDiscussionsProps {
-    contentType: "blog" | "project";
-    slug: string;
-    title: string;
+    contentType: ContentType;
+    identifier: string;
     initialDiscussionNumber?: number | null;
+    inputOnly?: boolean;
+    onCommentAdded?: () => void;
+    seeAllLink?: string;
+    commentCount?: number;
 }
 
 function CreateDiscussionPrompt({
     contentType,
-    slug,
-    title,
+    identifier,
     onDiscussionCreated,
+    inputOnly = false,
 }: {
-    contentType: "blog" | "project";
-    slug: string;
-    title: string;
-    onDiscussionCreated: (discussionNumber: number) => void;
+    readonly contentType: ContentType;
+    readonly identifier: string;
+    readonly onDiscussionCreated: (discussionNumber: number) => void;
+    readonly inputOnly?: boolean;
 }) {
     const { user, isGitHubUser } = useAuth();
     const [creating, setCreating] = useState(false);
@@ -31,11 +36,9 @@ function CreateDiscussionPrompt({
     const handleCreateAndComment = useCallback(async () => {
         setCreating(true);
         try {
-            // Create the discussion
-            const createRes = await fetch("/api/discussions/create", {
+            // Use unified API
+            const createRes = await fetch(`/api/discussions/content/${contentType}/${identifier}`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ contentType, slug, title }),
             });
 
             if (!createRes.ok) {
@@ -52,14 +55,50 @@ function CreateDiscussionPrompt({
         } finally {
             setCreating(false);
         }
-    }, [contentType, slug, title, onDiscussionCreated]);
+    }, [contentType, identifier, onDiscussionCreated]);
 
     const canInteract = user && isGitHubUser;
+
+    const promptText = contentType === "guestbook"
+        ? { title: "Messages", empty: "No messages yet", cta: "Be the first to leave a message!" }
+        : { title: "Comments", empty: "No comments yet", cta: "Be the first to share your thoughts!" };
+
+    // Compact version for inputOnly mode
+    if (inputOnly) {
+        return (
+            <div className="relative rounded-xl border border-border/50 bg-card p-6 text-center">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="p-3 rounded-full bg-primary/10">
+                        <MessageSquare className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                        <p className="font-medium text-foreground">{promptText.empty}</p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                            {promptText.cta}
+                        </p>
+                    </div>
+
+                    {canInteract ? (
+                        <button
+                            onClick={handleCreateAndComment}
+                            disabled={creating}
+                            className="px-5 py-2.5 flex items-center gap-2.5 rounded-xl font-medium text-sm cursor-pointer transition-all bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {creating && <Loader2 className="w-4 h-4 animate-spin" />}
+                            {creating ? "Starting discussion..." : "Start the conversation"}
+                        </button>
+                    ) : (
+                        <GitHubSignInButton />
+                    )}
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
             <div className="flex items-center gap-3">
-                <h2 className="text-xl font-medium text-foreground">Comments</h2>
+                <h2 className="text-xl font-medium text-foreground">{promptText.title}</h2>
                 <span className="text-secondary-foreground font-medium">(0)</span>
             </div>
 
@@ -69,15 +108,13 @@ function CreateDiscussionPrompt({
                         <MessageSquare className="w-6 h-6 text-primary" />
                     </div>
                     <div>
-                        <p className="font-medium text-foreground">No comments yet</p>
+                        <p className="font-medium text-foreground">{promptText.empty}</p>
                         <p className="text-sm text-muted-foreground mt-1">
-                            Be the first to share your thoughts!
+                            {promptText.cta}
                         </p>
                     </div>
 
-                    {!canInteract ? (
-                        <GitHubSignInButton />
-                    ) : (
+                    {canInteract ? (
                         <button
                             onClick={handleCreateAndComment}
                             disabled={creating}
@@ -86,6 +123,8 @@ function CreateDiscussionPrompt({
                             {creating && <Loader2 className="w-4 h-4 animate-spin" />}
                             {creating ? "Starting discussion..." : "Start the conversation"}
                         </button>
+                    ) : (
+                        <GitHubSignInButton />
                     )}
                 </div>
             </div>
@@ -95,9 +134,12 @@ function CreateDiscussionPrompt({
 
 export default function ContentDiscussions({
     contentType,
-    slug,
-    title,
+    identifier,
     initialDiscussionNumber,
+    inputOnly = false,
+    onCommentAdded,
+    seeAllLink,
+    commentCount,
 }: Readonly<ContentDiscussionsProps>) {
     const [discussionNumber, setDiscussionNumber] = useState<number | null>(
         initialDiscussionNumber ?? null
@@ -114,7 +156,8 @@ export default function ContentDiscussions({
 
         const fetchDiscussionNumber = async () => {
             try {
-                const res = await fetch(`/api/${contentType}/${slug}`);
+                // Use unified API for all content types
+                const res = await fetch(`/api/discussions/content/${contentType}/${identifier}`);
                 if (res.ok) {
                     const data = await res.json();
                     if (data.discussionNumber) {
@@ -129,7 +172,7 @@ export default function ContentDiscussions({
         };
 
         fetchDiscussionNumber();
-    }, [contentType, slug, initialDiscussionNumber]);
+    }, [contentType, identifier, initialDiscussionNumber]);
 
     if (loading) {
         return (
@@ -144,13 +187,13 @@ export default function ContentDiscussions({
         return (
             <CreateDiscussionPrompt
                 contentType={contentType}
-                slug={slug}
-                title={title}
+                identifier={identifier}
                 onDiscussionCreated={setDiscussionNumber}
+                inputOnly={inputOnly}
             />
         );
     }
 
-    // Discussion exists - use the same GithubDiscussions component as guestbook
-    return <GithubDiscussions discussionNumber={discussionNumber} />;
+    // Discussion exists - show GithubDiscussions component
+    return <GithubDiscussions discussionNumber={discussionNumber} inputOnly={inputOnly} onCommentAdded={onCommentAdded} seeAllLink={seeAllLink} commentCount={commentCount} />;
 }

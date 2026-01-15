@@ -188,8 +188,7 @@ export default function ProjectDetailsIndex({ slug }: { readonly slug: string })
                 <div className="mt-12 pt-8 border-t border-border/50">
                     <ContentDiscussions
                         contentType="project"
-                        slug={slug}
-                        title={data.title}
+                        identifier={slug}
                         initialDiscussionNumber={data.discussionNumber}
                     />
                 </div>

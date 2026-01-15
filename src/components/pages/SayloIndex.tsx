@@ -32,12 +32,14 @@ export default function SayloIndex() {
         isFetchingNextPage,
         isLoading,
         isError,
+        isFetching,
     } = useInfiniteQuery({
         queryKey: ["saylos", selectedCategory, selectedSort, selectedVisibility, searchQuery],
         queryFn: ({ pageParam = 1 }) => saylo.getAll(pageParam, 3, selectedCategory, selectedSort, selectedVisibility, searchQuery),
         getNextPageParam: (lastPage) =>
             lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
         initialPageParam: 1,
+        placeholderData: (previousData) => previousData, // Keep previous data while fetching new
     });
 
     const observerRef = useRef<HTMLDivElement>(null);
@@ -86,21 +88,29 @@ export default function SayloIndex() {
 
                 {/* Filters Row */}
                 {totalCount > 0 && (
-                    <SayloFilters
-                        categories={categoriesData?.categories || []}
-                        selectedCategory={selectedCategory}
-                        onCategoryChange={setSelectedCategory}
-                        selectedSort={selectedSort}
-                        onSortChange={setSelectedSort}
-                        selectedVisibility={selectedVisibility}
-                        onVisibilityChange={setSelectedVisibility}
-                        searchQuery={searchQuery}
-                        onSearchChange={setSearchQuery}
-                        totalCount={totalCount}
-                        isAdmin={isAdmin}
-                        distinctCategoriesCount={distinctCategoriesCount}
-                        distinctVisibilitiesCount={distinctVisibilitiesCount}
-                    />
+                    <div className="flex items-center gap-3">
+                        <div className="flex-1">
+                            <SayloFilters
+                                categories={categoriesData?.categories || []}
+                                selectedCategory={selectedCategory}
+                                onCategoryChange={setSelectedCategory}
+                                selectedSort={selectedSort}
+                                onSortChange={setSelectedSort}
+                                selectedVisibility={selectedVisibility}
+                                onVisibilityChange={setSelectedVisibility}
+                                searchQuery={searchQuery}
+                                onSearchChange={setSearchQuery}
+                                totalCount={totalCount}
+                                isAdmin={isAdmin}
+                                distinctCategoriesCount={distinctCategoriesCount}
+                                distinctVisibilitiesCount={distinctVisibilitiesCount}
+                            />
+                        </div>
+                        {/* Show subtle loading indicator when refetching due to filter change */}
+                        {isFetching && !isLoading && !isFetchingNextPage && (
+                            <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                        )}
+                    </div>
                 )}
 
                 {/* Loading State */}
@@ -132,7 +142,7 @@ export default function SayloIndex() {
 
                 {/* Saylo Feed */}
                 {allSaylos.length > 0 && (
-                    <div className="space-y-4">
+                    <div className={`space-y-4 transition-opacity duration-200 ${isFetching && !isLoading && !isFetchingNextPage ? "opacity-60" : "opacity-100"}`}>
                         {allSaylos.map((s) => (
                             <SayCard
                                 key={s.id}

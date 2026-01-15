@@ -9,14 +9,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { Bookmark, Globe, ImagePlus, Loader2, Lock, MessageCircle, MoreHorizontal, Pencil, Share2, Trash2, Users, Video, X } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
-import { Comment, MediaItem, Reactions, ReactionType, Saylo } from "@/utils/types";
+import { MediaItem, Reactions, ReactionType, Saylo } from "@/utils/types";
 import CategorySelector from "./CategorySelector";
-import CommentsSection from "./CommentsSection";
+import ContentDiscussions from "@/components/content/discussions/ContentDiscussions";
 import MediaGallery from "./MediaGallery";
 import MediaModal from "./MediaModal";
 import ReactionButton, { ReactionsSummary } from "./ReactionButton";
@@ -29,8 +28,8 @@ export type { Saylo } from "@/utils/types";
 interface SayCardProps {
     saylo: Saylo;
     isAdmin: boolean;
-    isLoggedIn: boolean;
-    userId?: string;
+    isLoggedIn?: boolean;  // Deprecated: no longer used, kept for compatibility
+    userId?: string;  // Deprecated: no longer used, kept for compatibility
     variant?: "list" | "detail";
     onDeleted?: () => void;
     isCommentOpen?: boolean;
@@ -54,7 +53,7 @@ function FavoriteButton({ className }: { readonly className?: string }) {
     );
 }
 
-export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = "list", onDeleted, isCommentOpen, onCommentToggle }: Readonly<SayCardProps>) {
+export default function SayCard({ saylo, isAdmin, variant = "list", onDeleted, isCommentOpen, onCommentToggle }: Readonly<SayCardProps>) {
     const router = useRouter();
     const queryClient = useQueryClient();
 
@@ -106,17 +105,16 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
     const [isReacting, setIsReacting] = useState(false);
     const [showReactionPicker, setShowReactionPicker] = useState(false);
 
-    // Comments state
-    const [comments, setComments] = useState<Comment[]>([]);
-    const [commentCount, setCommentCount] = useState(0);
+    // Share state
     const [shareCount, setShareCount] = useState(0);
     const [hasShared, setHasShared] = useState(false);
-    const [isLoadingComments, setIsLoadingComments] = useState(false);
+
+    // Comment count state
+    const [commentCount, setCommentCount] = useState(0);
 
     // Refs
     const menuRef = useRef<HTMLDivElement>(null);
     const reactionRef = useRef<HTMLDivElement>(null);
-    const commentInputRef = useRef<HTMLTextAreaElement>(null);
 
     // Fetch reaction and share status on mount
     useEffect(() => {
@@ -144,18 +142,20 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
                     setHasShared(data.hasShared);
                 }
 
-                // Fetch comment count
-                const commentsResponse = await fetch(`/api/saylo/${saylo.id}/comments?limit=1`);
-                if (commentsResponse.ok) {
-                    const data = await commentsResponse.json();
-                    setCommentCount(data.total);
+                // Fetch comment count if discussion exists
+                if (saylo.discussionNumber) {
+                    const commentsResponse = await fetch(`/api/discussions/${saylo.discussionNumber}?pageSize=1`);
+                    if (commentsResponse.ok) {
+                        const data = await commentsResponse.json();
+                        setCommentCount(data.total || 0);
+                    }
                 }
             } catch (error) {
                 console.error("Error fetching status:", error);
             }
         };
         fetchStatus();
-    }, [saylo.id]);
+    }, [saylo.id, saylo.discussionNumber]);
 
     // Close menu on outside click
     useEffect(() => {
@@ -170,20 +170,6 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
-
-    // Load comments when needed
-    useEffect(() => {
-        if ((showInlineComment || variant === "detail") && comments.length === 0) {
-            loadComments();
-        }
-    }, [showInlineComment, variant]);
-
-    // Focus comment input when opened
-    useEffect(() => {
-        if (showInlineComment && commentInputRef.current) {
-            commentInputRef.current.focus();
-        }
-    }, [showInlineComment]);
 
     const handleReaction = async (type: ReactionType) => {
         if (isReacting) return;
@@ -223,31 +209,6 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
             toast.error("Failed to update reaction");
         } finally {
             setIsReacting(false);
-        }
-    };
-
-    const loadComments = async () => {
-        if (isLoadingComments) return;
-
-        // Skip loading if there are no comments
-        if (commentCount === 0) {
-            setComments([]);
-            return;
-        }
-
-        setIsLoadingComments(true);
-
-        try {
-            const response = await fetch(`/api/saylo/${saylo.id}/comments?limit=100`);
-            if (response.ok) {
-                const data = await response.json();
-                setComments(data.comments);
-                setCommentCount(data.total);
-            }
-        } catch {
-            toast.error("Failed to load comments");
-        } finally {
-            setIsLoadingComments(false);
         }
     };
 
@@ -618,16 +579,19 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
                     />
                 )}
 
-                {/* Reactions & Comments Summary */}
+                {/* Reactions, Comments & Shares Summary */}
                 {(totalReactions > 0 || commentCount > 0 || shareCount > 0) && (
                     <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground">
                         {totalReactions > 0 ? <ReactionsSummary reactions={reactions} userReaction={userReaction} /> : <div />}
 
                         <div className="flex items-center gap-3">
                             {commentCount > 0 && (
-                                <Link href={`/saylo/${saylo.id}`} className="hover:underline">
+                                <button
+                                    onClick={() => router.push(`/saylo/${saylo.id}`)}
+                                    className="hover:text-foreground hover:underline transition-colors cursor-pointer"
+                                >
                                     {commentCount} comment{commentCount === 1 ? "" : "s"}
-                                </Link>
+                                </button>
                             )}
                             {shareCount > 0 && (
                                 <span>
@@ -667,56 +631,29 @@ export default function SayCard({ saylo, isAdmin, isLoggedIn, userId, variant = 
                     </button>
                 </div>
 
-                {/* Comments Section */}
+                {/* Comments Section - GitHub Discussions (full list on detail page) */}
                 {variant === "detail" && (
                     <div className="mt-4 pt-4 border-t border-border/20">
-                        <CommentsSection
-                            sayloId={saylo.id}
-                            comments={comments}
-                            isLoadingComments={isLoadingComments}
-                            isLoggedIn={isLoggedIn}
-                            isAdmin={isAdmin}
-                            userId={userId}
-                            onCommentAdded={(comment) => {
-                                setComments((prev) => [comment, ...prev]);
-                                setCommentCount((prev) => prev + 1);
-                            }}
-                            onCommentUpdated={(commentId, content) => {
-                                setComments((prev) => prev.map((c) => (c.id === commentId ? { ...c, content } : c)));
-                            }}
-                            onCommentDeleted={(commentId) => {
-                                setComments((prev) => prev.filter((c) => c.id !== commentId));
-                                setCommentCount((prev) => prev - 1);
-                            }}
-                            variant="full"
+                        <ContentDiscussions
+                            contentType="saylo"
+                            identifier={saylo.id}
+                            initialDiscussionNumber={saylo.discussionNumber}
+                            onCommentAdded={() => setCommentCount(prev => prev + 1)}
                         />
                     </div>
                 )}
 
-                {/* Inline Comments (for list variant) */}
+                {/* Inline Comment Input (for list variant) - only shows input, not full comments */}
                 {variant === "list" && showInlineComment && (
                     <div className="mt-4 pt-4 border-t border-border/20">
-                        <CommentsSection
-                            sayloId={saylo.id}
-                            comments={comments}
-                            isLoadingComments={isLoadingComments}
-                            isLoggedIn={isLoggedIn}
-                            isAdmin={isAdmin}
-                            userId={userId}
-                            onCommentAdded={(comment) => {
-                                setComments((prev) => [comment, ...prev]);
-                                setCommentCount((prev) => prev + 1);
-                            }}
-                            onCommentUpdated={(commentId, content) => {
-                                setComments((prev) => prev.map((c) => (c.id === commentId ? { ...c, content } : c)));
-                            }}
-                            onCommentDeleted={(commentId) => {
-                                setComments((prev) => prev.filter((c) => c.id !== commentId));
-                                setCommentCount((prev) => prev - 1);
-                            }}
-                            variant="preview"
+                        <ContentDiscussions
+                            contentType="saylo"
+                            identifier={saylo.id}
+                            initialDiscussionNumber={saylo.discussionNumber}
+                            inputOnly
+                            onCommentAdded={() => setCommentCount(prev => prev + 1)}
+                            seeAllLink={`/saylo/${saylo.id}`}
                             commentCount={commentCount}
-                            inputRef={commentInputRef}
                         />
                     </div>
                 )}
