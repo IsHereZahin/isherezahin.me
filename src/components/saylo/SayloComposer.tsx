@@ -1,6 +1,7 @@
 "use client";
 
 import { BlurImage, ToolDropdown } from "@/components/ui";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { PERSON } from "@/config/seo.config";
 import { parseMarkdown } from "@/lib/markdown";
 import { cloudinary, saylo } from "@/lib/api";
@@ -28,6 +29,8 @@ export default function SayloComposer({ onSuccess }: Readonly<SayloComposerProps
     const [showVisibilityDropdown, setShowVisibilityDropdown] = useState(false);
     const [showPreview, setShowPreview] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
+    const [pendingRemoveIndex, setPendingRemoveIndex] = useState<number | null>(null);
+    const [showRemoveMediaDialog, setShowRemoveMediaDialog] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const visibilityRef = useRef<HTMLDivElement>(null);
@@ -111,8 +114,35 @@ export default function SayloComposer({ onSuccess }: Readonly<SayloComposerProps
         }
     };
 
-    const removeMedia = (index: number) => {
-        setMedia((prev) => prev.filter((_, i) => i !== index));
+    const handleRemoveMediaClick = (index: number) => {
+        const item = media[index];
+        // Check if media is from Cloudinary
+        if (item?.url?.includes('res.cloudinary.com')) {
+            setPendingRemoveIndex(index);
+            setShowRemoveMediaDialog(true);
+        } else {
+            // Not a Cloudinary image, just remove it
+            setMedia((prev) => prev.filter((_, i) => i !== index));
+        }
+    };
+
+    const handleRemoveMediaConfirm = async (deleteFromCloudinary: boolean) => {
+        if (pendingRemoveIndex === null) return;
+
+        const item = media[pendingRemoveIndex];
+
+        if (deleteFromCloudinary && item?.url?.includes('res.cloudinary.com')) {
+            try {
+                await cloudinary.delete(item.url);
+                toast.success('Image deleted from Cloudinary');
+            } catch {
+                toast.error('Failed to delete from Cloudinary');
+            }
+        }
+
+        setMedia((prev) => prev.filter((_, i) => i !== pendingRemoveIndex));
+        setPendingRemoveIndex(null);
+        setShowRemoveMediaDialog(false);
     };
 
     const handleCategoryChange = (category: string | null) => {
@@ -233,7 +263,7 @@ export default function SayloComposer({ onSuccess }: Readonly<SayloComposerProps
                                     )}
                                     <button
                                         type="button"
-                                        onClick={() => removeMedia(index)}
+                                        onClick={() => handleRemoveMediaClick(index)}
                                         className="absolute -top-2 -right-2 p-1 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                                     >
                                         <X className="w-3 h-3" />
@@ -243,32 +273,36 @@ export default function SayloComposer({ onSuccess }: Readonly<SayloComposerProps
                         </div>
                     )}
 
-                    {/* Actions row - single row always */}
-                    <div className="mt-3 flex items-center gap-2">
-                        {/* Format Dropdown */}
-                        <ToolDropdown
-                            onInsert={insertMarkdown}
-                            disabled={createMutation.isPending || showPreview}
-                            size="sm"
-                        />
+                    {/* Actions row - responsive layout */}
+                    <div className="mt-3 flex flex-wrap items-center gap-1 sm:gap-2">
+                        {/* Left side actions */}
+                        <div className="flex items-center gap-1 sm:gap-2">
+                            {/* Format Dropdown */}
+                            <ToolDropdown
+                                onInsert={insertMarkdown}
+                                disabled={createMutation.isPending || showPreview}
+                                size="sm"
+                            />
 
-                        {/* Preview Button */}
-                        <button
-                            type="button"
-                            onClick={() => setShowPreview(!showPreview)}
-                            disabled={createMutation.isPending}
-                            className={`px-2 py-1.5 text-xs rounded transition-colors ${showPreview
-                                ? "bg-muted text-foreground"
-                                : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                                } ${createMutation.isPending ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
-                        >
-                            Preview
-                        </button>
+                            {/* Preview Button */}
+                            <button
+                                type="button"
+                                onClick={() => setShowPreview(!showPreview)}
+                                disabled={createMutation.isPending}
+                                className={`px-1.5 sm:px-2 py-1 sm:py-1.5 text-xs rounded transition-colors ${showPreview
+                                    ? "bg-muted text-foreground"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                                    } ${createMutation.isPending ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
+                            >
+                                Preview
+                            </button>
 
-                        {/* Separator */}
-                        <div className="h-4 w-px bg-border/50" />
+                            {/* Separator - hidden on very small screens */}
+                            <div className="hidden sm:block h-4 w-px bg-border/50" />
+                        </div>
 
-                        <div className="flex items-center gap-2 ml-auto">
+                        {/* Right side actions */}
+                        <div className="flex items-center gap-1 sm:gap-2 ml-auto">
                             {/* Media Upload */}
                             <input
                                 ref={fileInputRef}
@@ -282,10 +316,10 @@ export default function SayloComposer({ onSuccess }: Readonly<SayloComposerProps
                                 type="button"
                                 onClick={() => fileInputRef.current?.click()}
                                 disabled={isUploading || createMutation.isPending}
-                                className="p-1 sm:p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded transition-colors cursor-pointer disabled:opacity-50"
+                                className="p-1.5 sm:p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded transition-colors cursor-pointer disabled:opacity-50"
                                 title="Add images or videos"
                             >
-                                {isUploading ? <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" /> : <ImagePlus className="w-3 h-3 sm:w-4 sm:h-4" />}
+                                {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImagePlus className="w-4 h-4" />}
                             </button>
 
                             {/* Category Selector */}
@@ -301,10 +335,10 @@ export default function SayloComposer({ onSuccess }: Readonly<SayloComposerProps
                                 <button
                                     type="button"
                                     onClick={() => setShowVisibilityDropdown(!showVisibilityDropdown)}
-                                    className="flex items-center gap-1.5 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded transition-colors cursor-pointer"
+                                    className="flex items-center gap-1 sm:gap-1.5 p-1.5 sm:px-2 sm:py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded transition-colors cursor-pointer"
                                     title={currentVisibility.description}
                                 >
-                                    <currentVisibility.icon className="w-3 h-3 sm:w-4 sm:h-4" />
+                                    <currentVisibility.icon className="w-4 h-4" />
                                     <span className="hidden sm:inline text-xs">{currentVisibility.label}</span>
                                 </button>
                                 {showVisibilityDropdown && (
@@ -334,7 +368,7 @@ export default function SayloComposer({ onSuccess }: Readonly<SayloComposerProps
                             <button
                                 type="submit"
                                 disabled={!content.trim() || createMutation.isPending}
-                                className="rounded-lg p-2 text-primary hover:bg-primary/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="rounded-lg p-1.5 sm:p-2 text-primary hover:bg-primary/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 title="Post"
                             >
                                 {createMutation.isPending ? (
@@ -347,6 +381,24 @@ export default function SayloComposer({ onSuccess }: Readonly<SayloComposerProps
                     </div>
                 </div>
             </form>
+
+            {/* Remove Media Confirmation Dialog */}
+            <ConfirmDialog
+                open={showRemoveMediaDialog}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        setPendingRemoveIndex(null);
+                    }
+                    setShowRemoveMediaDialog(open);
+                }}
+                title="Remove Media"
+                description="Do you also want to delete this media from Cloudinary? If you keep it, you can still reuse the URL later."
+                confirmText="Delete from Cloudinary"
+                cancelText="Just Remove"
+                variant="danger"
+                onConfirm={() => handleRemoveMediaConfirm(true)}
+                onCancel={() => handleRemoveMediaConfirm(false)}
+            />
         </div>
     );
 }

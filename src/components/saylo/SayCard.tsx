@@ -78,6 +78,8 @@ export default function SayCard({ saylo, isAdmin, variant = "list", onDeleted, i
     const [mediaModalState, setMediaModalState] = useState<{ media: MediaItem[]; index: number } | null>(null);
     const [showInlineCommentInternal, setShowInlineCommentInternal] = useState(false);
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [pendingRemoveEditIndex, setPendingRemoveEditIndex] = useState<number | null>(null);
+    const [showRemoveEditMediaDialog, setShowRemoveEditMediaDialog] = useState(false);
 
     // Use controlled state if provided, otherwise use internal state
     const showInlineComment = isCommentOpen ?? showInlineCommentInternal;
@@ -254,8 +256,35 @@ export default function SayCard({ saylo, isAdmin, variant = "list", onDeleted, i
         }
     };
 
-    const removeEditMedia = (index: number) => {
-        setEditMedia((prev) => prev.filter((_, i) => i !== index));
+    const handleRemoveEditMediaClick = (index: number) => {
+        const item = editMedia[index];
+        // Check if media is from Cloudinary
+        if (item?.url?.includes('res.cloudinary.com')) {
+            setPendingRemoveEditIndex(index);
+            setShowRemoveEditMediaDialog(true);
+        } else {
+            // Not a Cloudinary media, just remove it
+            setEditMedia((prev) => prev.filter((_, i) => i !== index));
+        }
+    };
+
+    const handleRemoveEditMediaConfirm = async (deleteFromCloudinary: boolean) => {
+        if (pendingRemoveEditIndex === null) return;
+
+        const item = editMedia[pendingRemoveEditIndex];
+
+        if (deleteFromCloudinary && item?.url?.includes('res.cloudinary.com')) {
+            try {
+                await cloudinary.delete(item.url);
+                toast.success('Media deleted from Cloudinary');
+            } catch {
+                toast.error('Failed to delete from Cloudinary');
+            }
+        }
+
+        setEditMedia((prev) => prev.filter((_, i) => i !== pendingRemoveEditIndex));
+        setPendingRemoveEditIndex(null);
+        setShowRemoveEditMediaDialog(false);
     };
 
     const currentEditVisibility = visibilityOptions.find((v) => v.value === editVisibility)!;
@@ -423,7 +452,7 @@ export default function SayCard({ saylo, isAdmin, variant = "list", onDeleted, i
                                             />
                                         )}
                                         <button
-                                            onClick={() => removeEditMedia(index)}
+                                            onClick={() => handleRemoveEditMediaClick(index)}
                                             className="absolute -top-2 -right-2 p-1 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover/media:opacity-100 transition-opacity cursor-pointer"
                                         >
                                             <X className="w-3 h-3" />
@@ -632,6 +661,24 @@ export default function SayCard({ saylo, isAdmin, variant = "list", onDeleted, i
                     await deleteMutation.mutateAsync();
                 }}
                 isLoading={deleteMutation.isPending}
+            />
+
+            {/* Remove Edit Media Confirmation Dialog */}
+            <ConfirmDialog
+                open={showRemoveEditMediaDialog}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        setPendingRemoveEditIndex(null);
+                    }
+                    setShowRemoveEditMediaDialog(open);
+                }}
+                title="Remove Media"
+                description="Do you also want to delete this media from Cloudinary? If you keep it, you can still reuse the URL later."
+                confirmText="Delete from Cloudinary"
+                cancelText="Just Remove"
+                variant="danger"
+                onConfirm={() => handleRemoveEditMediaConfirm(true)}
+                onCancel={() => handleRemoveEditMediaConfirm(false)}
             />
         </>
     );
