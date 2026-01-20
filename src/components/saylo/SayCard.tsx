@@ -1,8 +1,8 @@
 "use client";
 
+import ExpandableText from "@/components/ui/ExpandableText";
 import MarkdownTextarea from "@/components/ui/MarkdownTextarea";
 import { PERSON } from "@/config/seo.config";
-import { parseMarkdown } from "@/lib/markdown";
 import { getDeviceId } from "@/utils";
 import { cloudinary } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -557,9 +557,11 @@ export default function SayCard({ saylo, isAdmin, variant = "list", onDeleted, i
                         </div>
                     </div>
                 ) : (
-                    <div
-                        className="text-foreground text-[15px] leading-relaxed prose prose-sm max-w-none"
-                        dangerouslySetInnerHTML={{ __html: parseMarkdown(saylo.content) }}
+                    <ExpandableText
+                        text={saylo.content}
+                        limit={300}
+                        markdown
+                        className="text-foreground text-[15px] leading-relaxed"
                     />
                 )}
 
