@@ -14,6 +14,7 @@ import {
     Skeleton,
     TextGradient
 } from "@/components/ui";
+import { legal } from "@/lib/api";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { getFormattedDate } from "@/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -59,29 +60,20 @@ interface LegalPageIndexProps {
 }
 
 const fetchLegalPage = async (slug: string) => {
-    const response = await fetch(`/api/legal/${slug}`);
-    if (!response.ok) {
-        const data = await response.json();
-        if (response.status === 404) {
+    try {
+        const data = await legal.get(slug);
+        return { exists: true, ...data };
+    } catch (error) {
+        if (error instanceof Error && error.message.includes("404")) {
             return { exists: false };
         }
-        throw new Error(data.error || "Failed to fetch page");
+        throw error;
     }
-    return { exists: true, ...(await response.json()) };
 };
 
 const resetLegalPage = async (slug: string) => {
-    const response = await fetch(`/api/legal/${slug}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            title: slug === "privacy-policy" ? "Privacy Policy" : "Terms of Service",
-            content: "",
-            published: false,
-        }),
-    });
-    if (!response.ok) throw new Error("Failed to reset page");
-    return response.json();
+    const title = slug === "privacy-policy" ? "Privacy Policy" : "Terms of Service";
+    return legal.update(slug, { title, content: "", published: false });
 };
 
 export default function LegalPageIndex({ slug, pageTitle, pageSubtitle }: Readonly<LegalPageIndexProps>) {

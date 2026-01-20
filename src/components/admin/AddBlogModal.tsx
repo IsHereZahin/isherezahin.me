@@ -28,7 +28,7 @@ import {
     PublishToggle,
     Textarea,
 } from "@/components/ui";
-import { createBlog } from "@/lib/api";
+import { cloudinary, createBlog } from "@/lib/api";
 import { generateSlug } from "@/utils";
 
 const blogFormSchema = z.object({
@@ -72,7 +72,7 @@ export default function AddBlogModal({ open, onOpenChange }: Readonly<AddBlogMod
     const handleDeleteOldImage = async (deleteOld: boolean) => {
         if (deleteOld && previousImageUrl && isCloudinaryUrl(previousImageUrl)) {
             try {
-                await fetch(`/api/cloudinary?url=${encodeURIComponent(previousImageUrl)}`, { method: 'DELETE' });
+                await cloudinary.delete(previousImageUrl);
                 toast.success('Old image deleted');
             } catch {
                 toast.error('Failed to delete old image');

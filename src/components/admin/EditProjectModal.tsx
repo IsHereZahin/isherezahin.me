@@ -28,7 +28,7 @@ import {
     PublishToggle,
     Textarea,
 } from "@/components/ui";
-import { updateProject } from "@/lib/api";
+import { cloudinary, updateProject } from "@/lib/api";
 import { Project } from "@/utils/types";
 
 const projectFormSchema = z.object({
@@ -86,7 +86,7 @@ export default function EditProjectModal({ open, onOpenChange, project, onSucces
 
     const handlePreviousImageDetected = (prevUrl: string, newUrl: string) => {
         if (isCloudinaryUrl(prevUrl) && prevUrl !== originalImageSrc) {
-            fetch(`/api/cloudinary?url=${encodeURIComponent(prevUrl)}`, { method: 'DELETE' });
+            cloudinary.delete(prevUrl);
         }
         if (isCloudinaryUrl(originalImageSrc) && prevUrl === originalImageSrc) {
             setPendingNewImage(newUrl);
@@ -103,7 +103,7 @@ export default function EditProjectModal({ open, onOpenChange, project, onSucces
 
         if (deleteOld && isCloudinaryUrl(originalImageSrc)) {
             try {
-                await fetch(`/api/cloudinary?url=${encodeURIComponent(originalImageSrc)}`, { method: 'DELETE' });
+                await cloudinary.delete(originalImageSrc);
                 toast.success('Old image deleted');
             } catch { toast.error('Failed to delete old image'); }
         }

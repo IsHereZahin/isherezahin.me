@@ -3,8 +3,7 @@
 import ExpandableText from "@/components/ui/ExpandableText";
 import MarkdownTextarea from "@/components/ui/MarkdownTextarea";
 import { PERSON } from "@/config/seo.config";
-import { getDeviceId } from "@/utils";
-import { cloudinary } from "@/lib/api";
+import { cloudinary, discussions, saylo as sayloApi } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { Bookmark, Globe, ImagePlus, Loader2, Lock, MessageCircle, MoreHorizontal, Pencil, Share2, Trash2, Users, Video, X } from "lucide-react";
@@ -20,7 +19,6 @@ import MediaGallery from "./MediaGallery";
 import MediaModal from "./MediaModal";
 import ReactionButton, { ReactionsSummary } from "./ReactionButton";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
-import { saylo as sayloApi } from "@/lib/api";
 
 // Re-export Saylo type for backwards compatibility
 export type { Saylo } from "@/utils/types";
@@ -120,35 +118,20 @@ export default function SayCard({ saylo, isAdmin, variant = "list", onDeleted, i
     useEffect(() => {
         const fetchStatus = async () => {
             try {
-                const deviceId = getDeviceId();
-
                 // Fetch reactions
-                const reactionResponse = await fetch(`/api/saylo/${saylo.id}/reaction`, {
-                    headers: { "x-device-id": deviceId },
-                });
-                if (reactionResponse.ok) {
-                    const data = await reactionResponse.json();
-                    setUserReaction(data.userReaction);
-                    setReactions(data.reactions);
-                }
+                const reactionData = await sayloApi.getReactions(saylo.id);
+                setUserReaction(reactionData.userReaction);
+                setReactions(reactionData.reactions);
 
                 // Fetch share status
-                const shareResponse = await fetch(`/api/saylo/${saylo.id}/share`, {
-                    headers: { "x-device-id": deviceId },
-                });
-                if (shareResponse.ok) {
-                    const data = await shareResponse.json();
-                    setShareCount(data.shareCount);
-                    setHasShared(data.hasShared);
-                }
+                const shareData = await sayloApi.getShareStatus(saylo.id);
+                setShareCount(shareData.shareCount);
+                setHasShared(shareData.hasShared);
 
                 // Fetch comment count if discussion exists
                 if (saylo.discussionNumber) {
-                    const commentsResponse = await fetch(`/api/discussions/${saylo.discussionNumber}?pageSize=1`);
-                    if (commentsResponse.ok) {
-                        const data = await commentsResponse.json();
-                        setCommentCount(data.total || 0);
-                    }
+                    const count = await discussions.getCommentCount(saylo.discussionNumber);
+                    setCommentCount(count);
                 }
             } catch (error) {
                 console.error("Error fetching status:", error);
@@ -191,16 +174,7 @@ export default function SayCard({ saylo, isAdmin, variant = "list", onDeleted, i
         }
 
         try {
-            const deviceId = getDeviceId();
-            const response = await fetch(`/api/saylo/${saylo.id}/reaction`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "x-device-id": deviceId },
-                body: JSON.stringify({ type }),
-            });
-
-            if (!response.ok) throw new Error("Failed to toggle reaction");
-
-            const data = await response.json();
+            const data = await sayloApi.toggleReaction(saylo.id, type);
             setReactions(data.reactions);
             setUserReaction(data.userReaction);
         } catch {
@@ -214,9 +188,7 @@ export default function SayCard({ saylo, isAdmin, variant = "list", onDeleted, i
 
     const deleteMutation = useMutation({
         mutationFn: async () => {
-            const response = await fetch(`/api/saylo/${saylo.id}`, { method: "DELETE" });
-            if (!response.ok) throw new Error("Failed to delete");
-            return response.json();
+            return sayloApi.delete(saylo.id);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["saylos"] });
@@ -235,19 +207,13 @@ export default function SayCard({ saylo, isAdmin, variant = "list", onDeleted, i
 
     const updateMutation = useMutation({
         mutationFn: async () => {
-            const response = await fetch(`/api/saylo/${saylo.id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    content: editContent,
-                    category: editCategory,
-                    images: editMedia.filter((m) => m.type === "image").map((m) => m.url),
-                    videos: editMedia.filter((m) => m.type === "video").map((m) => m.url),
-                    visibility: editVisibility,
-                }),
+            return sayloApi.update(saylo.id, {
+                content: editContent,
+                category: editCategory,
+                images: editMedia.filter((m) => m.type === "image").map((m) => m.url),
+                videos: editMedia.filter((m) => m.type === "video").map((m) => m.url),
+                visibility: editVisibility,
             });
-            if (!response.ok) throw new Error("Failed to update");
-            return response.json();
         },
         onSuccess: () => {
             setIsEditing(false);
@@ -321,16 +287,9 @@ export default function SayCard({ saylo, isAdmin, variant = "list", onDeleted, i
 
         if (shared) {
             try {
-                const deviceId = getDeviceId();
-                const response = await fetch(`/api/saylo/${saylo.id}/share`, {
-                    method: "POST",
-                    headers: { "x-device-id": deviceId },
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    setShareCount(data.shareCount);
-                    setHasShared(true);
-                }
+                const data = await sayloApi.share(saylo.id);
+                setShareCount(data.shareCount);
+                setHasShared(true);
             } catch {
                 // Silent fail
             }

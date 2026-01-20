@@ -16,7 +16,7 @@ import {
     isCloudinaryUrl,
     MarkdownTextarea,
 } from "@/components/ui";
-import { aboutHero } from "@/lib/api";
+import { aboutHero, cloudinary } from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { Plus, Trash2, User } from "lucide-react";
@@ -114,7 +114,7 @@ export default function AboutHeroModal({ open, onOpenChange, aboutData }: Readon
     const handleDeleteOldImage = async (deleteOld: boolean) => {
         if (deleteOld && previousImageUrl && isCloudinaryUrl(previousImageUrl)) {
             try {
-                await fetch(`/api/cloudinary?url=${encodeURIComponent(previousImageUrl)}`, { method: 'DELETE' });
+                await cloudinary.delete(previousImageUrl);
                 toast.success('Old image deleted');
             } catch {
                 toast.error('Failed to delete old image');

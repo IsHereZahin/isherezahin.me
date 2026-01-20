@@ -3,7 +3,7 @@
 import { adminSettings, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Mail, MessageCirclePlus, MessageSquare, Settings as SettingsIcon } from "lucide-react";
+import { Loader2, Mail, MessageCirclePlus, MessageSquare, Megaphone, Settings as SettingsIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -13,6 +13,7 @@ interface AdminSettingsData {
     allowGoogleLogin: boolean;
     primaryLoginMethod: "github" | "google";
     allowAnyUserStartConversation: boolean;
+    sayloPagePublic: boolean;
 }
 
 export default function Settings() {
@@ -53,6 +54,7 @@ export default function Settings() {
         allowGoogleLogin: false,
         primaryLoginMethod: "github" as const,
         allowAnyUserStartConversation: true,
+        sayloPagePublic: true,
     };
 
     const handleToggleSetting = (key: keyof AdminSettingsData) => {
@@ -172,6 +174,31 @@ export default function Settings() {
                                     <span className="text-green-600 dark:text-green-400">✓ Any GitHub user can start conversations on blogs and projects</span>
                                 ) : (
                                     <span className="text-amber-600 dark:text-amber-400">⚠ Only admins can start conversations. Other users can still comment on existing ones.</span>
+                                )}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Saylo Page Visibility Setting */}
+                    <div className="border border-border rounded-lg p-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div className="flex items-center gap-3">
+                                <div className={`p-2 rounded-full shrink-0 ${settings.sayloPagePublic ? "bg-muted" : "bg-muted/50"}`}>
+                                    <Megaphone className={`h-5 w-5 icon-bw ${!settings.sayloPagePublic ? "opacity-50" : ""}`} />
+                                </div>
+                                <div className="min-w-0">
+                                    <p className="font-medium text-sm">Saylo Page Public</p>
+                                    <p className="text-xs text-muted-foreground">Make Saylo page publicly accessible to all visitors</p>
+                                </div>
+                            </div>
+                            <ToggleButton isOn={settings.sayloPagePublic} isLoading={mutation.isPending && mutation.variables?.key === "sayloPagePublic"} onClick={() => handleToggleSetting("sayloPagePublic")} />
+                        </div>
+                        <div className="mt-3 pt-3 border-t border-border">
+                            <p className="text-xs text-muted-foreground">
+                                {settings.sayloPagePublic ? (
+                                    <span className="text-green-600 dark:text-green-400">✓ Saylo page is visible to all visitors</span>
+                                ) : (
+                                    <span className="text-amber-600 dark:text-amber-400">⚠ Saylo page shows "Coming Soon" to visitors. Only admins can access it.</span>
                                 )}
                             </p>
                         </div>

@@ -1,13 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
-import { FileText, Type } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
-
 import {
     Form,
     FormActions,
@@ -21,6 +13,14 @@ import {
     MarkdownTextarea,
     PublishToggle
 } from "@/components/ui";
+import { legal } from "@/lib/api";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { FileText, Type } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
 const legalPageFormSchema = z.object({
     title: z.string().min(1, "Title is required").max(200),
@@ -86,17 +86,7 @@ export default function EditLegalPageModal({
     const onSubmit = async (data: LegalPageFormValues) => {
         setIsSubmitting(true);
         try {
-            const response = await fetch(`/api/legal/${slug}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || "Failed to update page");
-            }
-
+            await legal.update(slug, data);
             toast.success("Page updated successfully!");
             queryClient.invalidateQueries({ queryKey: ["legal-page", slug] });
             onOpenChange(false);

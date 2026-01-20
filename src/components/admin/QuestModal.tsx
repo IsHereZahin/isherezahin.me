@@ -18,7 +18,7 @@ import {
     SelectItem, SelectTrigger, SelectValue,
     Textarea
 } from "@/components/ui";
-import { quests as questsApi } from "@/lib/api";
+import { cloudinary, quests as questsApi } from "@/lib/api";
 
 const mediaItemSchema = z.object({
     id: z.string(),
@@ -188,7 +188,7 @@ export default function QuestModal({ open, onOpenChange, quest }: Readonly<Quest
         if (!pendingImageChange) return;
         if (deleteOld && pendingImageChange.prevUrl && isCloudinaryUrl(pendingImageChange.prevUrl)) {
             try {
-                await fetch(`/api/cloudinary?url=${encodeURIComponent(pendingImageChange.prevUrl)}`, { method: "DELETE" });
+                await cloudinary.delete(pendingImageChange.prevUrl);
                 toast.success("Old image deleted");
             } catch { toast.error("Failed to delete old image"); }
         }

@@ -1,8 +1,16 @@
 import { SayloModel, SayloReactionModel } from "@/database/models/saylo-model";
+import { SiteSettingsModel } from "@/database/models/site-settings-model";
 import dbConnect from "@/database/services/mongo";
 import { auth } from "@/auth";
 import { UserModel } from "@/database/models/user-model";
+import { checkIsAdmin } from "@/lib/auth-utils";
 import { NextRequest, NextResponse } from "next/server";
+
+// Helper function to check if Saylo page is public
+async function isSayloPagePublic(): Promise<boolean> {
+    const setting = await SiteSettingsModel.findOne({ key: "sayloPagePublic" }).lean();
+    return setting ? (setting as { value: boolean }).value : true;
+}
 
 const VALID_REACTIONS = ["like", "love", "haha", "fire"] as const;
 type ReactionType = (typeof VALID_REACTIONS)[number];
@@ -34,6 +42,17 @@ export async function GET(
 ) {
     try {
         await dbConnect();
+
+        // Check if Saylo page is public - return empty data for non-admin if private
+        const isAdmin = await checkIsAdmin();
+        const pageIsPublic = await isSayloPagePublic();
+        if (!isAdmin && !pageIsPublic) {
+            return NextResponse.json({
+                reactions: { like: 0, love: 0, haha: 0, fire: 0 },
+                userReaction: null,
+            });
+        }
+
         const { id } = await context.params;
         const deviceId = req.headers.get("x-device-id") || "";
 
@@ -81,6 +100,17 @@ export async function POST(
 ) {
     try {
         await dbConnect();
+
+        // Check if Saylo page is public - return empty data for non-admin if private
+        const isAdmin = await checkIsAdmin();
+        const pageIsPublic = await isSayloPagePublic();
+        if (!isAdmin && !pageIsPublic) {
+            return NextResponse.json({
+                reactions: { like: 0, love: 0, haha: 0, fire: 0 },
+                userReaction: null,
+            });
+        }
+
         const { id } = await context.params;
         const deviceId = req.headers.get("x-device-id");
         const body = await req.json();

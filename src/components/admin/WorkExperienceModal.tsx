@@ -13,7 +13,7 @@ import {
     isCloudinaryUrl,
     MarkdownTextarea,
 } from "@/components/ui";
-import { workExperience } from "@/lib/api";
+import { cloudinary, workExperience } from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { Briefcase, Plus, Trash2 } from "lucide-react";
@@ -109,7 +109,7 @@ export default function WorkExperienceModal({ open, onOpenChange, experience }: 
     const handleDeleteOldImage = async (deleteOld: boolean) => {
         if (deleteOld && previousImageUrl && isCloudinaryUrl(previousImageUrl)) {
             try {
-                await fetch(`/api/cloudinary?url=${encodeURIComponent(previousImageUrl)}`, { method: 'DELETE' });
+                await cloudinary.delete(previousImageUrl);
                 toast.success('Old image deleted');
             } catch { toast.error('Failed to delete old image'); }
         }

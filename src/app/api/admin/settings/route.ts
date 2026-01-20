@@ -25,6 +25,10 @@ const DEFAULT_SETTINGS = {
         value: true,
         description: "Allow any GitHub user to start conversations, or restrict to admins only",
     },
+    sayloPagePublic: {
+        value: true,
+        description: "Make Saylo page publicly accessible or show coming soon",
+    },
 };
 
 export async function GET() {

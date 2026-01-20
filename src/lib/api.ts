@@ -58,7 +58,7 @@ const saylo = {
         return await response.json();
     },
 
-    async update(id: string, data: { content?: string; category?: string | null; published?: boolean; visibility?: "public" | "authenticated" | "private" }) {
+    async update(id: string, data: { content?: string; category?: string | null; images?: string[]; videos?: string[]; published?: boolean; visibility?: "public" | "authenticated" | "private" }) {
         const response = await fetch(`/api/saylo/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -190,6 +190,30 @@ const saylo = {
             throw new ApiError(errorData.error || "Failed to share", response.status);
         }
         return await response.json();
+    },
+};
+
+// Discussions API
+const discussions = {
+    async get(discussionNumber: number, pageSize = 10, cursor?: string, sort: "newest" | "oldest" | "popular" = "newest") {
+        const params = new URLSearchParams({ pageSize: pageSize.toString(), sort });
+        if (cursor) params.set("cursor", cursor);
+        const response = await fetch(`/api/discussions/${discussionNumber}?${params}`);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch discussion", response.status);
+        }
+        return await response.json();
+    },
+
+    async getCommentCount(discussionNumber: number) {
+        const response = await fetch(`/api/discussions/${discussionNumber}?pageSize=1`);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch comment count", response.status);
+        }
+        const data = await response.json();
+        return data.total || 0;
     },
 };
 
@@ -928,6 +952,18 @@ const adminSettings = {
     },
 };
 
+// Public Settings API (for unauthenticated access)
+const publicSettings = {
+    async get() {
+        const response = await fetch("/api/admin/settings/public");
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to load public settings", response.status);
+        }
+        return await response.json();
+    },
+};
+
 // Admin Users API
 const adminUsers = {
     async getAll(search: string, filter: string, page: number) {
@@ -1176,10 +1212,74 @@ const bucketList = {
     },
 };
 
+// Visitor Tracking API
+const visitors = {
+    async track(data: { path: string; ref?: string | null }) {
+        const response = await fetch("/api/visitors/track", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to track visitor", response.status);
+        }
+        return await response.json();
+    },
+};
+
+// Legal Pages API
+const legal = {
+    async get(slug: string) {
+        const response = await fetch(`/api/legal/${slug}`);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch legal page", response.status);
+        }
+        return await response.json();
+    },
+
+    async update(slug: string, data: { title?: string; subtitle?: string; content?: string; published?: boolean }) {
+        const response = await fetch(`/api/legal/${slug}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to update legal page", response.status);
+        }
+        return await response.json();
+    },
+};
+
+// Content Discussions API (for guestbook, blog comments, etc.)
+const contentDiscussions = {
+    async get(contentType: string, identifier: string) {
+        const response = await fetch(`/api/discussions/content/${contentType}/${identifier}`);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch content discussion", response.status);
+        }
+        return await response.json();
+    },
+
+    async create(contentType: string, identifier: string) {
+        const response = await fetch(`/api/discussions/content/${contentType}/${identifier}`, {
+            method: "POST",
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to create content discussion", response.status);
+        }
+        return await response.json();
+    },
+};
+
 export {
     aboutHero, adminSettings, adminSubscribers, adminUsers, blogLikes, blogViews, bucketList, cloudinary, contactInfo, contactMessage,
-    createBlog, createProject, currentStatus, deleteBlog, deleteProject, getBlog, getBlogs, getBlogTags, getProject,
-    getProjects, getProjectTags, newsletter, profile, projectLikes, projectViews, quests, saylo, sessions, statistics, testimonials,
-    updateBlog, updateProject, workExperience
+    contentDiscussions, createBlog, createProject, currentStatus, deleteBlog, deleteProject, discussions, getBlog, getBlogs, getBlogTags, getProject,
+    getProjects, getProjectTags, legal, newsletter, profile, projectLikes, projectViews, publicSettings, quests, saylo, sessions, statistics, testimonials,
+    updateBlog, updateProject, visitors, workExperience
 };
 

@@ -2,6 +2,7 @@
 
 import EditLegalPageModal from "@/components/admin/EditLegalPageModal";
 import { Section } from "@/components/ui";
+import { legal } from "@/lib/api";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { getFormattedDate } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -26,15 +27,15 @@ const LEGAL_PAGES = [
 ] as const;
 
 const fetchLegalPage = async (slug: string): Promise<LegalPage> => {
-    const response = await fetch(`/api/legal/${slug}`);
-    if (!response.ok) {
-        if (response.status === 404) {
+    try {
+        const data = await legal.get(slug);
+        return { ...data, exists: true };
+    } catch (error) {
+        if (error instanceof Error && error.message.includes("404")) {
             return { slug, title: "", content: "", published: false, exists: false };
         }
-        throw new Error("Failed to fetch page");
+        throw error;
     }
-    const data = await response.json();
-    return { ...data, exists: true };
 };
 
 export default function AdminLegalPagesPage() {

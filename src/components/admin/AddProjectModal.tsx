@@ -22,7 +22,7 @@ import {
     PublishToggle,
     Textarea,
 } from "@/components/ui";
-import { createProject } from "@/lib/api";
+import { cloudinary, createProject } from "@/lib/api";
 import { generateSlug } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
@@ -79,7 +79,7 @@ export default function AddProjectModal({ open, onOpenChange }: Readonly<AddProj
     const handleDeleteOldImage = async (deleteOld: boolean) => {
         if (deleteOld && previousImageUrl && isCloudinaryUrl(previousImageUrl)) {
             try {
-                await fetch(`/api/cloudinary?url=${encodeURIComponent(previousImageUrl)}`, { method: 'DELETE' });
+                await cloudinary.delete(previousImageUrl);
                 toast.success('Old image deleted');
             } catch {
                 toast.error('Failed to delete old image');

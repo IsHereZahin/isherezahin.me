@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { SayloModel, SayloReactionModel, SayloShareModel } from "@/database/models/saylo-model";
+import { SiteSettingsModel } from "@/database/models/site-settings-model";
 import { UserModel } from "@/database/models/user-model";
 import dbConnect from "@/database/services/mongo";
 import { checkIsAdmin } from "@/lib/auth-utils";
@@ -7,6 +8,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 // Ensure User model is registered for population
 const _UserModel = UserModel;
+
+// Helper function to check if Saylo page is public
+async function isSayloPagePublic(): Promise<boolean> {
+    const setting = await SiteSettingsModel.findOne({ key: "sayloPagePublic" }).lean();
+    return setting ? (setting as { value: boolean }).value : true;
+}
 
 interface SayloDocument {
     _id: { toString(): string };
@@ -29,6 +36,19 @@ export async function GET(
 ) {
     try {
         await dbConnect();
+
+        const session = await auth();
+        const isAdmin = await checkIsAdmin();
+
+        // Check if Saylo page is public - return not found for non-admin if private
+        const pageIsPublic = await isSayloPagePublic();
+        if (!isAdmin && !pageIsPublic) {
+            return NextResponse.json(
+                { error: "Saylo not found" },
+                { status: 404 }
+            );
+        }
+
         const { id } = await context.params;
 
         const saylo = await SayloModel.findById(id).populate("authorId", "name image").lean() as SayloDocument | null;
@@ -39,9 +59,6 @@ export async function GET(
                 { status: 404 }
             );
         }
-
-        const session = await auth();
-        const isAdmin = await checkIsAdmin();
 
         // Check visibility permissions
         if (!isAdmin) {

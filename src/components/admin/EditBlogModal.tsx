@@ -28,7 +28,7 @@ import {
     PublishToggle,
     Textarea,
 } from "@/components/ui";
-import { updateBlog } from "@/lib/api";
+import { cloudinary, updateBlog } from "@/lib/api";
 import { Blog } from "@/utils/types";
 
 const blogFormSchema = z.object({
@@ -77,7 +77,7 @@ export default function EditBlogModal({ open, onOpenChange, blog, onSuccess }: R
     const handlePreviousImageDetected = (prevUrl: string, newUrl: string) => {
         // If there's already a new uploaded image (not original), delete it first
         if (isCloudinaryUrl(prevUrl) && prevUrl !== originalImageSrc) {
-            fetch(`/api/cloudinary?url=${encodeURIComponent(prevUrl)}`, { method: 'DELETE' });
+            cloudinary.delete(prevUrl);
         }
         // If current image is the original, ask about deleting it
         if (isCloudinaryUrl(originalImageSrc) && prevUrl === originalImageSrc) {
@@ -98,7 +98,7 @@ export default function EditBlogModal({ open, onOpenChange, blog, onSuccess }: R
 
         if (deleteOld && isCloudinaryUrl(originalImageSrc)) {
             try {
-                await fetch(`/api/cloudinary?url=${encodeURIComponent(originalImageSrc)}`, { method: 'DELETE' });
+                await cloudinary.delete(originalImageSrc);
                 toast.success('Old image deleted');
             } catch { toast.error('Failed to delete old image'); }
         }

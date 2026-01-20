@@ -1,11 +1,12 @@
 "use client";
 
+import ComingSoon from "@/components/ComingSoon";
 import SayCard from "@/components/saylo/SayCard";
 import SayloComposer from "@/components/saylo/SayloComposer";
 import SayloFilters from "@/components/saylo/SayloFilters";
 import { PageTitle, Section } from "@/components/ui";
 import EmptyState from "@/components/ui/EmptyState";
-import { saylo, SortOption, VisibilityOption } from "@/lib/api";
+import { publicSettings, saylo, SortOption, VisibilityOption } from "@/lib/api";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
@@ -14,15 +15,34 @@ import { useCallback, useEffect, useRef, useState } from "react";
 export default function SayloIndex() {
     const { isAdmin, status, user } = useAuth();
     const isLoggedIn = status === "authenticated";
+    const isAuthLoading = status === "loading";
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [selectedSort, setSelectedSort] = useState<SortOption>("recent");
     const [selectedVisibility, setSelectedVisibility] = useState<VisibilityOption>("all");
     const [searchQuery, setSearchQuery] = useState("");
     const [openCommentId, setOpenCommentId] = useState<string | null>(null);
 
+    // Check if Saylo page is public
+    const { data: settingsData, isLoading: isSettingsLoading } = useQuery({
+        queryKey: ["publicSettings"],
+        queryFn: publicSettings.get,
+    });
+
+    // Only determine page visibility after settings are loaded
+    // Use undefined until settings are loaded to prevent premature API calls
+    const isSayloPagePublic = settingsData ? (settingsData.settings?.sayloPagePublic ?? true) : undefined;
+
+    // Only fetch data if:
+    // 1. Settings are loaded (!isSettingsLoading)
+    // 2. Auth status is determined (!isAuthLoading)
+    // 3. AND (user is admin OR page is public)
+    // If isSayloPagePublic is undefined (still loading), don't fetch
+    const shouldFetchData = !isSettingsLoading && !isAuthLoading && (isAdmin === true || isSayloPagePublic === true);
+
     const { data: categoriesData } = useQuery({
         queryKey: ["sayloCategories"],
         queryFn: () => saylo.getCategories(),
+        enabled: shouldFetchData,
     });
 
     const {
@@ -40,6 +60,7 @@ export default function SayloIndex() {
             lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
         initialPageParam: 1,
         placeholderData: (previousData) => previousData, // Keep previous data while fetching new
+        enabled: shouldFetchData,
     });
 
     const observerRef = useRef<HTMLDivElement>(null);
@@ -72,6 +93,22 @@ export default function SayloIndex() {
     const totalCount = data?.pages[0]?.total || 0;
     const distinctCategoriesCount = data?.pages[0]?.distinctCategoriesCount || 0;
     const distinctVisibilitiesCount = data?.pages[0]?.distinctVisibilitiesCount || 0;
+
+    // Show loading while checking settings or auth status
+    if (isSettingsLoading || isAuthLoading) {
+        return (
+            <Section id="saylo" className="px-4 sm:px-6 py-12 sm:py-16 max-w-2xl">
+                <div className="flex justify-center py-12">
+                    <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                </div>
+            </Section>
+        );
+    }
+
+    // Show Coming Soon for non-admin users when page is private
+    if (isAdmin !== true && isSayloPagePublic === false) {
+        return <ComingSoon />;
+    }
 
     return (
         <Section id="saylo" className="px-4 sm:px-6 py-12 sm:py-16 max-w-2xl">

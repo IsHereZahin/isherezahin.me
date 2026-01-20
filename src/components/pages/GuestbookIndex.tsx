@@ -2,6 +2,7 @@
 
 import ContentDiscussions from "@/components/content/discussions/ContentDiscussions";
 import { PageTitle, ReferralLink, Section } from "@/components/ui";
+import { contentDiscussions } from "@/lib/api";
 import { GITHUB_REPO_NAME, GITHUB_REPO_OWNER } from "@/lib/constants";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -14,12 +15,9 @@ export default function GuestbookIndex() {
     useEffect(() => {
         const fetchDiscussionNumber = async () => {
             try {
-                const res = await fetch("/api/discussions/content/guestbook/default");
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.discussionNumber) {
-                        setDiscussionNumber(data.discussionNumber);
-                    }
+                const data = await contentDiscussions.get("guestbook", "default");
+                if (data.discussionNumber) {
+                    setDiscussionNumber(data.discussionNumber);
                 }
             } catch (error) {
                 console.error("Error fetching guestbook discussion:", error);

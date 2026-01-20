@@ -1,5 +1,6 @@
 "use client";
 
+import { contentDiscussions } from "@/lib/api";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Loader2, MessageSquare } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -36,19 +37,9 @@ function CreateDiscussionPrompt({
     const handleCreateAndComment = useCallback(async () => {
         setCreating(true);
         try {
-            // Use unified API
-            const createRes = await fetch(`/api/discussions/content/${contentType}/${identifier}`, {
-                method: "POST",
-            });
-
-            if (!createRes.ok) {
-                const error = await createRes.json();
-                throw new Error(error.error || "Failed to create discussion");
-            }
-
-            const { discussionNumber } = await createRes.json();
+            const data = await contentDiscussions.create(contentType, identifier);
             toast.success("Discussion created! You can now comment.");
-            onDiscussionCreated(discussionNumber);
+            onDiscussionCreated(data.discussionNumber);
         } catch (error) {
             console.error("Error:", error);
             toast.error(error instanceof Error ? error.message : "Something went wrong");
@@ -156,13 +147,9 @@ export default function ContentDiscussions({
 
         const fetchDiscussionNumber = async () => {
             try {
-                // Use unified API for all content types
-                const res = await fetch(`/api/discussions/content/${contentType}/${identifier}`);
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.discussionNumber) {
-                        setDiscussionNumber(data.discussionNumber);
-                    }
+                const data = await contentDiscussions.get(contentType, identifier);
+                if (data.discussionNumber) {
+                    setDiscussionNumber(data.discussionNumber);
                 }
             } catch (error) {
                 console.error("Error fetching discussion number:", error);

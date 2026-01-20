@@ -9,6 +9,7 @@ import {
     Section,
     Signature,
 } from "@/components/ui";
+import { aboutHero } from "@/lib/api";
 import { MY_FULL_NAME, SITE_GITHUB_URL, SITE_LINKEDIN_URL, SITE_USER_LOGO, SITE_YOUTUBE_URL } from "@/lib/constants";
 import { useQuery } from "@tanstack/react-query";
 import { GithubIcon, LinkedinIcon, YoutubeIcon } from "lucide-react";
@@ -54,9 +55,11 @@ const defaultAboutData: AboutHeroData = {
 };
 
 async function fetchAboutHero(): Promise<AboutHeroData | null> {
-    const response = await fetch('/api/admin/about');
-    if (!response.ok) return null;
-    return response.json();
+    try {
+        return await aboutHero.get();
+    } catch {
+        return null;
+    }
 }
 
 export default function AboutContent() {

@@ -3,12 +3,13 @@ import dbConnect from "@/database/services/mongo";
 import { NextResponse } from "next/server";
 
 // Public settings that can be accessed without authentication
-const PUBLIC_SETTINGS = ["allowGitHubLogin", "allowGoogleLogin", "primaryLoginMethod"];
+const PUBLIC_SETTINGS = ["allowGitHubLogin", "allowGoogleLogin", "primaryLoginMethod", "sayloPagePublic"];
 
 const DEFAULT_VALUES: Record<string, unknown> = {
     allowGitHubLogin: true,
     allowGoogleLogin: false,
     primaryLoginMethod: "github",
+    sayloPagePublic: true,
 };
 
 export async function GET() {

@@ -2,7 +2,7 @@
 
 import { SendMessageModal } from '@/components/chat'
 import { Logo, Section, Skeleton } from "@/components/ui"
-import { contactInfo as contactInfoApi } from '@/lib/api'
+import { contactInfo as contactInfoApi, publicSettings } from '@/lib/api'
 import { MY_USERNAME } from '@/lib/constants'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useQuery } from '@tanstack/react-query'
@@ -44,11 +44,8 @@ export default function GetInTouch() {
     });
 
     const { data: settingsData } = useQuery<{ settings: PublicSettings }>({
-        queryKey: ["public-settings"],
-        queryFn: async () => {
-            const res = await fetch('/api/admin/settings/public')
-            return res.json()
-        },
+        queryKey: ["publicSettings"],
+        queryFn: publicSettings.get,
     });
 
     const contactData = useMemo(() => ({
