@@ -12,9 +12,9 @@ const _UserModel = UserModel;
 
 // Helper function to check if Saylo page is public
 async function isSayloPagePublic(): Promise<boolean> {
-    const setting = await SiteSettingsModel.findOne({ key: "sayloPagePublic" }).lean();
+    const setting = await SiteSettingsModel.findOne({ key: "sayloPagePublic" }).lean() as { value: boolean } | null;
     // Default to true if setting doesn't exist
-    return setting ? (setting as { value: boolean }).value : true;
+    return setting ? setting.value : true;
 }
 
 export async function GET(req: NextRequest) {

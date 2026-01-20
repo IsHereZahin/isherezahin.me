@@ -8,8 +8,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 // Helper function to check if Saylo page is public
 async function isSayloPagePublic(): Promise<boolean> {
-    const setting = await SiteSettingsModel.findOne({ key: "sayloPagePublic" }).lean();
-    return setting ? (setting as { value: boolean }).value : true;
+    const setting = await SiteSettingsModel.findOne({ key: "sayloPagePublic" }).lean() as { value: boolean } | null;
+    return setting ? setting.value : true;
 }
 
 interface DbUser {
