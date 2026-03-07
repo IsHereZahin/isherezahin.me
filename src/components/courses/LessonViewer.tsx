@@ -341,20 +341,37 @@ export default function LessonViewer({ slug }: Readonly<LessonViewerProps>) {
                                 savedResult={course?.enrollment?.quizResults?.[activeLesson._id] || null}
                                 onComplete={handleQuizComplete}
                             />
+                        ) : activeLesson?.contentType === "text" && activeLesson.content ? (
+                            <div className="border border-border rounded-xl bg-card overflow-hidden">
+                                <div className="px-6 py-4 border-b border-border bg-muted/30">
+                                    {activeModule && (
+                                        <p className="text-xs text-muted-foreground mb-1">{activeModule.title}</p>
+                                    )}
+                                    <h2 className="text-lg font-semibold text-foreground">{activeLesson.title}</h2>
+                                </div>
+                                <div
+                                    className="prose prose-sm dark:prose-invert max-w-none p-6"
+                                    dangerouslySetInnerHTML={{ __html: parseMarkdown(activeLesson.content) }}
+                                />
+                            </div>
                         ) : null}
                     </MotionWrapper>
 
                     {/* Lesson info & actions */}
                     <MotionWrapper delay={0.1}>
                         <div className="mt-4 space-y-3">
-                            <h2 className="text-lg font-semibold text-foreground">
-                                {activeLesson?.title}
-                            </h2>
+                            {activeLesson?.contentType !== "text" && (
+                                <>
+                                    <h2 className="text-lg font-semibold text-foreground">
+                                        {activeLesson?.title}
+                                    </h2>
 
-                            {activeModule && (
-                                <p className="text-sm text-muted-foreground">
-                                    Module: {activeModule.title}
-                                </p>
+                                    {activeModule && (
+                                        <p className="text-sm text-muted-foreground">
+                                            Module: {activeModule.title}
+                                        </p>
+                                    )}
+                                </>
                             )}
 
                             {/* Action buttons */}
@@ -401,7 +418,7 @@ export default function LessonViewer({ slug }: Readonly<LessonViewerProps>) {
                                         className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                                     >
                                         <ChevronLeft className="w-4 h-4" />
-                                        <span className="truncate max-w-40">{prevLesson.title}</span>
+                                        Previous
                                     </button>
                                 ) : (
                                     <div />
@@ -411,7 +428,7 @@ export default function LessonViewer({ slug }: Readonly<LessonViewerProps>) {
                                         onClick={() => handleNavigate(nextLesson)}
                                         className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                                     >
-                                        <span className="truncate max-w-40">{nextLesson.title}</span>
+                                        Next
                                         <ChevronRight className="w-4 h-4" />
                                     </button>
                                 ) : (
@@ -419,8 +436,8 @@ export default function LessonViewer({ slug }: Readonly<LessonViewerProps>) {
                                 )}
                             </div>
 
-                            {/* Lesson note (not for quiz — content is JSON) */}
-                            {activeLesson?.content && activeLesson.contentType !== "quiz" && (
+                            {/* Lesson note — only for video lessons with extra notes */}
+                            {activeLesson?.content && activeLesson.contentType === "video" && (
                                 <div className="pt-4 border-t border-border">
                                     <h3 className="text-sm font-medium text-foreground mb-2">Note</h3>
                                     <div

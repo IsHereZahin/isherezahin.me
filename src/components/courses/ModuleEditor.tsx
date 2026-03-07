@@ -133,9 +133,24 @@ function LessonDescription({
     value,
     onChange,
     inputClass,
-}: Readonly<{ value: string; onChange: (val: string) => void; inputClass: string }>) {
+    placeholder = "Description note (optional) — Markdown supported",
+    rows = 2,
+    noWrapper = false,
+}: Readonly<{ value: string; onChange: (val: string) => void; inputClass: string; placeholder?: string; rows?: number; noWrapper?: boolean }>) {
     const [showPreview, setShowPreview] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    // Auto-resize textarea to fit content
+    const autoResize = useCallback(() => {
+        const el = textareaRef.current;
+        if (!el) return;
+        el.style.height = "auto";
+        el.style.height = `${el.scrollHeight}px`;
+    }, []);
+
+    useEffect(() => {
+        autoResize();
+    }, [value, autoResize]);
 
     const insertMarkdown = useCallback((before: string, after: string, placeholder = "") => {
         const input = textareaRef.current;
@@ -152,43 +167,47 @@ function LessonDescription({
         }, 0);
     }, [value, onChange]);
 
-    return (
-        <div className="ml-8">
-            <div className="border border-border rounded-lg overflow-hidden">
-                <div className="flex items-center justify-between bg-muted/30 border-b border-border px-2 py-1">
-                    <div className="flex-1">
-                        {!showPreview && <MarkdownToolbar onInsert={insertMarkdown} />}
-                    </div>
-                    <button
-                        type="button"
-                        onClick={() => setShowPreview((p) => !p)}
-                        className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                        title={showPreview ? "Edit" : "Preview"}
-                    >
-                        {showPreview ? <Pencil className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                    </button>
+    const content = (
+        <div className="border border-border rounded-lg overflow-hidden">
+            <div className="flex items-center justify-between bg-muted/30 border-b border-border px-2 py-1">
+                <div className="flex-1">
+                    {!showPreview && <MarkdownToolbar onInsert={insertMarkdown} />}
                 </div>
-                {showPreview ? (
-                    <div className="p-3 min-h-16 text-xs">
-                        {value ? (
-                            <MarkdownPreview content={value} />
-                        ) : (
-                            <p className="italic text-xs text-muted-foreground">No description</p>
-                        )}
-                    </div>
-                ) : (
-                    <textarea
-                        ref={textareaRef}
-                        value={value}
-                        onChange={(e) => onChange(e.target.value)}
-                        className={`${inputClass} text-xs min-h-16 resize-y border-0 rounded-none focus:ring-0`}
-                        placeholder="Description note (optional) — Markdown supported"
-                        rows={2}
-                    />
-                )}
+                <button
+                    type="button"
+                    onClick={() => setShowPreview((p) => !p)}
+                    className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                    title={showPreview ? "Edit" : "Preview"}
+                >
+                    {showPreview ? <Pencil className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                </button>
             </div>
+            {showPreview ? (
+                <div className="p-3 min-h-16 text-xs">
+                    {value ? (
+                        <MarkdownPreview content={value} />
+                    ) : (
+                        <p className="italic text-xs text-muted-foreground">No content</p>
+                    )}
+                </div>
+            ) : (
+                <textarea
+                    ref={textareaRef}
+                    value={value}
+                    onChange={(e) => {
+                        onChange(e.target.value);
+                        autoResize();
+                    }}
+                    className={`${inputClass} text-xs min-h-16 resize-none border-0 rounded-none focus:ring-0 overflow-hidden`}
+                    placeholder={placeholder}
+                    rows={rows}
+                />
+            )}
         </div>
     );
+
+    if (noWrapper) return content;
+    return <div className="ml-8">{content}</div>;
 }
 
 interface Lesson {
@@ -529,16 +548,17 @@ export default function ModuleEditor({ course, onBack }: Readonly<ModuleEditorPr
                                                     placeholder="YouTube video URL (private/unlisted)"
                                                 />
                                             ) : lesson.contentType === "text" ? (
-                                                <textarea
+                                                <LessonDescription
                                                     value={lesson.content || ""}
-                                                    onChange={(e) => {
+                                                    onChange={(val) => {
                                                         const updated = [...modules];
-                                                        updated[mi].lessons[li].content = e.target.value;
+                                                        updated[mi].lessons[li].content = val;
                                                         setModules(updated);
                                                     }}
-                                                    className={`${inputClass} text-xs min-h-16 resize-y`}
+                                                    inputClass={inputClass}
                                                     placeholder="Markdown content..."
-                                                    rows={3}
+                                                    rows={4}
+                                                    noWrapper
                                                 />
                                             ) : lesson.contentType === "quiz" ? (
                                                 <QuizEditor
