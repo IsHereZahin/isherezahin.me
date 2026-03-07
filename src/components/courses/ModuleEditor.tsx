@@ -4,6 +4,7 @@ import MarkdownPreview from "@/components/content/discussions/MarkdownPreview";
 import MarkdownToolbar from "@/components/content/discussions/MarkdownToolbar";
 import { courses } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import QuizEditor from "./QuizEditor";
 import { ArrowLeft, ChevronDown, ChevronUp, Eye, GripVertical, Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -268,11 +269,31 @@ export default function ModuleEditor({ course, onBack }: Readonly<ModuleEditorPr
     });
 
     const handleSave = () => {
-        // Clean and reorder
+        // Validate before saving
+        const errors: string[] = [];
+        modules.forEach((m, mi) => {
+            if (!m.title.trim()) {
+                errors.push(`Module ${mi + 1}: Title is required`);
+            }
+            m.lessons.forEach((l, li) => {
+                if (!l.title.trim()) {
+                    errors.push(`Module ${mi + 1}, Lesson ${li + 1}: Title is required`);
+                }
+            });
+        });
+
+        if (errors.length > 0) {
+            errors.forEach((e) => toast.error(e));
+            return;
+        }
+
+        // Clean and reorder — preserve _id to keep enrollment data intact
         const cleaned = modules.map((m, mi) => ({
+            ...(m._id ? { _id: m._id } : {}),
             title: m.title,
             order: mi,
             lessons: m.lessons.map((l, li) => ({
+                    ...(l._id ? { _id: l._id } : {}),
                     title: l.title,
                     order: li,
                     contentType: l.contentType,
@@ -454,22 +475,24 @@ export default function ModuleEditor({ course, onBack }: Readonly<ModuleEditorPr
                                                 <option value="text">Text</option>
                                                 <option value="quiz">Quiz</option>
                                             </select>
-                                            <div className="relative">
-                                                <input
-                                                    type="text"
-                                                    value={lesson.duration || ""}
-                                                    onChange={(e) => {
-                                                        const updated = [...modules];
-                                                        updated[mi].lessons[li].duration = e.target.value;
-                                                        setModules(updated);
-                                                    }}
-                                                    className={`${inputClass} text-xs ${fetchingDuration === `${mi}-${li}` ? "pr-8" : ""}`}
-                                                    placeholder="Duration (e.g. 7:56)"
-                                                />
-                                                {fetchingDuration === `${mi}-${li}` && (
-                                                    <Loader2 className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 animate-spin text-muted-foreground" />
-                                                )}
-                                            </div>
+                                            {lesson.contentType !== "quiz" && (
+                                                <div className="relative">
+                                                    <input
+                                                        type="text"
+                                                        value={lesson.duration || ""}
+                                                        onChange={(e) => {
+                                                            const updated = [...modules];
+                                                            updated[mi].lessons[li].duration = e.target.value;
+                                                            setModules(updated);
+                                                        }}
+                                                        className={`${inputClass} text-xs ${fetchingDuration === `${mi}-${li}` ? "pr-8" : ""}`}
+                                                        placeholder="Duration (e.g. 7:56)"
+                                                    />
+                                                    {fetchingDuration === `${mi}-${li}` && (
+                                                        <Loader2 className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 animate-spin text-muted-foreground" />
+                                                    )}
+                                                </div>
+                                            )}
                                             <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
                                                 <input
                                                     type="checkbox"
@@ -506,6 +529,24 @@ export default function ModuleEditor({ course, onBack }: Readonly<ModuleEditorPr
                                                     className={`${inputClass} text-xs min-h-16 resize-y`}
                                                     placeholder="Markdown content..."
                                                     rows={3}
+                                                />
+                                            ) : lesson.contentType === "quiz" ? (
+                                                <QuizEditor
+                                                    value={lesson.content || "[]"}
+                                                    onChange={(val) => {
+                                                        const updated = [...modules];
+                                                        updated[mi].lessons[li].content = val;
+                                                        // Auto-calculate duration based on question count
+                                                        try {
+                                                            const questions = JSON.parse(val);
+                                                            if (Array.isArray(questions)) {
+                                                                const count = questions.length;
+                                                                updated[mi].lessons[li].duration = count > 0 ? `${count} question${count > 1 ? "s" : ""}` : null;
+                                                            }
+                                                        } catch { /* noop */ }
+                                                        setModules(updated);
+                                                    }}
+                                                    inputClass={inputClass}
                                                 />
                                             ) : null}
                                         </div>

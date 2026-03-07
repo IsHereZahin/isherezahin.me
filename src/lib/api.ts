@@ -1418,6 +1418,28 @@ const courses = {
         }
         return await response.json();
     },
+
+    async getQuizResult(slug: string, lessonId: string) {
+        const response = await fetch(`/api/courses/${slug}/quiz?lessonId=${encodeURIComponent(lessonId)}`);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to check quiz status", response.status);
+        }
+        return await response.json();
+    },
+
+    async submitQuiz(slug: string, lessonId: string, answers: Record<number, number[]>) {
+        const response = await fetch(`/api/courses/${slug}/quiz`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ lessonId, answers }),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to submit quiz", response.status);
+        }
+        return await response.json();
+    },
 };
 
 export {

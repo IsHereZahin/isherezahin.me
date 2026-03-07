@@ -5,7 +5,7 @@ import { BlurImage, Section, Skeleton } from "@/components/ui";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { courses } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { BookOpen, CheckCircle, ChevronRight, GraduationCap, PlayCircle, Users } from "lucide-react";
+import { BookOpen, CheckCircle, ChevronRight, GraduationCap, Layers, PlayCircle, Users } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -318,9 +318,9 @@ export default function CourseDetailIndex({ slug }: Readonly<CourseDetailIndexPr
                                         {enrollMutation.isPending ? "Enrolling..." : "Enroll Now"}
                                     </button>
                                     <div className="text-xs text-muted-foreground space-y-1.5 pt-2 border-t border-border">
-                                        <p>{course.totalLessons} lessons</p>
-                                        <p>{course.totalModules} modules</p>
-                                        <p>{course.enrollmentCount} students enrolled</p>
+                                        <p className="flex items-center gap-2"><BookOpen className="w-3.5 h-3.5" /> {course.totalLessons} lessons</p>
+                                        <p className="flex items-center gap-2"><Layers className="w-3.5 h-3.5" /> {course.totalModules} modules</p>
+                                        <p className="flex items-center gap-2"><Users className="w-3.5 h-3.5" /> {course.enrollmentCount} students enrolled</p>
                                     </div>
                                 </div>
                             </div>

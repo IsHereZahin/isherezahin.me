@@ -50,10 +50,25 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
             ...module,
             lessons: (module.lessons as Record<string, unknown>[])?.map((lesson: Record<string, unknown>) => {
                 const canAccess = isAdmin || isEnrolled || lesson.isFree;
+                let content = canAccess ? lesson.content : null;
+
+                // Strip correct answers from quiz content (security — answers validated server-side only)
+                if (content && lesson.contentType === "quiz" && !isAdmin) {
+                    try {
+                        const questions = JSON.parse(content as string);
+                        if (Array.isArray(questions)) {
+                            content = JSON.stringify(questions.map((q: Record<string, unknown>) => ({
+                                question: q.question,
+                                options: q.options,
+                            })));
+                        }
+                    } catch { /* noop */ }
+                }
+
                 return {
                     ...lesson,
                     videoUrl: canAccess ? lesson.videoUrl : null,
-                    content: canAccess ? lesson.content : null,
+                    content,
                 };
             }),
         })) || [];
@@ -89,6 +104,11 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
                     lastAccessedLessonId: enrollment.lastAccessedLessonId,
                     progressPercent: enrollment.progressPercent,
                     status: enrollment.status,
+                    quizResults: enrollment.quizResults
+                        ? (enrollment.quizResults instanceof Map
+                            ? Object.fromEntries(enrollment.quizResults)
+                            : enrollment.quizResults)
+                        : {},
                 }
                 : null,
             createdAt: course.createdAt,

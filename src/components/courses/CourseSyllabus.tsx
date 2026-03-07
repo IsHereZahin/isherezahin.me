@@ -36,11 +36,24 @@ function LessonIcon({ lesson, isCompleted, isActive, canAccess }: {
     canAccess: boolean;
 }) {
     if (isCompleted) return <CheckCircle className="w-4 h-4 text-green-500" />;
-    if (!canAccess) return <Lock className="w-4 h-4" />;
-    const activeClass = isActive ? "text-primary" : "";
-    if (lesson.contentType === "video") return <PlayCircle className={`w-4 h-4 ${activeClass}`} />;
-    if (lesson.contentType === "quiz") return <HelpCircle className={`w-4 h-4 ${activeClass}`} />;
-    return <FileText className={`w-4 h-4 ${activeClass}`} />;
+    const colorClass = isActive ? "text-primary" : canAccess ? "" : "text-muted-foreground/50";
+
+    if (!canAccess) {
+        return (
+            <span className="relative inline-flex items-center justify-center w-5 h-5">
+                {lesson.contentType === "video" && <PlayCircle className={`w-4 h-4 ${colorClass}`} />}
+                {lesson.contentType === "quiz" && <HelpCircle className={`w-4 h-4 ${colorClass}`} />}
+                {lesson.contentType === "text" && <FileText className={`w-4 h-4 ${colorClass}`} />}
+                <span className="absolute -bottom-0.5 -right-0.5 bg-card rounded-full p-[1px]">
+                    <Lock className="w-2 h-2 text-muted-foreground" />
+                </span>
+            </span>
+        );
+    }
+
+    if (lesson.contentType === "video") return <PlayCircle className={`w-4 h-4 ${colorClass}`} />;
+    if (lesson.contentType === "quiz") return <HelpCircle className={`w-4 h-4 ${colorClass}`} />;
+    return <FileText className={`w-4 h-4 ${colorClass}`} />;
 }
 
 export default function CourseSyllabus({
@@ -71,7 +84,21 @@ export default function CourseSyllabus({
         });
     };
 
-    const totalLessons = modules.reduce((sum, m) => sum + m.lessons.length, 0);
+    const allLessons = modules.flatMap((m) => m.lessons);
+    const totalLessons = allLessons.length;
+
+    const totalVideos = allLessons.filter((l) => l.contentType === "video").length;
+    const totalTexts = allLessons.filter((l) => l.contentType === "text").length;
+    const totalQuizzes = allLessons.filter((l) => l.contentType === "quiz").length;
+
+    const completedVideos = allLessons.filter((l) => l.contentType === "video" && completedLessons.includes(l._id)).length;
+    const completedTexts = allLessons.filter((l) => l.contentType === "text" && completedLessons.includes(l._id)).length;
+    const completedQuizzes = allLessons.filter((l) => l.contentType === "quiz" && completedLessons.includes(l._id)).length;
+
+    const statusParts: string[] = [];
+    if (totalVideos > 0) statusParts.push(`${completedVideos}/${totalVideos} video`);
+    if (totalTexts > 0) statusParts.push(`${completedTexts}/${totalTexts} text`);
+    if (totalQuizzes > 0) statusParts.push(`${completedQuizzes}/${totalQuizzes} quiz`);
 
     return (
         <div className="space-y-3">
@@ -82,6 +109,15 @@ export default function CourseSyllabus({
                     {progressPercent}% complete
                 </span>
             </div>
+
+            {/* Per-type completion status */}
+            {isEnrolled && statusParts.length > 0 && (
+                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                    {statusParts.map((part) => (
+                        <span key={part}>{part}</span>
+                    ))}
+                </div>
+            )}
 
             {/* Progress bar */}
             {isEnrolled && (

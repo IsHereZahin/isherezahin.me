@@ -173,6 +173,12 @@ const enrollmentSchema = new Schema(
             type: Date,
             default: null,
         },
+        // Quiz results: { lessonId: { answers: {0: [1,2], 1: [0]}, results: [...], correctCount, totalQuestions, passed } }
+        quizResults: {
+            type: Map,
+            of: Schema.Types.Mixed,
+            default: {},
+        },
     },
     { timestamps: true }
 );

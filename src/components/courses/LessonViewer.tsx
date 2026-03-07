@@ -4,6 +4,7 @@ import MotionWrapper from "@/components/motion/MotionWrapper";
 import { Section, Skeleton } from "@/components/ui";
 import { courses } from "@/lib/api";
 import { parseMarkdown } from "@/lib/markdown";
+import QuizPlayer from "./QuizPlayer";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle, ChevronLeft, ChevronRight, Share2 } from "lucide-react";
 import Link from "next/link";
@@ -260,6 +261,16 @@ export default function LessonViewer({ slug }: Readonly<LessonViewerProps>) {
         toast.success("Lesson auto-completed!");
     }, [activeLessonId, course?.isEnrolled, isCurrentCompleted, progressMutation]);
 
+    const handleQuizComplete = useCallback(() => {
+        if (!activeLessonId || !course?.isEnrolled) return;
+        if (!isCurrentCompleted) {
+            progressMutation.mutate({ lessonId: activeLessonId, action: "complete" });
+        } else {
+            // Lesson already completed but quiz data may be missing from cache — refresh
+            queryClient.invalidateQueries({ queryKey: ["course", slug] });
+        }
+    }, [activeLessonId, course?.isEnrolled, isCurrentCompleted, progressMutation, queryClient, slug]);
+
     const handleDurationDetected = useCallback((duration: string) => {
         if (!activeLessonId || !activeLesson?.duration) {
             // Only update if there's no duration set yet
@@ -348,6 +359,15 @@ export default function LessonViewer({ slug }: Readonly<LessonViewerProps>) {
                             <div className="aspect-video bg-muted rounded-xl flex items-center justify-center">
                                 <p className="text-muted-foreground">No video available</p>
                             </div>
+                        ) : activeLesson?.contentType === "quiz" && activeLesson.content ? (
+                            <QuizPlayer
+                                key={activeLesson._id}
+                                content={activeLesson.content}
+                                slug={slug}
+                                lessonId={activeLesson._id}
+                                savedResult={course?.enrollment?.quizResults?.[activeLesson._id] || null}
+                                onComplete={handleQuizComplete}
+                            />
                         ) : null}
                     </MotionWrapper>
 
@@ -366,17 +386,19 @@ export default function LessonViewer({ slug }: Readonly<LessonViewerProps>) {
 
                             {/* Action buttons */}
                             <div className="flex items-center gap-3 flex-wrap">
-                                <button
-                                    onClick={handleToggleComplete}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-                                        isCurrentCompleted
-                                            ? "bg-green-500/10 text-green-500 hover:bg-green-500/20"
-                                            : "bg-muted text-foreground hover:bg-muted/80"
-                                    }`}
-                                >
-                                    <CheckCircle className="w-4 h-4" />
-                                    {isCurrentCompleted ? "Completed" : "Mark as Complete"}
-                                </button>
+                                {activeLesson?.contentType !== "quiz" && (
+                                    <button
+                                        onClick={handleToggleComplete}
+                                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                                            isCurrentCompleted
+                                                ? "bg-green-500/10 text-green-500 hover:bg-green-500/20"
+                                                : "bg-muted text-foreground hover:bg-muted/80"
+                                        }`}
+                                    >
+                                        <CheckCircle className="w-4 h-4" />
+                                        {isCurrentCompleted ? "Completed" : "Mark as Complete"}
+                                    </button>
+                                )}
 
                                 <button
                                     onClick={() => {
@@ -424,8 +446,8 @@ export default function LessonViewer({ slug }: Readonly<LessonViewerProps>) {
                                 )}
                             </div>
 
-                            {/* Lesson note */}
-                            {activeLesson?.content && (
+                            {/* Lesson note (not for quiz — content is JSON) */}
+                            {activeLesson?.content && activeLesson.contentType !== "quiz" && (
                                 <div className="pt-4 border-t border-border">
                                     <h3 className="text-sm font-medium text-foreground mb-2">Note</h3>
                                     <div

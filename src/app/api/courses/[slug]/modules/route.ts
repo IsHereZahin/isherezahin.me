@@ -46,9 +46,10 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
             modules: course.modules,
         });
     } catch (error) {
-        console.error("Error updating modules:", error);
+        const err = error instanceof Error ? error.message : String(error);
+        console.error("Error updating modules:", err, error);
         return NextResponse.json(
-            { error: "Failed to update modules" },
+            { error: "Failed to update modules", details: err },
             { status: 500 }
         );
     }
