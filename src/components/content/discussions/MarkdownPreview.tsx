@@ -41,7 +41,7 @@ export default function MarkdownPreview({ content }: Readonly<MarkdownPreviewPro
             "<code class='bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-secondary-foreground'>$1</code>"
         )
 
-        // Links
+        // Links: [text](url)
         html = html.replace(
             /\[([^\]]+)\]\(([^)]+)\)/g,
             "<a href='$2' class='text-primary hover:underline' target='_blank' rel='noopener noreferrer'>$1</a>"

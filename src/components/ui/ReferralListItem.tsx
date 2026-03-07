@@ -17,14 +17,14 @@ export default function ReferralListItem({
     return (
         <>
             {listItems.map((item, idx) => {
-                const parts = item.text.split(/(\([^)]+\)\[[^\]]+\])/g);
+                const parts = item.text.split(/(\[[^\]]+\]\([^)]+\))/g);
 
                 const listContent = (
                     <li className="flex items-baseline">
                         <span className="mr-3 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-secondary-foreground relative top-[-0.15em]"></span>
                         <span>
                             {parts.map((part, partIdx) => {
-                                const match = part.match(/\(([^)]+)\)\[([^\]]+)\]/);
+                                const match = part.match(/\[([^\]]+)\]\(([^)]+)\)/);
                                 if (match) {
                                     const display = match[1];
                                     let url = match[2];

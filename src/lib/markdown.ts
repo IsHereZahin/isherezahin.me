@@ -59,7 +59,7 @@ export function parseMarkdown(text: string): string {
         "<code class='bg-muted px-1 py-0.5 rounded text-xs font-mono text-secondary-foreground'>$1</code>"
     );
 
-    // Standard markdown links: [display text](url)
+    // Links: [text](url)
     html = html.replace(
         /\[([^\]]+)\]\(([^)]+)\)/g,
         "<a href='$2' class='text-primary hover:underline' target='_blank' rel='noopener noreferrer'>$1</a>"

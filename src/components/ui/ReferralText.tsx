@@ -5,14 +5,14 @@ interface ReferralTextProps {
     className?: string;
 }
 
-// Parse text with (display)[url] syntax into React elements
+// Parse text with [display](url) syntax into React elements
 export default function ReferralText({ text, className }: Readonly<ReferralTextProps>) {
-    const parts = text.split(/(\([^)]+\)\[[^\]]+\])/g);
+    const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g);
 
     return (
         <span className={className}>
             {parts.map((part, idx) => {
-                const match = part.match(/\(([^)]+)\)\[([^\]]+)\]/);
+                const match = part.match(/\[([^\]]+)\]\(([^)]+)\)/);
                 if (match) {
                     const display = match[1];
                     let url = match[2];
