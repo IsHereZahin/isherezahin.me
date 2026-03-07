@@ -1,10 +1,184 @@
 "use client";
 
+import MarkdownPreview from "@/components/content/discussions/MarkdownPreview";
+import MarkdownToolbar from "@/components/content/discussions/MarkdownToolbar";
 import { courses } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, ChevronDown, ChevronUp, GripVertical, Plus, Trash2, X } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, ChevronDown, ChevronUp, Eye, GripVertical, Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+
+// YouTube IFrame API types
+declare global {
+    interface Window {
+        YT: {
+            Player: new (
+                el: string | HTMLElement,
+                config: {
+                    videoId: string;
+                    playerVars?: Record<string, unknown>;
+                    events?: {
+                        onReady?: (event: { target: { getDuration: () => number; destroy: () => void } }) => void;
+                    };
+                }
+            ) => { destroy: () => void };
+        };
+        onYouTubeIframeAPIReady: (() => void) | undefined;
+        _ytApiLoaded?: boolean;
+    }
+}
+
+function getYouTubeVideoId(url: string): string | null {
+    try {
+        const parsed = new URL(url);
+        if (parsed.hostname.includes("youtube.com") && parsed.pathname === "/watch") {
+            return parsed.searchParams.get("v");
+        }
+        if (parsed.hostname.includes("youtu.be")) {
+            return parsed.pathname.slice(1);
+        }
+        if (parsed.hostname.includes("youtube.com") && parsed.pathname.startsWith("/embed/")) {
+            return parsed.pathname.split("/embed/")[1]?.split("?")[0] || null;
+        }
+    } catch { /* noop */ }
+    return null;
+}
+
+function formatDuration(seconds: number): string {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = Math.floor(seconds % 60);
+    if (h > 0) return `${h}h ${m}m ${s}s`;
+    if (m > 0) return `${m}m ${s}s`;
+    return `${s}s`;
+}
+
+function loadYouTubeAPI(): Promise<void> {
+    return new Promise((resolve) => {
+        if (window.YT?.Player) { resolve(); return; }
+        const existingScript = document.querySelector('script[src="https://www.youtube.com/iframe_api"]');
+        if (!existingScript) {
+            const script = document.createElement("script");
+            script.src = "https://www.youtube.com/iframe_api";
+            document.head.appendChild(script);
+        }
+        const prev = window.onYouTubeIframeAPIReady;
+        window.onYouTubeIframeAPIReady = () => {
+            prev?.();
+            resolve();
+        };
+    });
+}
+
+function useFetchDuration() {
+    const containerRef = useRef<HTMLDivElement | null>(null);
+
+    // Create a hidden container once
+    useEffect(() => {
+        const div = document.createElement("div");
+        div.style.position = "absolute";
+        div.style.width = "0";
+        div.style.height = "0";
+        div.style.overflow = "hidden";
+        document.body.appendChild(div);
+        containerRef.current = div;
+        return () => { div.remove(); };
+    }, []);
+
+    const fetchDuration = useCallback(async (videoId: string): Promise<string | null> => {
+        await loadYouTubeAPI();
+        if (!containerRef.current) return null;
+
+        return new Promise((resolve) => {
+            const el = document.createElement("div");
+            containerRef.current!.appendChild(el);
+
+            const timeout = setTimeout(() => {
+                try { player.destroy(); } catch { /* noop */ }
+                el.remove();
+                resolve(null);
+            }, 10000);
+
+            const player = new window.YT.Player(el, {
+                videoId,
+                playerVars: { autoplay: 0, controls: 0, mute: 1 },
+                events: {
+                    onReady: (event) => {
+                        clearTimeout(timeout);
+                        const dur = event.target.getDuration();
+                        try { event.target.destroy(); } catch { /* noop */ }
+                        el.remove();
+                        resolve(dur > 0 ? formatDuration(dur) : null);
+                    },
+                },
+            });
+        });
+    }, []);
+
+    return fetchDuration;
+}
+
+function LessonDescription({
+    value,
+    onChange,
+    inputClass,
+}: Readonly<{ value: string; onChange: (val: string) => void; inputClass: string }>) {
+    const [showPreview, setShowPreview] = useState(false);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    const insertMarkdown = useCallback((before: string, after: string, placeholder = "") => {
+        const input = textareaRef.current;
+        if (!input) return;
+        const start = input.selectionStart;
+        const end = input.selectionEnd;
+        const selected = value.substring(start, end) || placeholder;
+        const newContent = value.slice(0, start) + before + selected + after + value.slice(end);
+        onChange(newContent);
+        setTimeout(() => {
+            input.focus();
+            const pos = start + before.length + selected.length;
+            input.setSelectionRange(pos, pos);
+        }, 0);
+    }, [value, onChange]);
+
+    return (
+        <div className="ml-8">
+            <div className="border border-border rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between bg-muted/30 border-b border-border px-2 py-1">
+                    <div className="flex-1">
+                        {!showPreview && <MarkdownToolbar onInsert={insertMarkdown} />}
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => setShowPreview((p) => !p)}
+                        className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                        title={showPreview ? "Edit" : "Preview"}
+                    >
+                        {showPreview ? <Pencil className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    </button>
+                </div>
+                {showPreview ? (
+                    <div className="p-3 min-h-16 text-xs">
+                        {value ? (
+                            <MarkdownPreview content={value} />
+                        ) : (
+                            <p className="italic text-xs text-muted-foreground">No description</p>
+                        )}
+                    </div>
+                ) : (
+                    <textarea
+                        ref={textareaRef}
+                        value={value}
+                        onChange={(e) => onChange(e.target.value)}
+                        className={`${inputClass} text-xs min-h-16 resize-y border-0 rounded-none focus:ring-0`}
+                        placeholder="Description note (optional) — Markdown supported"
+                        rows={2}
+                    />
+                )}
+            </div>
+        </div>
+    );
+}
 
 interface Lesson {
     _id?: string;
@@ -34,6 +208,31 @@ interface ModuleEditorProps {
 
 export default function ModuleEditor({ course, onBack }: Readonly<ModuleEditorProps>) {
     const queryClient = useQueryClient();
+    const fetchDuration = useFetchDuration();
+    const [fetchingDuration, setFetchingDuration] = useState<string | null>(null); // "mi-li" key
+
+    const handleVideoUrlChange = async (mi: number, li: number, url: string) => {
+        const updated = [...modules];
+        updated[mi].lessons[li].videoUrl = url;
+        setModules(updated);
+
+        const videoId = getYouTubeVideoId(url);
+        if (!videoId) return;
+
+        const key = `${mi}-${li}`;
+        setFetchingDuration(key);
+        const duration = await fetchDuration(videoId);
+        if (duration) {
+            setModules((prev) => {
+                const next = [...prev];
+                if (next[mi]?.lessons[li]) {
+                    next[mi].lessons[li].duration = duration;
+                }
+                return next;
+            });
+        }
+        setFetchingDuration((prev) => (prev === key ? null : prev));
+    };
 
     const { data: courseData } = useQuery({
         queryKey: ["course", course.slug],
@@ -74,14 +273,14 @@ export default function ModuleEditor({ course, onBack }: Readonly<ModuleEditorPr
             title: m.title,
             order: mi,
             lessons: m.lessons.map((l, li) => ({
-                title: l.title,
-                order: li,
-                contentType: l.contentType,
-                videoUrl: l.videoUrl || null,
-                content: l.content || null,
-                duration: l.duration || null,
-                isFree: l.isFree || false,
-            })),
+                    title: l.title,
+                    order: li,
+                    contentType: l.contentType,
+                    videoUrl: l.videoUrl || null,
+                    content: l.content || null,
+                    duration: l.duration || null,
+                    isFree: l.isFree || false,
+                })),
         }));
         saveMutation.mutate(cleaned);
     };
@@ -255,17 +454,22 @@ export default function ModuleEditor({ course, onBack }: Readonly<ModuleEditorPr
                                                 <option value="text">Text</option>
                                                 <option value="quiz">Quiz</option>
                                             </select>
-                                            <input
-                                                type="text"
-                                                value={lesson.duration || ""}
-                                                onChange={(e) => {
-                                                    const updated = [...modules];
-                                                    updated[mi].lessons[li].duration = e.target.value;
-                                                    setModules(updated);
-                                                }}
-                                                className={`${inputClass} text-xs`}
-                                                placeholder="Duration (e.g. 7:56)"
-                                            />
+                                            <div className="relative">
+                                                <input
+                                                    type="text"
+                                                    value={lesson.duration || ""}
+                                                    onChange={(e) => {
+                                                        const updated = [...modules];
+                                                        updated[mi].lessons[li].duration = e.target.value;
+                                                        setModules(updated);
+                                                    }}
+                                                    className={`${inputClass} text-xs ${fetchingDuration === `${mi}-${li}` ? "pr-8" : ""}`}
+                                                    placeholder="Duration (e.g. 7:56)"
+                                                />
+                                                {fetchingDuration === `${mi}-${li}` && (
+                                                    <Loader2 className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 animate-spin text-muted-foreground" />
+                                                )}
+                                            </div>
                                             <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
                                                 <input
                                                     type="checkbox"
@@ -287,11 +491,7 @@ export default function ModuleEditor({ course, onBack }: Readonly<ModuleEditorPr
                                                 <input
                                                     type="text"
                                                     value={lesson.videoUrl || ""}
-                                                    onChange={(e) => {
-                                                        const updated = [...modules];
-                                                        updated[mi].lessons[li].videoUrl = e.target.value;
-                                                        setModules(updated);
-                                                    }}
+                                                    onChange={(e) => handleVideoUrlChange(mi, li, e.target.value)}
                                                     className={`${inputClass} text-xs`}
                                                     placeholder="YouTube video URL (private/unlisted)"
                                                 />
@@ -309,6 +509,19 @@ export default function ModuleEditor({ course, onBack }: Readonly<ModuleEditorPr
                                                 />
                                             ) : null}
                                         </div>
+
+                                        {/* Optional description note for video lessons */}
+                                        {lesson.contentType === "video" && (
+                                            <LessonDescription
+                                                value={lesson.content || ""}
+                                                onChange={(val) => {
+                                                    const updated = [...modules];
+                                                    updated[mi].lessons[li].content = val;
+                                                    setModules(updated);
+                                                }}
+                                                inputClass={inputClass}
+                                            />
+                                        )}
                                     </div>
                                 ))}
 

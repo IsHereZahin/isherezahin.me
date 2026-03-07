@@ -8,7 +8,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle, ChevronLeft, ChevronRight, Share2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import CourseSyllabus from "./CourseSyllabus";
 
@@ -34,25 +34,150 @@ interface Module {
     lessons: Lesson[];
 }
 
-function getYouTubeEmbedUrl(url: string): string | null {
+function getYouTubeVideoId(url: string): string | null {
     try {
         const parsed = new URL(url);
-        let videoId: string | null = null;
-
-        if (parsed.hostname.includes("youtube.com")) {
-            videoId = parsed.searchParams.get("v");
-        } else if (parsed.hostname.includes("youtu.be")) {
-            videoId = parsed.pathname.slice(1);
+        if (parsed.hostname.includes("youtube.com") && parsed.pathname === "/watch") {
+            return parsed.searchParams.get("v");
         }
-
-        if (videoId) {
-            return `https://www.youtube.com/embed/${videoId}`;
+        if (parsed.hostname.includes("youtu.be")) {
+            return parsed.pathname.slice(1);
+        }
+        if (parsed.hostname.includes("youtube.com") && parsed.pathname.startsWith("/embed/")) {
+            return parsed.pathname.split("/embed/")[1]?.split("?")[0] || null;
         }
     } catch {
-        // If it's already an embed URL, return as-is
-        if (url.includes("youtube.com/embed/")) return url;
+        // noop
     }
-    return url;
+    return null;
+}
+
+function formatDuration(seconds: number): string {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = Math.floor(seconds % 60);
+    if (h > 0) return `${h}h ${m}m ${s}s`;
+    if (m > 0) return `${m}m ${s}s`;
+    return `${s}s`;
+}
+
+// YouTube IFrame API types
+declare global {
+    interface Window {
+        YT: {
+            Player: new (
+                el: string | HTMLElement,
+                config: {
+                    videoId: string;
+                    playerVars?: Record<string, unknown>;
+                    events?: {
+                        onReady?: (event: { target: YTPlayer }) => void;
+                        onStateChange?: (event: { data: number; target: YTPlayer }) => void;
+                    };
+                }
+            ) => YTPlayer;
+            PlayerState: {
+                ENDED: number;
+                PLAYING: number;
+                PAUSED: number;
+                BUFFERING: number;
+                CUED: number;
+            };
+        };
+        onYouTubeIframeAPIReady: (() => void) | undefined;
+    }
+}
+
+interface YTPlayer {
+    getDuration: () => number;
+    destroy: () => void;
+}
+
+function YouTubePlayer({
+    videoId,
+    title,
+    onEnded,
+    onDurationDetected,
+}: Readonly<{
+    videoId: string;
+    title: string;
+    onEnded: () => void;
+    onDurationDetected: (duration: string) => void;
+}>) {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const playerRef = useRef<YTPlayer | null>(null);
+    const currentVideoIdRef = useRef(videoId);
+
+    useEffect(() => {
+        currentVideoIdRef.current = videoId;
+
+        const createPlayer = () => {
+            if (!containerRef.current || !window.YT?.Player) return;
+
+            // Destroy old player
+            if (playerRef.current) {
+                try { playerRef.current.destroy(); } catch { /* noop */ }
+                playerRef.current = null;
+            }
+
+            // Create a fresh div for the player
+            const playerDiv = document.createElement("div");
+            playerDiv.id = `yt-player-${videoId}`;
+            containerRef.current.innerHTML = "";
+            containerRef.current.appendChild(playerDiv);
+
+            playerRef.current = new window.YT.Player(playerDiv.id, {
+                videoId,
+                width: "100%",
+                height: "100%",
+                playerVars: {
+                    rel: 0,
+                    modestbranding: 1,
+                    autoplay: 0,
+                },
+                events: {
+                    onReady: (event) => {
+                        const dur = event.target.getDuration();
+                        if (dur > 0) {
+                            onDurationDetected(formatDuration(dur));
+                        }
+                    },
+                    onStateChange: (event) => {
+                        if (event.data === window.YT.PlayerState.ENDED) {
+                            onEnded();
+                        }
+                    },
+                },
+            });
+        };
+
+        // Load YouTube IFrame API if not already loaded
+        if (window.YT?.Player) {
+            createPlayer();
+        } else {
+            const existingScript = document.querySelector('script[src="https://www.youtube.com/iframe_api"]');
+            if (!existingScript) {
+                const script = document.createElement("script");
+                script.src = "https://www.youtube.com/iframe_api";
+                document.head.appendChild(script);
+            }
+            window.onYouTubeIframeAPIReady = createPlayer;
+        }
+
+        return () => {
+            if (playerRef.current) {
+                try { playerRef.current.destroy(); } catch { /* noop */ }
+                playerRef.current = null;
+            }
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [videoId]);
+
+    return (
+        <div className="aspect-video bg-black rounded-xl overflow-hidden">
+            <div ref={containerRef} className="w-full h-full" title={title} />
+        </div>
+    );
 }
 
 export default function LessonViewer({ slug }: Readonly<LessonViewerProps>) {
@@ -120,14 +245,30 @@ export default function LessonViewer({ slug }: Readonly<LessonViewerProps>) {
         router.replace(`/courses/${slug}/learn?lesson=${lessonId}`, { scroll: false });
     }, [router, slug]);
 
-    const handleToggleComplete = () => {
+    const handleToggleComplete = useCallback(() => {
         if (!activeLessonId || !course?.isEnrolled) return;
         const action = isCurrentCompleted ? "uncomplete" : "complete";
         progressMutation.mutate({ lessonId: activeLessonId, action });
         if (!isCurrentCompleted) {
             toast.success("Lesson marked as complete!");
         }
-    };
+    }, [activeLessonId, course?.isEnrolled, isCurrentCompleted, progressMutation]);
+
+    const handleVideoEnded = useCallback(() => {
+        if (!activeLessonId || !course?.isEnrolled || isCurrentCompleted) return;
+        progressMutation.mutate({ lessonId: activeLessonId, action: "complete" });
+        toast.success("Lesson auto-completed!");
+    }, [activeLessonId, course?.isEnrolled, isCurrentCompleted, progressMutation]);
+
+    const handleDurationDetected = useCallback((duration: string) => {
+        if (!activeLessonId || !activeLesson?.duration) {
+            // Only update if there's no duration set yet
+            // We could save it via API, but for now just display it
+        }
+        // We don't persist auto-detected duration to avoid unnecessary API calls
+        // Admin can set it manually in module editor
+        void duration;
+    }, [activeLessonId, activeLesson?.duration]);
 
     const handleNavigate = (lesson: Lesson) => {
         handleLessonClick(lesson._id);
@@ -169,7 +310,7 @@ export default function LessonViewer({ slug }: Readonly<LessonViewerProps>) {
         );
     }
 
-    const embedUrl = activeLesson?.videoUrl ? getYouTubeEmbedUrl(activeLesson.videoUrl) : null;
+    const videoId = activeLesson?.videoUrl ? getYouTubeVideoId(activeLesson.videoUrl) : null;
 
     // Find which module the active lesson belongs to
     const activeModule = course.modules?.find((m: Module) =>
@@ -195,27 +336,19 @@ export default function LessonViewer({ slug }: Readonly<LessonViewerProps>) {
                 {/* Main content */}
                 <div className="lg:col-span-2">
                     <MotionWrapper>
-                        {/* Video player */}
-                        {activeLesson?.contentType === "video" && embedUrl ? (
-                            <div className="aspect-video bg-black rounded-xl overflow-hidden">
-                                <iframe
-                                    src={embedUrl}
-                                    className="w-full h-full"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowFullScreen
-                                    title={activeLesson.title}
-                                />
-                            </div>
-                        ) : activeLesson?.contentType === "text" && activeLesson.content ? (
-                            <div
-                                className="prose prose-sm dark:prose-invert max-w-none p-6 bg-card border border-border rounded-xl"
-                                dangerouslySetInnerHTML={{ __html: parseMarkdown(activeLesson.content) }}
+                        {/* Video player — only for video lessons */}
+                        {activeLesson?.contentType === "video" && videoId ? (
+                            <YouTubePlayer
+                                videoId={videoId}
+                                title={activeLesson.title}
+                                onEnded={handleVideoEnded}
+                                onDurationDetected={handleDurationDetected}
                             />
-                        ) : (
+                        ) : activeLesson?.contentType === "video" ? (
                             <div className="aspect-video bg-muted rounded-xl flex items-center justify-center">
-                                <p className="text-muted-foreground">No content available</p>
+                                <p className="text-muted-foreground">No video available</p>
                             </div>
-                        )}
+                        ) : null}
                     </MotionWrapper>
 
                     {/* Lesson info & actions */}
@@ -290,6 +423,17 @@ export default function LessonViewer({ slug }: Readonly<LessonViewerProps>) {
                                     <div />
                                 )}
                             </div>
+
+                            {/* Lesson note */}
+                            {activeLesson?.content && (
+                                <div className="pt-4 border-t border-border">
+                                    <h3 className="text-sm font-medium text-foreground mb-2">Note</h3>
+                                    <div
+                                        className="prose prose-sm dark:prose-invert max-w-none text-sm text-muted-foreground p-4 bg-muted/30 border border-border rounded-lg"
+                                        dangerouslySetInnerHTML={{ __html: parseMarkdown(activeLesson.content) }}
+                                    />
+                                </div>
+                            )}
                         </div>
                     </MotionWrapper>
 

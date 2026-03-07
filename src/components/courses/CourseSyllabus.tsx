@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle, ChevronDown, Lock, PlayCircle, FileText } from "lucide-react";
+import { CheckCircle, ChevronDown, Lock, PlayCircle, FileText, HelpCircle } from "lucide-react";
 import { useState } from "react";
 
 interface Lesson {
@@ -29,6 +29,20 @@ interface CourseSyllabusProps {
     progressPercent?: number;
 }
 
+function LessonIcon({ lesson, isCompleted, isActive, canAccess }: {
+    lesson: Lesson;
+    isCompleted: boolean;
+    isActive: boolean;
+    canAccess: boolean;
+}) {
+    if (isCompleted) return <CheckCircle className="w-4 h-4 text-green-500" />;
+    if (!canAccess) return <Lock className="w-4 h-4" />;
+    const activeClass = isActive ? "text-primary" : "";
+    if (lesson.contentType === "video") return <PlayCircle className={`w-4 h-4 ${activeClass}`} />;
+    if (lesson.contentType === "quiz") return <HelpCircle className={`w-4 h-4 ${activeClass}`} />;
+    return <FileText className={`w-4 h-4 ${activeClass}`} />;
+}
+
 export default function CourseSyllabus({
     modules,
     completedLessons = [],
@@ -38,7 +52,6 @@ export default function CourseSyllabus({
     progressPercent = 0,
 }: Readonly<CourseSyllabusProps>) {
     const [expandedModules, setExpandedModules] = useState<Set<string>>(() => {
-        // Expand first module by default
         const initial = new Set<string>();
         if (modules.length > 0) {
             initial.add(modules[0]._id);
@@ -61,9 +74,9 @@ export default function CourseSyllabus({
     const totalLessons = modules.reduce((sum, m) => sum + m.lessons.length, 0);
 
     return (
-        <div className="border border-border rounded-xl overflow-hidden bg-card">
+        <div className="space-y-3">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-border bg-muted/30">
+            <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-foreground">Course Syllabus</h3>
                 <span className="text-sm text-muted-foreground">
                     {progressPercent}% complete
@@ -72,45 +85,52 @@ export default function CourseSyllabus({
 
             {/* Progress bar */}
             {isEnrolled && (
-                <div className="h-1 bg-muted">
+                <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                     <div
-                        className="h-full bg-primary transition-all duration-300"
+                        className="h-full bg-primary rounded-full transition-all duration-300"
                         style={{ width: `${progressPercent}%` }}
                     />
                 </div>
             )}
 
             {/* Modules */}
-            <div className="divide-y divide-border">
+            <div className="space-y-3">
                 {modules
                     .sort((a, b) => a.order - b.order)
                     .map((module) => {
                         const isExpanded = expandedModules.has(module._id);
-                        const moduleLessonCount = module.lessons.length;
-                        const completedInModule = module.lessons.filter((l) =>
-                            completedLessons.includes(l._id)
-                        ).length;
+                        const videoCount = module.lessons.filter((l) => l.contentType === "video").length;
+                        const textCount = module.lessons.filter((l) => l.contentType === "text").length;
+                        const quizCount = module.lessons.filter((l) => l.contentType === "quiz").length;
+
+                        const completedVideos = module.lessons.filter((l) => l.contentType === "video" && completedLessons.includes(l._id)).length;
+                        const completedTexts = module.lessons.filter((l) => l.contentType === "text" && completedLessons.includes(l._id)).length;
+                        const completedQuizzes = module.lessons.filter((l) => l.contentType === "quiz" && completedLessons.includes(l._id)).length;
+
+                        const parts: string[] = [];
+                        if (videoCount > 0) parts.push(isEnrolled ? `${completedVideos}/${videoCount} video` : `${videoCount} video`);
+                        if (textCount > 0) parts.push(isEnrolled ? `${completedTexts}/${textCount} text` : `${textCount} text`);
+                        if (quizCount > 0) parts.push(isEnrolled ? `${completedQuizzes}/${quizCount} quiz` : `${quizCount} quiz`);
 
                         return (
-                            <div key={module._id}>
+                            <div key={module._id} className="border border-border rounded-lg overflow-hidden bg-card">
                                 {/* Module header */}
                                 <button
                                     onClick={() => toggleModule(module._id)}
-                                    className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors text-left cursor-pointer"
+                                    className="w-full flex items-center justify-between p-3.5 hover:bg-muted/30 transition-colors text-left cursor-pointer"
                                 >
                                     <div className="flex-1 min-w-0">
-                                        <p className="font-medium text-foreground text-sm">
+                                        <p className="font-medium text-foreground text-sm leading-snug">
                                             {module.title}
                                         </p>
-                                        <p className="text-xs text-muted-foreground mt-0.5">
-                                            {moduleLessonCount} {moduleLessonCount === 1 ? "lesson" : "lessons"}
-                                            {isEnrolled && completedInModule > 0 && (
-                                                <span> · {completedInModule} completed</span>
-                                            )}
+                                        <p className="text-xs text-muted-foreground mt-1 flex items-center gap-2 flex-wrap">
+                                            {parts.map((part, i) => (
+                                                <span key={i}>{part}</span>
+                                            ))}
                                         </p>
                                     </div>
                                     <ChevronDown
-                                        className={`w-4 h-4 text-muted-foreground transition-transform flex-shrink-0 ml-2 ${
+                                        className={`w-4 h-4 text-muted-foreground transition-transform flex-shrink-0 ml-3 ${
                                             isExpanded ? "rotate-180" : ""
                                         }`}
                                     />
@@ -118,7 +138,7 @@ export default function CourseSyllabus({
 
                                 {/* Lessons */}
                                 {isExpanded && (
-                                    <div className="border-t border-border/50 bg-muted/20">
+                                    <div className="border-t border-border">
                                         {module.lessons
                                             .sort((a, b) => a.order - b.order)
                                             .map((lesson) => {
@@ -131,38 +151,33 @@ export default function CourseSyllabus({
                                                         key={lesson._id}
                                                         onClick={() => canAccess && onLessonClick?.(lesson._id)}
                                                         disabled={!canAccess && !onLessonClick}
-                                                        className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors text-sm ${
+                                                        className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors text-sm border-b border-border/50 last:border-b-0 ${
                                                             isActive
                                                                 ? "bg-primary/10 text-primary"
                                                                 : canAccess
-                                                                ? "hover:bg-muted/50 text-foreground cursor-pointer"
+                                                                ? "hover:bg-muted/40 text-foreground cursor-pointer"
                                                                 : "text-muted-foreground cursor-default"
                                                         }`}
                                                     >
                                                         {/* Icon */}
                                                         <div className="flex-shrink-0">
-                                                            {isCompleted ? (
-                                                                <CheckCircle className="w-4 h-4 text-green-500" />
-                                                            ) : isActive ? (
-                                                                <PlayCircle className="w-4 h-4 text-primary" />
-                                                            ) : !canAccess ? (
-                                                                <Lock className="w-4 h-4" />
-                                                            ) : lesson.contentType === "video" ? (
-                                                                <PlayCircle className="w-4 h-4" />
-                                                            ) : (
-                                                                <FileText className="w-4 h-4" />
-                                                            )}
+                                                            <LessonIcon
+                                                                lesson={lesson}
+                                                                isCompleted={isCompleted}
+                                                                isActive={isActive}
+                                                                canAccess={canAccess}
+                                                            />
                                                         </div>
 
                                                         {/* Lesson info */}
                                                         <div className="flex-1 min-w-0">
-                                                            <p className="truncate">{lesson.title}</p>
+                                                            <p className="truncate text-[13px]">{lesson.title}</p>
                                                         </div>
 
                                                         {/* Duration / Free badge */}
                                                         <div className="flex-shrink-0 flex items-center gap-2">
                                                             {lesson.isFree && !isEnrolled && (
-                                                                <span className="text-xs text-green-500 font-medium">
+                                                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-green-500/10 text-green-500 font-medium">
                                                                     Free
                                                                 </span>
                                                             )}
@@ -183,7 +198,7 @@ export default function CourseSyllabus({
             </div>
 
             {/* Footer summary */}
-            <div className="p-3 border-t border-border bg-muted/20 text-center text-xs text-muted-foreground">
+            <div className="text-center text-xs text-muted-foreground">
                 {totalLessons} lessons · {modules.length} modules
             </div>
         </div>

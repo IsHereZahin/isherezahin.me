@@ -3,7 +3,7 @@
 import { BlurImage, ConfirmDialog, Skeleton } from "@/components/ui";
 import { courses } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { BookOpen, Edit, Eye, Trash2, Users } from "lucide-react";
+import { BookOpen, Edit, Eye, Trash2, Users, Plus, Layers } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
