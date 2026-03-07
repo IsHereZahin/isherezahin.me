@@ -1,6 +1,6 @@
 import { SITE_GITHUB_URL, SITE_INSTAGRAM_URL, SITE_LINKEDIN_URL, SITE_X_URL, SITE_YOUTUBE_URL } from '@/lib/constants';
 import { SiGithub, SiInstagram, SiX, SiYoutube } from '@icons-pack/react-simple-icons';
-import { FlameIcon, LinkedinIcon, PencilIcon, UserCircleIcon } from 'lucide-react';
+import { BookOpenIcon, FlameIcon, LinkedinIcon, PencilIcon, UserCircleIcon } from 'lucide-react';
 import { ComponentType, SVGProps } from 'react';
 
 type SocialLinks = Array<{
@@ -29,6 +29,11 @@ export const HEADER_LINKS = [
     icon: <FlameIcon className='size-3.5' />,
     href: '/projects',
     key: 'projects'
+  },
+  {
+    icon: <BookOpenIcon className='size-3.5' />,
+    href: '/courses',
+    key: 'courses'
   }
 ] as const
 
@@ -39,6 +44,7 @@ export const FOOTER_MENU_ITEMS: FooterMenuItems = [
       { href: '/home', label: 'Home' },
       { href: '/blog', label: 'Blog' },
       { href: '/projects', label: 'Projects' },
+      { href: '/courses', label: 'Courses' },
       { href: '/about', label: 'About' },
     ],
   },

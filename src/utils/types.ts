@@ -125,3 +125,5 @@ export interface MediaItem {
     type: "image" | "video";
 }
 // End of Saylo Types
+
+// Start of Course Types

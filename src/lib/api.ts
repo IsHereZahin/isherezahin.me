@@ -1276,9 +1276,153 @@ const contentDiscussions = {
     },
 };
 
+// Course API
+interface CourseData {
+    title: string;
+    slug: string;
+    description?: string;
+    thumbnail?: string | null;
+    category?: string | null;
+    tags?: string[];
+    difficulty?: "beginner" | "intermediate" | "advanced";
+    instructors?: { name: string; image?: string | null; bio?: string | null }[];
+    price?: number;
+    originalPrice?: number | null;
+    currency?: string;
+    learningOutcomes?: string[];
+    status?: "draft" | "published" | "archived";
+}
+
+interface ModuleData {
+    title: string;
+    order: number;
+    lessons: {
+        title: string;
+        order: number;
+        contentType: "video" | "text" | "quiz";
+        videoUrl?: string | null;
+        content?: string | null;
+        duration?: string | null;
+        isFree?: boolean;
+    }[];
+}
+
+const courses = {
+    async getAll(page = 1, limit = 20, options: { category?: string; difficulty?: string; search?: string; status?: string } = {}) {
+        const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
+        if (options.category) params.set("category", options.category);
+        if (options.difficulty) params.set("difficulty", options.difficulty);
+        if (options.search?.trim()) params.set("search", options.search.trim());
+        if (options.status) params.set("status", options.status);
+        const response = await fetch(`/api/courses?${params}`);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch courses", response.status);
+        }
+        return await response.json();
+    },
+
+    async get(slug: string) {
+        const response = await fetch(`/api/courses/${slug}`);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch course", response.status);
+        }
+        return await response.json();
+    },
+
+    async create(data: CourseData) {
+        const response = await fetch("/api/courses", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to create course", response.status);
+        }
+        return await response.json();
+    },
+
+    async update(slug: string, data: Partial<CourseData>) {
+        const response = await fetch(`/api/courses/${slug}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to update course", response.status);
+        }
+        return await response.json();
+    },
+
+    async delete(slug: string) {
+        const response = await fetch(`/api/courses/${slug}`, { method: "DELETE" });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to delete course", response.status);
+        }
+        return await response.json();
+    },
+
+    async updateModules(slug: string, modules: ModuleData[]) {
+        const response = await fetch(`/api/courses/${slug}/modules`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ modules }),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to update modules", response.status);
+        }
+        return await response.json();
+    },
+
+    async enroll(slug: string) {
+        const response = await fetch(`/api/courses/${slug}/enroll`, { method: "POST" });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to enroll", response.status);
+        }
+        return await response.json();
+    },
+
+    async unenroll(slug: string) {
+        const response = await fetch(`/api/courses/${slug}/enroll`, { method: "DELETE" });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to unenroll", response.status);
+        }
+        return await response.json();
+    },
+
+    async getEnrollments(slug: string) {
+        const response = await fetch(`/api/courses/${slug}/enroll`);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch enrollments", response.status);
+        }
+        return await response.json();
+    },
+
+    async updateProgress(slug: string, lessonId: string, action: "complete" | "uncomplete" | "access") {
+        const response = await fetch(`/api/courses/${slug}/progress`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ lessonId, action }),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to update progress", response.status);
+        }
+        return await response.json();
+    },
+};
+
 export {
     aboutHero, adminSettings, adminSubscribers, adminUsers, blogLikes, blogViews, bucketList, cloudinary, contactInfo, contactMessage,
-    contentDiscussions, createBlog, createProject, currentStatus, deleteBlog, deleteProject, discussions, getBlog, getBlogs, getBlogTags, getProject,
+    contentDiscussions, courses, createBlog, createProject, currentStatus, deleteBlog, deleteProject, discussions, getBlog, getBlogs, getBlogTags, getProject,
     getProjects, getProjectTags, legal, newsletter, profile, projectLikes, projectViews, publicSettings, quests, saylo, sessions, statistics, testimonials,
     updateBlog, updateProject, visitors, workExperience
 };

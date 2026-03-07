@@ -4,7 +4,7 @@ import MotionWrapper from "@/components/motion/MotionWrapper";
 import { BlurImage, PageTitle, Section } from "@/components/ui";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useChatUnread } from "@/lib/hooks/useChat";
-import { BarChart3, ChevronDown, Layout, LogOut, Mail, MessageCircle, Settings, Users } from "lucide-react";
+import { BarChart3, BookOpen, ChevronDown, Layout, LogOut, Mail, MessageCircle, Settings, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
@@ -33,6 +33,7 @@ const adminNavItems: NavItem[] = [
             { id: "legal", label: "Legal Pages", href: "/admin/pages/legal" },
         ]
     },
+    { id: "courses", label: "Courses", icon: BookOpen, href: "/admin/courses" },
     { id: "subscribers", label: "Subscribers", icon: Mail, href: "/admin/subscribers" },
     { id: "statistics", label: "Statistics", icon: BarChart3, href: "/admin/statistics" },
     { id: "settings", label: "Settings", icon: Settings, href: "/admin/settings" },
