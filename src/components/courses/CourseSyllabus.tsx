@@ -180,7 +180,7 @@ export default function CourseSyllabus({
                                             .map((lesson) => {
                                                 const isCompleted = completedLessons.includes(lesson._id);
                                                 const isActive = activeLessonId === lesson._id;
-                                                const canAccess = isEnrolled || lesson.isFree;
+                                                const canAccess = isEnrolled || !!lesson.isFree;
 
                                                 return (
                                                     <button

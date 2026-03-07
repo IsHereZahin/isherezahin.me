@@ -62,33 +62,6 @@ function formatDuration(seconds: number): string {
     return `${s}s`;
 }
 
-// YouTube IFrame API types
-declare global {
-    interface Window {
-        YT: {
-            Player: new (
-                el: string | HTMLElement,
-                config: {
-                    videoId: string;
-                    playerVars?: Record<string, unknown>;
-                    events?: {
-                        onReady?: (event: { target: YTPlayer }) => void;
-                        onStateChange?: (event: { data: number; target: YTPlayer }) => void;
-                    };
-                }
-            ) => YTPlayer;
-            PlayerState: {
-                ENDED: number;
-                PLAYING: number;
-                PAUSED: number;
-                BUFFERING: number;
-                CUED: number;
-            };
-        };
-        onYouTubeIframeAPIReady: (() => void) | undefined;
-    }
-}
-
 interface YTPlayer {
     getDuration: () => number;
     destroy: () => void;

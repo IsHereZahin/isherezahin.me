@@ -1,13 +1,13 @@
 "use client";
 
 import { FormModal } from "@/components/ui";
-import { courses } from "@/lib/api";
-import { useMutation } from "@tanstack/react-query";
-import { BookOpen, Loader2, Plus, Upload, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { courses, instructors as instructorsApi } from "@/lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { BookOpen, Check, ChevronDown, Loader2, Plus, Upload, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
-function ThumbnailUploadButton({ onUploaded }: Readonly<{ onUploaded: (url: string) => void }>) {
+function ImageUploadButton({ onUploaded, size = "normal" }: Readonly<{ onUploaded: (url: string) => void; size?: "normal" | "small" }>) {
     const [isUploading, setIsUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -41,11 +41,275 @@ function ThumbnailUploadButton({ onUploaded }: Readonly<{ onUploaded: (url: stri
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading}
-                className="px-3 py-2 bg-muted border border-border rounded-lg text-sm hover:bg-muted/80 transition-colors disabled:opacity-50 cursor-pointer"
+                className={`bg-muted border border-border rounded-lg hover:bg-muted/80 transition-colors disabled:opacity-50 cursor-pointer flex items-center justify-center ${
+                    size === "small" ? "p-1.5" : "px-3 py-2"
+                }`}
             >
-                {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                {isUploading ? <Loader2 className={`animate-spin ${size === "small" ? "w-3.5 h-3.5" : "w-4 h-4"}`} /> : <Upload className={size === "small" ? "w-3.5 h-3.5" : "w-4 h-4"} />}
             </button>
         </>
+    );
+}
+
+interface Instructor {
+    id: string;
+    name: string;
+    image: string | null;
+    bio: string | null;
+}
+
+interface InstructorSelectorProps {
+    selectedIds: string[];
+    onChange: (ids: string[]) => void;
+    inputClass: string;
+}
+
+function InstructorSelector({ selectedIds, onChange, inputClass }: Readonly<InstructorSelectorProps>) {
+    const queryClient = useQueryClient();
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [showAddForm, setShowAddForm] = useState(false);
+    const [newInstructor, setNewInstructor] = useState({ name: "", image: null as string | null, bio: "" });
+    const [search, setSearch] = useState("");
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    const { data } = useQuery({
+        queryKey: ["instructors"],
+        queryFn: () => instructorsApi.getAll(),
+    });
+
+    const allInstructors: Instructor[] = data?.instructors || [];
+
+    const createMutation = useMutation({
+        mutationFn: (data: { name: string; image?: string | null; bio?: string | null }) =>
+            instructorsApi.create(data),
+        onSuccess: (created: Instructor) => {
+            toast.success("Instructor created!");
+            queryClient.invalidateQueries({ queryKey: ["instructors"] });
+            onChange([...selectedIds, created.id]);
+            setNewInstructor({ name: "", image: null, bio: "" });
+            setShowAddForm(false);
+        },
+        onError: (error: Error) => toast.error(error.message),
+    });
+
+    // Close dropdown on outside click
+    useEffect(() => {
+        const handler = (e: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+                setShowDropdown(false);
+            }
+        };
+        document.addEventListener("mousedown", handler);
+        return () => document.removeEventListener("mousedown", handler);
+    }, []);
+
+    const filteredInstructors = allInstructors.filter((i) =>
+        i.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+    const selectedInstructors = allInstructors.filter((i) => selectedIds.includes(i.id));
+
+    const toggleInstructor = (id: string) => {
+        if (selectedIds.includes(id)) {
+            onChange(selectedIds.filter((sid) => sid !== id));
+        } else {
+            onChange([...selectedIds, id]);
+        }
+    };
+
+    const handleCreateSubmit = () => {
+        if (!newInstructor.name.trim()) {
+            toast.error("Instructor name is required");
+            return;
+        }
+        createMutation.mutate({
+            name: newInstructor.name.trim(),
+            image: newInstructor.image,
+            bio: newInstructor.bio.trim() || null,
+        });
+    };
+
+    return (
+        <div className="space-y-2">
+            {/* Selected instructors */}
+            {selectedInstructors.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                    {selectedInstructors.map((instructor) => (
+                        <div
+                            key={instructor.id}
+                            className="flex items-center gap-2 px-2.5 py-1.5 bg-muted border border-border rounded-lg text-sm"
+                        >
+                            {instructor.image ? (
+                                <img
+                                    src={instructor.image}
+                                    alt=""
+                                    className="w-5 h-5 rounded-full object-cover"
+                                />
+                            ) : (
+                                <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
+                                    {instructor.name.charAt(0)}
+                                </span>
+                            )}
+                            <span className="text-foreground">{instructor.name}</span>
+                            <button
+                                type="button"
+                                onClick={() => toggleInstructor(instructor.id)}
+                                className="p-0.5 hover:bg-red-500/10 rounded cursor-pointer"
+                            >
+                                <X className="w-3 h-3 text-red-400" />
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* Dropdown trigger */}
+            <div className="relative" ref={dropdownRef}>
+                <button
+                    type="button"
+                    onClick={() => setShowDropdown(!showDropdown)}
+                    className={`${inputClass} flex items-center justify-between cursor-pointer`}
+                >
+                    <span className="text-muted-foreground text-sm">
+                        {selectedIds.length > 0
+                            ? `${selectedIds.length} instructor${selectedIds.length > 1 ? "s" : ""} selected`
+                            : "Select instructors..."}
+                    </span>
+                    <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${showDropdown ? "rotate-180" : ""}`} />
+                </button>
+
+                {showDropdown && (
+                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-lg max-h-72 overflow-hidden">
+                        {/* Search */}
+                        <div className="p-2 border-b border-border">
+                            <input
+                                type="text"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                className={`${inputClass} text-xs`}
+                                placeholder="Search instructors..."
+                                autoFocus
+                            />
+                        </div>
+
+                        {/* List */}
+                        <div className="max-h-40 overflow-y-auto">
+                            {filteredInstructors.length > 0 ? (
+                                filteredInstructors.map((instructor) => {
+                                    const isSelected = selectedIds.includes(instructor.id);
+                                    return (
+                                        <button
+                                            key={instructor.id}
+                                            type="button"
+                                            onClick={() => toggleInstructor(instructor.id)}
+                                            className={`w-full flex items-center gap-2.5 px-3 py-2 text-left text-sm transition-colors cursor-pointer ${
+                                                isSelected ? "bg-primary/5" : "hover:bg-muted/50"
+                                            }`}
+                                        >
+                                            {instructor.image ? (
+                                                <img
+                                                    src={instructor.image}
+                                                    alt=""
+                                                    className="w-7 h-7 rounded-full object-cover shrink-0"
+                                                />
+                                            ) : (
+                                                <span className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground shrink-0">
+                                                    {instructor.name.charAt(0)}
+                                                </span>
+                                            )}
+                                            <div className="flex-1 min-w-0">
+                                                <p className="font-medium text-foreground truncate">{instructor.name}</p>
+                                                {instructor.bio && (
+                                                    <p className="text-xs text-muted-foreground truncate">{instructor.bio}</p>
+                                                )}
+                                            </div>
+                                            {isSelected && <Check className="w-4 h-4 text-primary shrink-0" />}
+                                        </button>
+                                    );
+                                })
+                            ) : (
+                                <p className="px-3 py-4 text-center text-sm text-muted-foreground">
+                                    {search ? "No matching instructors" : "No instructors yet"}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Add new button */}
+                        <div className="border-t border-border p-2">
+                            {!showAddForm ? (
+                                <button
+                                    type="button"
+                                    onClick={() => setShowAddForm(true)}
+                                    className="w-full flex items-center gap-1.5 px-3 py-2 text-sm text-primary hover:bg-muted/50 rounded-lg transition-colors cursor-pointer"
+                                >
+                                    <Plus className="w-3.5 h-3.5" /> Add new instructor
+                                </button>
+                            ) : (
+                                <div className="space-y-2 p-1">
+                                    <div className="flex items-center gap-2">
+                                        {newInstructor.image ? (
+                                            <div className="relative shrink-0">
+                                                <img
+                                                    src={newInstructor.image}
+                                                    alt=""
+                                                    className="w-9 h-9 rounded-full object-cover"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setNewInstructor({ ...newInstructor, image: null })}
+                                                    className="absolute -top-1 -right-1 p-0.5 bg-card border border-border rounded-full cursor-pointer hover:bg-red-500/10"
+                                                >
+                                                    <X className="w-2.5 h-2.5 text-red-400" />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <ImageUploadButton
+                                                size="small"
+                                                onUploaded={(url) => setNewInstructor({ ...newInstructor, image: url })}
+                                            />
+                                        )}
+                                        <input
+                                            type="text"
+                                            value={newInstructor.name}
+                                            onChange={(e) => setNewInstructor({ ...newInstructor, name: e.target.value })}
+                                            className={`${inputClass} text-xs flex-1`}
+                                            placeholder="Name *"
+                                        />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={newInstructor.bio}
+                                        onChange={(e) => setNewInstructor({ ...newInstructor, bio: e.target.value })}
+                                        className={`${inputClass} text-xs`}
+                                        placeholder="Bio (optional)"
+                                    />
+                                    <div className="flex justify-end gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setShowAddForm(false);
+                                                setNewInstructor({ name: "", image: null, bio: "" });
+                                            }}
+                                            className="px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={handleCreateSubmit}
+                                            disabled={createMutation.isPending || !newInstructor.name.trim()}
+                                            className="px-3 py-1 bg-primary text-primary-foreground rounded text-xs font-medium hover:bg-primary/90 disabled:opacity-50 cursor-pointer"
+                                        >
+                                            {createMutation.isPending ? "Adding..." : "Add"}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
     );
 }
 
@@ -58,7 +322,7 @@ interface CourseFormModalProps {
         category: string | null;
         tags: string[];
         difficulty: string;
-        instructors: { name: string; image?: string | null; bio?: string | null }[];
+        instructors: { id?: string; name: string; image?: string | null; bio?: string | null }[];
         price: number;
         originalPrice?: number | null;
         currency: string;
@@ -93,13 +357,13 @@ export default function CourseFormModal({ course, onClose, onSuccess }: Readonly
         originalPrice: course?.originalPrice?.toString() || "",
         currency: course?.currency || "BDT",
         status: course?.status || "draft",
-        instructors: course?.instructors || [{ name: "", image: null, bio: null }],
+        instructorIds: course?.instructors?.map((i) => i.id).filter(Boolean) as string[] || [],
         learningOutcomes: course?.learningOutcomes?.length ? course.learningOutcomes : [""],
     });
 
     const mutation = useMutation({
         mutationFn: (data: Record<string, unknown>) =>
-            isEditing ? courses.update(course!.slug, data) : courses.create(data as Parameters<typeof courses.create>[0]),
+            isEditing ? courses.update(course!.slug, data) : courses.create(data as unknown as Parameters<typeof courses.create>[0]),
         onSuccess: () => {
             toast.success(isEditing ? "Course updated!" : "Course created!");
             onSuccess();
@@ -124,7 +388,7 @@ export default function CourseFormModal({ course, onClose, onSuccess }: Readonly
             originalPrice: form.originalPrice ? parseFloat(form.originalPrice) : null,
             currency: form.currency,
             status: form.status,
-            instructors: form.instructors.filter((i) => i.name.trim()),
+            instructorIds: form.instructorIds,
             learningOutcomes: form.learningOutcomes.filter((o) => o.trim()),
         });
     };
@@ -195,7 +459,7 @@ export default function CourseFormModal({ course, onClose, onSuccess }: Readonly
                             className={`${inputClass} flex-1`}
                             placeholder="https://example.com/image.jpg"
                         />
-                        <ThumbnailUploadButton
+                        <ImageUploadButton
                             onUploaded={(url) => updateField("thumbnail", url)}
                         />
                     </div>
@@ -289,56 +553,12 @@ export default function CourseFormModal({ course, onClose, onSuccess }: Readonly
 
                 {/* Instructors */}
                 <div>
-                    <label className={labelClass}>Instructors</label>
-                    <div className="space-y-2">
-                        {form.instructors.map((instructor, i) => (
-                            <div key={i} className="flex items-center gap-2">
-                                <input
-                                    type="text"
-                                    value={instructor.name}
-                                    onChange={(e) => {
-                                        const updated = [...form.instructors];
-                                        updated[i] = { ...updated[i], name: e.target.value };
-                                        updateField("instructors", updated);
-                                    }}
-                                    className={`${inputClass} flex-1`}
-                                    placeholder="Instructor name"
-                                />
-                                <input
-                                    type="text"
-                                    value={instructor.bio || ""}
-                                    onChange={(e) => {
-                                        const updated = [...form.instructors];
-                                        updated[i] = { ...updated[i], bio: e.target.value };
-                                        updateField("instructors", updated);
-                                    }}
-                                    className={`${inputClass} flex-1`}
-                                    placeholder="Bio (optional)"
-                                />
-                                {form.instructors.length > 1 && (
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            const updated = form.instructors.filter((_, idx) => idx !== i);
-                                            updateField("instructors", updated);
-                                        }}
-                                        className="p-2 hover:bg-red-500/10 rounded-lg cursor-pointer"
-                                    >
-                                        <X className="w-4 h-4 text-red-400" />
-                                    </button>
-                                )}
-                            </div>
-                        ))}
-                        <button
-                            type="button"
-                            onClick={() =>
-                                updateField("instructors", [...form.instructors, { name: "", image: null, bio: null }])
-                            }
-                            className="flex items-center gap-1.5 text-sm text-primary hover:underline cursor-pointer"
-                        >
-                            <Plus className="w-3.5 h-3.5" /> Add instructor
-                        </button>
-                    </div>
+                    <label className={labelClass}>Instructors *</label>
+                    <InstructorSelector
+                        selectedIds={form.instructorIds}
+                        onChange={(ids) => updateField("instructorIds", ids)}
+                        inputClass={inputClass}
+                    />
                 </div>
 
                 {/* Learning Outcomes */}
@@ -393,7 +613,7 @@ export default function CourseFormModal({ course, onClose, onSuccess }: Readonly
                     </button>
                     <button
                         type="submit"
-                        disabled={mutation.isPending || !form.title.trim() || !form.slug.trim()}
+                        disabled={mutation.isPending || !form.title.trim() || !form.slug.trim() || form.instructorIds.length === 0}
                         className="px-5 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 cursor-pointer"
                     >
                         {mutation.isPending

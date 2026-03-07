@@ -1,5 +1,8 @@
 import { auth } from "@/auth";
-import { CourseModel, EnrollmentModel } from "@/database/models/course-model";
+import { CourseModel } from "@/database/models/course-model";
+import { LessonModel } from "@/database/models/lesson-model";
+import { EnrollmentModel } from "@/database/models/enrollment-model";
+import { QuizResultModel } from "@/database/models/quiz-result-model";
 import dbConnect from "@/database/services/mongo";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -31,7 +34,7 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
             return NextResponse.json({ error: "lessonId is required" }, { status: 400 });
         }
 
-        const course = await CourseModel.findOne({ slug }).lean() as { _id: unknown };
+        const course = await CourseModel.findOne({ slug }).lean() as { _id: unknown } | null;
         if (!course) {
             return NextResponse.json({ error: "Course not found" }, { status: 404 });
         }
@@ -39,14 +42,17 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
         const enrollment = await EnrollmentModel.findOne({
             userId: session.user.id,
             courseId: course._id,
-        });
+        }).lean() as { _id: unknown } | null;
         if (!enrollment) {
             return NextResponse.json({ error: "Not enrolled" }, { status: 403 });
         }
 
-        const savedResult = enrollment.quizResults?.get(lessonId);
+        const savedResult = await QuizResultModel.findOne({
+            enrollmentId: enrollment._id,
+            lessonId,
+        }).lean() as Record<string, unknown> | null;
+
         if (savedResult) {
-            // Explicitly extract properties — spread may fail on Mongoose Map values
             return NextResponse.json({
                 results: savedResult.results,
                 correctCount: savedResult.correctCount,
@@ -87,8 +93,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
             );
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const course = await CourseModel.findOne({ slug }).lean() as any;
+        const course = await CourseModel.findOne({ slug }).lean() as { _id: unknown } | null;
         if (!course) {
             return NextResponse.json(
                 { error: "Course not found" },
@@ -100,7 +105,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
         const enrollment = await EnrollmentModel.findOne({
             userId: session.user.id,
             courseId: course._id,
-        });
+        }).lean() as { _id: unknown } | null;
         if (!enrollment) {
             return NextResponse.json(
                 { error: "Not enrolled in this course" },
@@ -109,7 +114,11 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
         }
 
         // Check if already submitted
-        const existingResult = enrollment.quizResults?.get(lessonId);
+        const existingResult = await QuizResultModel.findOne({
+            enrollmentId: enrollment._id,
+            lessonId,
+        }).lean() as Record<string, unknown> | null;
+
         if (existingResult) {
             return NextResponse.json({
                 results: existingResult.results,
@@ -121,19 +130,14 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
             });
         }
 
-        // Find the quiz lesson
-        let quizContent: string | null = null;
-        for (const mod of course.modules || []) {
-            for (const lesson of mod.lessons || []) {
-                if (lesson._id.toString() === lessonId && lesson.contentType === "quiz") {
-                    quizContent = lesson.content;
-                    break;
-                }
-            }
-            if (quizContent) break;
-        }
+        // Find the quiz lesson from the Lesson collection
+        const quizLesson = await LessonModel.findOne({
+            _id: lessonId,
+            courseId: course._id,
+            contentType: "quiz",
+        }).lean() as { content: string } | null;
 
-        if (!quizContent) {
+        if (!quizLesson?.content) {
             return NextResponse.json(
                 { error: "Quiz lesson not found" },
                 { status: 404 }
@@ -143,7 +147,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
         // Parse quiz questions
         let questions: QuizQuestion[];
         try {
-            questions = JSON.parse(quizContent);
+            questions = JSON.parse(quizLesson.content);
             if (!Array.isArray(questions)) {
                 throw new Error("Invalid quiz format");
             }
@@ -181,12 +185,36 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
         const totalQuestions = questions.length;
         const passed = correctCount === totalQuestions;
 
-        // Store quiz result in enrollment
-        const quizResult = { results, correctCount, totalQuestions, passed, answers, submittedAt: new Date() };
-        enrollment.quizResults = enrollment.quizResults || new Map();
-        enrollment.quizResults.set(lessonId, quizResult);
-        enrollment.markModified("quizResults");
-        await enrollment.save();
+        // Atomically insert quiz result — unique index on (enrollmentId, lessonId) prevents duplicates
+        try {
+            await QuizResultModel.create({
+                enrollmentId: enrollment._id,
+                lessonId,
+                answers,
+                results,
+                correctCount,
+                totalQuestions,
+                passed,
+                submittedAt: new Date(),
+            });
+        } catch (err: unknown) {
+            // Duplicate key error (race condition) — return existing result
+            if (err && typeof err === "object" && "code" in err && (err as { code: number }).code === 11000) {
+                const saved = await QuizResultModel.findOne({
+                    enrollmentId: enrollment._id,
+                    lessonId,
+                }).lean() as Record<string, unknown> | null;
+                return NextResponse.json({
+                    results: saved?.results ?? results,
+                    correctCount: saved?.correctCount ?? correctCount,
+                    totalQuestions: saved?.totalQuestions ?? totalQuestions,
+                    passed: saved?.passed ?? passed,
+                    answers: saved?.answers ?? answers,
+                    alreadySubmitted: true,
+                });
+            }
+            throw err;
+        }
 
         return NextResponse.json({
             results,

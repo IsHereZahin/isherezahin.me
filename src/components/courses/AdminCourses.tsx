@@ -25,7 +25,7 @@ interface Course {
     difficulty: string;
     category: string | null;
     tags: string[];
-    instructors: { name: string; image?: string | null; bio?: string | null }[];
+    instructors: { id: string; name: string; image?: string | null; bio?: string | null }[];
     description: string;
     learningOutcomes: string[];
     createdAt: string;

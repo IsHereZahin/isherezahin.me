@@ -17,12 +17,22 @@ declare global {
                 el: string | HTMLElement,
                 config: {
                     videoId: string;
+                    width?: string | number;
+                    height?: string | number;
                     playerVars?: Record<string, unknown>;
                     events?: {
                         onReady?: (event: { target: { getDuration: () => number; destroy: () => void } }) => void;
+                        onStateChange?: (event: { data: number; target: { getDuration: () => number; destroy: () => void } }) => void;
                     };
                 }
-            ) => { destroy: () => void };
+            ) => { getDuration: () => number; destroy: () => void };
+            PlayerState: {
+                ENDED: number;
+                PLAYING: number;
+                PAUSED: number;
+                BUFFERING: number;
+                CUED: number;
+            };
         };
         onYouTubeIframeAPIReady: (() => void) | undefined;
         _ytApiLoaded?: boolean;

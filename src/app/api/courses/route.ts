@@ -1,5 +1,10 @@
 import { auth } from "@/auth";
-import { CourseModel, EnrollmentModel } from "@/database/models/course-model";
+import { CourseModel } from "@/database/models/course-model";
+import { CategoryModel } from "@/database/models/category-model";
+import { InstructorModel } from "@/database/models/instructor-model";
+import { ModuleModel } from "@/database/models/module-model";
+import { LessonModel } from "@/database/models/lesson-model";
+import { EnrollmentModel } from "@/database/models/enrollment-model";
 import dbConnect from "@/database/services/mongo";
 import { checkIsAdmin } from "@/lib/auth-utils";
 import { NextRequest, NextResponse } from "next/server";
@@ -28,8 +33,22 @@ export async function GET(req: NextRequest) {
             query.status = statusFilter;
         }
 
+        // Category filter: resolve slug/name to categoryId
         if (category && category !== "all") {
-            query.category = category;
+            const cat = await CategoryModel.findOne({
+                $or: [{ slug: category }, { name: category }],
+            }).lean();
+            if (cat) {
+                query.categoryId = (cat as { _id: unknown })._id;
+            } else {
+                return NextResponse.json({
+                    courses: [],
+                    total: 0,
+                    page,
+                    limit,
+                    totalPages: 0,
+                });
+            }
         }
 
         if (difficulty && difficulty !== "all") {
@@ -46,7 +65,6 @@ export async function GET(req: NextRequest) {
 
         const total = await CourseModel.countDocuments(query);
         const courses = await CourseModel.find(query)
-            .select("-modules.lessons.videoUrl -modules.lessons.content")
             .sort({ createdAt: -1 })
             .skip((page - 1) * limit)
             .limit(limit)
@@ -63,32 +81,64 @@ export async function GET(req: NextRequest) {
             enrolledCourseIds = enrollments.map((e: any) => e.courseId.toString());
         }
 
+        // Get module/lesson counts and category names in parallel
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const courseIds = courses.map((c: any) => c._id);
+        // Collect all instructor IDs across courses
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const allInstructorIds = [...new Set(courses.flatMap((c: any) => (c.instructorIds || []).map((id: any) => id.toString())))];
+
+        const [moduleCounts, lessonCounts, categories, instructors] = await Promise.all([
+            ModuleModel.aggregate([
+                { $match: { courseId: { $in: courseIds } } },
+                { $group: { _id: "$courseId", count: { $sum: 1 } } },
+            ]),
+            LessonModel.aggregate([
+                { $match: { courseId: { $in: courseIds } } },
+                { $group: { _id: "$courseId", count: { $sum: 1 } } },
+            ]),
+            CategoryModel.find({
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                _id: { $in: courses.map((c: any) => c.categoryId).filter(Boolean) },
+            }).lean(),
+            allInstructorIds.length > 0
+                ? InstructorModel.find({ _id: { $in: allInstructorIds } }).lean()
+                : Promise.resolve([]),
+        ]);
+
+        const moduleCountMap: Record<string, number> = {};
+        for (const m of moduleCounts) moduleCountMap[m._id.toString()] = m.count;
+        const lessonCountMap: Record<string, number> = {};
+        for (const l of lessonCounts) lessonCountMap[l._id.toString()] = l.count;
+        const categoryMap: Record<string, string> = {};
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        for (const c of categories as any[]) categoryMap[c._id.toString()] = c.name;
+        const instructorMap: Record<string, { id: string; name: string; image: string | null; bio: string | null }> = {};
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        for (const i of instructors as any[]) instructorMap[i._id.toString()] = { id: i._id.toString(), name: i.name, image: i.image, bio: i.bio };
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const formattedCourses = courses.map((course: any) => {
-            const totalLessons = course.modules?.reduce(
-                (sum: number, m: { lessons?: unknown[] }) => sum + (m.lessons?.length || 0),
-                0
-            ) || 0;
-
+            const id = course._id.toString();
             return {
-                id: course._id.toString(),
+                id,
                 title: course.title,
                 slug: course.slug,
                 description: course.description,
                 thumbnail: course.thumbnail,
-                category: course.category,
+                category: course.categoryId ? categoryMap[course.categoryId.toString()] || null : null,
                 tags: course.tags,
                 difficulty: course.difficulty,
-                instructors: course.instructors,
+                instructors: (course.instructorIds || []).map((id: any) => instructorMap[id.toString()]).filter(Boolean),
                 price: course.price,
                 originalPrice: course.originalPrice,
                 currency: course.currency,
                 status: course.status,
                 learningOutcomes: course.learningOutcomes || [],
                 enrollmentCount: course.enrollmentCount,
-                totalModules: course.modules?.length || 0,
-                totalLessons,
-                isEnrolled: enrolledCourseIds.includes(course._id.toString()),
+                totalModules: moduleCountMap[id] || 0,
+                totalLessons: lessonCountMap[id] || 0,
+                isEnrolled: enrolledCourseIds.includes(id),
                 createdAt: course.createdAt,
             };
         });
@@ -130,7 +180,7 @@ export async function POST(req: NextRequest) {
             category,
             tags,
             difficulty,
-            instructors,
+            instructorIds,
             price,
             originalPrice,
             currency,
@@ -145,6 +195,13 @@ export async function POST(req: NextRequest) {
             );
         }
 
+        if (!Array.isArray(instructorIds) || instructorIds.length === 0) {
+            return NextResponse.json(
+                { error: "At least one instructor is required" },
+                { status: 400 }
+            );
+        }
+
         // Check for duplicate slug
         const existing = await CourseModel.findOne({ slug: slug.trim().toLowerCase() });
         if (existing) {
@@ -154,15 +211,31 @@ export async function POST(req: NextRequest) {
             );
         }
 
+        // Resolve category name to categoryId (auto-create if new)
+        let categoryId = null;
+        if (category?.trim()) {
+            const categorySlug = category.trim().toLowerCase().replace(/\s+/g, "-");
+            let cat = await CategoryModel.findOne({
+                $or: [{ slug: categorySlug }, { name: category.trim() }],
+            });
+            if (!cat) {
+                cat = await CategoryModel.create({
+                    name: category.trim(),
+                    slug: categorySlug,
+                });
+            }
+            categoryId = cat._id;
+        }
+
         const course = await CourseModel.create({
             title: title.trim(),
             slug: slug.trim().toLowerCase(),
             description: description?.trim() || "",
             thumbnail: thumbnail || null,
-            category: category?.trim() || null,
+            categoryId,
             tags: Array.isArray(tags) ? tags : [],
             difficulty: difficulty || "beginner",
-            instructors: Array.isArray(instructors) ? instructors : [],
+            instructorIds: Array.isArray(instructorIds) ? instructorIds : [],
             price: price || 0,
             originalPrice: originalPrice || null,
             currency: currency || "BDT",

@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(ls -la \"/d/LWS/isherezahin.me/src/app/\\(main\\)\")",
-      "Bash(ls -la \"/d/LWS/isherezahin.me/src/app/\\(main\\)/saylo\")"
-    ]
-  }
-}

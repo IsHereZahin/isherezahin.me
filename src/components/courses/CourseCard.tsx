@@ -62,9 +62,34 @@ export default function CourseCard({ course }: Readonly<CourseCardProps>) {
                     {course.title}
                 </h3>
 
-                <p className="text-sm text-muted-foreground line-clamp-1">
-                    {instructorNames}
-                </p>
+                <div className="flex items-center gap-1.5">
+                    {course.instructors?.length > 0 && (
+                        <div className="flex -space-x-1.5 flex-shrink-0">
+                            {course.instructors.slice(0, 3).map((inst, i) => (
+                                inst.image ? (
+                                    <img
+                                        key={i}
+                                        src={inst.image}
+                                        alt={inst.name}
+                                        className="w-5 h-5 rounded-full border border-background object-cover"
+                                    />
+                                ) : (
+                                    <div
+                                        key={i}
+                                        className="w-5 h-5 rounded-full border border-background bg-muted flex items-center justify-center"
+                                    >
+                                        <span className="text-[9px] font-bold text-muted-foreground">
+                                            {inst.name.charAt(0)}
+                                        </span>
+                                    </div>
+                                )
+                            ))}
+                        </div>
+                    )}
+                    <p className="text-sm text-muted-foreground line-clamp-1">
+                        {instructorNames}
+                    </p>
+                </div>
 
                 <div className="flex items-center gap-3 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">

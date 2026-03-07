@@ -1,5 +1,8 @@
 import { auth } from "@/auth";
-import { CourseModel, EnrollmentModel } from "@/database/models/course-model";
+import { CourseModel } from "@/database/models/course-model";
+import { LessonModel } from "@/database/models/lesson-model";
+import { EnrollmentModel } from "@/database/models/enrollment-model";
+import { LessonProgressModel } from "@/database/models/lesson-progress-model";
 import dbConnect from "@/database/services/mongo";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -23,8 +26,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
         const body = await req.json();
         const { lessonId, action } = body; // action: "complete" | "uncomplete" | "access"
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const course = await CourseModel.findOne({ slug }).lean() as any;
+        const course = await CourseModel.findOne({ slug }).lean() as { _id: unknown } | null;
         if (!course) {
             return NextResponse.json(
                 { error: "Course not found" },
@@ -44,29 +46,36 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
             );
         }
 
-        // Calculate total lessons
-        const totalLessons = course.modules?.reduce(
-            (sum: number, m: { lessons?: unknown[] }) => sum + (m.lessons?.length || 0),
-            0
-        ) || 0;
+        // Get total lessons for progress calculation
+        const totalLessons = await LessonModel.countDocuments({ courseId: course._id });
 
         if (action === "complete" && lessonId) {
-            if (!enrollment.completedLessons.includes(lessonId)) {
-                enrollment.completedLessons.push(lessonId);
-            }
-        } else if (action === "uncomplete" && lessonId) {
-            enrollment.completedLessons = enrollment.completedLessons.filter(
-                (id: string) => id !== lessonId
+            // Upsert lesson progress record
+            await LessonProgressModel.findOneAndUpdate(
+                { enrollmentId: enrollment._id, lessonId },
+                { $set: { completedAt: new Date() } },
+                { upsert: true }
             );
+        } else if (action === "uncomplete" && lessonId) {
+            // Remove lesson progress record
+            await LessonProgressModel.deleteOne({
+                enrollmentId: enrollment._id,
+                lessonId,
+            });
         }
 
         if (lessonId) {
             enrollment.lastAccessedLessonId = lessonId;
         }
 
-        // Recalculate progress
+        // Recalculate progress from LessonProgress collection
+        const completedCount = await LessonProgressModel.countDocuments({
+            enrollmentId: enrollment._id,
+            completedAt: { $ne: null },
+        });
+
         enrollment.progressPercent = totalLessons > 0
-            ? Math.round((enrollment.completedLessons.length / totalLessons) * 100)
+            ? Math.round((completedCount / totalLessons) * 100)
             : 0;
 
         if (enrollment.progressPercent >= 100) {
@@ -79,11 +88,20 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
 
         await enrollment.save();
 
+        // Return completed lesson IDs for frontend compatibility
+        const progressRecords = await LessonProgressModel.find({
+            enrollmentId: enrollment._id,
+            completedAt: { $ne: null },
+        }).lean();
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const completedLessons = progressRecords.map((p: any) => p.lessonId.toString());
+
         return NextResponse.json({
-            completedLessons: enrollment.completedLessons,
+            completedLessons,
             progressPercent: enrollment.progressPercent,
             status: enrollment.status,
-            lastAccessedLessonId: enrollment.lastAccessedLessonId,
+            lastAccessedLessonId: enrollment.lastAccessedLessonId?.toString() || null,
         });
     } catch (error) {
         console.error("Error updating progress:", error);

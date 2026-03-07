@@ -1276,6 +1276,31 @@ const contentDiscussions = {
     },
 };
 
+// Instructors API
+const instructors = {
+    async getAll() {
+        const response = await fetch("/api/instructors");
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch instructors", response.status);
+        }
+        return await response.json();
+    },
+
+    async create(data: { name: string; image?: string | null; bio?: string | null }) {
+        const response = await fetch("/api/instructors", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to create instructor", response.status);
+        }
+        return await response.json();
+    },
+};
+
 // Course API
 interface CourseData {
     title: string;
@@ -1285,7 +1310,7 @@ interface CourseData {
     category?: string | null;
     tags?: string[];
     difficulty?: "beginner" | "intermediate" | "advanced";
-    instructors?: { name: string; image?: string | null; bio?: string | null }[];
+    instructorIds?: string[];
     price?: number;
     originalPrice?: number | null;
     currency?: string;
@@ -1444,7 +1469,7 @@ const courses = {
 
 export {
     aboutHero, adminSettings, adminSubscribers, adminUsers, blogLikes, blogViews, bucketList, cloudinary, contactInfo, contactMessage,
-    contentDiscussions, courses, createBlog, createProject, currentStatus, deleteBlog, deleteProject, discussions, getBlog, getBlogs, getBlogTags, getProject,
+    contentDiscussions, courses, createBlog, createProject, currentStatus, deleteBlog, deleteProject, discussions, getBlog, getBlogs, getBlogTags, getProject, instructors,
     getProjects, getProjectTags, legal, newsletter, profile, projectLikes, projectViews, publicSettings, quests, saylo, sessions, statistics, testimonials,
     updateBlog, updateProject, visitors, workExperience
 };

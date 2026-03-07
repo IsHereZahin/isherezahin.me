@@ -2,7 +2,7 @@
 
 import { courses } from "@/lib/api";
 import { CheckCircle, ChevronLeft, ChevronRight, Loader2, XCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 interface QuizQuestion {
@@ -59,6 +59,7 @@ export default function QuizPlayer({ content, slug, lessonId, savedResult, onCom
     });
     const [results, setResults] = useState<QuizResult[] | null>(savedResult?.results || null);
     const [submitting, setSubmitting] = useState(false);
+    const submittingRef = useRef(false);
     const [correctCount, setCorrectCount] = useState(savedResult?.correctCount || 0);
     const [checking, setChecking] = useState(!savedResult && !results);
 
@@ -116,10 +117,23 @@ export default function QuizPlayer({ content, slug, lessonId, savedResult, onCom
     };
 
     const handleSubmit = async () => {
-        if (!allAnswered || submitting || isAlreadySubmitted || checking) return;
+        if (!allAnswered || submittingRef.current || submitted || isAlreadySubmitted || checking) return;
+        submittingRef.current = true;
         setSubmitting(true);
         try {
             const response = await courses.submitQuiz(slug, lessonId, answers);
+            if (response.alreadySubmitted) {
+                setResults(response.results);
+                setCorrectCount(response.correctCount);
+                if (response.answers) {
+                    const restored: Record<number, number[]> = {};
+                    for (const [k, v] of Object.entries(response.answers as Record<string, number[]>)) {
+                        restored[Number(k)] = v;
+                    }
+                    setAnswers(restored);
+                }
+                return;
+            }
             setResults(response.results);
             setCorrectCount(response.correctCount);
             const correct = response.correctCount ?? 0;
@@ -134,6 +148,7 @@ export default function QuizPlayer({ content, slug, lessonId, savedResult, onCom
             }
         } catch {
             toast.error("Failed to submit quiz");
+            submittingRef.current = false;
         } finally {
             setSubmitting(false);
         }

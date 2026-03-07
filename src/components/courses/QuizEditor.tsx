@@ -21,7 +21,7 @@ function parseQuiz(value: string): QuizQuestion[] {
         if (!Array.isArray(parsed)) return [];
         // Migrate old format (correctIndex) to new (correctIndices)
         return parsed.map((q: Record<string, unknown>) => ({
-            question: q.question || "",
+            question: (q.question as string) || "",
             options: Array.isArray(q.options) ? q.options : [],
             correctIndices: Array.isArray(q.correctIndices)
                 ? q.correctIndices

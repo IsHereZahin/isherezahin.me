@@ -1,5 +1,8 @@
 import { auth } from "@/auth";
-import { CourseModel, EnrollmentModel } from "@/database/models/course-model";
+import { CourseModel } from "@/database/models/course-model";
+import { EnrollmentModel } from "@/database/models/enrollment-model";
+import { LessonProgressModel } from "@/database/models/lesson-progress-model";
+import { QuizResultModel } from "@/database/models/quiz-result-model";
 import dbConnect from "@/database/services/mongo";
 import { checkIsAdmin } from "@/lib/auth-utils";
 import { NextRequest, NextResponse } from "next/server";
@@ -99,6 +102,12 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
             );
         }
 
+        // Cascade delete lesson progress and quiz results for this enrollment
+        await Promise.all([
+            LessonProgressModel.deleteMany({ enrollmentId: result._id }),
+            QuizResultModel.deleteMany({ enrollmentId: result._id }),
+        ]);
+
         await CourseModel.updateOne(
             { _id: course._id },
             { $inc: { enrollmentCount: -1 } }
@@ -141,12 +150,21 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
             .sort({ createdAt: -1 })
             .lean();
 
+        // Get completed lesson counts per enrollment
+        const enrollmentIds = enrollments.map((e: Record<string, unknown>) => e._id);
+        const progressCounts = await LessonProgressModel.aggregate([
+            { $match: { enrollmentId: { $in: enrollmentIds }, completedAt: { $ne: null } } },
+            { $group: { _id: "$enrollmentId", count: { $sum: 1 } } },
+        ]);
+        const progressCountMap: Record<string, number> = {};
+        for (const p of progressCounts) progressCountMap[p._id.toString()] = p.count;
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const formatted = enrollments.map((e: any) => ({
             id: e._id.toString(),
             user: e.userId,
             progressPercent: e.progressPercent,
-            completedLessons: e.completedLessons?.length || 0,
+            completedLessons: progressCountMap[e._id.toString()] || 0,
             status: e.status,
             enrolledAt: e.createdAt,
             completedAt: e.completedAt,
