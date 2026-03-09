@@ -282,6 +282,10 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
             { new: true, strict: false }
         );
 
+        if (!updated) {
+            return NextResponse.json({ error: "Course not found after update" }, { status: 404 });
+        }
+
         return NextResponse.json({
             id: updated._id.toString(),
             slug: updated.slug,
