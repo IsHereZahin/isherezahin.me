@@ -276,15 +276,11 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
             }
         }
 
-        console.log("Updating course with:", JSON.stringify(update, null, 2));
-
         const updated = await CourseModel.findByIdAndUpdate(
             (course as unknown as { _id: string })._id,
             { $set: update },
             { new: true, strict: false }
         );
-
-        console.log("Updated instructorIds:", updated.instructorIds);
 
         return NextResponse.json({
             id: updated._id.toString(),

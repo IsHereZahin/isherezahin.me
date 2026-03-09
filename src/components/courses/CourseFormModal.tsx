@@ -1,6 +1,6 @@
 "use client";
 
-import { FormModal } from "@/components/ui";
+import { FormModal, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui";
 import { courses, instructors as instructorsApi } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { BookOpen, Check, ChevronDown, Loader2, Plus, Upload, X } from "lucide-react";
@@ -479,27 +479,29 @@ export default function CourseFormModal({ course, onClose, onSuccess }: Readonly
                     </div>
                     <div>
                         <label className={labelClass}>Difficulty</label>
-                        <select
-                            value={form.difficulty}
-                            onChange={(e) => updateField("difficulty", e.target.value)}
-                            className={inputClass}
-                        >
-                            <option value="beginner">Beginner</option>
-                            <option value="intermediate">Intermediate</option>
-                            <option value="advanced">Advanced</option>
-                        </select>
+                        <Select value={form.difficulty} onValueChange={(v) => updateField("difficulty", v)}>
+                            <SelectTrigger className="w-full text-sm">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="beginner">Beginner</SelectItem>
+                                <SelectItem value="intermediate">Intermediate</SelectItem>
+                                <SelectItem value="advanced">Advanced</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
                     <div>
                         <label className={labelClass}>Status</label>
-                        <select
-                            value={form.status}
-                            onChange={(e) => updateField("status", e.target.value)}
-                            className={inputClass}
-                        >
-                            <option value="draft">Draft</option>
-                            <option value="published">Published</option>
-                            <option value="archived">Archived</option>
-                        </select>
+                        <Select value={form.status} onValueChange={(v) => updateField("status", v)}>
+                            <SelectTrigger className="w-full text-sm">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="draft">Draft</SelectItem>
+                                <SelectItem value="published">Published</SelectItem>
+                                <SelectItem value="archived">Archived</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
 
@@ -528,14 +530,15 @@ export default function CourseFormModal({ course, onClose, onSuccess }: Readonly
                     </div>
                     <div>
                         <label className={labelClass}>Currency</label>
-                        <select
-                            value={form.currency}
-                            onChange={(e) => updateField("currency", e.target.value)}
-                            className={inputClass}
-                        >
-                            <option value="BDT">BDT (৳)</option>
-                            <option value="USD">USD ($)</option>
-                        </select>
+                        <Select value={form.currency} onValueChange={(v) => updateField("currency", v)}>
+                            <SelectTrigger className={inputClass}>
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="BDT">BDT (৳)</SelectItem>
+                                <SelectItem value="USD">USD ($)</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
 

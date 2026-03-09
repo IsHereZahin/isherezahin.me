@@ -2,6 +2,7 @@
 
 import MarkdownPreview from "@/components/content/discussions/MarkdownPreview";
 import MarkdownToolbar from "@/components/content/discussions/MarkdownToolbar";
+import { ConfirmDialog, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui";
 import { courses } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import QuizEditor from "./QuizEditor";
@@ -272,6 +273,7 @@ export default function ModuleEditor({ course, onBack }: Readonly<ModuleEditorPr
     const [modules, setModules] = useState<Module[]>([]);
     const [initialized, setInitialized] = useState(false);
     const [expandedModules, setExpandedModules] = useState<Set<number>>(new Set([0]));
+    const [deleteModuleIndex, setDeleteModuleIndex] = useState<number | null>(null);
 
     // Initialize from fetched data
     if (courseData?.modules && !initialized) {
@@ -407,7 +409,7 @@ export default function ModuleEditor({ course, onBack }: Readonly<ModuleEditorPr
                     </button>
                     <div>
                         <h2 className="text-lg font-bold text-foreground">Manage Modules</h2>
-                        <p className="text-sm text-muted-foreground">{course.title}</p>
+                        <p className="text-sm text-muted-foreground">{courseData?.title || course.title}</p>
                     </div>
                 </div>
                 <button
@@ -450,7 +452,7 @@ export default function ModuleEditor({ course, onBack }: Readonly<ModuleEditorPr
                                 <button onClick={() => toggleModuleExpand(mi)} className="p-1 hover:bg-muted rounded cursor-pointer">
                                     <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expandedModules.has(mi) ? "rotate-180" : ""}`} />
                                 </button>
-                                <button onClick={() => removeModule(mi)} className="p-1 hover:bg-red-500/10 rounded cursor-pointer">
+                                <button onClick={() => setDeleteModuleIndex(mi)} className="p-1 hover:bg-red-500/10 rounded cursor-pointer">
                                     <Trash2 className="w-3.5 h-3.5 text-red-400" />
                                 </button>
                             </div>
@@ -491,19 +493,23 @@ export default function ModuleEditor({ course, onBack }: Readonly<ModuleEditorPr
 
                                         {/* Lesson details */}
                                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 ml-8">
-                                            <select
+                                            <Select
                                                 value={lesson.contentType}
-                                                onChange={(e) => {
+                                                onValueChange={(v) => {
                                                     const updated = [...modules];
-                                                    updated[mi].lessons[li].contentType = e.target.value as "video" | "text" | "quiz";
+                                                    updated[mi].lessons[li].contentType = v as "video" | "text" | "quiz";
                                                     setModules(updated);
                                                 }}
-                                                className={`${inputClass} text-xs`}
                                             >
-                                                <option value="video">Video</option>
-                                                <option value="text">Text</option>
-                                                <option value="quiz">Quiz</option>
-                                            </select>
+                                                <SelectTrigger className={`${inputClass} text-xs`}>
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="video">Video</SelectItem>
+                                                    <SelectItem value="text">Text</SelectItem>
+                                                    <SelectItem value="quiz">Quiz</SelectItem>
+                                                </SelectContent>
+                                            </Select>
                                             {lesson.contentType !== "quiz" && (
                                                 <div className="relative">
                                                     <input
@@ -522,18 +528,29 @@ export default function ModuleEditor({ course, onBack }: Readonly<ModuleEditorPr
                                                     )}
                                                 </div>
                                             )}
-                                            <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={lesson.isFree || false}
-                                                    onChange={(e) => {
+                                            <label className="flex items-center gap-2 cursor-pointer select-none">
+                                                <span className={`text-xs ${lesson.isFree ? "text-primary" : "text-muted-foreground"}`}>
+                                                    {lesson.isFree ? "Free" : "Paid"}
+                                                </span>
+                                                <button
+                                                    type="button"
+                                                    role="switch"
+                                                    aria-checked={lesson.isFree || false}
+                                                    onClick={() => {
                                                         const updated = [...modules];
-                                                        updated[mi].lessons[li].isFree = e.target.checked;
+                                                        updated[mi].lessons[li].isFree = !lesson.isFree;
                                                         setModules(updated);
                                                     }}
-                                                    className="rounded"
-                                                />
-                                                Free preview
+                                                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${
+                                                        lesson.isFree ? "bg-primary" : "bg-border"
+                                                    }`}
+                                                >
+                                                    <span
+                                                        className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow-sm transition-transform ${
+                                                            lesson.isFree ? "translate-x-4.5" : "translate-x-0.75"
+                                                        }`}
+                                                    />
+                                                </button>
                                             </label>
                                         </div>
 
@@ -614,6 +631,21 @@ export default function ModuleEditor({ course, onBack }: Readonly<ModuleEditorPr
                     <Plus className="w-4 h-4" /> Add Module
                 </button>
             </div>
+
+            {deleteModuleIndex !== null && (
+                <ConfirmDialog
+                    open={true}
+                    onOpenChange={() => setDeleteModuleIndex(null)}
+                    title="Delete Module"
+                    description={`Are you sure you want to delete "${modules[deleteModuleIndex]?.title || "Untitled Module"}"? All lessons in this module will be removed. This action cannot be undone.`}
+                    onConfirm={() => {
+                        removeModule(deleteModuleIndex);
+                        setDeleteModuleIndex(null);
+                    }}
+                    confirmText="Delete"
+                    variant="danger"
+                />
+            )}
         </div>
     );
 }

@@ -8,7 +8,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 import CourseFormModal from "./CourseFormModal";
-import ModuleEditor from "./ModuleEditor";
 
 interface Course {
     id: string;
@@ -35,7 +34,6 @@ export default function AdminCourses() {
     const queryClient = useQueryClient();
     const [showForm, setShowForm] = useState(false);
     const [editingCourse, setEditingCourse] = useState<Course | null>(null);
-    const [managingModules, setManagingModules] = useState<Course | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<Course | null>(null);
 
     const { data, isLoading } = useQuery({
@@ -59,18 +57,6 @@ export default function AdminCourses() {
         archived: "bg-gray-500/10 text-gray-400",
     };
 
-    if (managingModules) {
-        return (
-            <ModuleEditor
-                course={managingModules}
-                onBack={() => {
-                    setManagingModules(null);
-                    queryClient.invalidateQueries({ queryKey: ["admin-courses"] });
-                }}
-            />
-        );
-    }
-
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -85,7 +71,7 @@ export default function AdminCourses() {
                         setEditingCourse(null);
                         setShowForm(true);
                     }}
-                    className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors cursor-pointer"
+                    className="flex items-center gap-2 px-4 py-2 bg-foreground text-background rounded-lg text-sm font-medium hover:bg-foreground/90 transition-colors cursor-pointer"
                 >
                     <Plus className="w-4 h-4" />
                     New Course
@@ -154,14 +140,14 @@ export default function AdminCourses() {
                                 >
                                     <Eye className="w-4 h-4 text-muted-foreground" />
                                 </Link>
-                                <button
-                                    onClick={() => setManagingModules(course)}
-                                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-primary/10 text-primary transition-colors cursor-pointer text-xs font-medium"
+                                <Link
+                                    href={`/admin/courses/${course.slug}/content`}
+                                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-primary/10 text-primary transition-colors text-xs font-medium"
                                     title="Manage Modules & Lessons"
                                 >
                                     <Layers className="w-3.5 h-3.5" />
                                     Content
-                                </button>
+                                </Link>
                                 <button
                                     onClick={() => {
                                         setEditingCourse(course);
