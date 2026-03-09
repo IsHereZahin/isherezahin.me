@@ -122,7 +122,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                             const Icon = item.icon;
                             const hasChildren = item.children && item.children.length > 0;
                             const isParentActive = !!(hasChildren && pathname.startsWith(item.href));
-                            const isActive = pathname === item.href || currentSection === item.id;
+                            const isActive = pathname === item.href || currentSection === item.id || pathname.startsWith(item.href + "/");
 
                             if (hasChildren) {
                                 return (

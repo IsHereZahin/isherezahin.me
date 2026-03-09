@@ -1,9 +1,9 @@
 "use client";
 
-import { BlurImage, ConfirmDialog, Skeleton } from "@/components/ui";
+import { BlurImage, ConfirmDialog, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, Skeleton } from "@/components/ui";
 import { courses } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { BookOpen, Edit, Eye, Trash2, Users, Plus, Layers } from "lucide-react";
+import { BookOpen, Edit, Eye, Trash2, Users, Plus, Layers, MoreVertical } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -92,7 +92,7 @@ export default function AdminCourses() {
                             className="flex items-center gap-4 p-4 bg-card border border-border rounded-xl hover:border-primary/20 transition-colors"
                         >
                             {/* Thumbnail */}
-                            <div className="w-20 h-12 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                            <div className="w-20 h-12 rounded-lg overflow-hidden bg-muted shrink-0">
                                 {course.thumbnail ? (
                                     <BlurImage
                                         src={course.thumbnail}
@@ -131,8 +131,8 @@ export default function AdminCourses() {
                                 </div>
                             </div>
 
-                            {/* Actions */}
-                            <div className="flex items-center gap-1.5 flex-shrink-0">
+                            {/* Actions - Desktop */}
+                            <div className="hidden sm:flex items-center gap-1.5 shrink-0">
                                 <Link
                                     href={`/courses/${course.slug}`}
                                     className="p-2 rounded-lg hover:bg-muted transition-colors"
@@ -165,6 +165,49 @@ export default function AdminCourses() {
                                 >
                                     <Trash2 className="w-4 h-4 text-red-400" />
                                 </button>
+                            </div>
+
+                            {/* Actions - Mobile dropdown */}
+                            <div className="sm:hidden shrink-0">
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <button className="p-1.5 rounded-lg hover:bg-muted transition-colors cursor-pointer">
+                                            <MoreVertical className="w-4 h-4 text-muted-foreground" />
+                                        </button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem asChild>
+                                            <Link href={`/courses/${course.slug}`} className="cursor-pointer">
+                                                <Eye className="w-4 h-4 mr-2" />
+                                                View Course
+                                            </Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem asChild>
+                                            <Link href={`/admin/courses/${course.slug}/content`} className="cursor-pointer">
+                                                <Layers className="w-4 h-4 mr-2" />
+                                                Manage Content
+                                            </Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            onClick={() => {
+                                                setEditingCourse(course);
+                                                setShowForm(true);
+                                            }}
+                                            className="cursor-pointer"
+                                        >
+                                            <Edit className="w-4 h-4 mr-2" />
+                                            Edit Course
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem
+                                            onClick={() => setDeleteTarget(course)}
+                                            className="text-red-500 focus:text-red-500 cursor-pointer"
+                                        >
+                                            <Trash2 className="w-4 h-4 mr-2" />
+                                            Delete Course
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                             </div>
                         </div>
                     ))}
