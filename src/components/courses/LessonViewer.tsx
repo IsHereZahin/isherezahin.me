@@ -1,12 +1,13 @@
 "use client";
 
+import MarkdownPreview from "@/components/content/discussions/MarkdownPreview";
 import MotionWrapper from "@/components/motion/MotionWrapper";
 import { Section, Skeleton } from "@/components/ui";
 import { courses } from "@/lib/api";
-import { parseMarkdown } from "@/lib/markdown";
+import { extractTocItems } from "@/utils";
 import QuizPlayer from "./QuizPlayer";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckCircle, ChevronLeft, ChevronRight, Share2 } from "lucide-react";
+import { AlignLeftIcon, CheckCircle, ChevronLeft, ChevronRight, Share2, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -260,6 +261,28 @@ export default function LessonViewer({ slug }: Readonly<LessonViewerProps>) {
     };
 
     const [showSidebar, setShowSidebar] = useState(false);
+    const [showTOC, setShowTOC] = useState(false);
+
+    // Extract TOC items from text lesson content
+    const tocItems = useMemo(() => {
+        if (activeLesson?.contentType === "text" && activeLesson.content) {
+            return extractTocItems(activeLesson.content);
+        }
+        if (activeLesson?.contentType === "video" && activeLesson.content) {
+            return extractTocItems(activeLesson.content);
+        }
+        return [];
+    }, [activeLesson]);
+
+    // Lock body scroll when mobile TOC is open
+    useEffect(() => {
+        if (showTOC) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+        return () => { document.body.style.overflow = ""; };
+    }, [showTOC]);
 
     if (isLoading) {
         return (
@@ -342,36 +365,32 @@ export default function LessonViewer({ slug }: Readonly<LessonViewerProps>) {
                                 onComplete={handleQuizComplete}
                             />
                         ) : activeLesson?.contentType === "text" && activeLesson.content ? (
-                            <div className="border border-border rounded-xl bg-card overflow-hidden">
-                                <div className="px-6 py-4 border-b border-border bg-muted/30">
-                                    {activeModule && (
-                                        <p className="text-xs text-muted-foreground mb-1">{activeModule.title}</p>
-                                    )}
-                                    <h2 className="text-lg font-semibold text-foreground">{activeLesson.title}</h2>
+                            <div>
+                                {activeModule && (
+                                    <p className="text-xs tracking-wider uppercase text-muted-foreground mb-2">{activeModule.title}</p>
+                                )}
+                                <h1 className="text-2xl sm:text-3xl font-bold text-foreground leading-tight mb-6">{activeLesson.title}</h1>
+                                <div className="border-t border-border pt-6">
+                                    <MarkdownPreview content={activeLesson.content} />
                                 </div>
-                                <div
-                                    className="prose prose-sm dark:prose-invert max-w-none p-6"
-                                    dangerouslySetInnerHTML={{ __html: parseMarkdown(activeLesson.content) }}
-                                />
                             </div>
                         ) : null}
                     </MotionWrapper>
 
                     {/* Lesson info & actions */}
                     <MotionWrapper delay={0.1}>
-                        <div className="mt-4 space-y-3">
+                        <div className="mt-6 space-y-4">
                             {activeLesson?.contentType !== "text" && (
-                                <>
-                                    <h2 className="text-lg font-semibold text-foreground">
-                                        {activeLesson?.title}
-                                    </h2>
-
+                                <div>
                                     {activeModule && (
-                                        <p className="text-sm text-muted-foreground">
-                                            Module: {activeModule.title}
+                                        <p className="text-xs tracking-wider uppercase text-muted-foreground mb-1.5">
+                                            {activeModule.title}
                                         </p>
                                     )}
-                                </>
+                                    <h2 className="text-xl sm:text-2xl font-bold text-foreground leading-tight">
+                                        {activeLesson?.title}
+                                    </h2>
+                                </div>
                             )}
 
                             {/* Action buttons */}
@@ -411,14 +430,17 @@ export default function LessonViewer({ slug }: Readonly<LessonViewerProps>) {
                             </div>
 
                             {/* Navigation */}
-                            <div className="flex items-center justify-between pt-4 border-t border-border">
+                            <div className="flex items-center justify-between pt-6 border-t border-border">
                                 {prevLesson ? (
                                     <button
                                         onClick={() => handleNavigate(prevLesson)}
-                                        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                                        className="group flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                                     >
-                                        <ChevronLeft className="w-4 h-4" />
-                                        Previous
+                                        <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+                                        <div className="text-left">
+                                            <span className="text-xs text-muted-foreground block">Previous</span>
+                                            <span className="hidden sm:block text-foreground text-sm font-medium truncate max-w-40">{prevLesson.title}</span>
+                                        </div>
                                     </button>
                                 ) : (
                                     <div />
@@ -426,10 +448,13 @@ export default function LessonViewer({ slug }: Readonly<LessonViewerProps>) {
                                 {nextLesson ? (
                                     <button
                                         onClick={() => handleNavigate(nextLesson)}
-                                        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                                        className="group flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                                     >
-                                        Next
-                                        <ChevronRight className="w-4 h-4" />
+                                        <div className="text-right">
+                                            <span className="text-xs text-muted-foreground block">Next</span>
+                                            <span className="hidden sm:block text-foreground text-sm font-medium truncate max-w-40">{nextLesson.title}</span>
+                                        </div>
+                                        <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                                     </button>
                                 ) : (
                                     <div />
@@ -438,12 +463,9 @@ export default function LessonViewer({ slug }: Readonly<LessonViewerProps>) {
 
                             {/* Lesson note — only for video lessons with extra notes */}
                             {activeLesson?.content && activeLesson.contentType === "video" && (
-                                <div className="pt-4 border-t border-border">
-                                    <h3 className="text-sm font-medium text-foreground mb-2">Note</h3>
-                                    <div
-                                        className="prose prose-sm dark:prose-invert max-w-none text-sm text-muted-foreground p-4 bg-muted/30 border border-border rounded-lg"
-                                        dangerouslySetInnerHTML={{ __html: parseMarkdown(activeLesson.content) }}
-                                    />
+                                <div className="pt-6 border-t border-border">
+                                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">Lesson Notes</h3>
+                                    <MarkdownPreview content={activeLesson.content} />
                                 </div>
                             )}
                         </div>
@@ -478,6 +500,62 @@ export default function LessonViewer({ slug }: Readonly<LessonViewerProps>) {
                     </div>
                 </div>
             </div>
+
+            {/* Floating TOC button — mobile only, for text/video lessons with headings */}
+            {tocItems.length > 0 && (
+                <button
+                    onClick={() => setShowTOC(true)}
+                    className="group rounded-xl border border-transparent bg-neutral-800/40 backdrop-blur-sm fixed z-10 bottom-5 right-5 lg:hidden py-3 px-3 flex items-center gap-2 transition-opacity duration-300 opacity-50 hover:opacity-100! cursor-pointer"
+                >
+                    <AlignLeftIcon className="w-5 h-5 text-white" /> <span className="text-white text-sm">Table of Contents</span>
+                </button>
+            )}
+
+            {/* Mobile TOC overlay */}
+            {showTOC && tocItems.length > 0 && (
+                <div
+                    className="fixed inset-0 z-50 bg-black/10 backdrop-blur-xs"
+                    onClick={() => setShowTOC(false)}
+                >
+                    <div
+                        className="fixed left-0 right-0 bottom-0 rounded-t-[12px] bg-background shadow-2xl backdrop-blur-md border-t border-border"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="mx-auto w-10 h-1.5 shrink-0 rounded-full bg-linear-to-r from-foreground/30 to-foreground/50 mt-4 mb-4 opacity-80" />
+                        <div className="flex items-center justify-between px-6 pb-2">
+                            <h2 className="text-lg font-semibold text-foreground leading-tight">
+                                Table of Contents
+                            </h2>
+                            <button
+                                onClick={() => setShowTOC(false)}
+                                className="p-2.5 rounded-lg hover:bg-accent transition-colors cursor-pointer"
+                            >
+                                <X className="w-5 h-5 text-foreground" />
+                            </button>
+                        </div>
+                        <div className="overflow-auto px-6 pb-6 max-h-[80vh]">
+                            <ul className="flex flex-col space-y-2.5 text-sm leading-relaxed">
+                                {tocItems.map((item) => (
+                                    <li key={item.id}>
+                                        <a
+                                            href={`#${item.id}`}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                setShowTOC(false);
+                                                document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth" });
+                                            }}
+                                            style={{ marginLeft: `${(item.indent || 0) * 12}px` }}
+                                            className="block py-1 px-2 rounded-sm font-medium text-secondary-foreground hover:text-foreground hover:bg-muted/15 transition-all duration-200 cursor-pointer"
+                                        >
+                                            {item.title}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            )}
         </Section>
     );
 }
