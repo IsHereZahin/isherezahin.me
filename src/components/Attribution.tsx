@@ -11,38 +11,38 @@ import {
 export default function Attribution() {
     const developers = [
         {
-            text: "(Nelson Lai)[https://github.com/nelsonlaidev] Component architecture and blog implementation patterns.",
+            text: "[Nelson Lai](https://github.com/nelsonlaidev) Component architecture and blog implementation patterns.",
         },
         {
-            text: "(Clarence)[https://github.com/theodorusclarence] Micro-interaction design and portfolio UX patterns.",
+            text: "[Clarence](https://github.com/theodorusclarence) Micro-interaction design and portfolio UX patterns.",
         },
         {
-            text: "(Delba de Oliveira)[https://www.linkedin.com/in/delbaoliveira/] Visual design language for testimonials, imagery, and project showcases.",
+            text: "[Delba de Oliveira](https://www.linkedin.com/in/delbaoliveira/) Visual design language for testimonials, imagery, and project showcases.",
         },
     ];
 
     const tools = [
-        { text: "(Next.js)[https://nextjs.org/] React framework for production-grade web applications." },
-        { text: "(Tailwind CSS)[https://tailwindcss.com/] Utility-first CSS framework." },
-        { text: "(TypeScript)[https://www.typescriptlang.org/] Static type checking and enhanced developer experience." },
-        { text: "(GitHub)[https://github.com/] Version control and source code management." },
-        { text: "(GitHub Discussions)[https://docs.github.com/en/discussions] Community engagement via GraphQL API integration." },
-        { text: "(ESLint)[https://eslint.org/] Code quality and consistency enforcement." },
-        { text: "(NextAuth.js)[https://next-auth.js.org/] Authentication and session management." },
-        { text: "(Motion)[https://motion.dev/] Declarative animations and transitions." },
-        { text: "(Lucide React)[https://lucide.dev/] Consistent icon system." },
-        { text: "(Simple Icons)[https://simpleicons.org/] Brand and platform iconography." },
-        { text: "(Cobe)[https://cobe.vercel.app/] Interactive 3D globe visualizations." },
-        { text: "(MongoDB)[https://www.mongodb.com/] Document-based data persistence." },
-        { text: "(Firebase)[https://firebase.google.com/] Real-time database and backend infrastructure." },
-        { text: "(Radix UI)[https://www.radix-ui.com/] Accessible, unstyled component primitives." },
-        { text: "(shadcn/ui)[https://ui.shadcn.com/] Pre-built component library extending Radix UI." },
-        { text: "(TanStack Query)[https://tanstack.com/query/] Server state management and caching." },
-        { text: "(Zod)[https://zod.dev/] Runtime schema validation." },
-        { text: "(React Hook Form)[https://react-hook-form.com/] Performant form state management." },
-        { text: "(Sonner)[https://sonner.emilkowal.ski/] Toast notification system." },
-        { text: "(dnd kit)[https://dndkit.com/] Drag and drop interactions." },
-        { text: "(Cloudinary)[https://cloudinary.com/] Media asset management and optimization." },
+        { text: "[Next.js](https://nextjs.org/) React framework for production-grade web applications." },
+        { text: "[Tailwind CSS](https://tailwindcss.com/) Utility-first CSS framework." },
+        { text: "[TypeScript](https://www.typescriptlang.org/) Static type checking and enhanced developer experience." },
+        { text: "[GitHub](https://github.com/) Version control and source code management." },
+        { text: "[GitHub Discussions](https://docs.github.com/en/discussions) Community engagement via GraphQL API integration." },
+        { text: "[ESLint](https://eslint.org/) Code quality and consistency enforcement." },
+        { text: "[NextAuth.js](https://next-auth.js.org/) Authentication and session management." },
+        { text: "[Motion](https://motion.dev/) Declarative animations and transitions." },
+        { text: "[Lucide React](https://lucide.dev/) Consistent icon system." },
+        { text: "[Simple Icons](https://simpleicons.org/) Brand and platform iconography." },
+        { text: "[Cobe](https://cobe.vercel.app/) Interactive 3D globe visualizations." },
+        { text: "[MongoDB](https://www.mongodb.com/) Document-based data persistence." },
+        { text: "[Firebase](https://firebase.google.com/) Real-time database and backend infrastructure." },
+        { text: "[Radix UI](https://www.radix-ui.com/) Accessible, unstyled component primitives." },
+        { text: "[shadcn/ui](https://ui.shadcn.com/) Pre-built component library extending Radix UI." },
+        { text: "[TanStack Query](https://tanstack.com/query/) Server state management and caching." },
+        { text: "[Zod](https://zod.dev/) Runtime schema validation." },
+        { text: "[React Hook Form](https://react-hook-form.com/) Performant form state management." },
+        { text: "[Sonner](https://sonner.emilkowal.ski/) Toast notification system." },
+        { text: "[dnd kit](https://dndkit.com/) Drag and drop interactions." },
+        { text: "[Cloudinary](https://cloudinary.com/) Media asset management and optimization." },
     ];
 
     return (
