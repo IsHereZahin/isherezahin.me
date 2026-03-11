@@ -51,10 +51,10 @@ export const workExperience: WorkExperienceItemProps[] = [
 
 const currentStatus: { text: string }[] = [
     {
-        text: "Currently employed as a Frontend Developer and SQA at (Iconic)[http://www.iconicsolutionsbd.com], working on a File Manager web application.",
+        text: "Currently employed as a Frontend Developer and SQA at [Iconic](http://www.iconicsolutionsbd.com), working on a File Manager web application.",
     },
     {
-        text: "Also contributing to the frontend of a SaaS platform at (Iconic)[http://www.iconicsolutionsbd.com] designed for real estate appraisers, making it simple and user-friendly.",
+        text: "Also contributing to the frontend of a SaaS platform at [Iconic](http://www.iconicsolutionsbd.com) designed for real estate appraisers, making it simple and user-friendly.",
     },
     {
         text: "Continuously researching and learning new technologies to stay up-to-date.",
