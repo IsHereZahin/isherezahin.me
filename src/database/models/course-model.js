@@ -73,7 +73,6 @@ const courseSchema = new Schema(
     { timestamps: true }
 );
 
-courseSchema.index({ slug: 1 });
 courseSchema.index({ status: 1, categoryId: 1 });
 courseSchema.index({ status: 1, createdAt: -1 });
 

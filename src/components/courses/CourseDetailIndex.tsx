@@ -8,9 +8,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { BookOpen, CheckCircle, ChevronRight, GraduationCap, Layers, PlayCircle, Users } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 import CourseCard from "./CourseCard";
 import CourseSyllabus from "./CourseSyllabus";
+import LessonPreviewModal from "./LessonPreviewModal";
 
 interface CourseDetailIndexProps {
     slug: string;
@@ -44,6 +46,16 @@ export default function CourseDetailIndex({ slug }: Readonly<CourseDetailIndexPr
             toast.error(error.message);
         },
     });
+
+    // Free lesson preview modal state
+    const [previewLesson, setPreviewLesson] = useState<{
+        _id: string;
+        title: string;
+        contentType: string;
+        videoUrl?: string | null;
+        content?: string | null;
+        duration?: string | null;
+    } | null>(null);
 
     if (isLoading) {
         return (
@@ -98,6 +110,19 @@ export default function CourseDetailIndex({ slug }: Readonly<CourseDetailIndexPr
     const relatedCourses = relatedData?.courses?.filter(
         (c: { slug: string }) => c.slug !== slug
     )?.slice(0, 4);
+
+    const handleSyllabusLessonClick = (lessonId: string) => {
+        if (course.isEnrolled) {
+            router.push(`/courses/${slug}/learn?lesson=${lessonId}`);
+            return;
+        }
+        // Find the free lesson and open preview
+        const allLessons = (course.modules || []).flatMap((m: { lessons: Array<{ _id: string; isFree?: boolean; title: string; contentType: string; videoUrl?: string | null; content?: string | null; duration?: string | null }> }) => m.lessons);
+        const lesson = allLessons.find((l: { _id: string; isFree?: boolean }) => l._id === lessonId && l.isFree);
+        if (lesson) {
+            setPreviewLesson(lesson);
+        }
+    };
 
     return (
         <Section id="course-detail" className="px-6 py-8 max-w-6xl">
@@ -217,11 +242,7 @@ export default function CourseDetailIndex({ slug }: Readonly<CourseDetailIndexPr
                             completedLessons={course.enrollment?.completedLessons || []}
                             isEnrolled={course.isEnrolled}
                             progressPercent={course.enrollment?.progressPercent || 0}
-                            onLessonClick={(lessonId) => {
-                                if (course.isEnrolled) {
-                                    router.push(`/courses/${slug}/learn?lesson=${lessonId}`);
-                                }
-                            }}
+                            onLessonClick={handleSyllabusLessonClick}
                         />
                     </MotionWrapper>
 
@@ -402,6 +423,12 @@ export default function CourseDetailIndex({ slug }: Readonly<CourseDetailIndexPr
                     </div>
                 </MotionWrapper>
             )}
+            {/* Free lesson preview modal */}
+            <LessonPreviewModal
+                lesson={previewLesson}
+                open={!!previewLesson}
+                onOpenChange={(open) => { if (!open) setPreviewLesson(null); }}
+            />
         </Section>
     );
 }

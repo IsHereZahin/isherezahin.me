@@ -64,7 +64,7 @@ export default function LessonModal({ open, onClose, onSave, initialLesson, isNe
                 <div className="grid grid-cols-3 gap-3">
                     <div>
                         <label className="block text-sm font-medium text-foreground mb-1.5">Type</label>
-                        <Select value={lesson.contentType} onValueChange={(v) => update("contentType", v)}>
+                        <Select value={lesson.contentType} onValueChange={(v) => { update("contentType", v); if (v === "quiz") update("isFree", false); }}>
                             <SelectTrigger className={inputClass}>
                                 <SelectValue />
                             </SelectTrigger>
@@ -92,29 +92,31 @@ export default function LessonModal({ open, onClose, onSave, initialLesson, isNe
                             </div>
                         </div>
                     )}
-                    <div>
-                        <label className="block text-sm font-medium text-foreground mb-1.5">Access</label>
-                        <label className="flex items-center gap-2 h-10 cursor-pointer select-none">
-                            <button
-                                type="button"
-                                role="switch"
-                                aria-checked={lesson.isFree || false}
-                                onClick={() => update("isFree", !lesson.isFree)}
-                                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${
-                                    lesson.isFree ? "bg-primary" : "bg-border"
-                                }`}
-                            >
-                                <span
-                                    className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow-sm transition-transform ${
-                                        lesson.isFree ? "translate-x-4.5" : "translate-x-0.76"
+                    {lesson.contentType !== "quiz" && (
+                        <div>
+                            <label className="block text-sm font-medium text-foreground mb-1.5">Access</label>
+                            <label className="flex items-center gap-2 h-10 cursor-pointer select-none">
+                                <button
+                                    type="button"
+                                    role="switch"
+                                    aria-checked={lesson.isFree || false}
+                                    onClick={() => update("isFree", !lesson.isFree)}
+                                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${
+                                        lesson.isFree ? "bg-primary" : "bg-border"
                                     }`}
-                                />
-                            </button>
-                            <span className={`text-sm ${lesson.isFree ? "text-primary" : "text-muted-foreground"}`}>
-                                {lesson.isFree ? "Free Preview" : "Paid"}
-                            </span>
-                        </label>
-                    </div>
+                                >
+                                    <span
+                                        className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow-sm transition-transform ${
+                                            lesson.isFree ? "translate-x-4.5" : "translate-x-0.76"
+                                        }`}
+                                    />
+                                </button>
+                                <span className={`text-sm ${lesson.isFree ? "text-primary" : "text-muted-foreground"}`}>
+                                    {lesson.isFree ? "Free Preview" : "Paid"}
+                                </span>
+                            </label>
+                        </div>
+                    )}
                 </div>
 
                 {/* Content area based on type */}
