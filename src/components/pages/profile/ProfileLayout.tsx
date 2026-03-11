@@ -4,13 +4,14 @@ import MotionWrapper from "@/components/motion/MotionWrapper";
 import { BlurImage, Button, PageTitle, Section } from "@/components/ui";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useChatUnread } from "@/lib/hooks/useChat";
-import { LogIn, LogOut, MessageCircle, Monitor, Settings, Shield, User } from "lucide-react";
+import { GraduationCap, LogIn, LogOut, MessageCircle, Monitor, Settings, Shield, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 
 const navItems = [
     { id: "personal", label: "Personal Information", icon: User, href: "/profile/personal" },
+    { id: "courses", label: "My Courses", icon: GraduationCap, href: "/profile/courses" },
     { id: "chat", label: "Chat with Admin", icon: MessageCircle, href: "/profile/chat" },
     { id: "sessions", label: "Sessions", icon: Monitor, href: "/profile/sessions" },
     { id: "settings", label: "Settings", icon: Settings, href: "/profile/settings" },

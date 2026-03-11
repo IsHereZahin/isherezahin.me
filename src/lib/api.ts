@@ -1431,6 +1431,15 @@ const courses = {
         return await response.json();
     },
 
+    async getMyEnrolledCourses() {
+        const response = await fetch("/api/courses/enrolled");
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch enrolled courses", response.status);
+        }
+        return await response.json();
+    },
+
     async updateProgress(slug: string, lessonId: string, action: "complete" | "uncomplete" | "access") {
         const response = await fetch(`/api/courses/${slug}/progress`, {
             method: "PATCH",

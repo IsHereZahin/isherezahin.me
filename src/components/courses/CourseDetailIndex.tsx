@@ -26,12 +26,12 @@ export default function CourseDetailIndex({ slug }: Readonly<CourseDetailIndexPr
         queryFn: () => courses.get(slug),
     });
 
-    // Fetch related courses
+    // Fetch related courses (only when course has a category)
     const { data: relatedData } = useQuery({
         queryKey: ["courses", "related", course?.category],
         queryFn: () =>
-            courses.getAll(1, 4, { category: course?.category || undefined }),
-        enabled: !!course,
+            courses.getAll(1, 5, { category: course!.category }),
+        enabled: !!course?.category,
     });
 
     const enrollMutation = useMutation({
@@ -202,7 +202,7 @@ export default function CourseDetailIndex({ slug }: Readonly<CourseDetailIndexPr
                                 <button
                                     onClick={handleEnroll}
                                     disabled={enrollMutation.isPending}
-                                    className="w-full py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 cursor-pointer"
+                                    className="w-full py-3 bg-foreground text-background rounded-lg font-semibold hover:bg-foreground/90 transition-colors disabled:opacity-50 cursor-pointer"
                                 >
                                     {enrollMutation.isPending ? "Enrolling..." : "Enroll Now"}
                                 </button>
@@ -225,8 +225,8 @@ export default function CourseDetailIndex({ slug }: Readonly<CourseDetailIndexPr
                         />
                     </MotionWrapper>
 
-                    {/* Instructors */}
-                    {course.instructors?.length > 0 && (
+                    {/* Instructors - shown in main content only for non-enrolled */}
+                    {!course.isEnrolled && course.instructors?.length > 0 && (
                         <MotionWrapper delay={0.3}>
                             <div className="border border-border rounded-xl p-5 bg-card">
                                 <h3 className="font-semibold text-foreground mb-4">Course {course.instructors.length > 1 ? "Instructors" : "Instructor"}</h3>
@@ -313,7 +313,7 @@ export default function CourseDetailIndex({ slug }: Readonly<CourseDetailIndexPr
                                     <button
                                         onClick={handleEnroll}
                                         disabled={enrollMutation.isPending}
-                                        className="w-full py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 cursor-pointer"
+                                        className="w-full py-3 bg-foreground text-background rounded-lg font-semibold hover:bg-foreground/90 transition-colors disabled:opacity-50 cursor-pointer"
                                     >
                                         {enrollMutation.isPending ? "Enrolling..." : "Enroll Now"}
                                     </button>
@@ -328,24 +328,63 @@ export default function CourseDetailIndex({ slug }: Readonly<CourseDetailIndexPr
                     </div>
                 )}
 
-                {/* Sidebar - Syllabus for enrolled (on lesson page this is the sidebar) */}
+                {/* Sidebar - Instructors & Summary (for enrolled users) */}
                 {course.isEnrolled && (
-                    <div className="hidden lg:block">
+                    <div className="order-first lg:order-none">
                         <MotionWrapper delay={0.2}>
-                            <div className="sticky top-24">
-                                <CourseSyllabus
-                                    modules={course.modules || []}
-                                    completedLessons={course.enrollment?.completedLessons || []}
-                                    isEnrolled
-                                    progressPercent={course.enrollment?.progressPercent || 0}
-                                    onLessonClick={(lessonId) => {
-                                        router.push(`/courses/${slug}/learn?lesson=${lessonId}`);
-                                    }}
-                                />
+                            <div className="lg:sticky lg:top-24 space-y-6">
+                                {/* Course Summary */}
+                                <div className="border border-border rounded-xl p-5 bg-card">
+                                    <h3 className="font-semibold text-foreground mb-3">Course Summary</h3>
+                                    {course.description && (
+                                        <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{course.description}</p>
+                                    )}
+                                    <div className="text-xs text-muted-foreground space-y-1.5 pt-2 border-t border-border">
+                                        <p className="flex items-center gap-2"><BookOpen className="w-3.5 h-3.5" /> {course.totalLessons} lessons</p>
+                                        <p className="flex items-center gap-2"><Layers className="w-3.5 h-3.5" /> {course.totalModules} modules</p>
+                                        <p className="flex items-center gap-2"><Users className="w-3.5 h-3.5" /> {course.enrollmentCount} students enrolled</p>
+                                    </div>
+                                </div>
+
+                                {/* Instructors */}
+                                {course.instructors?.length > 0 && (
+                                    <div className="border border-border rounded-xl p-5 bg-card">
+                                        <h3 className="font-semibold text-foreground mb-4">Course {course.instructors.length > 1 ? "Instructors" : "Instructor"}</h3>
+                                        <div className="space-y-4">
+                                            {course.instructors.map((instructor: { name: string; image?: string | null; bio?: string | null }, i: number) => (
+                                                <div key={i} className="flex items-start gap-3">
+                                                    {instructor.image ? (
+                                                        <BlurImage
+                                                            src={instructor.image}
+                                                            alt={instructor.name}
+                                                            width={48}
+                                                            height={48}
+                                                            className="rounded-full w-12 h-12 flex-shrink-0"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                                                            <span className="text-lg font-bold text-muted-foreground">
+                                                                {instructor.name.charAt(0)}
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                    <div>
+                                                        <p className="font-medium text-foreground">{instructor.name}</p>
+                                                        {instructor.bio && (
+                                                            <p className="text-sm text-muted-foreground mt-0.5">{instructor.bio}</p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
                             </div>
                         </MotionWrapper>
                     </div>
                 )}
+
             </div>
 
             {/* Related Courses */}
