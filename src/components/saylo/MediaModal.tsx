@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { toast } from "sonner";
+import { notifySayloModalClose, notifySayloModalOpen } from "./AutoPlayVideo";
 
 interface MediaModalContentProps {
     media: MediaItem[];
@@ -46,12 +47,25 @@ function MediaModalContent({ media, initialIndex, onClose }: Readonly<MediaModal
         };
     }, [onClose, canGoNext, canGoPrev]);
 
-    // Pause video when changing slides
+    // Autoplay the active slide's video (with muted fallback if the browser blocks sound)
     useEffect(() => {
-        if (videoRef.current) {
-            videoRef.current.pause();
+        const video = videoRef.current;
+        if (!video || currentItem.type !== "video") return;
+
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(() => {
+                video.muted = true;
+                video.play().catch(() => {});
+            });
         }
-    }, [currentIndex]);
+    }, [currentIndex, currentItem]);
+
+    // Pause feed videos while this modal is open
+    useEffect(() => {
+        notifySayloModalOpen();
+        return () => notifySayloModalClose();
+    }, []);
 
     const handleDownload = async () => {
         try {

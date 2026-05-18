@@ -1,10 +1,11 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Play } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { isVideoUrl } from "@/utils";
 import { MediaItem } from "@/utils/types";
+import AutoPlayVideo from "./AutoPlayVideo";
 
 interface MediaGalleryProps {
     images: string[];
@@ -117,15 +118,20 @@ export default function MediaGallery({ images, videos, onMediaClick }: Readonly<
         return (
             <div className="mt-3">
                 {item.type === "video" ? (
-                    <button
+                    <div
+                        role="button"
+                        tabIndex={0}
                         onClick={() => onMediaClick(0, allMedia)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                onMediaClick(0, allMedia);
+                            }
+                        }}
                         className="relative w-full rounded-lg overflow-hidden border border-border/30 hover:border-border/50 transition-colors cursor-pointer"
                     >
-                        <video src={item.url} className="w-full max-h-[400px] rounded-lg" muted preload="metadata" />
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                            <Play className="w-12 h-12 text-white" />
-                        </div>
-                    </button>
+                        <AutoPlayVideo src={item.url} className="w-full max-h-[400px] rounded-lg" />
+                    </div>
                 ) : (
                     <button
                         onClick={() => onMediaClick(0, allMedia)}
@@ -142,24 +148,33 @@ export default function MediaGallery({ images, videos, onMediaClick }: Readonly<
     if (allMedia.length === 2) {
         return (
             <div className="mt-3 grid grid-cols-2 gap-1 rounded-lg overflow-hidden">
-                {allMedia.map((item, index) => (
-                    <button
-                        key={item.url}
-                        onClick={() => onMediaClick(index, allMedia)}
-                        className="relative aspect-square overflow-hidden border border-border/30 hover:opacity-90 transition-opacity cursor-pointer"
-                    >
-                        {item.type === "image" ? (
+                {allMedia.map((item, index) =>
+                    item.type === "image" ? (
+                        <button
+                            key={item.url}
+                            onClick={() => onMediaClick(index, allMedia)}
+                            className="relative aspect-square overflow-hidden border border-border/30 hover:opacity-90 transition-opacity cursor-pointer"
+                        >
                             <Image src={item.url} alt={`Image ${index + 1}`} fill className="object-cover" />
-                        ) : (
-                            <>
-                                <video src={item.url} className="w-full h-full object-cover" muted preload="metadata" />
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                                    <Play className="w-10 h-10 text-white" />
-                                </div>
-                            </>
-                        )}
-                    </button>
-                ))}
+                        </button>
+                    ) : (
+                        <div
+                            key={item.url}
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => onMediaClick(index, allMedia)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                    e.preventDefault();
+                                    onMediaClick(index, allMedia);
+                                }
+                            }}
+                            className="relative aspect-square overflow-hidden border border-border/30 hover:opacity-90 transition-opacity cursor-pointer"
+                        >
+                            <AutoPlayVideo src={item.url} className="w-full h-full object-cover" />
+                        </div>
+                    )
+                )}
             </div>
         );
     }
@@ -198,26 +213,41 @@ export default function MediaGallery({ images, videos, onMediaClick }: Readonly<
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
             >
-                {allMedia.map((item, index) => (
-                    <button
-                        key={item.url}
-                        onClick={() => onMediaClick(index, allMedia)}
-                        className={`relative shrink-0 aspect-square overflow-hidden border border-border/30 rounded-lg transition-all duration-300 cursor-pointer ${
-                            index === currentIndex ? "w-[70%] opacity-100 scale-100" : "w-[70%] opacity-70 scale-95"
-                        }`}
-                    >
-                        {item.type === "image" ? (
+                {allMedia.map((item, index) =>
+                    item.type === "image" ? (
+                        <button
+                            key={item.url}
+                            onClick={() => onMediaClick(index, allMedia)}
+                            className={`relative shrink-0 aspect-square overflow-hidden border border-border/30 rounded-lg transition-all duration-300 cursor-pointer ${
+                                index === currentIndex ? "w-[70%] opacity-100 scale-100" : "w-[70%] opacity-70 scale-95"
+                            }`}
+                        >
                             <Image src={item.url} alt={`Image ${index + 1}`} fill className="object-cover" />
-                        ) : (
-                            <>
-                                <video src={item.url} className="w-full h-full object-cover" muted preload="metadata" />
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                                    <Play className="w-10 h-10 text-white" />
-                                </div>
-                            </>
-                        )}
-                    </button>
-                ))}
+                        </button>
+                    ) : (
+                        <div
+                            key={item.url}
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => onMediaClick(index, allMedia)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                    e.preventDefault();
+                                    onMediaClick(index, allMedia);
+                                }
+                            }}
+                            className={`relative shrink-0 aspect-square overflow-hidden border border-border/30 rounded-lg transition-all duration-300 cursor-pointer ${
+                                index === currentIndex ? "w-[70%] opacity-100 scale-100" : "w-[70%] opacity-70 scale-95"
+                            }`}
+                        >
+                            <AutoPlayVideo
+                                src={item.url}
+                                className="w-full h-full object-cover"
+                                isActive={index === currentIndex}
+                            />
+                        </div>
+                    )
+                )}
             </div>
 
             {/* Dots Indicator */}
