@@ -3,10 +3,9 @@
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useChatUnread } from "@/lib/hooks/useChat";
 import type { PopupState, ThemeMode } from "@/utils/types";
-import { Command, Languages, Moon, Palette, Sun, User } from "lucide-react";
+import { Command, Moon, Palette, Sun, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import CommandPopup from "./CommandPopup";
-import LanguageDropdown from "./LanguageDropdown";
 import ProfileDropdown from "./ProfileDropdown";
 import ThemeColorPicker from "./ThemeColorPicker";
 
@@ -46,7 +45,6 @@ export default function HeaderActions() {
         activePopup: null,
     });
 
-    const languageRef = useRef<HTMLDivElement>(null);
     const colorRef = useRef<HTMLDivElement>(null);
     const commandRef = useRef<HTMLDivElement>(null);
     const profileRef = useRef<HTMLDivElement>(null);
@@ -102,11 +100,6 @@ export default function HeaderActions() {
         localStorage.setItem("custom-primary", defaultHex);
     };
 
-    const handleLanguageSelect = (code: string) => {
-        setState((prev) => ({ ...prev, activePopup: null }));
-        console.log(`Selected language: ${code}`);
-    };
-
     const togglePopup = (popup: PopupState) => {
         setState((prev) => ({
             ...prev,
@@ -153,13 +146,6 @@ export default function HeaderActions() {
                 state.activePopup === "color" &&
                 colorRef.current &&
                 !colorRef.current.contains(target)
-            ) {
-                setState((prev) => ({ ...prev, activePopup: null }));
-            }
-            if (
-                state.activePopup === "language" &&
-                languageRef.current &&
-                !languageRef.current.contains(target)
             ) {
                 setState((prev) => ({ ...prev, activePopup: null }));
             }
@@ -222,23 +208,6 @@ export default function HeaderActions() {
                             onReset={handleReset}
                             onClose={() => setState((prev) => ({ ...prev, activePopup: null }))}
                         />
-                    </div>
-                )}
-            </div>
-
-            <div className="relative" ref={languageRef}>
-                <button
-                    onClick={() => togglePopup("language")}
-                    className={`${buttonBaseClass} ${hoverGradientClass} ${state.activePopup === "language" ? "bg-primary/10" : ""
-                        }`}
-                    aria-label="Change language"
-                    aria-expanded={state.activePopup === "language"}
-                >
-                    <Languages className="size-4" />
-                </button>
-                {state.activePopup === "language" && (
-                    <div className="absolute right-0 top-full mt-2 bg-background border border-border rounded-lg shadow-lg z-50 animate-in fade-in-0 zoom-in-95">
-                        <LanguageDropdown onLanguageSelect={handleLanguageSelect} />
                     </div>
                 )}
             </div>

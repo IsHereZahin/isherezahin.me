@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-export type PopupState = "color" | "language" | "command" | "profile" | null;
+export type PopupState = "color" | "command" | "profile" | null;
 export type ThemeMode = "light" | "dark";
 
 export interface Blog {
