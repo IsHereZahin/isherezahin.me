@@ -14,6 +14,15 @@ export interface WorkExperienceItemProps {
     logo: string;
 }
 
+export interface EducationItemProps {
+    start: string;
+    end?: string;
+    degree: string;
+    institution: string;
+    institutionUrl?: string;
+    logo: string;
+}
+
 export const workExperience: WorkExperienceItemProps[] = [
     {
         start: "Sep 2023",

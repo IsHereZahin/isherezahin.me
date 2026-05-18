@@ -3,15 +3,16 @@
 import AboutHeroModal from "@/components/admin/AboutHeroModal";
 import CurrentStatusModal from "@/components/admin/CurrentStatusModal";
 import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
+import EducationModal from "@/components/admin/EducationModal";
 import WorkExperienceModal from "@/components/admin/WorkExperienceModal";
 import { ShadcnButton as Button } from "@/components/ui";
-import { aboutHero, currentStatus, workExperience } from "@/lib/api";
+import { aboutHero, currentStatus, education, workExperience } from "@/lib/api";
 import { formatMonthYear } from "@/utils";
 import { closestCenter, DndContext, DragEndEvent, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Briefcase, CircleHelp, GripVertical, Pencil, Plus, Trash2, User } from "lucide-react";
+import { Briefcase, CircleHelp, GraduationCap, GripVertical, Pencil, Plus, Trash2, User } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -50,6 +51,18 @@ interface WorkExperienceItem {
     isActive: boolean;
 }
 
+interface EducationItem {
+    _id: string;
+    start: string;
+    end: string;
+    degree: string;
+    institution: string;
+    institutionUrl: string;
+    logo: string;
+    order: number;
+    isActive: boolean;
+}
+
 function SortableStatusItem({ item, onEdit, onDelete }: { item: CurrentStatusItem; onEdit: () => void; onDelete: () => void }) {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item._id });
     const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
@@ -81,11 +94,14 @@ export default function AboutPageAdmin() {
     const [deleteStatus, setDeleteStatus] = useState<CurrentStatusItem | null>(null);
     const [experienceModal, setExperienceModal] = useState<{ open: boolean; data: WorkExperienceItem | null }>({ open: false, data: null });
     const [deleteExperience, setDeleteExperience] = useState<WorkExperienceItem | null>(null);
+    const [educationModal, setEducationModal] = useState<{ open: boolean; data: EducationItem | null }>({ open: false, data: null });
+    const [deleteEducation, setDeleteEducation] = useState<EducationItem | null>(null);
     const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
 
     const { data: aboutHeroData } = useQuery<AboutHeroData>({ queryKey: ["admin-about-hero"], queryFn: aboutHero.get });
     const { data: statusData = [] } = useQuery<CurrentStatusItem[]>({ queryKey: ["admin-current-status"], queryFn: () => currentStatus.getAll(true) });
     const { data: experienceData = [] } = useQuery<WorkExperienceItem[]>({ queryKey: ["admin-work-experience"], queryFn: () => workExperience.getAll(true) });
+    const { data: educationData = [] } = useQuery<EducationItem[]>({ queryKey: ["admin-education"], queryFn: () => education.getAll(true) });
 
     const handleDeleteStatus = async () => {
         if (!deleteStatus) return;
@@ -105,6 +121,17 @@ export default function AboutPageAdmin() {
             queryClient.invalidateQueries({ queryKey: ["admin-work-experience"] });
         } catch { toast.error("Failed to delete experience"); }
         setDeleteExperience(null);
+    };
+
+    const handleDeleteEducation = async () => {
+        if (!deleteEducation) return;
+        try {
+            await education.delete(deleteEducation._id);
+            toast.success("Education deleted");
+            queryClient.invalidateQueries({ queryKey: ["admin-education"] });
+            queryClient.invalidateQueries({ queryKey: ["education"] });
+        } catch { toast.error("Failed to delete education"); }
+        setDeleteEducation(null);
     };
 
     const handleStatusDragEnd = async (event: DragEndEvent) => {
@@ -196,11 +223,38 @@ export default function AboutPageAdmin() {
                     </div>
                 )}
             </section>
+            <section className="border border-border rounded-xl p-4 sm:p-6">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                        <GraduationCap className="h-5 w-5 text-muted-foreground shrink-0" />
+                        <h3 className="text-base sm:text-lg font-semibold">Education</h3>
+                    </div>
+                    <Button size="sm" onClick={() => setEducationModal({ open: true, data: null })}><Plus className="h-4 w-4" /> Add</Button>
+                </div>
+                {educationData.length === 0 ? (<p className="text-sm text-muted-foreground py-4 text-center">No education entries yet</p>) : (
+                    <div className="space-y-3">
+                        {educationData.map((item) => (
+                            <div key={item._id} className="flex flex-col sm:flex-row sm:items-start gap-3 p-3 sm:p-4 bg-muted/30 rounded-lg">
+                                <div className="flex-1 min-w-0">
+                                    <p className="font-medium text-sm sm:text-base">{item.institution}</p>
+                                    <p className="text-xs sm:text-sm text-muted-foreground">{item.degree} · {formatMonthYear(item.start)} - {formatMonthYear(item.end)}</p>
+                                </div>
+                                <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+                                    <button onClick={() => setEducationModal({ open: true, data: item })} className="p-1.5 sm:p-2 hover:bg-muted rounded-md transition-colors"><Pencil className="h-4 w-4 text-muted-foreground" /></button>
+                                    <button onClick={() => setDeleteEducation(item)} className="p-1.5 sm:p-2 hover:bg-red-500/10 rounded-md transition-colors"><Trash2 className="h-4 w-4 text-red-500" /></button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </section>
             <AboutHeroModal open={aboutHeroModal} onOpenChange={setAboutHeroModal} aboutData={aboutHeroData} />
             <CurrentStatusModal open={statusModal.open} onOpenChange={(open) => setStatusModal({ open, data: open ? statusModal.data : null })} status={statusModal.data} />
             <DeleteConfirmDialog open={!!deleteStatus} onOpenChange={(open) => !open && setDeleteStatus(null)} title="Delete Status" description="Are you sure you want to delete this status item?" onConfirm={handleDeleteStatus} />
             <WorkExperienceModal open={experienceModal.open} onOpenChange={(open) => setExperienceModal({ open, data: open ? experienceModal.data : null })} experience={experienceModal.data} />
             <DeleteConfirmDialog open={!!deleteExperience} onOpenChange={(open) => !open && setDeleteExperience(null)} title="Delete Experience" description="Are you sure you want to delete this work experience?" onConfirm={handleDeleteExperience} />
+            <EducationModal open={educationModal.open} onOpenChange={(open) => setEducationModal({ open, data: open ? educationModal.data : null })} educationItem={educationModal.data} />
+            <DeleteConfirmDialog open={!!deleteEducation} onOpenChange={(open) => !open && setDeleteEducation(null)} title="Delete Education" description="Are you sure you want to delete this education entry?" onConfirm={handleDeleteEducation} />
         </div>
     );
 }

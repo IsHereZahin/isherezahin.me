@@ -810,6 +810,60 @@ const workExperience = {
     },
 };
 
+// Education API
+const education = {
+    async getAll(includeInactive = false) {
+        const url = includeInactive ? '/api/admin/education?all=true' : '/api/admin/education';
+        const response = await fetch(url);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to fetch education", response.status);
+        }
+        return await response.json();
+    },
+
+    async create(data: {
+        start: string; end?: string; degree: string; institution: string;
+        institutionUrl?: string; logo: string; order?: number; isActive?: boolean;
+    }) {
+        const response = await fetch('/api/admin/education', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to create education", response.status);
+        }
+        return await response.json();
+    },
+
+    async update(id: string, data: {
+        start: string; end?: string; degree: string; institution: string;
+        institutionUrl?: string; logo: string; order?: number; isActive?: boolean;
+    }) {
+        const response = await fetch(`/api/admin/education/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to update education", response.status);
+        }
+        return await response.json();
+    },
+
+    async delete(id: string) {
+        const response = await fetch(`/api/admin/education/${id}`, { method: 'DELETE' });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new ApiError(errorData.error || "Failed to delete education", response.status);
+        }
+        return await response.json();
+    },
+};
+
 // About Hero API
 const aboutHero = {
     async get() {
@@ -1278,7 +1332,7 @@ const contentDiscussions = {
 
 export {
     aboutHero, adminSettings, adminSubscribers, adminUsers, blogLikes, blogViews, bucketList, cloudinary, contactInfo, contactMessage,
-    contentDiscussions, createBlog, createProject, currentStatus, deleteBlog, deleteProject, discussions, getBlog, getBlogs, getBlogTags, getProject,
+    contentDiscussions, createBlog, createProject, currentStatus, deleteBlog, deleteProject, discussions, education, getBlog, getBlogs, getBlogTags, getProject,
     getProjects, getProjectTags, legal, newsletter, profile, projectLikes, projectViews, publicSettings, quests, saylo, sessions, statistics, testimonials,
     updateBlog, updateProject, visitors, workExperience
 };
