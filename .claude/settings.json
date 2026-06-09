@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(echo \"=== build exit: $? ===\")",
+      "Bash(grep -qi \"Ready\\\\|started server\\\\|Local:\" /tmp/vaultdev.log)",
+      "Bash(break)",
+      "Read(//tmp/**)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3000,3001 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { try { Stop-Process -Id $_ -Force -ErrorAction Stop; \"killed $_\" } catch {} }; Get-Process node -ErrorAction SilentlyContinue | Select-Object Id,StartTime | Format-Table -AutoSize)",
+      "Bash(curl -s \"http://localhost:3000/vault\" -o /tmp/v.html -w \"HTTP %{http_code}\\\\n\")",
+      "Bash(echo \"build exit $?\")",
+      "Bash(md5sum src/components/admin/vault/VaultSettingsPanel.tsx)",
+      "Bash(sed -n '246,256p' src/components/admin/vault/VaultSettingsPanel.tsx)",
+      "PowerShell(Remove-Item -Force \"D:\\\\LWS\\\\isherezahin.me\\\\src\\\\lib\\\\vault\\\\rate-limit.ts\" -ErrorAction SilentlyContinue; \"removed rate-limit.ts: \" + \\(-not \\(Test-Path \"D:\\\\LWS\\\\isherezahin.me\\\\src\\\\lib\\\\vault\\\\rate-limit.ts\"\\)\\))",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3000,3001 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { try { Stop-Process -Id $_ -Force -ErrorAction Stop; \"stopped PID $_\" } catch {} }; \"ok\")",
+      "Bash(echo \"tsc exit $?\")"
+    ]
+  }
+}

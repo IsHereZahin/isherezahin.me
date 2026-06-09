@@ -1330,10 +1330,144 @@ const contentDiscussions = {
     },
 };
 
+// ---------------------------------------------------------------------------
+// Personal Vault
+// ---------------------------------------------------------------------------
+
+const VAULT_BASE = "/api/admin/vault";
+
+async function vaultFetch(path: string, init?: RequestInit) {
+    const response = await fetch(`${VAULT_BASE}${path}`, init);
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new ApiError(
+            errorData.error || "Vault request failed",
+            response.status,
+            errorData
+        );
+    }
+    return await response.json();
+}
+
+const jsonInit = (method: string, body?: unknown): RequestInit => ({
+    method,
+    headers: { "Content-Type": "application/json" },
+    ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+});
+
+interface VaultListOpts {
+    folderId?: string | null;
+    favorites?: boolean;
+}
+
+function vaultListQuery(opts?: VaultListOpts): string {
+    const params = new URLSearchParams();
+    if (opts?.folderId !== undefined && opts.folderId !== null) params.set("folderId", opts.folderId);
+    if (opts?.favorites) params.set("favorites", "true");
+    const qs = params.toString();
+    return qs ? `?${qs}` : "";
+}
+
+const vault = {
+    // Gate status + authentication
+    status: () => vaultFetch("/auth/status"),
+    setup: (password: string) => vaultFetch("/auth/setup", jsonInit("POST", { password })),
+    unlock: (password: string) => vaultFetch("/auth/unlock", jsonInit("POST", { password })),
+    lock: () => vaultFetch("/auth/lock", jsonInit("POST")),
+
+    settings: {
+        get: () => vaultFetch("/settings"),
+        update: (data: {
+            enabled?: boolean;
+            sessionTimeoutMinutes?: number;
+            maxFileSizeMB?: number;
+            allowedFileTypes?: string[];
+        }) => vaultFetch("/settings", jsonInit("PATCH", data)),
+        changePassword: (oldPassword: string, newPassword: string) =>
+            vaultFetch("/settings/password", jsonInit("POST", { oldPassword, newPassword })),
+        reset: (newPassword: string) =>
+            vaultFetch("/settings/password/reset", jsonInit("POST", { newPassword, confirm: true })),
+    },
+
+    logs: (page = 1, limit = 25, action?: string) => {
+        const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+        if (action) params.set("action", action);
+        return vaultFetch(`/logs?${params}`);
+    },
+
+    links: {
+        getAll: (opts?: VaultListOpts) => vaultFetch(`/links${vaultListQuery(opts)}`),
+        create: (data: unknown) => vaultFetch("/links", jsonInit("POST", data)),
+        update: (id: string, data: unknown) => vaultFetch(`/links/${id}`, jsonInit("PUT", data)),
+        delete: (id: string) => vaultFetch(`/links/${id}`, jsonInit("DELETE")),
+    },
+
+    notes: {
+        getAll: (opts?: VaultListOpts) => vaultFetch(`/notes${vaultListQuery(opts)}`),
+        create: (data: unknown) => vaultFetch("/notes", jsonInit("POST", data)),
+        update: (id: string, data: unknown) => vaultFetch(`/notes/${id}`, jsonInit("PUT", data)),
+        delete: (id: string) => vaultFetch(`/notes/${id}`, jsonInit("DELETE")),
+    },
+
+    credentials: {
+        getAll: (opts?: VaultListOpts & { reveal?: boolean }) => {
+            const params = new URLSearchParams();
+            if (opts?.folderId) params.set("folderId", opts.folderId);
+            if (opts?.favorites) params.set("favorites", "true");
+            if (opts?.reveal) params.set("reveal", "true");
+            const qs = params.toString();
+            return vaultFetch(`/credentials${qs ? `?${qs}` : ""}`);
+        },
+        get: (id: string) => vaultFetch(`/credentials/${id}`),
+        create: (data: unknown) => vaultFetch("/credentials", jsonInit("POST", data)),
+        update: (id: string, data: unknown) => vaultFetch(`/credentials/${id}`, jsonInit("PUT", data)),
+        delete: (id: string) => vaultFetch(`/credentials/${id}`, jsonInit("DELETE")),
+    },
+
+    folders: {
+        getAll: () => vaultFetch("/folders"),
+        create: (data: unknown) => vaultFetch("/folders", jsonInit("POST", data)),
+        update: (id: string, data: unknown) => vaultFetch(`/folders/${id}`, jsonInit("PUT", data)),
+        delete: (id: string) => vaultFetch(`/folders/${id}`, jsonInit("DELETE")),
+    },
+
+    tags: {
+        getAll: () => vaultFetch("/tags"),
+    },
+
+    files: {
+        getAll: (opts?: VaultListOpts) => vaultFetch(`/files${vaultListQuery(opts)}`),
+        upload: async (file: File, opts?: { folderId?: string | null; tags?: string[] }) => {
+            const formData = new FormData();
+            formData.append("file", file);
+            if (opts?.folderId) formData.append("folderId", opts.folderId);
+            if (opts?.tags?.length) formData.append("tags", opts.tags.join(","));
+            const response = await fetch(`${VAULT_BASE}/files`, { method: "POST", body: formData });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new ApiError(errorData.error || "Upload failed", response.status, errorData);
+            }
+            return await response.json();
+        },
+        update: (id: string, data: unknown) => vaultFetch(`/files/${id}`, jsonInit("PUT", data)),
+        delete: (id: string) => vaultFetch(`/files/${id}`, jsonInit("DELETE")),
+        fileUrl: (id: string, download = false) =>
+            `${VAULT_BASE}/files/${id}/raw${download ? "?download=true" : ""}`,
+    },
+
+    search: (params: { q?: string; tag?: string; from?: string; to?: string; type?: string }) => {
+        const sp = new URLSearchParams();
+        Object.entries(params).forEach(([k, v]) => {
+            if (v) sp.set(k, v);
+        });
+        return vaultFetch(`/search?${sp}`);
+    },
+};
+
 export {
     aboutHero, adminSettings, adminSubscribers, adminUsers, blogLikes, blogViews, bucketList, cloudinary, contactInfo, contactMessage,
     contentDiscussions, createBlog, createProject, currentStatus, deleteBlog, deleteProject, discussions, education, getBlog, getBlogs, getBlogTags, getProject,
     getProjects, getProjectTags, legal, newsletter, profile, projectLikes, projectViews, publicSettings, quests, saylo, sessions, statistics, testimonials,
-    updateBlog, updateProject, visitors, workExperience
+    updateBlog, updateProject, vault, visitors, workExperience
 };
 

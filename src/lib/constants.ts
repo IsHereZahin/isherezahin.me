@@ -65,6 +65,9 @@ export const GITHUB_ACCESS_TOKEN = process.env.GITHUB_ACCESS_TOKEN;
 export const AUTH_GOOGLE_ID = process.env.AUTH_GOOGLE_ID!;
 export const AUTH_GOOGLE_SECRET = process.env.AUTH_GOOGLE_SECRET!;
 
+// Auth secret (NextAuth) — reused to seal the Personal Vault session cookie
+export const AUTH_SECRET = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "";
+
 // Cloudinary Configuration
 export const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
 export const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
