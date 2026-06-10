@@ -3,7 +3,6 @@
 import MotionWrapper from "@/components/motion/MotionWrapper";
 import {
     ReferralLink,
-    ReferralListItem,
     ReferralText,
     Section,
     SectionHeader,
@@ -46,6 +45,13 @@ export function WorkExperienceItem({
 }: Readonly<WorkExperienceItemProps>) {
     const [isOpen, setIsOpen] = useState(false);
     const hasDetails = Boolean(description || (highlights && highlights.length > 0) || location || type);
+
+    // Drop a trailing "(TYPE)" from the location when it just repeats the type badge
+    // (e.g. location "Chittagong, BD (On Site)" + type "On Site").
+    const cleanLocation = location
+        ? location.replace(/\s*\(([^)]+)\)\s*$/, (full, inner) =>
+            inner.trim().toLowerCase() === (type ?? "").trim().toLowerCase() ? "" : full).trim()
+        : location;
 
     return (
         <MotionWrapper delay={0.2} className="group/item border-b border-border/50 last:border-b-0">
@@ -92,15 +98,15 @@ export function WorkExperienceItem({
                 >
                     <div className="overflow-hidden">
                         <div className="pl-14 pb-6 pr-2 space-y-4">
-                            {(location || type) && (
+                            {(cleanLocation || type) && (
                                 <div className="flex flex-wrap items-center gap-y-1.5 text-[0.75rem] text-muted-foreground/80 uppercase tracking-wide">
-                                    {location && (
+                                    {cleanLocation && (
                                         <div className="flex items-center gap-1.5">
                                             <MapPin className="w-3 h-3 shrink-0" />
-                                            <span>{location}</span>
+                                            <span>{cleanLocation}</span>
                                         </div>
                                     )}
-                                    {location && type && (
+                                    {cleanLocation && type && (
                                         <span className="mx-4 h-1 w-1 rounded-full bg-muted-foreground/40" aria-hidden="true" />
                                     )}
                                     {type && (
@@ -124,7 +130,7 @@ export function WorkExperienceItem({
                                         <li key={i} className="flex gap-3">
                                             <span className="mt-[0.65rem] h-1 w-1 rounded-full bg-muted-foreground/50 shrink-0" />
                                             <span className="flex-1">
-                                                <ReferralListItem listItems={[h]} />
+                                                <ReferralText text={h.text} />
                                             </span>
                                         </li>
                                     ))}

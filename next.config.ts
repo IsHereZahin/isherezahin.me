@@ -135,26 +135,11 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      {
-        // Cache images
-        source: "/_next/image/:path*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=604800, stale-while-revalidate=86400",
-          },
-        ],
-      },
-      {
-        // Cache static JS/CSS chunks
-        source: "/_next/static/:path*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
+      // NOTE: Do NOT set custom Cache-Control on /_next/static or /_next/image.
+      // Next.js already applies correct immutable caching to hashed static assets
+      // in production, and /_next/image caching is controlled by images.minimumCacheTTL.
+      // Overriding them caches Turbopack's stable dev chunk URLs for a year, which
+      // breaks HMR (the browser keeps serving stale JS/CSS until a hard reload).
     ];
   },
 };
