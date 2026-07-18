@@ -6,7 +6,7 @@ import { legal } from "@/lib/api";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { getFormattedDate } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
-import { CheckCircle, ExternalLink, FileText, Loader2, Pencil, XCircle } from "lucide-react";
+import { CheckCircle, ExternalLink, FileText, Loader2, Pencil, ScrollText, ShieldCheck, XCircle } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { useState } from "react";
@@ -22,8 +22,20 @@ interface LegalPage {
 }
 
 const LEGAL_PAGES = [
-    { slug: "privacy-policy", defaultTitle: "Privacy Policy", path: "/privacy-policy" },
-    { slug: "terms-of-service", defaultTitle: "Terms of Service", path: "/terms-of-service" },
+    {
+        slug: "privacy-policy",
+        defaultTitle: "Privacy Policy",
+        path: "/privacy-policy",
+        icon: ShieldCheck,
+        description: "How visitor data is collected, stored, and used",
+    },
+    {
+        slug: "terms-of-service",
+        defaultTitle: "Terms of Service",
+        path: "/terms-of-service",
+        icon: ScrollText,
+        description: "Rules and conditions for using your site",
+    },
 ] as const;
 
 const fetchLegalPage = async (slug: string): Promise<LegalPage> => {
@@ -37,6 +49,32 @@ const fetchLegalPage = async (slug: string): Promise<LegalPage> => {
         throw error;
     }
 };
+
+function StatusBadge({ data }: { data?: LegalPage }) {
+    const isCreated = Boolean(data?.exists && data?.content);
+
+    if (!isCreated) {
+        return (
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#F6F4EF] px-2.5 py-1 text-[11px] font-medium text-[#9a978f]">
+                <XCircle className="h-3 w-3" /> Not created
+            </span>
+        );
+    }
+
+    if (data?.published) {
+        return (
+            <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-1 text-[11px] font-medium text-green-600 dark:bg-green-500/10 dark:text-green-400">
+                <CheckCircle className="h-3 w-3" /> Published
+            </span>
+        );
+    }
+
+    return (
+        <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-500" /> Draft
+        </span>
+    );
+}
 
 export default function AdminLegalPagesPage() {
     const { isAdmin, status } = useAuth();
@@ -56,7 +94,7 @@ export default function AdminLegalPagesPage() {
 
     if (status === "loading") {
         return (
-            <Section id="admin-legal" className="px-6 py-16 max-w-4xl">
+            <Section id="admin-legal" className="">
                 <div className="flex items-center justify-center py-12">
                     <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
                 </div>
@@ -74,72 +112,108 @@ export default function AdminLegalPagesPage() {
         { ...LEGAL_PAGES[1], data: termsOfService },
     ];
 
-    return (
-        <Section id="admin-legal" className="px-6 py-16 max-w-4xl">
-            <div className="mb-8">
-                <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">Legal Pages</h1>
-                <p className="text-muted-foreground">
-                    Manage your Privacy Policy and Terms of Service pages.
-                </p>
-            </div>
+    const publishedCount = pages.filter((p) => p.data?.exists && p.data?.content && p.data?.published).length;
+    const draftCount = pages.filter((p) => p.data?.exists && p.data?.content && !p.data?.published).length;
+    const notCreatedCount = pages.filter((p) => !(p.data?.exists && p.data?.content)).length;
 
+    const stats = [
+        { label: "Published", value: publishedCount },
+        { label: "Drafts", value: draftCount },
+        { label: "Not created", value: notCreatedCount },
+    ];
+
+    return (
+        <Section id="admin-legal" className="">
             {isLoading ? (
-                <div className="flex items-center justify-center py-12">
-                    <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                <div className="space-y-5">
+                    <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
+                        {[0, 1, 2].map((i) => (
+                            <div key={i} className="h-[72px] animate-pulse rounded-2xl bg-[#F6F4EF]" />
+                        ))}
+                    </div>
+                    <div className="rounded-[24px] border border-[#EEEAE2] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+                        <div className="h-5 w-40 animate-pulse rounded bg-[#EFEBE3]" />
+                        <div className="mt-5 space-y-4">
+                            {[0, 1].map((i) => (
+                                <div key={i} className="h-16 animate-pulse rounded-2xl bg-[#F6F4EF]" />
+                            ))}
+                        </div>
+                    </div>
                 </div>
             ) : (
-                <div className="grid gap-4">
-                    {pages.map(({ slug, defaultTitle, path, data }) => (
-                        <div
-                            key={slug}
-                            className="flex items-center justify-between p-4 sm:p-6 rounded-xl border border-border/50 bg-card hover:bg-card/80 transition-colors"
-                        >
-                            <div className="flex items-start gap-4">
-                                <div className="p-3 rounded-lg bg-muted/50">
-                                    <FileText className="w-5 h-5 text-muted-foreground" />
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold text-foreground">
-                                        {data?.title || defaultTitle}
-                                    </h3>
-                                    <div className="flex items-center gap-3 mt-1">
-                                        {data?.exists && data?.content ? (
-                                            <span className="flex items-center gap-1 text-xs text-green-500">
-                                                <CheckCircle className="w-3 h-3" />
-                                                {data.published ? "Published" : "Draft"}
-                                            </span>
-                                        ) : (
-                                            <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                                                <XCircle className="w-3 h-3" />
-                                                Not created
-                                            </span>
-                                        )}
-                                        {data?.updatedAt && (
-                                            <span className="text-xs text-muted-foreground">
-                                                Updated {getFormattedDate(data.updatedAt)}
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
+                <div className="space-y-5">
+                    {/* Summary tiles */}
+                    <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
+                        {stats.map((stat) => (
+                            <div key={stat.label} className="rounded-2xl bg-[#F6F4EF] px-4 py-3">
+                                <p className="text-[22px] font-semibold leading-none text-[#26262B]">{stat.value}</p>
+                                <p className="mt-1.5 text-[12px] text-[#9a978f]">{stat.label}</p>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <Link
-                                    href={path}
-                                    className="p-2 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
-                                    title="View page"
-                                >
-                                    <ExternalLink className="w-4 h-4" />
-                                </Link>
-                                <button
-                                    onClick={() => setEditingSlug(slug as "privacy-policy" | "terms-of-service")}
-                                    className="p-2 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
-                                    title="Edit page"
-                                >
-                                    <Pencil className="w-4 h-4" />
-                                </button>
+                        ))}
+                    </div>
+
+                    {/* Pages list */}
+                    <section className="rounded-[24px] border border-[#EEEAE2] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#F6F4EF]">
+                                <FileText className="h-5 w-5 text-[#26262B]" />
+                            </div>
+                            <div>
+                                <h3 className="text-[16px] font-semibold text-[#26262B]">Legal Pages</h3>
+                                <p className="text-[12px] text-[#9a978f]">
+                                    Manage the privacy policy and terms of service shown across your site
+                                </p>
                             </div>
                         </div>
-                    ))}
+
+                        <div className="mt-5 divide-y divide-[#f1ede5]">
+                            {pages.map(({ slug, defaultTitle, path, icon: Icon, description, data }) => (
+                                <div
+                                    key={slug}
+                                    className="flex flex-col gap-4 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
+                                >
+                                    <div className="flex min-w-0 items-start gap-3.5">
+                                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#F6F4EF]">
+                                            <Icon className="h-[18px] w-[18px] text-[#57544e]" />
+                                        </div>
+                                        <div className="min-w-0">
+                                            <h4 className="text-[15px] font-semibold text-[#26262B]">
+                                                {data?.title || defaultTitle}
+                                            </h4>
+                                            <p className="mt-0.5 text-[12px] text-[#9a978f]">{description}</p>
+                                            <div className="mt-2 flex flex-wrap items-center gap-2">
+                                                <StatusBadge data={data} />
+                                                {data?.updatedAt && (
+                                                    <span className="text-[11px] text-[#9a978f]">
+                                                        Updated {getFormattedDate(data.updatedAt)}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex shrink-0 items-center gap-2 pl-[54px] sm:pl-0">
+                                        <Link
+                                            href={path}
+                                            title="View page"
+                                            className="inline-flex h-10 items-center gap-2 rounded-full border border-[#EEEAE2] bg-white px-4 text-[13px] font-medium text-[#26262B] transition-colors hover:bg-[#F6F4EF]"
+                                        >
+                                            <ExternalLink className="h-4 w-4" />
+                                            <span className="hidden sm:inline">View</span>
+                                        </Link>
+                                        <button
+                                            onClick={() => setEditingSlug(slug as "privacy-policy" | "terms-of-service")}
+                                            title="Edit page"
+                                            className="inline-flex h-10 items-center gap-2 rounded-full border border-[#EEEAE2] bg-white px-4 text-[13px] font-medium text-[#26262B] transition-colors hover:bg-[#F6F4EF]"
+                                        >
+                                            <Pencil className="h-4 w-4" />
+                                            <span className="hidden sm:inline">Edit</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
                 </div>
             )}
 

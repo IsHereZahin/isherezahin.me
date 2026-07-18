@@ -12,7 +12,7 @@ import { closestCenter, DndContext, DragEndEvent, KeyboardSensor, PointerSensor,
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Briefcase, CircleHelp, GraduationCap, GripVertical, Pencil, Plus, Trash2, User } from "lucide-react";
+import { Briefcase, CircleHelp, GraduationCap, GripVertical, type LucideIcon, Pencil, Plus, Trash2, User } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -68,19 +68,18 @@ function SortableStatusItem({ item, onEdit, onDelete }: { item: CurrentStatusIte
     const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
 
     return (
-        <div ref={setNodeRef} style={style} className={`flex flex-col sm:flex-row sm:items-start gap-3 p-3 sm:p-4 bg-muted/30 rounded-lg ${isDragging ? "shadow-lg ring-2 ring-primary/20" : ""}`}>
-            <div className="flex items-start gap-2 flex-1 min-w-0">
-                <button {...attributes} {...listeners} className="p-1 cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground shrink-0 touch-none">
-                    <GripVertical className="h-4 w-4" />
+        <div ref={setNodeRef} style={style} className={`flex items-center gap-2.5 rounded-xl border border-[#EEEAE2] bg-white px-3 py-2.5 ${isDragging ? "shadow-lg ring-2 ring-[#F4C63D]/30" : ""}`}>
+            <button {...attributes} {...listeners} aria-label="Drag to reorder" className="shrink-0 cursor-grab touch-none rounded-lg p-1 text-[#c4c0b7] transition-colors hover:bg-[#F6F4EF] hover:text-[#26262B] active:cursor-grabbing">
+                <GripVertical className="h-4 w-4" />
+            </button>
+            <p className="min-w-0 flex-1 break-words text-[13px] text-[#57544e]">{item.text}</p>
+            <div className="flex shrink-0 items-center gap-1">
+                {!item.isActive && <StatusBadge>Hidden</StatusBadge>}
+                <button onClick={onEdit} aria-label="Edit status" className="rounded-xl p-2 transition-colors hover:bg-[#F6F4EF]">
+                    <Pencil className="h-4 w-4 text-[#57544e]" />
                 </button>
-                <p className="text-sm text-muted-foreground flex-1 break-words">{item.text}</p>
-            </div>
-            <div className="flex items-center gap-1 sm:gap-2 ml-6 sm:ml-0 shrink-0">
-                <button onClick={onEdit} className="p-1.5 sm:p-2 hover:bg-muted rounded-md transition-colors">
-                    <Pencil className="h-4 w-4 text-muted-foreground" />
-                </button>
-                <button onClick={onDelete} className="p-1.5 sm:p-2 hover:bg-red-500/10 rounded-md transition-colors">
-                    <Trash2 className="h-4 w-4 text-red-500" />
+                <button onClick={onDelete} aria-label="Delete status" className="rounded-xl p-2 transition-colors hover:bg-[#EE5D4A]/10">
+                    <Trash2 className="h-4 w-4 text-[#EE5D4A]" />
                 </button>
             </div>
         </div>
@@ -151,103 +150,135 @@ export default function AboutPageAdmin() {
     };
 
     return (
-        <div className="space-y-6">
-            <h2 className="text-xl font-semibold">About Page Settings</h2>
-            <section className="border border-border rounded-xl p-4 sm:p-6">
-                <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                        <User className="h-5 w-5 text-muted-foreground shrink-0" />
-                        <h3 className="text-base sm:text-lg font-semibold">Hero Section</h3>
-                    </div>
-                    <Button size="sm" onClick={() => setAboutHeroModal(true)}><Pencil className="h-4 w-4" /> Edit</Button>
+        <div className="space-y-5">
+            {/* Summary tiles */}
+            <section className="rounded-[24px] border border-[#EEEAE2] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+                <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+                    <StatTile label="Work Experience" value={experienceData.length} />
+                    <StatTile label="Education" value={educationData.length} />
+                    <StatTile label="Status Updates" value={statusData.length} />
+                    <StatTile label="Bio Paragraphs" value={aboutHeroData?.paragraphs?.length ?? 0} />
                 </div>
-                {aboutHeroData ? (
-                    <div className="grid md:grid-cols-2 gap-4">
-                        <div className="p-4 bg-muted/30 rounded-lg space-y-2">
-                            <p className="text-sm font-medium text-foreground mb-2">Profile Info</p>
-                            <p className="text-sm"><span className="text-muted-foreground">Name:</span> {aboutHeroData.name}</p>
-                            <p className="text-sm"><span className="text-muted-foreground">Title:</span> {aboutHeroData.title}</p>
-                            <p className="text-sm"><span className="text-muted-foreground">Location:</span> {aboutHeroData.location}</p>
-                            <p className="text-sm"><span className="text-muted-foreground">Image:</span> {aboutHeroData.imageSrc ? "Set" : "Not set"}</p>
-                        </div>
-                        <div className="p-4 bg-muted/30 rounded-lg space-y-2">
-                            <p className="text-sm font-medium text-foreground mb-2">Page Content</p>
-                            <p className="text-sm"><span className="text-muted-foreground">Page Title:</span> {aboutHeroData.pageTitle || "About Me"}</p>
-                            <p className="text-sm"><span className="text-muted-foreground">Subtitle:</span> {aboutHeroData.pageSubtitle || "Not set"}</p>
-                            <p className="text-sm"><span className="text-muted-foreground">Paragraphs:</span> {aboutHeroData.paragraphs?.length || 0}</p>
-                        </div>
-                    </div>
-                ) : (<p className="text-sm text-muted-foreground py-4 text-center">Hero section not configured yet</p>)}
             </section>
-            <section className="border border-border rounded-xl p-4 sm:p-6">
-                <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                        <CircleHelp className="h-5 w-5 text-muted-foreground shrink-0" />
-                        <h3 className="text-base sm:text-lg font-semibold">What I&apos;m Up To Now</h3>
+
+            {/* Hero */}
+            <SectionCard
+                icon={User}
+                title="Hero Section"
+                description="Profile details shown at the top of your About page"
+                action={<Button size="sm" onClick={() => setAboutHeroModal(true)} className="inline-flex items-center gap-2 rounded-full bg-[#26262B] px-5 h-10 text-[13px] font-medium text-white transition-transform hover:scale-[1.02]"><Pencil className="h-4 w-4" /> Edit</Button>}
+            >
+                {aboutHeroData ? (
+                    <div className="grid gap-2.5 md:grid-cols-2">
+                        <div className="rounded-2xl bg-[#F6F4EF] p-4">
+                            <p className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-[#9a978f]">Profile Info</p>
+                            <dl className="space-y-2 text-[13px]">
+                                <InfoRow label="Name" value={aboutHeroData.name} />
+                                <InfoRow label="Title" value={aboutHeroData.title} />
+                                <InfoRow label="Location" value={aboutHeroData.location} />
+                                <InfoRow label="Image" value={aboutHeroData.imageSrc ? "Set" : "Not set"} />
+                            </dl>
+                        </div>
+                        <div className="rounded-2xl bg-[#F6F4EF] p-4">
+                            <p className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-[#9a978f]">Page Content</p>
+                            <dl className="space-y-2 text-[13px]">
+                                <InfoRow label="Page Title" value={aboutHeroData.pageTitle || "About Me"} />
+                                <InfoRow label="Subtitle" value={aboutHeroData.pageSubtitle || "Not set"} />
+                                <InfoRow label="Paragraphs" value={String(aboutHeroData.paragraphs?.length || 0)} />
+                            </dl>
+                        </div>
                     </div>
-                    <Button size="sm" onClick={() => setStatusModal({ open: true, data: null })}><Plus className="h-4 w-4" /> Add</Button>
-                </div>
-                {statusData.length === 0 ? (<p className="text-sm text-muted-foreground py-4 text-center">No status items yet</p>) : (
+                ) : (
+                    <EmptyState icon={User} text="Hero section not configured yet" />
+                )}
+            </SectionCard>
+
+            {/* Current status */}
+            <SectionCard
+                icon={CircleHelp}
+                title="What I'm Up To Now"
+                description="Drag to reorder what you're currently up to"
+                action={<Button size="sm" onClick={() => setStatusModal({ open: true, data: null })} className="inline-flex items-center gap-2 rounded-full bg-[#26262B] px-5 h-10 text-[13px] font-medium text-white transition-transform hover:scale-[1.02]"><Plus className="h-4 w-4" /> Add</Button>}
+            >
+                {statusData.length === 0 ? (
+                    <EmptyState icon={CircleHelp} text="No status items yet" />
+                ) : (
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleStatusDragEnd}>
                         <SortableContext items={statusData.map((item) => item._id)} strategy={verticalListSortingStrategy}>
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 {statusData.map((item) => (<SortableStatusItem key={item._id} item={item} onEdit={() => setStatusModal({ open: true, data: item })} onDelete={() => setDeleteStatus(item)} />))}
                             </div>
                         </SortableContext>
                     </DndContext>
                 )}
-            </section>
+            </SectionCard>
 
-            <section className="border border-border rounded-xl p-4 sm:p-6">
-                <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                        <Briefcase className="h-5 w-5 text-muted-foreground shrink-0" />
-                        <h3 className="text-base sm:text-lg font-semibold">Work Experience</h3>
-                    </div>
-                    <Button size="sm" onClick={() => setExperienceModal({ open: true, data: null })}><Plus className="h-4 w-4" /> Add</Button>
-                </div>
-                {experienceData.length === 0 ? (<p className="text-sm text-muted-foreground py-4 text-center">No work experience yet</p>) : (
-                    <div className="space-y-3">
+            {/* Work experience */}
+            <SectionCard
+                icon={Briefcase}
+                title="Work Experience"
+                description="Roles and positions listed on your About page"
+                action={<Button size="sm" onClick={() => setExperienceModal({ open: true, data: null })} className="inline-flex items-center gap-2 rounded-full bg-[#26262B] px-5 h-10 text-[13px] font-medium text-white transition-transform hover:scale-[1.02]"><Plus className="h-4 w-4" /> Add</Button>}
+            >
+                {experienceData.length === 0 ? (
+                    <EmptyState icon={Briefcase} text="No work experience yet" />
+                ) : (
+                    <div className="divide-y divide-[#f1ede5]">
                         {experienceData.map((item) => (
-                            <div key={item._id} className="flex flex-col sm:flex-row sm:items-start gap-3 p-3 sm:p-4 bg-muted/30 rounded-lg">
-                                <div className="flex-1 min-w-0">
-                                    <p className="font-medium text-sm sm:text-base">{item.title}</p>
-                                    <p className="text-xs sm:text-sm text-muted-foreground">{item.company} · {formatMonthYear(item.start)} - {formatMonthYear(item.end)}</p>
+                            <div key={item._id} className="flex items-center justify-between gap-4 py-3.5 first:pt-0 last:pb-0">
+                                <div className="flex min-w-0 items-center gap-3">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#F6F4EF]">
+                                        <Briefcase className="h-[18px] w-[18px] text-[#57544e]" />
+                                    </div>
+                                    <div className="min-w-0">
+                                        <p className="truncate text-[14px] font-medium text-[#26262B]">{item.title}</p>
+                                        <p className="truncate text-[12px] text-[#9a978f]">{item.company} · {formatMonthYear(item.start)} - {formatMonthYear(item.end)}</p>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-                                    <button onClick={() => setExperienceModal({ open: true, data: item })} className="p-1.5 sm:p-2 hover:bg-muted rounded-md transition-colors"><Pencil className="h-4 w-4 text-muted-foreground" /></button>
-                                    <button onClick={() => setDeleteExperience(item)} className="p-1.5 sm:p-2 hover:bg-red-500/10 rounded-md transition-colors"><Trash2 className="h-4 w-4 text-red-500" /></button>
+                                <div className="flex shrink-0 items-center gap-1">
+                                    {!item.isActive && <StatusBadge>Hidden</StatusBadge>}
+                                    <button onClick={() => setExperienceModal({ open: true, data: item })} aria-label="Edit experience" className="rounded-xl p-2 transition-colors hover:bg-[#F6F4EF]"><Pencil className="h-4 w-4 text-[#57544e]" /></button>
+                                    <button onClick={() => setDeleteExperience(item)} aria-label="Delete experience" className="rounded-xl p-2 transition-colors hover:bg-[#EE5D4A]/10"><Trash2 className="h-4 w-4 text-[#EE5D4A]" /></button>
                                 </div>
                             </div>
                         ))}
                     </div>
                 )}
-            </section>
-            <section className="border border-border rounded-xl p-4 sm:p-6">
-                <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                        <GraduationCap className="h-5 w-5 text-muted-foreground shrink-0" />
-                        <h3 className="text-base sm:text-lg font-semibold">Education</h3>
-                    </div>
-                    <Button size="sm" onClick={() => setEducationModal({ open: true, data: null })}><Plus className="h-4 w-4" /> Add</Button>
-                </div>
-                {educationData.length === 0 ? (<p className="text-sm text-muted-foreground py-4 text-center">No education entries yet</p>) : (
-                    <div className="space-y-3">
+            </SectionCard>
+
+            {/* Education */}
+            <SectionCard
+                icon={GraduationCap}
+                title="Education"
+                description="Schools and degrees listed on your About page"
+                action={<Button size="sm" onClick={() => setEducationModal({ open: true, data: null })} className="inline-flex items-center gap-2 rounded-full bg-[#26262B] px-5 h-10 text-[13px] font-medium text-white transition-transform hover:scale-[1.02]"><Plus className="h-4 w-4" /> Add</Button>}
+            >
+                {educationData.length === 0 ? (
+                    <EmptyState icon={GraduationCap} text="No education entries yet" />
+                ) : (
+                    <div className="divide-y divide-[#f1ede5]">
                         {educationData.map((item) => (
-                            <div key={item._id} className="flex flex-col sm:flex-row sm:items-start gap-3 p-3 sm:p-4 bg-muted/30 rounded-lg">
-                                <div className="flex-1 min-w-0">
-                                    <p className="font-medium text-sm sm:text-base">{item.institution}</p>
-                                    <p className="text-xs sm:text-sm text-muted-foreground">{item.degree} · {formatMonthYear(item.start)} - {formatMonthYear(item.end)}</p>
+                            <div key={item._id} className="flex items-center justify-between gap-4 py-3.5 first:pt-0 last:pb-0">
+                                <div className="flex min-w-0 items-center gap-3">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#F6F4EF]">
+                                        <GraduationCap className="h-[18px] w-[18px] text-[#57544e]" />
+                                    </div>
+                                    <div className="min-w-0">
+                                        <p className="truncate text-[14px] font-medium text-[#26262B]">{item.institution}</p>
+                                        <p className="truncate text-[12px] text-[#9a978f]">{item.degree} · {formatMonthYear(item.start)} - {formatMonthYear(item.end)}</p>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-                                    <button onClick={() => setEducationModal({ open: true, data: item })} className="p-1.5 sm:p-2 hover:bg-muted rounded-md transition-colors"><Pencil className="h-4 w-4 text-muted-foreground" /></button>
-                                    <button onClick={() => setDeleteEducation(item)} className="p-1.5 sm:p-2 hover:bg-red-500/10 rounded-md transition-colors"><Trash2 className="h-4 w-4 text-red-500" /></button>
+                                <div className="flex shrink-0 items-center gap-1">
+                                    {!item.isActive && <StatusBadge>Hidden</StatusBadge>}
+                                    <button onClick={() => setEducationModal({ open: true, data: item })} aria-label="Edit education" className="rounded-xl p-2 transition-colors hover:bg-[#F6F4EF]"><Pencil className="h-4 w-4 text-[#57544e]" /></button>
+                                    <button onClick={() => setDeleteEducation(item)} aria-label="Delete education" className="rounded-xl p-2 transition-colors hover:bg-[#EE5D4A]/10"><Trash2 className="h-4 w-4 text-[#EE5D4A]" /></button>
                                 </div>
                             </div>
                         ))}
                     </div>
                 )}
-            </section>
+            </SectionCard>
+
             <AboutHeroModal open={aboutHeroModal} onOpenChange={setAboutHeroModal} aboutData={aboutHeroData} />
             <CurrentStatusModal open={statusModal.open} onOpenChange={(open) => setStatusModal({ open, data: open ? statusModal.data : null })} status={statusModal.data} />
             <DeleteConfirmDialog open={!!deleteStatus} onOpenChange={(open) => !open && setDeleteStatus(null)} title="Delete Status" description="Are you sure you want to delete this status item?" onConfirm={handleDeleteStatus} />
@@ -255,6 +286,59 @@ export default function AboutPageAdmin() {
             <DeleteConfirmDialog open={!!deleteExperience} onOpenChange={(open) => !open && setDeleteExperience(null)} title="Delete Experience" description="Are you sure you want to delete this work experience?" onConfirm={handleDeleteExperience} />
             <EducationModal open={educationModal.open} onOpenChange={(open) => setEducationModal({ open, data: open ? educationModal.data : null })} educationItem={educationModal.data} />
             <DeleteConfirmDialog open={!!deleteEducation} onOpenChange={(open) => !open && setDeleteEducation(null)} title="Delete Education" description="Are you sure you want to delete this education entry?" onConfirm={handleDeleteEducation} />
+        </div>
+    );
+}
+
+function SectionCard({ icon: Icon, title, description, action, children }: { icon: LucideIcon; title: string; description: string; action?: React.ReactNode; children: React.ReactNode }) {
+    return (
+        <section className="rounded-[24px] border border-[#EEEAE2] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] sm:p-6">
+            <div className="mb-5 flex items-center justify-between gap-4">
+                <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#F6F4EF]">
+                        <Icon className="h-5 w-5 text-[#26262B]" />
+                    </div>
+                    <div className="min-w-0">
+                        <h3 className="text-[16px] font-semibold text-[#26262B]">{title}</h3>
+                        <p className="text-[12px] text-[#9a978f]">{description}</p>
+                    </div>
+                </div>
+                {action && <div className="shrink-0">{action}</div>}
+            </div>
+            {children}
+        </section>
+    );
+}
+
+function StatTile({ label, value }: { label: string; value: number | string }) {
+    return (
+        <div className="rounded-2xl bg-[#F6F4EF] px-4 py-3">
+            <p className="text-[22px] font-bold leading-none text-[#26262B]">{value}</p>
+            <p className="mt-1.5 text-[12px] text-[#9a978f]">{label}</p>
+        </div>
+    );
+}
+
+function InfoRow({ label, value }: { label: string; value: string }) {
+    return (
+        <div className="flex items-center justify-between gap-3">
+            <dt className="shrink-0 text-[#9a978f]">{label}</dt>
+            <dd className="min-w-0 truncate text-right font-medium text-[#26262B]">{value}</dd>
+        </div>
+    );
+}
+
+function StatusBadge({ children }: { children: React.ReactNode }) {
+    return (
+        <span className="mr-1 rounded-full bg-[#F6F4EF] px-2.5 py-1 text-[11px] font-medium text-[#9a978f]">{children}</span>
+    );
+}
+
+function EmptyState({ icon: Icon, text }: { icon: LucideIcon; text: string }) {
+    return (
+        <div className="flex flex-col items-center justify-center gap-2 rounded-2xl bg-[#F6F4EF]/60 py-10 text-center">
+            <Icon className="h-6 w-6 text-[#c4c0b7]" />
+            <p className="text-[13px] text-[#9a978f]">{text}</p>
         </div>
     );
 }

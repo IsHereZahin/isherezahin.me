@@ -233,13 +233,14 @@ export default function ChatView({ conversation, onBack, onDelete }: ChatViewPro
             : null;
 
     return (
-        <div className="flex flex-col h-full w-full">
+        <div className="flex h-full w-full flex-col">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-border bg-card flex-shrink-0">
-                <div className="flex items-center gap-3">
+            <div className="flex flex-shrink-0 items-center justify-between gap-3 border-b border-[#EEEAE2] bg-white p-4">
+                <div className="flex min-w-0 items-center gap-3">
                     <button
                         onClick={onBack}
-                        className="p-2 rounded-lg hover:bg-muted transition-colors md:hidden"
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[#26262B] transition-colors hover:bg-[#F6F4EF] md:hidden"
+                        aria-label="Back to conversations"
                     >
                         <ArrowLeft className="h-5 w-5" />
                     </button>
@@ -248,10 +249,10 @@ export default function ChatView({ conversation, onBack, onDelete }: ChatViewPro
                         alt={conversation.participantName}
                         width={40}
                         height={40}
-                        className="rounded-full"
+                        className="shrink-0 rounded-full"
                     />
-                    <div>
-                        <h3 className="font-semibold">{conversation.participantName}</h3>
+                    <div className="min-w-0">
+                        <h3 className="truncate text-[15px] font-semibold text-[#26262B]">{conversation.participantName}</h3>
                         {presence && (
                             <PresenceIndicator
                                 isOnline={presence.isOnline}
@@ -261,35 +262,34 @@ export default function ChatView({ conversation, onBack, onDelete }: ChatViewPro
                         )}
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <div className="relative">
-                        <button
-                            onClick={() => setShowMenu(!showMenu)}
-                            className="p-2 rounded-lg hover:bg-muted transition-colors"
-                        >
-                            <MoreVertical className="h-4 w-4" />
-                        </button>
-                        {showMenu && (
-                            <>
-                                <div
-                                    className="fixed inset-0 z-10"
-                                    onClick={() => setShowMenu(false)}
-                                />
-                                <div className="absolute right-0 top-full mt-1 w-48 rounded-lg border border-border bg-card shadow-lg z-20">
-                                    <button
-                                        onClick={() => {
-                                            setShowMenu(false);
-                                            setDeleteDialogOpen(true);
-                                        }}
-                                        className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-500 hover:bg-muted transition-colors rounded-lg"
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                        Delete Conversation
-                                    </button>
-                                </div>
-                            </>
-                        )}
-                    </div>
+                <div className="relative shrink-0">
+                    <button
+                        onClick={() => setShowMenu(!showMenu)}
+                        className="flex h-9 w-9 items-center justify-center rounded-xl text-[#57544e] transition-colors hover:bg-[#F6F4EF]"
+                        aria-label="Conversation options"
+                    >
+                        <MoreVertical className="h-4 w-4" />
+                    </button>
+                    {showMenu && (
+                        <>
+                            <div
+                                className="fixed inset-0 z-10"
+                                onClick={() => setShowMenu(false)}
+                            />
+                            <div className="absolute right-0 top-full z-20 mt-1 w-52 rounded-2xl border border-[#EEEAE2] bg-white p-1 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+                                <button
+                                    onClick={() => {
+                                        setShowMenu(false);
+                                        setDeleteDialogOpen(true);
+                                    }}
+                                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-[13px] font-medium text-[#EE5D4A] transition-colors hover:bg-[#F6F4EF]"
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                    Delete Conversation
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
 
@@ -297,11 +297,11 @@ export default function ChatView({ conversation, onBack, onDelete }: ChatViewPro
             <div
                 ref={messagesContainerRef}
                 onScroll={handleScroll}
-                className="flex-1 overflow-y-auto p-4 bg-background/50 chat-scrollbar"
+                className="pretty-scroll min-h-0 flex-1 overflow-y-auto bg-[#F6F4EF]/40 p-4"
             >
                 {loading ? (
-                    <div className="flex items-center justify-center h-full">
-                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    <div className="flex h-full items-center justify-center">
+                        <Loader2 className="h-6 w-6 animate-spin text-[#9a978f]" />
                     </div>
                 ) : (
                     <>

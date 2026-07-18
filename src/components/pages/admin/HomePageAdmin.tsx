@@ -3,7 +3,6 @@
 import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
 import EditContactInfoModal from "@/components/admin/EditContactInfoModal";
 import TestimonialModal from "@/components/admin/TestimonialModal";
-import { ShadcnButton as Button } from "@/components/ui";
 import { contactInfo, testimonials } from "@/lib/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Mail, MessageSquareQuote, Pencil, Plus, Trash2 } from "lucide-react";
@@ -55,37 +54,59 @@ export default function HomePageAdmin() {
         setDeleteTestimonial(null);
     };
 
-    return (
-        <div className="space-y-6">
-            <h2 className="text-xl font-semibold">Home Page Settings</h2>
+    const activeCount = testimonialsData.filter((t) => t.isActive).length;
+    const skillsCount = contactData?.skills?.length ?? 0;
 
-            {/* Testimonials Section */}
-            <section className="border border-border rounded-xl p-4 sm:p-6">
-                <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                        <MessageSquareQuote className="h-5 w-5 text-muted-foreground shrink-0" />
-                        <h3 className="text-base sm:text-lg font-semibold">Testimonials</h3>
-                    </div>
-                    <Button size="sm" onClick={() => setTestimonialModal({ open: true, data: null })}>
+    return (
+        <div className="space-y-5">
+            {/* Summary tiles */}
+            <div className="grid grid-cols-3 gap-3">
+                <StatTile label="Testimonials" value={testimonialsData.length} />
+                <StatTile label="Active" value={activeCount} />
+                <StatTile label="Skills listed" value={skillsCount} />
+            </div>
+
+            {/* Testimonials */}
+            <section className="rounded-[24px] border border-[#EEEAE2] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+                <div className="flex items-center justify-between gap-4">
+                    <SectionHeading icon={MessageSquareQuote} title="Testimonials" description="Quotes shown on your home page" />
+                    <button
+                        onClick={() => setTestimonialModal({ open: true, data: null })}
+                        className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full bg-[#26262B] px-5 text-[13px] font-medium text-white transition-transform hover:scale-[1.02]"
+                    >
                         <Plus className="h-4 w-4" /> Add
-                    </Button>
+                    </button>
                 </div>
+
                 {testimonialsData.length === 0 ? (
-                    <p className="text-sm text-muted-foreground py-4 text-center">No testimonials yet</p>
+                    <EmptyState icon={MessageSquareQuote} text="No testimonials yet" />
                 ) : (
-                    <div className="space-y-3">
+                    <div className="mt-4 divide-y divide-[#f1ede5]">
                         {testimonialsData.map((item) => (
-                            <div key={item._id} className="flex flex-col sm:flex-row sm:items-start gap-3 p-3 sm:p-4 bg-muted/30 rounded-lg">
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm text-muted-foreground line-clamp-2">&quot;{item.quote}&quot;</p>
-                                    <p className="text-xs sm:text-sm font-medium mt-1">{item.name} · {item.role}</p>
+                            <div key={item._id} className="flex items-start justify-between gap-4 py-4 first:pt-0 last:pb-0">
+                                <div className="min-w-0 flex-1">
+                                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                        <p className="text-[14px] font-medium text-[#26262B]">{item.name}</p>
+                                        <span className="text-[#d9d4ca]">·</span>
+                                        <span className="text-[12px] text-[#9a978f]">{item.role}</span>
+                                        <StatusBadge active={item.isActive} />
+                                    </div>
+                                    <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-[#57544e]">&quot;{item.quote}&quot;</p>
                                 </div>
-                                <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-                                    <button onClick={() => setTestimonialModal({ open: true, data: item })} className="p-1.5 sm:p-2 hover:bg-muted rounded-md transition-colors">
-                                        <Pencil className="h-4 w-4 text-muted-foreground" />
+                                <div className="flex shrink-0 items-center gap-1">
+                                    <button
+                                        onClick={() => setTestimonialModal({ open: true, data: item })}
+                                        aria-label="Edit testimonial"
+                                        className="rounded-xl p-2 text-[#9a978f] transition-colors hover:bg-[#F6F4EF]"
+                                    >
+                                        <Pencil className="h-4 w-4" />
                                     </button>
-                                    <button onClick={() => setDeleteTestimonial(item)} className="p-1.5 sm:p-2 hover:bg-red-500/10 rounded-md transition-colors">
-                                        <Trash2 className="h-4 w-4 text-red-500" />
+                                    <button
+                                        onClick={() => setDeleteTestimonial(item)}
+                                        aria-label="Delete testimonial"
+                                        className="rounded-xl p-2 text-[#EE5D4A] transition-colors hover:bg-[#EE5D4A]/10"
+                                    >
+                                        <Trash2 className="h-4 w-4" />
                                     </button>
                                 </div>
                             </div>
@@ -94,32 +115,46 @@ export default function HomePageAdmin() {
                 )}
             </section>
 
-            {/* Get In Touch Section */}
-            <section className="border border-border rounded-xl p-4 sm:p-6">
-                <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                        <Mail className="h-5 w-5 text-muted-foreground shrink-0" />
-                        <h3 className="text-base sm:text-lg font-semibold">Get In Touch</h3>
-                    </div>
-                    <Button size="sm" onClick={() => setEditContactOpen(true)}>
+            {/* Get In Touch */}
+            <section className="rounded-[24px] border border-[#EEEAE2] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+                <div className="flex items-center justify-between gap-4">
+                    <SectionHeading icon={Mail} title="Get In Touch" description="Contact section shown to visitors" />
+                    <button
+                        onClick={() => setEditContactOpen(true)}
+                        className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-[#EEEAE2] bg-white px-4 text-[13px] font-medium text-[#26262B] transition-colors hover:bg-[#F6F4EF]"
+                    >
                         <Pencil className="h-4 w-4" /> Edit
-                    </Button>
+                    </button>
                 </div>
+
                 {contactData ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-                        <div className="p-3 sm:p-4 bg-muted/30 rounded-lg space-y-2">
-                            <p className="text-sm font-medium text-foreground mb-2">Contact Details</p>
-                            <p className="text-xs sm:text-sm"><span className="text-muted-foreground">Email:</span> {contactData.email || "Not set"}</p>
-                            <p className="text-xs sm:text-sm"><span className="text-muted-foreground">Headline:</span> {contactData.headline || "Not set"}</p>
+                    <div className="mt-4 space-y-3">
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            <InfoTile label="Email" value={contactData.email || "Not set"} />
+                            <InfoTile label="Headline" value={contactData.headline || "Not set"} />
+                            <InfoTile label="Subheadline" value={contactData.subheadline || "Not set"} />
+                            <InfoTile label="Highlight" value={contactData.highlightText || "Not set"} />
                         </div>
-                        <div className="p-3 sm:p-4 bg-muted/30 rounded-lg space-y-2">
-                            <p className="text-sm font-medium text-foreground mb-2">Skills & Highlight</p>
-                            <p className="text-xs sm:text-sm"><span className="text-muted-foreground">Highlight:</span> {contactData.highlightText || "Not set"}</p>
-                            <p className="text-xs sm:text-sm"><span className="text-muted-foreground">Skills:</span> {contactData.skills?.join(", ") || "None"}</p>
+                        <div className="rounded-2xl bg-[#F6F4EF] px-4 py-3">
+                            <p className="text-[11px] text-[#9a978f]">Skills</p>
+                            {contactData.skills?.length ? (
+                                <div className="mt-2 flex flex-wrap gap-1.5">
+                                    {contactData.skills.map((skill, i) => (
+                                        <span
+                                            key={`${skill}-${i}`}
+                                            className="inline-flex items-center rounded-full border border-[#EEEAE2] bg-white px-2.5 py-1 text-[12px] font-medium text-[#57544e]"
+                                        >
+                                            {skill}
+                                        </span>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="mt-1 text-[14px] font-medium text-[#26262B]">None</p>
+                            )}
                         </div>
                     </div>
                 ) : (
-                    <p className="text-sm text-muted-foreground py-4 text-center">Contact info not configured yet</p>
+                    <EmptyState icon={Mail} text="Contact info not configured yet" />
                 )}
             </section>
 
@@ -141,6 +176,59 @@ export default function HomePageAdmin() {
                 onOpenChange={setEditContactOpen}
                 contactData={contactData}
             />
+        </div>
+    );
+}
+
+function SectionHeading({ icon: Icon, title, description }: { icon: typeof Mail; title: string; description: string }) {
+    return (
+        <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#F6F4EF]">
+                <Icon className="h-5 w-5 text-[#26262B]" />
+            </div>
+            <div className="min-w-0">
+                <h3 className="text-[16px] font-semibold text-[#26262B]">{title}</h3>
+                <p className="text-[12px] text-[#9a978f]">{description}</p>
+            </div>
+        </div>
+    );
+}
+
+function StatTile({ label, value }: { label: string; value: number }) {
+    return (
+        <div className="rounded-2xl bg-[#F6F4EF] px-4 py-3">
+            <p className="text-[20px] font-semibold leading-none text-[#26262B]">{value}</p>
+            <p className="mt-1.5 text-[12px] text-[#9a978f]">{label}</p>
+        </div>
+    );
+}
+
+function InfoTile({ label, value }: { label: string; value: string }) {
+    return (
+        <div className="rounded-2xl bg-[#F6F4EF] px-4 py-3">
+            <p className="text-[11px] text-[#9a978f]">{label}</p>
+            <p className="mt-1 wrap-break-word text-[14px] font-medium text-[#26262B]">{value}</p>
+        </div>
+    );
+}
+
+function StatusBadge({ active }: { active: boolean }) {
+    return active ? (
+        <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-0.5 text-[11px] font-medium text-green-600 dark:bg-green-500/10 dark:text-green-400">
+            Active
+        </span>
+    ) : (
+        <span className="inline-flex items-center rounded-full bg-[#F6F4EF] px-2 py-0.5 text-[11px] font-medium text-[#9a978f]">
+            Hidden
+        </span>
+    );
+}
+
+function EmptyState({ icon: Icon, text }: { icon: typeof Mail; text: string }) {
+    return (
+        <div className="mt-4 flex flex-col items-center gap-2 rounded-2xl bg-[#F6F4EF] py-10 text-center">
+            <Icon className="h-6 w-6 text-[#c4c0b7]" />
+            <p className="text-[13px] text-[#9a978f]">{text}</p>
         </div>
     );
 }

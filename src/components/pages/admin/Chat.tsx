@@ -26,108 +26,102 @@ function AdminChatContent() {
     }, [user?.id]);
 
     return (
-        <div className="border border-border rounded-xl overflow-hidden">
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-border bg-card">
-                <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-full bg-primary/10">
-                        <MessageCircle className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                        <h3 className="font-semibold">Live Chat</h3>
-                        <p className="text-xs text-muted-foreground">
-                            Manage conversations with users
-                        </p>
-                    </div>
-                </div>
-                <div className="relative">
-                    <button
-                        onClick={() => setShowSettings(!showSettings)}
-                        className="p-2 rounded-lg hover:bg-muted transition-colors"
-                        title="Chat Settings"
-                    >
-                        <Settings className="h-4 w-4" />
-                    </button>
-                    {showSettings && (
-                        <>
-                            <div
-                                className="fixed inset-0 z-10"
-                                onClick={() => setShowSettings(false)}
-                            />
-                            <div className="absolute right-0 top-full mt-1 w-80 rounded-lg border border-border bg-card shadow-lg z-20">
-                                <div className="p-4">
-                                    <h4 className="font-medium text-sm mb-4">Chat Settings</h4>
+        <div className="flex h-full flex-col overflow-hidden rounded-[24px] border border-[#EEEAE2] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+            <div className="flex min-h-0 flex-1">
+                {/* Sidebar — conversation list */}
+                <div
+                    className={`flex w-full flex-col border-r border-[#EEEAE2] md:w-80 ${selectedConversation ? "hidden md:flex" : "flex"}`}
+                >
+                    {/* Sidebar header + settings */}
+                    <div className="flex flex-shrink-0 items-center justify-between gap-3 border-b border-[#EEEAE2] p-4">
+                        <div className="flex items-center gap-2.5">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F4C63D]/15">
+                                <MessageCircle className="h-[18px] w-[18px] text-[#26262B]" />
+                            </div>
+                            <h3 className="text-[15px] font-semibold text-[#26262B]">Conversations</h3>
+                        </div>
+                        <div className="relative shrink-0">
+                            <button
+                                onClick={() => setShowSettings(!showSettings)}
+                                className="flex h-9 w-9 items-center justify-center rounded-xl text-[#57544e] transition-colors hover:bg-[#F6F4EF]"
+                                title="Chat Settings"
+                                aria-label="Chat Settings"
+                            >
+                                <Settings className="h-4 w-4" />
+                            </button>
+                            {showSettings && (
+                                <>
+                                    <div
+                                        className="fixed inset-0 z-10"
+                                        onClick={() => setShowSettings(false)}
+                                    />
+                                    <div className="absolute right-0 top-full z-20 mt-1 w-72 rounded-2xl border border-[#EEEAE2] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+                                        <h4 className="mb-3 text-[14px] font-semibold text-[#26262B]">Chat Settings</h4>
 
-                                    {/* Status Visibility Toggle */}
-                                    <div className="border border-border rounded-lg p-4">
-                                        <div className="flex items-center justify-between gap-3">
-                                            <div className="min-w-0">
-                                                <p className="font-medium text-sm">
-                                                    User can see your active and read status
-                                                </p>
-                                                <p className="text-xs text-muted-foreground mt-0.5">
-                                                    Show online status and message read receipts to users
-                                                </p>
+                                        {/* Status Visibility Toggle */}
+                                        <div className="rounded-2xl border border-[#EEEAE2] p-4">
+                                            <div className="flex items-center justify-between gap-3">
+                                                <div className="min-w-0">
+                                                    <p className="text-[13px] font-medium text-[#26262B]">
+                                                        Show active &amp; read status
+                                                    </p>
+                                                    <p className="mt-0.5 text-[12px] text-[#9a978f]">
+                                                        Let users see your online status and read receipts
+                                                    </p>
+                                                </div>
+                                                <button
+                                                    onClick={toggleGlobalStatus}
+                                                    disabled={isLoading}
+                                                    aria-pressed={!globalHideStatus}
+                                                    className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#26262B]/30 focus:ring-offset-2 ${!globalHideStatus
+                                                        ? "bg-green-500"
+                                                        : "bg-gray-300 dark:bg-gray-600"
+                                                        } disabled:opacity-50`}
+                                                >
+                                                    {isLoading ? (
+                                                        <span className="absolute inset-0 flex items-center justify-center">
+                                                            <Loader2 className="h-4 w-4 animate-spin text-white" />
+                                                        </span>
+                                                    ) : (
+                                                        <span
+                                                            className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-all duration-300 ease-in-out ${!globalHideStatus
+                                                                ? "translate-x-6"
+                                                                : "translate-x-1"
+                                                                }`}
+                                                        />
+                                                    )}
+                                                </button>
                                             </div>
-                                            <button
-                                                onClick={toggleGlobalStatus}
-                                                disabled={isLoading}
-                                                className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${!globalHideStatus
-                                                    ? "bg-green-500"
-                                                    : "bg-gray-300 dark:bg-gray-600"
-                                                    } disabled:opacity-50`}
+                                            <div
+                                                className={`mt-3 flex items-start gap-1.5 rounded-xl px-3 py-2 text-[12px] ${!globalHideStatus
+                                                    ? "bg-green-50 text-green-700 dark:bg-green-500/10 dark:text-green-400"
+                                                    : "bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400"
+                                                    }`}
                                             >
-                                                {isLoading ? (
-                                                    <span className="absolute inset-0 flex items-center justify-center">
-                                                        <Loader2 className="h-4 w-4 animate-spin text-white" />
-                                                    </span>
-                                                ) : (
-                                                    <span
-                                                        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-all duration-300 ease-in-out ${!globalHideStatus
-                                                            ? "translate-x-6"
-                                                            : "translate-x-1"
-                                                            }`}
-                                                    />
-                                                )}
-                                            </button>
-                                        </div>
-                                        <div className="mt-3 pt-3 border-t border-border">
-                                            <p className="text-xs text-muted-foreground">
-                                                {!globalHideStatus ? (
-                                                    <span className="text-green-600 dark:text-green-400">
-                                                        ✓ Users can see when you&apos;re online and when
-                                                        you&apos;ve read their messages
-                                                    </span>
-                                                ) : (
-                                                    <span className="text-amber-600 dark:text-amber-400">
-                                                        ⚠ Your online status and read receipts are hidden
-                                                        from users
-                                                    </span>
-                                                )}
-                                            </p>
+                                                <span className="mt-px">{!globalHideStatus ? "✓" : "⚠"}</span>
+                                                <span>
+                                                    {!globalHideStatus
+                                                        ? "Users can see when you're online and when you've read their messages"
+                                                        : "Your online status and read receipts are hidden from users"}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </>
-                    )}
-                </div>
-            </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
 
-            {/* Content */}
-            <div className="flex h-[600px]">
-                {/* Sidebar - Conversation List */}
-                <div
-                    className={`w-full md:w-80 border-r border-border overflow-y-auto p-4 ${selectedConversation ? "hidden md:block" : ""
-                        }`}
-                >
-                    <ChatList
-                        selectedConversationId={selectedConversation?.id}
-                        onSelectConversation={setSelectedConversation}
-                    />
+                    {/* Scrollable list */}
+                    <div className="pretty-scroll min-h-0 flex-1 overflow-y-auto p-4">
+                        <ChatList
+                            selectedConversationId={selectedConversation?.id}
+                            onSelectConversation={setSelectedConversation}
+                        />
+                    </div>
                 </div>
 
-                {/* Main - Chat View */}
+                {/* Main — chat view */}
                 <div className={`flex-1 ${selectedConversation ? "" : "hidden md:flex"}`}>
                     {selectedConversation ? (
                         <ChatView
@@ -136,9 +130,14 @@ function AdminChatContent() {
                             onDelete={() => setSelectedConversation(null)}
                         />
                     ) : (
-                        <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground">
-                            <MessageCircle className="h-16 w-16 mb-4 opacity-30" />
-                            <p>Select a conversation to start chatting</p>
+                        <div className="flex flex-1 flex-col items-center justify-center p-8 text-center">
+                            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#F6F4EF]">
+                                <MessageCircle className="h-8 w-8 text-[#c4c0b7]" />
+                            </div>
+                            <p className="text-[15px] font-semibold text-[#26262B]">No conversation selected</p>
+                            <p className="mt-1 text-[13px] text-[#9a978f]">
+                                Choose a conversation from the list to start chatting
+                            </p>
                         </div>
                     )}
                 </div>

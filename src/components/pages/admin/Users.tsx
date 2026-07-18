@@ -9,7 +9,7 @@ import {
 } from "@/lib/firebase";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Ban, ChevronLeft, ChevronRight, Circle, Crown, Loader2, MessageCircle, Search, ShieldCheck } from "lucide-react";
+import { Ban, ChevronLeft, ChevronRight, Crown, Loader2, MessageCircle, Search, ShieldCheck, Users as UsersIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -62,17 +62,23 @@ function UserPresenceIndicator({ userId }: { userId: string }) {
     };
 
     return (
-        <div className="flex items-center gap-1.5">
-            <Circle
-                className={`h-2.5 w-2.5 ${isOnline ? "fill-green-500 text-green-500" : "fill-gray-400 text-gray-400"}`}
-            />
-            <span className={`text-xs ${isOnline ? "text-green-600 dark:text-green-400" : "text-muted-foreground"}`}>
+        <span className="inline-flex items-center gap-1.5">
+            <span className={`h-2 w-2 shrink-0 rounded-full ${isOnline ? "bg-green-500" : "bg-[#c4c0b7]"}`} />
+            <span className={isOnline ? "text-green-600 dark:text-green-400" : "text-[#9a978f]"}>
                 {isOnline ? "Online" : formatLastSeen(lastSeen)}
             </span>
-        </div>
+        </span>
     );
 }
 
+function StatTile({ label, value }: { label: string; value: number }) {
+    return (
+        <div className="rounded-2xl bg-[#F6F4EF] px-4 py-3">
+            <p className="text-[20px] font-bold leading-none text-[#26262B]">{value}</p>
+            <p className="mt-1.5 text-[11px] text-[#9a978f]">{label}</p>
+        </div>
+    );
+}
 
 export default function Users() {
     const { isAdmin } = useAuth();
@@ -121,85 +127,133 @@ export default function Users() {
     const users = data?.users || [];
     const pagination = data?.pagination || { page: 1, limit: 10, total: 0, totalPages: 0 };
 
+    const adminCount = users.filter((u: User) => u.isAdmin).length;
+    const bannedCount = users.filter((u: User) => u.isBanned).length;
+    const activeCount = users.length - bannedCount;
+
     return (
-        <section className="border border-border rounded-xl p-6">
-            <div className="flex items-center gap-2 mb-4">
-                <ShieldCheck className="h-5 w-5 icon-bw" />
-                <h3 className="text-base font-semibold">Manage Users</h3>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3 mb-4">
-                <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <input type="text" placeholder="Search by name, email, or username..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} className="w-full pl-9 pr-4 py-2 text-sm border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary" />
+        <div className="space-y-5">
+            {/* Summary tiles (computed from the loaded page of users) */}
+            <section className="rounded-[24px] border border-[#EEEAE2] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+                <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+                    <StatTile label="On this page" value={users.length} />
+                    <StatTile label="Active" value={activeCount} />
+                    <StatTile label="Admins" value={adminCount} />
+                    <StatTile label="Banned" value={bannedCount} />
                 </div>
-                <Select value={filter} onValueChange={(v) => { setFilter(v as "all" | "active" | "banned"); setPage(1); }}>
-                    <SelectTrigger className="w-[140px]"><SelectValue placeholder="Filter" /></SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">All Users</SelectItem>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="banned">Banned</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
+            </section>
 
-            {isLoading ? (
-                <div className="flex items-center justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
-            ) : users.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-8">No users found.</p>
-            ) : (
-                <>
-                    <div className="space-y-3">
-                        {users.map((user: User) => (
-                            <div key={user.id} className={`border rounded-lg p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${user.isBanned ? "border-destructive/50 bg-destructive/5" : "border-border"}`}>
-                                <div className="flex items-center gap-3 min-w-0">
-                                    <BlurImage src={user.image || "/default-avatar.png"} alt={user.name || "User"} width={40} height={40} className="rounded-full" />
-                                    <div className="min-w-0">
-                                        <div className="flex items-center gap-2">
-                                            <p className="font-medium text-sm truncate">{user.name || "Unknown"}</p>
-                                            {user.isAdmin && <span className="flex items-center gap-1 px-2 py-0.5 text-xs bg-amber-500 text-white rounded-full"><Crown className="h-3 w-3" />Admin</span>}
-                                            {user.isBanned && <span className="px-2 py-0.5 text-xs bg-destructive text-destructive-foreground rounded-full">Banned</span>}
-                                        </div>
-                                        <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                                        <div className="flex items-center gap-2 mt-1">
-                                            <span className="text-xs text-muted-foreground">{user.provider} · Joined {new Date(user.createdAt).toLocaleDateString()}</span>
-                                            <span className="text-muted-foreground">·</span>
-                                            <UserPresenceIndicator userId={user.id} />
+            {/* Search, filter, list & pagination */}
+            <section className="rounded-[24px] border border-[#EEEAE2] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+                <div className="flex flex-col gap-3 sm:flex-row">
+                    <div className="relative flex-1">
+                        <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9a978f]" />
+                        <input
+                            type="text"
+                            placeholder="Search by name, email, or username..."
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
+                            className="h-10 w-full rounded-full border border-[#EEEAE2] bg-white pl-10 pr-4 text-[13px] text-[#26262B] placeholder:text-[#9a978f] focus:outline-none focus:ring-2 focus:ring-[#26262B]/20"
+                        />
+                    </div>
+                    <Select value={filter} onValueChange={(v) => { setFilter(v as "all" | "active" | "banned"); setPage(1); }}>
+                        <SelectTrigger className="h-10 w-full rounded-full sm:w-[150px]"><SelectValue placeholder="Filter" /></SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Users</SelectItem>
+                            <SelectItem value="active">Active</SelectItem>
+                            <SelectItem value="banned">Banned</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {isLoading ? (
+                    <div className="flex items-center justify-center py-16">
+                        <Loader2 className="h-6 w-6 animate-spin text-[#9a978f]" />
+                    </div>
+                ) : users.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F6F4EF]">
+                            <UsersIcon className="h-5 w-5 text-[#9a978f]" />
+                        </div>
+                        <div>
+                            <p className="text-[14px] font-medium text-[#26262B]">No users found</p>
+                            <p className="mt-0.5 text-[12px] text-[#9a978f]">Try adjusting your search or filter.</p>
+                        </div>
+                    </div>
+                ) : (
+                    <>
+                        <div className="mt-2 divide-y divide-[#f1ede5]">
+                            {users.map((user: User) => (
+                                <div key={user.id} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+                                    <div className="flex min-w-0 items-center gap-3">
+                                        <BlurImage src={user.image || "/default-avatar.png"} alt={user.name || "User"} width={44} height={44} className="h-11 w-11 shrink-0 rounded-full object-cover" />
+                                        <div className="min-w-0">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <p className="truncate text-[14px] font-medium text-[#26262B]">{user.name || "Unknown"}</p>
+                                                {user.isAdmin && (
+                                                    <span className="inline-flex items-center gap-1 rounded-full bg-[#F4C63D]/15 px-2 py-0.5 text-[11px] font-medium text-[#26262B]">
+                                                        <Crown className="h-3 w-3" /> Admin
+                                                    </span>
+                                                )}
+                                                {user.isBanned && (
+                                                    <span className="rounded-full bg-[#EE5D4A]/10 px-2 py-0.5 text-[11px] font-medium text-[#EE5D4A]">Banned</span>
+                                                )}
+                                            </div>
+                                            <p className="mt-0.5 truncate text-[12px] text-[#9a978f]">{user.email}</p>
+                                            <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-[#9a978f]">
+                                                <span className="rounded-full bg-[#F6F4EF] px-2 py-0.5 text-[11px] font-medium capitalize text-[#57544e]">{user.provider}</span>
+                                                <span className="text-[#d9d4ca]">·</span>
+                                                <span>Joined {new Date(user.createdAt).toLocaleDateString()}</span>
+                                                <span className="text-[#d9d4ca]">·</span>
+                                                <UserPresenceIndicator userId={user.id} />
+                                            </div>
                                         </div>
                                     </div>
+                                    <div className="flex shrink-0 items-center gap-2 self-start sm:self-auto">
+                                        {!user.isAdmin && (
+                                            <button
+                                                onClick={() => setSelectedUser(user)}
+                                                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#EEEAE2] bg-white text-[#26262B] transition hover:bg-[#F6F4EF]"
+                                                title="Send message"
+                                                aria-label="Send message"
+                                            >
+                                                <MessageCircle className="h-4 w-4" />
+                                            </button>
+                                        )}
+                                        {user.isAdmin ? (
+                                            <span className="rounded-full bg-[#F6F4EF] px-3 py-1.5 text-[11px] font-medium text-[#9a978f]">Protected</span>
+                                        ) : (
+                                            <button
+                                                onClick={() => banMutation.mutate({ userId: user.id, currentlyBanned: user.isBanned })}
+                                                disabled={banMutation.isPending && banMutation.variables?.userId === user.id}
+                                                className={`inline-flex h-10 items-center gap-2 rounded-full px-4 text-[13px] font-medium text-white transition-transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 ${user.isBanned ? "bg-green-600 hover:bg-green-700" : "bg-[#EE5D4A] hover:bg-[#EE5D4A]/90"}`}
+                                            >
+                                                {banMutation.isPending && banMutation.variables?.userId === user.id ? (
+                                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                                ) : user.isBanned ? (
+                                                    <><ShieldCheck className="h-4 w-4" /> Unban</>
+                                                ) : (
+                                                    <><Ban className="h-4 w-4" /> Ban</>
+                                                )}
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-2 self-start sm:self-auto">
-                                    {!user.isAdmin && (
-                                        <button
-                                            onClick={() => setSelectedUser(user)}
-                                            className="flex items-center gap-2 text-sm font-medium rounded-md px-3 py-2 border border-border hover:bg-muted transition"
-                                            title="Send message"
-                                        >
-                                            <MessageCircle className="h-4 w-4" />
-                                        </button>
-                                    )}
-                                    {user.isAdmin ? (
-                                        <span className="text-xs text-muted-foreground italic">Protected</span>
-                                    ) : (
-                                        <button onClick={() => banMutation.mutate({ userId: user.id, currentlyBanned: user.isBanned })} disabled={banMutation.isPending && banMutation.variables?.userId === user.id} className={`flex items-center gap-2 text-sm font-medium rounded-md px-4 py-2 transition ${user.isBanned ? "bg-green-600 text-white hover:bg-green-700" : "bg-destructive text-destructive-foreground hover:bg-destructive/90"} disabled:opacity-50`}>
-                                            {banMutation.isPending && banMutation.variables?.userId === user.id ? <Loader2 className="h-4 w-4 animate-spin" /> : user.isBanned ? <><ShieldCheck className="h-4 w-4" />Unban</> : <><Ban className="h-4 w-4" />Ban</>}
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    {pagination.totalPages > 1 && (
-                        <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
-                            <p className="text-sm text-muted-foreground">Page {pagination.page} of {pagination.totalPages} ({pagination.total} users)</p>
-                            <div className="flex gap-2">
-                                <button onClick={() => setPage((p) => p - 1)} disabled={pagination.page === 1} className="p-2 border border-border rounded-lg hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"><ChevronLeft className="h-4 w-4" /></button>
-                                <button onClick={() => setPage((p) => p + 1)} disabled={pagination.page === pagination.totalPages} className="p-2 border border-border rounded-lg hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"><ChevronRight className="h-4 w-4" /></button>
-                            </div>
+                            ))}
                         </div>
-                    )}
-                </>
-            )}
+
+                        {pagination.totalPages > 1 && (
+                            <div className="mt-4 flex items-center justify-between gap-3 border-t border-[#f1ede5] pt-4">
+                                <p className="text-[13px] text-[#9a978f]">Page {pagination.page} of {pagination.totalPages} ({pagination.total} users)</p>
+                                <div className="flex gap-2">
+                                    <button onClick={() => setPage((p) => p - 1)} disabled={pagination.page === 1} className="rounded-xl border border-[#EEEAE2] bg-white p-2 text-[#26262B] transition hover:bg-[#F6F4EF] disabled:cursor-not-allowed disabled:opacity-50" aria-label="Previous page"><ChevronLeft className="h-4 w-4" /></button>
+                                    <button onClick={() => setPage((p) => p + 1)} disabled={pagination.page === pagination.totalPages} className="rounded-xl border border-[#EEEAE2] bg-white p-2 text-[#26262B] transition hover:bg-[#F6F4EF] disabled:cursor-not-allowed disabled:opacity-50" aria-label="Next page"><ChevronRight className="h-4 w-4" /></button>
+                                </div>
+                            </div>
+                        )}
+                    </>
+                )}
+            </section>
 
             {/* Send Message Modal */}
             {selectedUser && (
@@ -209,6 +263,6 @@ export default function Users() {
                     onOpenChange={(open) => !open && setSelectedUser(null)}
                 />
             )}
-        </section>
+        </div>
     );
 }

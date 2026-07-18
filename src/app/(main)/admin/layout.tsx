@@ -1,91 +1,48 @@
 "use client";
 
-import MotionWrapper from "@/components/motion/MotionWrapper";
-import { BlurImage, PageTitle, Section } from "@/components/ui";
+import AdminSidebar from "@/components/admin/dashboard/AdminSidebar";
+import AdminTopBar from "@/components/admin/dashboard/AdminTopBar";
+import { D } from "@/components/admin/dashboard/palette";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { useChatUnread } from "@/lib/hooks/useChat";
-import { BarChart3, ChevronDown, Layout, LockKeyhole, LogOut, Mail, MessageCircle, Settings, Users } from "lucide-react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { Poppins } from "next/font/google";
+import { useRouter } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
 
-interface NavChild {
-    id: string;
-    label: string;
-    href: string;
-}
+// Matches the reference dashboard typography.
+const poppins = Poppins({
+    subsets: ["latin"],
+    weight: ["400", "500", "600", "700"],
+    display: "swap",
+});
 
-interface NavItem {
-    id: string;
-    label: string;
-    icon: React.ComponentType<{ className?: string }>;
-    href: string;
-    children?: NavChild[];
-}
+// Keep token-based page content on the light (cream) theme regardless of the
+// visitor's global light/dark preference, so the whole admin panel stays visually
+// consistent with the dashboard shell.
+const lightTokens = {
+    "--background": "oklch(1 0 0)",
+    "--foreground": "oklch(0.145 0 0)",
+    "--card": "oklch(1 0 0)",
+    "--card-foreground": "oklch(0.145 0 0)",
+    "--popover": "oklch(1 0 0)",
+    "--popover-foreground": "oklch(0.145 0 0)",
+    "--muted": "oklch(0.97 0 0)",
+    "--muted-foreground": "oklch(0.556 0 0)",
+    "--border": "oklch(0.922 0 0)",
+    "--input": "oklch(0.922 0 0)",
+    "--secondary": "oklch(0.97 0 0)",
+    "--secondary-foreground": "oklch(0.205 0 0)",
+    "--accent": "oklch(0.97 0 0)",
+    "--accent-foreground": "oklch(0.205 0 0)",
+    "--primary": "#000000",
+    "--primary-foreground": "#ffffff",
+    "--ring": "oklch(0.708 0 0)",
+    backgroundColor: D.page,
+} as React.CSSProperties;
 
-const adminNavItems: NavItem[] = [
-    { id: "users", label: "Manage Users", icon: Users, href: "/admin/users" },
-    { id: "chat", label: "Live Chat", icon: MessageCircle, href: "/admin/chat" },
-    {
-        id: "pages", label: "Pages", icon: Layout, href: "/admin/pages", children: [
-            { id: "home", label: "Home Page", href: "/admin/pages/home" },
-            { id: "about", label: "About Page", href: "/admin/pages/about" },
-            { id: "legal", label: "Legal Pages", href: "/admin/pages/legal" },
-        ]
-    },
-    { id: "subscribers", label: "Subscribers", icon: Mail, href: "/admin/subscribers" },
-    { id: "statistics", label: "Statistics", icon: BarChart3, href: "/admin/statistics" },
-    { id: "vault", label: "Vault Settings", icon: LockKeyhole, href: "/admin/vault" },
-    { id: "settings", label: "Settings", icon: Settings, href: "/admin/settings" },
-];
-
-function NavItemWithChildren({ item, pathname, isParentActive }: { item: NavItem; pathname: string; isParentActive: boolean }) {
-    const [isOpen, setIsOpen] = useState(isParentActive);
-    const Icon = item.icon;
-
-    return (
-        <div>
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className={`flex items-center justify-between w-full px-3 py-2 rounded-lg font-medium transition-colors ${isParentActive ? "bg-muted" : "text-foreground hover:bg-muted"}`}
-            >
-                <span className="flex items-center gap-2">
-                    <Icon className="h-4 w-4" />
-                    {item.label}
-                </span>
-                <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
-            </button>
-            {isOpen && item.children && (
-                <div className="ml-4 mt-1 space-y-1 border-l border-border pl-2">
-                    {item.children.map((child) => {
-                        const isChildActive = pathname === child.href;
-                        return (
-                            <Link
-                                key={child.id}
-                                href={child.href}
-                                prefetch={true}
-                                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isChildActive
-                                    ? "bg-foreground text-secondary"
-                                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                                    }`}
-                            >
-                                {child.label}
-                            </Link>
-                        );
-                    })}
-                </div>
-            )}
-        </div>
-    );
-}
-
-export default function AdminLayout({ children }: { children: ReactNode }) {
-    const { user, logout, isAdmin, status } = useAuth();
-    const pathname = usePathname();
+export default function AdminLayout({ children }: { readonly children: ReactNode }) {
+    const { user, isAdmin, status } = useAuth();
     const router = useRouter();
-    const { unreadCount: totalUnread } = useChatUnread();
-
-    const currentSection = pathname.split("/").pop() || "users";
+    const [mobileOpen, setMobileOpen] = useState(false);
 
     useEffect(() => {
         if (status === "authenticated" && !isAdmin) {
@@ -94,84 +51,31 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     }, [status, isAdmin, router]);
 
     if (status === "loading" || !user || !isAdmin) {
-        return null;
+        return (
+            <div
+                className="flex min-h-screen items-center justify-center"
+                style={{ backgroundColor: D.page }}
+            >
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#26262B] border-t-transparent" />
+            </div>
+        );
     }
 
     return (
-        <Section id="admin">
-            <PageTitle title="Admin Panel" subtitle="Manage your application" />
+        <div
+            className={`${poppins.className} flex h-dvh w-full overflow-hidden text-[#26262B]`}
+            style={lightTokens}
+        >
+            <AdminSidebar mobileOpen={mobileOpen} onCloseMobile={() => setMobileOpen(false)} />
 
-            <MotionWrapper delay={0.2} className="flex flex-col md:flex-row gap-6 mt-6">
-                <div className="w-full md:w-65 space-y-1 bg-card border border-border rounded-xl p-4 h-fit">
-                    <div className="flex items-center gap-3 pb-4 mb-2 border-b border-border md:hidden">
-                        <BlurImage
-                            src={user.image || "/default-avatar.png"}
-                            alt={user.name || "Admin"}
-                            width={40}
-                            height={40}
-                            className="rounded-full border border-primary"
-                        />
-                        <div className="min-w-0">
-                            <p className="font-medium text-sm truncate">{user.name}</p>
-                            <p className="text-xs text-muted-foreground">Administrator</p>
-                        </div>
-                    </div>
-
-                    <nav className="space-y-1">
-                        {adminNavItems.map((item) => {
-                            const Icon = item.icon;
-                            const hasChildren = item.children && item.children.length > 0;
-                            const isParentActive = !!(hasChildren && pathname.startsWith(item.href));
-                            const isActive = pathname === item.href || currentSection === item.id;
-
-                            if (hasChildren) {
-                                return (
-                                    <NavItemWithChildren
-                                        key={item.id}
-                                        item={item}
-                                        pathname={pathname}
-                                        isParentActive={isParentActive}
-                                    />
-                                );
-                            }
-
-                            return (
-                                <Link
-                                    key={item.id}
-                                    href={item.href}
-                                    prefetch={true}
-                                    className={`flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${isActive
-                                        ? "bg-foreground text-secondary"
-                                        : "text-foreground hover:bg-muted"
-                                        }`}
-                                >
-                                    <span className="flex items-center gap-2">
-                                        <Icon className="h-4 w-4" />
-                                        {item.label}
-                                    </span>
-                                    {item.id === "chat" && totalUnread > 0 && (
-                                        <span className="h-5 min-w-5 px-1.5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-medium animate-pulse">
-                                            {totalUnread > 99 ? "99+" : totalUnread}
-                                        </span>
-                                    )}
-                                </Link>
-                            );
-                        })}
-
-                        <div className="border-t border-border my-2" />
-
-                        <button
-                            onClick={logout}
-                            className="flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-colors text-foreground cursor-pointer hover:bg-muted w-full"
-                        >
-                            <LogOut className="h-4 w-4" />
-                            Logout
-                        </button>
-                    </nav>
+            <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
+                <div className="shrink-0 px-4 pt-5 md:px-8 md:pt-7">
+                    <AdminTopBar onOpenMenu={() => setMobileOpen(true)} />
                 </div>
-
-                <div className="flex-1 space-y-6">{children}</div>
-            </MotionWrapper>
-        </Section>
+                <div className="pretty-scroll min-h-0 flex-1 overflow-y-auto px-4 pb-5 md:px-8 md:pb-7">
+                    {children}
+                </div>
+            </main>
+        </div>
     );
 }
