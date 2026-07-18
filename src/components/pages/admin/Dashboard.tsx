@@ -1,77 +1,49 @@
 "use client";
 
-import ActivityCard from "@/components/admin/dashboard/ActivityCard";
-import CommunityCard from "@/components/admin/dashboard/CommunityCard";
-import ContributionsCalendar from "@/components/admin/dashboard/ContributionsCalendar";
-import { buildWorkout, reposToHabits } from "@/components/admin/dashboard/githubToCards";
-import { useGitHub } from "@/components/admin/dashboard/useGitHub";
-import MyHabits from "@/components/be-run/MyHabits";
-import WorkoutResults from "@/components/be-run/WorkoutResults";
-import { Github, RefreshCw } from "lucide-react";
-
-function DashboardSkeleton() {
-    return (
-        <div className="grid animate-pulse grid-cols-1 gap-4 lg:grid-cols-[1.5fr_1fr]">
-            <div className="flex flex-col gap-4">
-                <div className="h-[336px] rounded-[26px] bg-[#e5e1d8]" />
-                <div className="h-[210px] rounded-[24px] bg-[#efeae2]" />
-                <div className="h-[240px] rounded-[24px] bg-[#efeae2]" />
-            </div>
-            <div className="flex flex-col gap-4">
-                <div className="h-[430px] rounded-[26px] bg-[#2f2f35]" />
-                <div className="h-[360px] rounded-[24px] bg-[#efeae2]" />
-            </div>
-        </div>
-    );
-}
-
-function DashboardError({ onRetry }: { onRetry: () => void }) {
-    return (
-        <div className="flex flex-col items-center justify-center rounded-[26px] border border-[#EEEAE2] bg-white px-6 py-16 text-center">
-            <p className="text-[15px] font-semibold text-[#26262B]">Couldn&apos;t load GitHub data</p>
-            <p className="mt-1 max-w-md text-[13px] text-[#9a978f]">
-                The GitHub API request failed. Check your connection or the GITHUB_ACCESS_TOKEN, then try again.
-            </p>
-            <button
-                onClick={onRetry}
-                className="mt-5 flex items-center gap-2 rounded-full bg-[#26262B] px-5 py-2.5 text-[13px] font-medium text-white transition-transform hover:scale-[1.02]"
-            >
-                <RefreshCw className="h-4 w-4" />
-                Retry
-            </button>
-        </div>
-    );
-}
+import ApplicationOverview from "@/components/admin/dashboard/ApplicationOverview";
+import GitHubActivity from "@/components/admin/dashboard/GitHubActivity";
+import { SectionHeader } from "@/components/admin/dashboard/primitives";
+import { ArrowUpRight, Github } from "lucide-react";
+import Link from "next/link";
 
 export default function Dashboard() {
-    const { data, isLoading, isError, refetch } = useGitHub();
-
-    if (isLoading) return <DashboardSkeleton />;
-    if (isError || !data) return <DashboardError onRetry={() => refetch()} />;
-
-    const workoutProps = { ...buildWorkout(data), icon: Github };
-    const habitData = reposToHabits(data.topRepos);
-
     return (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.5fr_1fr]">
-            {/* Left column */}
-            <div className="flex flex-col gap-4">
-                <WorkoutResults {...workoutProps} />
-                <ActivityCard data={data} />
-                <CommunityCard data={data} />
-            </div>
-
-            {/* Right column */}
-            <div className="flex flex-col gap-4">
-                <ContributionsCalendar days={data.contributions.days} />
-                <MyHabits
-                    habits={habitData}
-                    metricLabel="Stars"
-                    title="Top Repositories"
-                    showTotal={false}
-                    emptyLabel="No public repositories found."
+        <div className="space-y-8">
+            {/* Application analytics & business health */}
+            <section>
+                <SectionHeader
+                    title="Application Overview"
+                    subtitle="Traffic, audience, users, and content health at a glance"
+                    action={
+                        <Link
+                            href="/admin/statistics"
+                            className="hidden shrink-0 items-center gap-1.5 rounded-full border border-[#EEEAE2] bg-white px-4 py-2 text-[12px] font-medium text-[#26262B] transition-colors hover:bg-[#F6F4EF] sm:inline-flex"
+                        >
+                            Full statistics
+                            <ArrowUpRight className="h-3.5 w-3.5" />
+                        </Link>
+                    }
                 />
-            </div>
+                <ApplicationOverview />
+            </section>
+
+            {/* Divider between the two domains */}
+            <div className="border-t border-[#E4DFD6]" />
+
+            {/* Personal development activity (GitHub) */}
+            <section>
+                <SectionHeader
+                    title="GitHub Activity"
+                    subtitle="Your public development activity and open-source stats"
+                    action={
+                        <span className="hidden shrink-0 items-center gap-1.5 rounded-full bg-[#26262B] px-4 py-2 text-[12px] font-medium text-white sm:inline-flex">
+                            <Github className="h-3.5 w-3.5 text-[#F4C63D]" />
+                            Developer insights
+                        </span>
+                    }
+                />
+                <GitHubActivity />
+            </section>
         </div>
     );
 }

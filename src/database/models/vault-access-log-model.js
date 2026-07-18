@@ -10,6 +10,7 @@ export const VAULT_LOG_ACTIONS = [
     "password_change",
     "password_reset",
     "settings_change",
+    "activity_cleared",
 ];
 
 const vaultAccessLogSchema = new Schema(

@@ -93,7 +93,7 @@ export default function NoteModal({ open, onOpenChange, note, folderId }: Readon
                 toast.success("Note saved");
             }
             queryClient.invalidateQueries({ queryKey: ["vault-notes"] });
-            queryClient.invalidateQueries({ queryKey: ["vault-dashboard"] });
+            queryClient.invalidateQueries({ queryKey: ["vault-all"] });
             onOpenChange(false);
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "Failed to save note");

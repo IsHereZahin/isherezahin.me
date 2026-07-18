@@ -15,7 +15,8 @@ export type VaultLogAction =
     | "file_download"
     | "password_change"
     | "password_reset"
-    | "settings_change";
+    | "settings_change"
+    | "activity_cleared";
 
 export async function logVaultAccess(
     action: VaultLogAction,

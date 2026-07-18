@@ -79,7 +79,7 @@ export default function LinkModal({ open, onOpenChange, link, folderId }: Readon
                 toast.success("Link saved");
             }
             queryClient.invalidateQueries({ queryKey: ["vault-links"] });
-            queryClient.invalidateQueries({ queryKey: ["vault-dashboard"] });
+            queryClient.invalidateQueries({ queryKey: ["vault-all"] });
             onOpenChange(false);
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "Failed to save link");

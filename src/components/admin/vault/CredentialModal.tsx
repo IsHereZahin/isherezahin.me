@@ -72,7 +72,7 @@ export default function CredentialModal({ open, onOpenChange, credential, folder
                 toast.success("Credential saved");
             }
             queryClient.invalidateQueries({ queryKey: ["vault-credentials"] });
-            queryClient.invalidateQueries({ queryKey: ["vault-dashboard"] });
+            queryClient.invalidateQueries({ queryKey: ["vault-all"] });
             onOpenChange(false);
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "Failed to save credential");

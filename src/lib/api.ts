@@ -1395,6 +1395,9 @@ const vault = {
         return vaultFetch(`/logs?${params}`);
     },
 
+    // Clear all activity logs; the server writes one audit entry recording the count.
+    clearLogs: (): Promise<{ removed: number; detail: string }> => vaultFetch("/logs", jsonInit("DELETE")),
+
     links: {
         getAll: (opts?: VaultListOpts) => vaultFetch(`/links${vaultListQuery(opts)}`),
         create: (data: unknown) => vaultFetch("/links", jsonInit("POST", data)),

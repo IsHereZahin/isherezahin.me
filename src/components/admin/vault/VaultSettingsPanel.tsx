@@ -7,7 +7,7 @@ import type { VaultAccessLog, VaultSettings, VaultStatus } from "@/lib/vault/typ
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
     AlertTriangle, KeyRound, Loader2, Lock, type LucideIcon,
-    ScrollText, Shield, Unlock, LockKeyhole as VaultIcon,
+    ScrollText, Shield, Trash2, Unlock, LockKeyhole as VaultIcon,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -272,14 +272,29 @@ const ACTION_COLORS: Record<string, string> = {
     password_change: "bg-green-500",
     unlock_failed: "bg-red-500",
     password_reset: "bg-amber-500",
+    activity_cleared: "bg-[#EE5D4A]",
 };
 
 function AccessLogs() {
+    const queryClient = useQueryClient();
     const [page, setPage] = useState(1);
+    const [confirmClear, setConfirmClear] = useState(false);
     const { data, isLoading } = useQuery<{ logs: VaultAccessLog[]; totalPages: number; total: number }>({
         queryKey: ["vault-logs", page],
         queryFn: () => vault.logs(page, 15),
     });
+
+    const clearAll = async () => {
+        try {
+            const { removed } = await vault.clearLogs();
+            toast.success(`Activity history cleared (${removed} ${removed === 1 ? "record" : "records"} removed)`);
+            setPage(1);
+            await queryClient.invalidateQueries({ queryKey: ["vault-logs"] });
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Failed to clear activity");
+            throw error; // keep the confirmation dialog open on failure
+        }
+    };
 
     let body: React.ReactNode;
     if (isLoading) {
@@ -316,14 +331,37 @@ function AccessLogs() {
 
     return (
         <div>
-            <div className="flex items-center gap-3 border-b border-[#f1ede5] p-5">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#F6F4EF]"><ScrollText className="h-[18px] w-[18px] text-[#26262B]" /></div>
-                <div>
-                    <p className="text-[15px] font-semibold text-[#26262B]">Access logs</p>
-                    <p className="mt-0.5 text-[12px] text-[#9a978f]">Unlock attempts, uploads, downloads, and setting changes.</p>
+            <div className="flex items-center justify-between gap-3 border-b border-[#f1ede5] p-5">
+                <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#F6F4EF]"><ScrollText className="h-[18px] w-[18px] text-[#26262B]" /></div>
+                    <div className="min-w-0">
+                        <p className="text-[15px] font-semibold text-[#26262B]">Access logs</p>
+                        <p className="mt-0.5 text-[12px] text-[#9a978f]">Unlock attempts, uploads, downloads, and setting changes.</p>
+                    </div>
                 </div>
+                {!!data?.total && (
+                    <button
+                        type="button"
+                        onClick={() => setConfirmClear(true)}
+                        className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-[#EE5D4A]/30 bg-white px-3.5 text-[12px] font-medium text-[#EE5D4A] transition-colors hover:bg-[#EE5D4A]/10"
+                    >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        <span className="hidden sm:inline">Delete All Activity</span>
+                        <span className="sm:hidden">Clear</span>
+                    </button>
+                )}
             </div>
             {body}
+
+            <ConfirmDialog
+                open={confirmClear}
+                onOpenChange={setConfirmClear}
+                title="Delete all activity?"
+                description="This permanently removes every activity log. A single new entry will be recorded noting how many were deleted, so the audit trail is preserved. This action cannot be undone."
+                confirmText="Delete All"
+                variant="danger"
+                onConfirm={clearAll}
+            />
         </div>
     );
 }
