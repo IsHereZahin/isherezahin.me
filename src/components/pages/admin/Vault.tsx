@@ -1,10 +1,10 @@
 "use client";
 
-import VaultSettingsPanel from "@/components/admin/vault/VaultSettingsPanel";
+import VaultWorkspace from "@/components/admin/vault/VaultWorkspace";
 
-// Admin portal view: the Personal Vault settings ONLY (enable/disable, password
-// setup/change/reset, upload limits, access logs). The vault contents live at /vault
-// and are reached with just the vault password, no admin login required there.
+// Admin portal view of the Personal Vault: the full vault workspace (dashboard,
+// links, notes, files, credentials) plus the admin-only Settings tab. Vault
+// contents stay gated behind the vault password; Settings needs admin login.
 export default function Vault() {
-    return <VaultSettingsPanel />;
+    return <VaultWorkspace admin />;
 }

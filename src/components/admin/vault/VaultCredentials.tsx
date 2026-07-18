@@ -79,35 +79,35 @@ export default function VaultCredentials({ folderId, query }: Readonly<{ folderI
         <section className="space-y-4">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <KeyRound className="h-5 w-5 icon-bw" />
-                    <h3 className="text-base font-semibold">Credentials</h3>
+                    <KeyRound className="h-5 w-5 text-[#26262B]" />
+                    <h3 className="text-[16px] font-semibold text-[#26262B]">Credentials</h3>
                 </div>
                 {!searching && <AdminAddButton label="New Credential" onClick={() => setModal({ open: true, credential: null })} />}
             </div>
 
             {isLoading ? (
-                <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
+                <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-[#9a978f]" /></div>
             ) : !creds?.length ? (
-                <p className="text-sm text-muted-foreground py-8 text-center">No credentials yet. All secrets are encrypted at rest.</p>
+                <p className="text-sm text-[#9a978f] py-8 text-center">No credentials yet. All secrets are encrypted at rest.</p>
             ) : (
                 <div className="space-y-2">
                     {creds.map((cred) => (
                         <div key={cred._id} className={`${glassItem} p-4 flex items-start justify-between gap-3`}>
                             <div className="min-w-0">
-                                <p className="font-medium text-sm truncate">{cred.title}</p>
-                                {cred.username && <p className="text-xs text-muted-foreground">{cred.username}</p>}
+                                <p className="font-medium text-sm truncate text-[#26262B]">{cred.title}</p>
+                                {cred.username && <p className="text-xs text-[#9a978f]">{cred.username}</p>}
                                 <div className="flex items-center gap-2 mt-1">
-                                    <code className="text-xs bg-muted px-2 py-0.5 rounded font-mono">
+                                    <code className="rounded-lg bg-[#F6F4EF] px-2.5 py-1 text-[13px] text-[#26262B] font-mono">
                                         {revealed[cred._id] ?? "••••••••"}
                                     </code>
-                                    <button onClick={() => toggleReveal(cred)} className="text-muted-foreground hover:text-foreground" title="Reveal">
+                                    <button onClick={() => toggleReveal(cred)} className="text-[#9a978f] hover:text-[#26262B]" title="Reveal">
                                         {revealed[cred._id] ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                                     </button>
-                                    <button onClick={() => copySecret(cred)} className="text-muted-foreground hover:text-foreground" title="Copy">
+                                    <button onClick={() => copySecret(cred)} className="text-[#9a978f] hover:text-[#26262B]" title="Copy">
                                         <Copy className="h-3.5 w-3.5" />
                                     </button>
                                 </div>
-                                {cred.urlHint && <p className="text-xs text-muted-foreground mt-1">{cred.urlHint}</p>}
+                                {cred.urlHint && <p className="text-xs text-[#9a978f] mt-1">{cred.urlHint}</p>}
                                 {cred.tags.length > 0 && (
                                     <div className="flex flex-wrap gap-1 mt-2">
                                         {cred.tags.map((t) => <Badge key={t} variant="secondary" className="text-[10px]">{t}</Badge>)}
@@ -115,10 +115,10 @@ export default function VaultCredentials({ folderId, query }: Readonly<{ folderI
                                 )}
                             </div>
                             <div className="flex items-center gap-1 shrink-0">
-                                <button onClick={() => openEdit(cred)} className="p-1.5 rounded-md hover:bg-muted text-muted-foreground" title="Edit">
+                                <button onClick={() => openEdit(cred)} className="p-1.5 rounded-lg text-[#9a978f] transition-colors hover:bg-[#F6F4EF] hover:text-[#26262B]" title="Edit">
                                     <Pencil className="h-4 w-4" />
                                 </button>
-                                <button onClick={() => setToDelete(cred)} className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-destructive" title="Delete">
+                                <button onClick={() => setToDelete(cred)} className="p-1.5 rounded-lg text-[#9a978f] transition-colors hover:bg-[#F6F4EF] hover:text-[#EE5D4A]" title="Delete">
                                     <Trash2 className="h-4 w-4" />
                                 </button>
                             </div>

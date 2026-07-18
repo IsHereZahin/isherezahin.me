@@ -6,11 +6,6 @@ export function fmtNum(n: number): string {
     return n.toLocaleString("de-DE");
 }
 
-/** Smallest multiple of `step` strictly above `n` (never below `step`). */
-export function niceCeil(n: number, step: number): number {
-    return Math.max(step, Math.ceil((n + 1) / step) * step);
-}
-
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -84,9 +79,7 @@ export function reposToHabits(repos: GitHubRepoSummary[]): Habit[] {
     }));
 }
 
-// ----- Prop builders for the three demo cards, preserving their exact visuals -----
-
-/** Workout blobs card → repository stats: repos (dark pill), stars (yellow), forks (red). */
+/** GitHub Overview (blobs) card → repository stats: repos (dark pill), stars (yellow), forks (red). */
 export function buildWorkout(d: GitHubData) {
     return {
         title: "GitHub Overview",
@@ -94,39 +87,5 @@ export function buildWorkout(d: GitHubData) {
         blobA: { value: fmtNum(d.stars), unit: "stars" },
         blobB: { value: fmtNum(d.forks), unit: "forks" },
         legend: ["Stars", "Forks", "Repositories"] as [string, string, string],
-    };
-}
-
-/** Steps gauge card → this year's contributions vs. a round goal. */
-export function buildSteps(d: GitHubData) {
-    const total = d.contributions.total;
-    const goal = niceCeil(total, 500);
-    return {
-        title: "Yearly Activity",
-        subtitle: "Your contributions this year",
-        centerLabel: "This year",
-        centerValue: fmtNum(total),
-        marker: fmtNum(goal),
-        progress: total / goal,
-    };
-}
-
-/**
- * Weight slider card → the follower/following balance (a stable, monotonic
- * ratio — no invented "goal" ceiling). The bar leans toward whichever is larger.
- */
-export function buildWeight(d: GitHubData) {
-    const followers = d.profile.followers;
-    const following = d.profile.following;
-    const totalConn = followers + following;
-    const pct = totalConn > 0 ? (followers / totalConn) * 100 : 50;
-    return {
-        title: "Community",
-        percent: Math.round(pct),
-        suffix: "Followers",
-        pct,
-        thumbLabel: `${fmtNum(followers)} followers`,
-        leftLabel: `Following ${fmtNum(following)}`,
-        rightLabel: `Followers ${fmtNum(followers)}`,
     };
 }

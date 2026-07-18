@@ -26,9 +26,9 @@ function FileThumb({ id, name, onClick }: Readonly<{ id: string; name: string; o
             type="button"
             onClick={onClick}
             title="Preview"
-            className="relative h-10 w-10 rounded-lg overflow-hidden border border-border shrink-0 bg-muted"
+            className="relative h-10 w-10 rounded-lg overflow-hidden border border-[#EEEAE2] shrink-0 bg-[#F6F4EF]"
         >
-            {!loaded && <FileIcon className="absolute inset-0 m-auto h-4 w-4 text-muted-foreground" />}
+            {!loaded && <FileIcon className="absolute inset-0 m-auto h-4 w-4 text-[#9a978f]" />}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
                 src={vault.files.fileUrl(id)}
@@ -121,8 +121,8 @@ export default function VaultFiles({ folderId, query }: Readonly<{ folderId?: st
     return (
         <section className="space-y-4">
             <div className="flex items-center gap-2">
-                <HardDriveUpload className="h-5 w-5 icon-bw" />
-                <h3 className="text-base font-semibold">Files</h3>
+                <HardDriveUpload className="h-5 w-5 text-[#26262B]" />
+                <h3 className="text-[16px] font-semibold text-[#26262B]">Files</h3>
             </div>
 
             {/* Drag-and-drop zone (hidden while searching) */}
@@ -133,14 +133,14 @@ export default function VaultFiles({ folderId, query }: Readonly<{ folderId?: st
                     onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                     onDragLeave={() => setDragOver(false)}
                     onDrop={handleDrop}
-                    className={`w-full border-2 border-dashed rounded-xl p-8 text-center transition-colors ${dragOver ? "border-primary bg-muted" : "border-border hover:bg-muted/50"}`}
+                    className={`w-full border-2 border-dashed rounded-2xl p-8 text-center transition-colors bg-[#F6F4EF] ${dragOver ? "border-[#26262B]" : "border-[#EEEAE2] hover:border-[#26262B]"}`}
                 >
                     {uploading ? (
-                        <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                        <div className="flex items-center justify-center gap-2 text-[#9a978f]">
                             <Loader2 className="h-5 w-5 animate-spin" /> Uploading...
                         </div>
                     ) : (
-                        <div className="text-muted-foreground">
+                        <div className="text-[#9a978f]">
                             <HardDriveUpload className="h-7 w-7 mx-auto mb-2" />
                             <p className="text-sm">Drag &amp; drop files here, or click to browse</p>
                         </div>
@@ -156,9 +156,9 @@ export default function VaultFiles({ folderId, query }: Readonly<{ folderId?: st
             )}
 
             {isLoading ? (
-                <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
+                <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-[#9a978f]" /></div>
             ) : !files?.length ? (
-                <p className="text-sm text-muted-foreground py-4 text-center">No files yet.</p>
+                <p className="text-sm text-[#9a978f] py-4 text-center">No files yet.</p>
             ) : (
                 <div className="space-y-2">
                     {files.map((file) => (
@@ -167,16 +167,16 @@ export default function VaultFiles({ folderId, query }: Readonly<{ folderId?: st
                                 {isImage(file) ? (
                                     <FileThumb id={file._id} name={file.name} onClick={() => setPreview(file)} />
                                 ) : (
-                                    <div className="p-2 rounded-lg bg-muted border border-border shrink-0">
-                                        <FileIcon className="h-4 w-4 text-muted-foreground" />
+                                    <div className="p-2 rounded-lg bg-[#F6F4EF] border border-[#EEEAE2] shrink-0">
+                                        <FileIcon className="h-4 w-4 text-[#9a978f]" />
                                     </div>
                                 )}
                                 <div className="min-w-0">
                                     <div className="flex items-center gap-2">
-                                        <p className="font-medium text-sm truncate">{file.name}</p>
-                                        {file.isFavorite && <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400 shrink-0" />}
+                                        <p className="font-medium text-sm truncate text-[#26262B]">{file.name}</p>
+                                        {file.isFavorite && <Star className="h-3.5 w-3.5 fill-[#F4C63D] text-[#F4C63D] shrink-0" />}
                                     </div>
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="text-xs text-[#9a978f]">
                                         {file.extension.toUpperCase()} · {formatBytes(file.sizeBytes)} · {new Date(file.createdAt).toLocaleString()}
                                     </p>
                                     {file.tags.length > 0 && (
@@ -188,20 +188,20 @@ export default function VaultFiles({ folderId, query }: Readonly<{ folderId?: st
                             </div>
                             <div className="flex items-center gap-1 shrink-0">
                                 {(isImage(file) || isPdf(file)) && (
-                                    <button onClick={() => setPreview(file)} className="p-1.5 rounded-md hover:bg-muted text-muted-foreground" title="Preview">
+                                    <button onClick={() => setPreview(file)} className="p-1.5 rounded-lg text-[#9a978f] transition-colors hover:bg-[#F6F4EF] hover:text-[#26262B]" title="Preview">
                                         <Eye className="h-4 w-4" />
                                     </button>
                                 )}
-                                <a href={vault.files.fileUrl(file._id, true)} className="p-1.5 rounded-md hover:bg-muted text-muted-foreground" title="Download">
+                                <a href={vault.files.fileUrl(file._id, true)} className="p-1.5 rounded-lg text-[#9a978f] transition-colors hover:bg-[#F6F4EF] hover:text-[#26262B]" title="Download">
                                     <Download className="h-4 w-4" />
                                 </a>
-                                <button onClick={() => toggleFavorite(file)} className="p-1.5 rounded-md hover:bg-muted text-muted-foreground" title="Favorite">
-                                    <Star className={`h-4 w-4 ${file.isFavorite ? "fill-yellow-400 text-yellow-400" : ""}`} />
+                                <button onClick={() => toggleFavorite(file)} className="p-1.5 rounded-lg text-[#9a978f] transition-colors hover:bg-[#F6F4EF] hover:text-[#26262B]" title="Favorite">
+                                    <Star className={`h-4 w-4 ${file.isFavorite ? "fill-[#F4C63D] text-[#F4C63D]" : ""}`} />
                                 </button>
-                                <button onClick={() => { setRenaming(file); setRenameValue(file.name); }} className="p-1.5 rounded-md hover:bg-muted text-muted-foreground" title="Rename">
+                                <button onClick={() => { setRenaming(file); setRenameValue(file.name); }} className="p-1.5 rounded-lg text-[#9a978f] transition-colors hover:bg-[#F6F4EF] hover:text-[#26262B]" title="Rename">
                                     <Pencil className="h-4 w-4" />
                                 </button>
-                                <button onClick={() => setToDelete(file)} className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-destructive" title="Delete">
+                                <button onClick={() => setToDelete(file)} className="p-1.5 rounded-lg text-[#9a978f] transition-colors hover:bg-[#F6F4EF] hover:text-[#EE5D4A]" title="Delete">
                                     <Trash2 className="h-4 w-4" />
                                 </button>
                             </div>
@@ -223,7 +223,7 @@ export default function VaultFiles({ folderId, query }: Readonly<{ folderId?: st
                         <img src={vault.files.fileUrl(preview._id)} alt={preview.name} className="max-w-full rounded-lg" />
                     )}
                     {preview && isPdf(preview) && (
-                        <iframe src={vault.files.fileUrl(preview._id)} title={preview.name} className="w-full h-[70vh] rounded-lg border border-border" />
+                        <iframe src={vault.files.fileUrl(preview._id)} title={preview.name} className="w-full h-[70vh] rounded-lg border border-[#EEEAE2]" />
                     )}
                 </DialogContent>
             </Dialog>

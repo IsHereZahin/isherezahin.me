@@ -3,10 +3,9 @@
 import { vault } from "@/lib/api";
 import type { VaultStatus } from "@/lib/vault/types";
 import { useQuery } from "@tanstack/react-query";
-import { Loader2, Lock, ShieldOff, ShieldCheck, KeyRound } from "lucide-react";
+import { Lock, ShieldOff, ShieldCheck, KeyRound } from "lucide-react";
 import { ReactNode, useState } from "react";
 import { toast } from "sonner";
-import { ShadcnButton as Button, Input } from "@/components/ui";
 
 interface VaultGateProps {
     children: (status: VaultStatus, refetch: () => void) => ReactNode;
@@ -23,8 +22,8 @@ export default function VaultGate({ children }: Readonly<VaultGateProps>) {
 
     if (isLoading || !status) {
         return (
-            <div className="flex items-center justify-center py-20">
-                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            <div className="flex items-center justify-center py-24">
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#26262B] border-t-transparent" />
             </div>
         );
     }
@@ -36,13 +35,22 @@ export default function VaultGate({ children }: Readonly<VaultGateProps>) {
     return <>{children(status, refetch)}</>;
 }
 
-function GateShell({ icon, title, subtitle, children }: Readonly<{ icon: ReactNode; title: string; subtitle: string; children?: ReactNode }>) {
+function GateShell({
+    icon,
+    title,
+    subtitle,
+    children,
+}: Readonly<{ icon: ReactNode; title: string; subtitle: string; children?: ReactNode }>) {
     return (
-        <div className="flex flex-col items-center justify-center py-14 px-4 text-center">
-            <div className="p-5 rounded-2xl bg-muted border border-border mb-6">{icon}</div>
-            <h3 className="text-2xl font-bold text-foreground mb-2">{title}</h3>
-            <p className="text-muted-foreground max-w-md leading-relaxed mb-6">{subtitle}</p>
-            {children}
+        <div className="flex min-h-[60vh] items-center justify-center px-4 py-10">
+            <div className="w-full max-w-md rounded-[28px] border border-[#EEEAE2] bg-white p-8 text-center shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#26262B] text-white">
+                    {icon}
+                </div>
+                <h3 className="text-[20px] font-semibold text-[#26262B]">{title}</h3>
+                <p className="mx-auto mt-2 max-w-sm text-[13px] leading-relaxed text-[#9a978f]">{subtitle}</p>
+                {children && <div className="mt-6">{children}</div>}
+            </div>
         </div>
     );
 }
@@ -50,9 +58,9 @@ function GateShell({ icon, title, subtitle, children }: Readonly<{ icon: ReactNo
 function AccessDisabled() {
     return (
         <GateShell
-            icon={<ShieldOff className="w-10 h-10 text-foreground" />}
+            icon={<ShieldOff className="h-7 w-7" />}
             title="Access Disabled"
-            subtitle="The Personal Vault module is currently disabled. Enable it from Settings to start saving and accessing your private items."
+            subtitle="The Personal Vault module is currently disabled. Enable it from the Vault settings to start saving and accessing your private items."
         />
     );
 }
@@ -60,9 +68,9 @@ function AccessDisabled() {
 function NotConfigured() {
     return (
         <GateShell
-            icon={<ShieldCheck className="w-10 h-10 text-foreground" />}
+            icon={<ShieldCheck className="h-7 w-7" />}
             title="Vault Not Set Up"
-            subtitle="A vault password hasn't been created yet. The administrator can set it up from the admin portal (Settings → Personal Vault)."
+            subtitle="A vault password hasn't been created yet. The administrator can set it up from the Vault settings."
         />
     );
 }
@@ -89,27 +97,30 @@ function VaultUnlock({ onUnlocked }: Readonly<{ onUnlocked: () => void }>) {
 
     return (
         <GateShell
-            icon={<Lock className="w-10 h-10 text-foreground" />}
+            icon={<Lock className="h-7 w-7" />}
             title="Vault Locked"
             subtitle="Enter your vault password to continue. The vault locks automatically after a period of inactivity."
         >
-            <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-3">
+            <form onSubmit={handleSubmit} className="space-y-3 text-left">
                 <div className="relative">
-                    <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
+                    <KeyRound className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#bdb9b0]" />
+                    <input
                         type="password"
                         placeholder="Vault password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="pl-9"
                         autoFocus
+                        className="h-11 w-full rounded-full border border-[#EEEAE2] bg-[#F6F4EF] pl-10 pr-4 text-[13px] text-[#26262B] outline-none transition-colors placeholder:text-[#bdb9b0] focus:border-[#26262B] focus:bg-white"
                     />
                 </div>
-                <Button type="submit" disabled={submitting} className="w-full">
-                    {submitting ? "Unlocking..." : "Unlock Vault"}
-                </Button>
+                <button
+                    type="submit"
+                    disabled={submitting}
+                    className="flex h-11 w-full items-center justify-center rounded-full bg-[#26262B] text-[13px] font-medium text-white transition-transform hover:scale-[1.01] disabled:opacity-60"
+                >
+                    {submitting ? "Unlocking…" : "Unlock Vault"}
+                </button>
             </form>
         </GateShell>
     );
 }
-

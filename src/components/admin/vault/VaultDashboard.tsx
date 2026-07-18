@@ -35,7 +35,7 @@ export default function VaultDashboard({ onNavigate }: Readonly<{ onNavigate: (s
     });
 
     if (isLoading || !data) {
-        return <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
+        return <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-[#9a978f]" /></div>;
     }
 
     const cards: { label: string; count: number; icon: typeof Link2; section: VaultSection }[] = [
@@ -64,7 +64,7 @@ export default function VaultDashboard({ onNavigate }: Readonly<{ onNavigate: (s
                     return (
                         <button key={card.label} onClick={() => onNavigate(card.section)} className="rounded-2xl border border-[#EEEAE2] bg-white p-4 text-left transition-colors hover:bg-[#F6F4EF]">
                             <div className="flex items-center justify-between">
-                                <div className="p-2 rounded-xl bg-[#F6F4EF] border border-[#EEEAE2]"><Icon className="h-5 w-5 icon-bw" /></div>
+                                <div className="p-2 rounded-xl bg-[#F6F4EF] border border-[#EEEAE2]"><Icon className="h-5 w-5 text-[#26262B]" /></div>
                                 <span className="text-2xl font-bold text-[#26262B]">{card.count}</span>
                             </div>
                             <p className="text-[13px] text-[#9a978f] mt-2">{card.label}</p>

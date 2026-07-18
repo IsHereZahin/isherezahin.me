@@ -58,16 +58,16 @@ export default function VaultNotes({ folderId, query }: Readonly<{ folderId?: st
         <section className="space-y-4">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <FileText className="h-5 w-5 icon-bw" />
-                    <h3 className="text-base font-semibold">Notes</h3>
+                    <FileText className="h-5 w-5 text-[#26262B]" />
+                    <h3 className="text-[16px] font-semibold text-[#26262B]">Notes</h3>
                 </div>
                 {!searching && <AdminAddButton label="New Note" onClick={() => setModal({ open: true, note: null })} />}
             </div>
 
             {isLoading ? (
-                <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
+                <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-[#9a978f]" /></div>
             ) : !notes?.length ? (
-                <p className="text-sm text-muted-foreground py-8 text-center">No notes yet.</p>
+                <p className="text-sm text-[#9a978f] py-8 text-center">No notes yet.</p>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {notes.map((note) => {
@@ -76,23 +76,23 @@ export default function VaultNotes({ folderId, query }: Readonly<{ folderId?: st
                             <div key={note._id} className={`${glassItem} p-4 flex flex-col`}>
                                 <div className="flex items-start justify-between gap-2">
                                     <div className="flex items-center gap-2 min-w-0">
-                                        <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
-                                        <p className="font-medium text-sm truncate">{note.title}</p>
-                                        {note.isEncrypted && <Lock className="h-3.5 w-3.5 text-muted-foreground shrink-0" />}
+                                        <Icon className="h-4 w-4 text-[#9a978f] shrink-0" />
+                                        <p className="font-medium text-sm truncate text-[#26262B]">{note.title}</p>
+                                        {note.isEncrypted && <Lock className="h-3.5 w-3.5 text-[#9a978f] shrink-0" />}
                                     </div>
                                     <div className="flex items-center gap-1 shrink-0">
-                                        <button onClick={() => toggleFavorite(note)} className="p-1 rounded-md hover:bg-muted text-muted-foreground">
-                                            <Star className={`h-4 w-4 ${note.isFavorite ? "fill-yellow-400 text-yellow-400" : ""}`} />
+                                        <button onClick={() => toggleFavorite(note)} className="p-1.5 rounded-lg text-[#9a978f] transition-colors hover:bg-[#F6F4EF] hover:text-[#26262B]">
+                                            <Star className={`h-4 w-4 ${note.isFavorite ? "fill-[#F4C63D] text-[#F4C63D]" : ""}`} />
                                         </button>
-                                        <button onClick={() => setModal({ open: true, note })} className="p-1 rounded-md hover:bg-muted text-muted-foreground">
+                                        <button onClick={() => setModal({ open: true, note })} className="p-1.5 rounded-lg text-[#9a978f] transition-colors hover:bg-[#F6F4EF] hover:text-[#26262B]">
                                             <Pencil className="h-4 w-4" />
                                         </button>
-                                        <button onClick={() => setToDelete(note)} className="p-1 rounded-md hover:bg-muted text-muted-foreground hover:text-destructive">
+                                        <button onClick={() => setToDelete(note)} className="p-1.5 rounded-lg text-[#9a978f] transition-colors hover:bg-[#F6F4EF] hover:text-[#EE5D4A]">
                                             <Trash2 className="h-4 w-4" />
                                         </button>
                                     </div>
                                 </div>
-                                <p className="text-xs text-muted-foreground mt-2 line-clamp-3 whitespace-pre-wrap">{preview(note)}</p>
+                                <p className="text-xs text-[#9a978f] mt-2 line-clamp-3 whitespace-pre-wrap">{preview(note)}</p>
                                 {note.tags.length > 0 && (
                                     <div className="flex flex-wrap gap-1 mt-2">
                                         {note.tags.map((t) => <Badge key={t} variant="secondary" className="text-[10px]">{t}</Badge>)}

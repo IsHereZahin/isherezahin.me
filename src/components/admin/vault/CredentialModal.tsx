@@ -109,7 +109,7 @@ export default function CredentialModal({ open, onOpenChange, credential, folder
                             onChange={(e) => setPassword(e.target.value)}
                             className="pr-10"
                         />
-                        <button type="button" onClick={() => setShowPassword((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                        <button type="button" onClick={() => setShowPassword((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9a978f] hover:text-[#26262B]">
                             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
                     </div>

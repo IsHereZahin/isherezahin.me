@@ -44,7 +44,7 @@ export default function VaultFolders({ selected, onSelect }: Readonly<VaultFolde
     };
 
     const itemClass = (active: boolean) =>
-        `flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm transition-colors ${active ? "bg-foreground text-secondary" : "text-foreground hover:bg-muted"}`;
+        `flex items-center gap-2 w-full px-3 py-2 rounded-xl text-[13px] transition-colors ${active ? "bg-[#26262B] text-white hover:bg-[#26262B]" : "text-[#57544e] hover:bg-[#F6F4EF]"}`;
 
     return (
         <div className={`w-full md:w-56 shrink-0 h-fit p-3 space-y-1 ${glassCard}`}>
@@ -55,10 +55,10 @@ export default function VaultFolders({ selected, onSelect }: Readonly<VaultFolde
                 <Inbox className="h-4 w-4" /> Unfiled
             </button>
 
-            <div className="pt-2 mt-2 border-t border-border">
+            <div className="pt-2 mt-2 border-t border-[#EEEAE2]">
                 <div className="flex items-center justify-between px-1 mb-1">
-                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Folders</span>
-                    <button onClick={() => setAdding((a) => !a)} className="p-1 rounded hover:bg-muted text-muted-foreground">
+                    <span className="text-xs font-medium text-[#9a978f] uppercase tracking-wide">Folders</span>
+                    <button onClick={() => setAdding((a) => !a)} className="p-1 rounded hover:bg-[#F6F4EF] text-[#9a978f]">
                         <Plus className="h-3.5 w-3.5" />
                     </button>
                 </div>
@@ -85,7 +85,7 @@ export default function VaultFolders({ selected, onSelect }: Readonly<VaultFolde
                                     {active ? <FolderOpen className="h-4 w-4" /> : <Folder className="h-4 w-4" />}
                                     <span className="truncate">{folder.name}</span>
                                 </button>
-                                <button onClick={() => setToDelete(folder)} className="opacity-0 group-hover:opacity-100 p-1 text-muted-foreground hover:text-destructive transition-opacity">
+                                <button onClick={() => setToDelete(folder)} className="opacity-0 group-hover:opacity-100 p-1 text-[#9a978f] hover:text-[#EE5D4A] transition-opacity">
                                     <Trash2 className="h-3.5 w-3.5" />
                                 </button>
                             </div>

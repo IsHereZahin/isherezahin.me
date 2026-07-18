@@ -1,26 +1,21 @@
 "use client";
 
+import ActivityCard from "@/components/admin/dashboard/ActivityCard";
+import CommunityCard from "@/components/admin/dashboard/CommunityCard";
 import ContributionsCalendar from "@/components/admin/dashboard/ContributionsCalendar";
-import {
-    buildSteps,
-    buildWeight,
-    buildWorkout,
-    reposToHabits,
-} from "@/components/admin/dashboard/githubToCards";
+import { buildWorkout, reposToHabits } from "@/components/admin/dashboard/githubToCards";
 import { useGitHub } from "@/components/admin/dashboard/useGitHub";
 import MyHabits from "@/components/be-run/MyHabits";
-import StepsForToday from "@/components/be-run/StepsForToday";
-import WeightLossPlan from "@/components/be-run/WeightLossPlan";
 import WorkoutResults from "@/components/be-run/WorkoutResults";
-import { ExternalLink, Github, RefreshCw } from "lucide-react";
+import { Github, RefreshCw } from "lucide-react";
 
 function DashboardSkeleton() {
     return (
         <div className="grid animate-pulse grid-cols-1 gap-4 lg:grid-cols-[1.5fr_1fr]">
             <div className="flex flex-col gap-4">
                 <div className="h-[336px] rounded-[26px] bg-[#e5e1d8]" />
-                <div className="h-[168px] rounded-[24px] bg-[#efeae2]" />
-                <div className="h-[150px] rounded-[24px] bg-[#efeae2]" />
+                <div className="h-[210px] rounded-[24px] bg-[#efeae2]" />
+                <div className="h-[240px] rounded-[24px] bg-[#efeae2]" />
             </div>
             <div className="flex flex-col gap-4">
                 <div className="h-[430px] rounded-[26px] bg-[#2f2f35]" />
@@ -55,11 +50,6 @@ export default function Dashboard() {
     if (isError || !data) return <DashboardError onRetry={() => refetch()} />;
 
     const workoutProps = { ...buildWorkout(data), icon: Github };
-    const stepsProps = {
-        ...buildSteps(data),
-        action: { label: "View Profile", icon: ExternalLink, href: data.profile.html_url },
-    };
-    const weightProps = buildWeight(data);
     const habitData = reposToHabits(data.topRepos);
 
     return (
@@ -67,8 +57,8 @@ export default function Dashboard() {
             {/* Left column */}
             <div className="flex flex-col gap-4">
                 <WorkoutResults {...workoutProps} />
-                <StepsForToday {...stepsProps} />
-                <WeightLossPlan {...weightProps} />
+                <ActivityCard data={data} />
+                <CommunityCard data={data} />
             </div>
 
             {/* Right column */}
