@@ -23,7 +23,13 @@ import { extractTocItems, getFormattedDate } from "@/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import ContentDiscussions from "../content/discussions/ContentDiscussions";
 
-export default function ProjectDetailsIndex({ slug }: { readonly slug: string }) {
+export default function ProjectDetailsIndex({
+    slug,
+    initialProject,
+}: {
+    readonly slug: string;
+    readonly initialProject?: Record<string, unknown>;
+}) {
     const [showTOC, setShowTOC] = useState(false);
     const [viewCount, setViewCount] = useState(0);
 
@@ -31,6 +37,8 @@ export default function ProjectDetailsIndex({ slug }: { readonly slug: string })
         queryKey: ["project", slug],
         queryFn: () => getProject.getProject(slug),
         staleTime: 1000 * 60 * 5,
+        // Server-rendered project is seeded so the page paints on first load.
+        initialData: initialProject,
     });
 
     const viewMutation = useMutation({

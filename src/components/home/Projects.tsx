@@ -11,7 +11,14 @@ import { getProjects } from "@/lib/api";
 import { Project as ProjectType } from "@/utils/types";
 import { useQuery } from "@tanstack/react-query";
 
-export default function Projects() {
+interface ProjectsPage {
+    total: number;
+    page: number;
+    limit: number;
+    projects: ProjectType[];
+}
+
+export default function Projects({ initialData }: { readonly initialData?: ProjectsPage }) {
     const page = 1;
     const limit = 2;
 
@@ -19,6 +26,7 @@ export default function Projects() {
         queryKey: ["projects", page, limit],
         queryFn: () => getProjects(page, limit),
         staleTime: 1000 * 60 * 5,
+        initialData,
     });
 
     // Don't render anything if there's an error

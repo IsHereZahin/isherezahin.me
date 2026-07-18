@@ -23,7 +23,13 @@ import {
 } from "@/components/ui";
 import ContentDiscussions from "../content/discussions/ContentDiscussions";
 
-export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
+export default function BlogDetailsIndex({
+    slug,
+    initialBlog,
+}: {
+    readonly slug: string;
+    readonly initialBlog?: Record<string, unknown>;
+}) {
     const [showTOC, setShowTOC] = useState(false);
     const [viewCount, setViewCount] = useState(0);
 
@@ -31,6 +37,9 @@ export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
         queryKey: ["blog", slug],
         queryFn: () => getBlog.getBlog(slug),
         staleTime: 1000 * 60 * 5,
+        // Server-rendered blog is seeded here so the page paints its content on
+        // first load instead of fetching after hydration.
+        initialData: initialBlog,
     });
 
     const viewMutation = useMutation({

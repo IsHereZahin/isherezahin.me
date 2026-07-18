@@ -91,7 +91,10 @@ export default async function ProjectDetailsPage({
           />
         </>
       )}
-      <ProjectDetailsIndex slug={slug} />
+      <ProjectDetailsIndex
+        slug={slug}
+        initialProject={project ? JSON.parse(JSON.stringify(project)) : undefined}
+      />
     </>
   );
 }

@@ -1,6 +1,7 @@
 import ProjectsIndex from "@/components/pages/ProjectsIndex";
 import { ProjectsLoading, TagsLoading } from "@/components/ui";
 import { METADATA } from "@/config/seo.config";
+import { getPublishedProjectsPage } from "@/lib/cached-queries";
 import { Suspense } from "react";
 
 export const metadata = METADATA.projects;
@@ -16,10 +17,11 @@ function ProjectsPageFallback() {
   );
 }
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
+  const initialData = await getPublishedProjectsPage(5);
   return (
     <Suspense fallback={<ProjectsPageFallback />}>
-      <ProjectsIndex />
+      <ProjectsIndex initialData={initialData} />
     </Suspense>
   );
 }

@@ -3,7 +3,6 @@
 import LoginModal from "@/components/auth/LoginModal";
 import { MY_MAIL } from "@/lib/constants";
 import { AuthContext } from "@/lib/contexts";
-import { updatePresence } from "@/lib/firebase";
 import { AuthContextType } from "@/lib/github/types";
 import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -48,9 +47,11 @@ function AuthProviderInner({ children }: { readonly children: React.ReactNode })
     }, [closeLoginModal]);
 
     const logout = useCallback(async () => {
-        // Update presence to offline before signing out (Firebase)
+        // Update presence to offline before signing out. Firebase is imported
+        // lazily here so its SDK is not bundled for anonymous visitors.
         if (session?.user?.id) {
             try {
+                const { updatePresence } = await import("@/lib/firebase");
                 await updatePresence(session.user.id, false);
             } catch {
                 // Ignore errors, proceed with logout

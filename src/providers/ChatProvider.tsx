@@ -1,16 +1,13 @@
 "use client";
 
 import { ChatContext } from "@/lib/contexts";
-import {
-    getPresence,
-    setupPresenceWithDisconnect,
-    subscribeToConversations,
-    subscribeToUserConversation,
-    updatePresenceSettings
-} from "@/lib/firebase";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+
+// Firebase is loaded lazily (dynamic import) inside the effects below so its
+// realtime SDK is code-split out of the bundle for anonymous visitors, who
+// never reach any of this logic (it all requires a logged-in user).
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
     const { user, isAdmin } = useAuth();
@@ -24,41 +21,60 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
     // ============ PRESENCE TRACKING (Firebase handles disconnect automatically) ============
     useEffect(() => {
-        if (!user?.id) return;
+        const userId = user?.id;
+        if (!userId) return;
+
+        let active = true;
+        let cleanup: (() => void) | undefined;
 
         // Setup presence with automatic disconnect handling
-        const cleanup = setupPresenceWithDisconnect(user.id);
+        import("@/lib/firebase")
+            .then(({ setupPresenceWithDisconnect }) => {
+                if (active) cleanup = setupPresenceWithDisconnect(userId);
+            })
+            .catch((error) => console.error("Failed to set up presence:", error));
 
-        return cleanup;
+        return () => {
+            active = false;
+            cleanup?.();
+        };
     }, [user?.id]);
 
     // ============ UNREAD COUNT (Real-time with Firebase) ============
     useEffect(() => {
-        if (!user?.id) {
+        const userId = user?.id;
+        if (!userId) {
             setUnreadCount(0);
             return;
         }
 
-        try {
-            if (isAdmin) {
-                // Admin subscribes to all conversations
-                const unsubscribe = subscribeToConversations((conversations) => {
-                    const total = conversations
-                        .filter((c) => c.participantId !== user.id)
-                        .reduce((sum, conv) => sum + (conv.unreadCountAdmin || 0), 0);
-                    setUnreadCount(total);
-                });
-                return unsubscribe;
-            } else {
-                // User subscribes to their own conversation
-                const unsubscribe = subscribeToUserConversation(user.id, (conversation) => {
-                    setUnreadCount(conversation?.unreadCountUser || 0);
-                });
-                return unsubscribe;
-            }
-        } catch (error) {
-            console.error("Failed to subscribe to chat updates:", error);
-        }
+        let active = true;
+        let unsubscribe: (() => void) | undefined;
+
+        import("@/lib/firebase")
+            .then((firebase) => {
+                if (!active) return;
+                if (isAdmin) {
+                    // Admin subscribes to all conversations
+                    unsubscribe = firebase.subscribeToConversations((conversations) => {
+                        const total = conversations
+                            .filter((c) => c.participantId !== userId)
+                            .reduce((sum, conv) => sum + (conv.unreadCountAdmin || 0), 0);
+                        setUnreadCount(total);
+                    });
+                } else {
+                    // User subscribes to their own conversation
+                    unsubscribe = firebase.subscribeToUserConversation(userId, (conversation) => {
+                        setUnreadCount(conversation?.unreadCountUser || 0);
+                    });
+                }
+            })
+            .catch((error) => console.error("Failed to subscribe to chat updates:", error));
+
+        return () => {
+            active = false;
+            unsubscribe?.();
+        };
     }, [user?.id, isAdmin]);
 
     const refreshUnreadCount = useCallback(async () => {
@@ -71,10 +87,12 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         const userId = user?.id;
         if (!userId) return;
 
+        let active = true;
         const fetchSettings = async () => {
             try {
+                const { getPresence } = await import("@/lib/firebase");
                 const presence = await getPresence(userId);
-                if (presence?.hideLastSeen !== undefined) {
+                if (active && presence?.hideLastSeen !== undefined) {
                     setGlobalHideStatus(presence.hideLastSeen);
                 }
             } catch (error) {
@@ -82,6 +100,8 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
             }
         };
         fetchSettings();
+
+        return () => { active = false; };
     }, [user?.id]);
 
     const toggleGlobalStatus = useCallback(async () => {
@@ -90,6 +110,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
         setIsStatusLoading(true);
         try {
+            const { updatePresenceSettings } = await import("@/lib/firebase");
             await updatePresenceSettings(userId, !globalHideStatus);
             setGlobalHideStatus(!globalHideStatus);
             toast.success(

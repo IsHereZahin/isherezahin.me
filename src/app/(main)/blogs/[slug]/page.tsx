@@ -89,7 +89,10 @@ export default async function BlogPostPage({
           />
         </>
       )}
-      <BlogDetailsIndex slug={slug} />
+      <BlogDetailsIndex
+        slug={slug}
+        initialBlog={blog ? JSON.parse(JSON.stringify(blog)) : undefined}
+      />
     </>
   );
 }

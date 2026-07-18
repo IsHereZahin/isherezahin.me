@@ -11,7 +11,14 @@ import { getBlogs } from "@/lib/api";
 import { Blog } from "@/utils/types";
 import { useQuery } from "@tanstack/react-query";
 
-export default function Blogs() {
+interface BlogsPage {
+    total: number;
+    page: number;
+    limit: number;
+    blogs: Blog[];
+}
+
+export default function Blogs({ initialData }: { readonly initialData?: BlogsPage }) {
     const page = 1;
     const limit = 2;
 
@@ -19,6 +26,7 @@ export default function Blogs() {
         queryKey: ["blogs", page, limit],
         queryFn: () => getBlogs(page, limit),
         staleTime: 1000 * 60 * 5,
+        initialData,
     });
 
     // Don't render anything if there's an error

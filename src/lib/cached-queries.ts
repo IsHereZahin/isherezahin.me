@@ -14,6 +14,8 @@ interface BlogDocument {
   imageSrc: string;
   tags?: string[];
   views?: number;
+  likes?: number;
+  type?: string;
   date?: Date;
   updatedAt?: Date;
   createdAt?: Date;
@@ -35,6 +37,7 @@ interface ProjectDocument {
   githubUrl?: string;
   tags?: string[];
   views?: number;
+  likes?: number;
   date?: Date;
   updatedAt?: Date;
   createdAt?: Date;
@@ -113,6 +116,74 @@ export async function getCachedRecentProjects(limit: number = 3): Promise<Projec
     .lean();
 
   return projects as unknown as ProjectDocument[];
+}
+
+/**
+ * First page of published blogs, shaped to match `GET /api/blog` for a
+ * non-admin visitor. Used to seed the homepage section and the /blogs list so
+ * they render on the server instead of fetching after hydration.
+ */
+export async function getPublishedBlogsPage(limit = 5) {
+  await dbConnect();
+  const query = { published: true };
+  const total = await BlogModel.countDocuments(query);
+  const docs = (await BlogModel.find(query)
+    .sort({ date: -1 })
+    .limit(limit)
+    .lean()) as unknown as BlogDocument[];
+
+  const blogs = docs.map((b) => ({
+    id: b._id.toString(),
+    date: b.date?.toString() ?? "",
+    views: b.views ?? 0,
+    likes: b.likes ?? 0,
+    type: b.type ?? "Blog",
+    title: b.title,
+    slug: b.slug,
+    excerpt: b.excerpt,
+    tags: b.tags ?? [],
+    imageSrc: b.imageSrc,
+    content: b.content,
+    published: b.published ?? true,
+  }));
+
+  return { total, page: 1, limit, blogs };
+}
+
+/**
+ * First page of published projects, shaped to match `GET /api/project` for a
+ * non-admin visitor. Seeds the homepage section and the /projects list.
+ */
+export async function getPublishedProjectsPage(limit = 5) {
+  await dbConnect();
+  const query = { published: true };
+  const total = await ProjectModel.countDocuments(query);
+  const docs = (await ProjectModel.find(query)
+    .sort({ date: -1 })
+    .limit(limit)
+    .lean()) as unknown as ProjectDocument[];
+
+  const projects = docs.map((p) => ({
+    id: p._id.toString(),
+    date: p.date?.toString() ?? "",
+    views: p.views ?? 0,
+    likes: p.likes ?? 0,
+    title: p.title,
+    slug: p.slug,
+    excerpt: p.excerpt,
+    categories: p.categories ?? "Project",
+    company: p.company ?? "",
+    duration: p.duration ?? "",
+    status: p.status ?? "completed",
+    tags: p.tags ?? [],
+    imageSrc: p.imageSrc,
+    liveUrl: p.liveUrl,
+    githubUrl: p.githubUrl,
+    content: p.content,
+    published: p.published ?? true,
+  }));
+
+  return { total, page: 1, limit, projects };
 }
 
 /**

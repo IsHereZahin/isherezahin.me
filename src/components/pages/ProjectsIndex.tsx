@@ -21,7 +21,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 const ITEMS_PER_PAGE = 5;
 
-export default function ProjectsIndex() {
+interface ProjectsPageData {
+    total: number;
+    page: number;
+    limit: number;
+    projects: ProjectType[];
+}
+
+export default function ProjectsIndex({ initialData }: { readonly initialData?: ProjectsPageData }) {
     const { isAdmin } = useAuth();
     const isInitialRender = useRef(true);
     const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -91,6 +98,11 @@ export default function ProjectsIndex() {
         },
         initialPageParam: 1,
         staleTime: 1000 * 60 * 5,
+        // Seed the server-rendered first page for the default (unfiltered) view.
+        initialData:
+            selectedTags.length === 0 && !searchQuery.trim() && initialData
+                ? { pages: [initialData], pageParams: [1] }
+                : undefined,
     });
 
     useEffect(() => {
