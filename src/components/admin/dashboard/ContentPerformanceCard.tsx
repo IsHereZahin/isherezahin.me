@@ -8,11 +8,11 @@ type IconType = React.ComponentType<{ className?: string }>;
 
 function MiniStat({ icon: Icon, value, label, sub }: { icon: IconType; value: string; label: string; sub?: string }) {
     return (
-        <div className="rounded-2xl bg-[#F6F4EF] p-3.5">
-            <Icon className="h-4 w-4 text-[#9a978f]" />
-            <div className="mt-2 text-[19px] font-bold leading-none text-[#26262B]">{value}</div>
-            <div className="mt-1 text-[12px] text-[#9a978f]">{label}</div>
-            {sub && <div className="mt-0.5 text-[11px] text-[#c4c0b7]">{sub}</div>}
+        <div className="rounded-2xl bg-[var(--s-soft)] p-3.5">
+            <Icon className="h-4 w-4 text-[var(--s-muted)]" />
+            <div className="mt-2 text-[19px] font-bold leading-none text-[var(--s-text)]">{value}</div>
+            <div className="mt-1 text-[12px] text-[var(--s-muted)]">{label}</div>
+            {sub && <div className="mt-0.5 text-[11px] text-[var(--s-faint)]">{sub}</div>}
         </div>
     );
 }
@@ -41,8 +41,8 @@ export default function ContentPerformanceCard({ overview }: { overview: Overvie
                         <BookOpen className="h-5 w-5 text-[#EE5D4A]" />
                     </span>
                     <div>
-                        <h3 className="text-[16px] font-semibold text-[#26262B]">Content Performance</h3>
-                        <p className="mt-0.5 text-[13px] text-[#9a978f]">Blogs &amp; projects at a glance</p>
+                        <h3 className="text-[16px] font-semibold text-[var(--s-text)]">Content Performance</h3>
+                        <p className="mt-0.5 text-[13px] text-[var(--s-muted)]">Blogs &amp; projects at a glance</p>
                     </div>
                 </div>
             </div>
@@ -56,25 +56,25 @@ export default function ContentPerformanceCard({ overview }: { overview: Overvie
             </div>
 
             {/* Top content */}
-            <p className="mb-1 mt-5 text-[12px] font-semibold uppercase tracking-wide text-[#9a978f]">Top performing</p>
+            <p className="mb-1 mt-5 text-[12px] font-semibold uppercase tracking-wide text-[var(--s-muted)]">Top performing</p>
             {content.top.length === 0 ? (
-                <p className="py-6 text-center text-[13px] text-[#9a978f]">No content published yet.</p>
+                <p className="py-6 text-center text-[13px] text-[var(--s-muted)]">No content published yet.</p>
             ) : (
-                <div className="divide-y divide-[#f1ede5]">
+                <div className="divide-y divide-[var(--s-border-soft)]">
                     {content.top.map((c, i) => (
                         <div key={`${c.type}-${c.slug}-${i}`} className="flex items-center gap-3 py-2.5">
-                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-[#F6F4EF] text-[11px] font-semibold text-[#9a978f]">
+                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-[var(--s-soft)] text-[11px] font-semibold text-[var(--s-muted)]">
                                 {i + 1}
                             </span>
                             <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-2">
-                                    <span className="truncate text-[13px] font-medium text-[#26262B]" title={c.title}>
+                                    <span className="truncate text-[13px] font-medium text-[var(--s-text)]" title={c.title}>
                                         {c.title}
                                     </span>
                                     <TypeBadge type={c.type} />
                                 </div>
                             </div>
-                            <div className="flex shrink-0 items-center gap-3 text-[12px] text-[#9a978f]">
+                            <div className="flex shrink-0 items-center gap-3 text-[12px] text-[var(--s-muted)]">
                                 <span className="inline-flex items-center gap-1"><Eye className="h-3.5 w-3.5" />{fmtCompact(c.views)}</span>
                                 <span className="inline-flex items-center gap-1"><Heart className="h-3.5 w-3.5" />{fmtCompact(c.likes)}</span>
                             </div>
@@ -85,10 +85,10 @@ export default function ContentPerformanceCard({ overview }: { overview: Overvie
 
             {/* Management signal */}
             {messages.total > 0 && (
-                <div className="mt-4 flex items-center gap-2 rounded-2xl bg-[#F6F4EF] px-3.5 py-3 text-[12px] text-[#57544e]">
-                    <Inbox className="h-4 w-4 shrink-0 text-[#9a978f]" />
+                <div className="mt-4 flex items-center gap-2 rounded-2xl bg-[var(--s-soft)] px-3.5 py-3 text-[12px] text-[var(--s-text2)]">
+                    <Inbox className="h-4 w-4 shrink-0 text-[var(--s-muted)]" />
                     <span>
-                        <span className="font-semibold text-[#26262B]">{fmtFull(messages.total)}</span> contact message{messages.total === 1 ? "" : "s"}
+                        <span className="font-semibold text-[var(--s-text)]">{fmtFull(messages.total)}</span> contact message{messages.total === 1 ? "" : "s"}
                         {messages.unread > 0 && (
                             <>
                                 {" · "}

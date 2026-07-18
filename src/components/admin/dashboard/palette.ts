@@ -1,12 +1,14 @@
-// Shared palette for the admin dashboard (light, cream aesthetic).
+// Shared palette for the admin dashboard. Neutral surfaces resolve to the
+// theme-aware `--s-*` tokens (globals.css) so they flip in dark mode; the gold
+// and coral accents stay fixed across both themes.
 export const D = {
-    page: "#EDEBE5",       // cream page background
-    dark: "#26262B",       // near-black (active nav, dark card, buttons)
-    darkSoft: "#3C3C43",
-    yellow: "#F4C63D",     // accent
+    page: "var(--s-page)",     // page background
+    dark: "var(--s-invert)",   // dark accent surface (active nav, dark card, buttons)
+    darkSoft: "var(--s-invert2)",
+    yellow: "#F4C63D",         // accent
     coral: "#EE5D4A",
-    muted: "#9A978F",
-    cardBorder: "#EEEAE2",
+    muted: "var(--s-muted)",
+    cardBorder: "var(--s-border)",
 } as const;
 
 // Language dot/bar colors (GitHub's canonical language colors).

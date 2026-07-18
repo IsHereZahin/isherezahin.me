@@ -84,18 +84,18 @@ export default function Settings() {
     return (
         <div className="space-y-5">
             {/* Authentication */}
-            <section className="rounded-[24px] border border-[#EEEAE2] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+            <section className="rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
                 <SectionHeading icon={LogIn} title="Authentication" description="Choose how people can sign in" />
 
                 <div className="mt-5 space-y-2.5">
-                    <label className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-[#EEEAE2] px-4 py-3">
-                        <span className="flex items-center gap-2.5 text-[14px] font-medium text-[#26262B]">
+                    <label className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-[var(--s-border)] px-4 py-3">
+                        <span className="flex items-center gap-2.5 text-[14px] font-medium text-[var(--s-text)]">
                             <Github className="h-[18px] w-[18px]" /> GitHub
                         </span>
                         <SmallToggle isOn={settings.allowGitHubLogin} isLoading={saving("allowGitHubLogin")} onClick={() => handleToggleSetting("allowGitHubLogin")} />
                     </label>
-                    <label className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-[#EEEAE2] px-4 py-3">
-                        <span className="flex items-center gap-2.5 text-[14px] font-medium text-[#26262B]">
+                    <label className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-[var(--s-border)] px-4 py-3">
+                        <span className="flex items-center gap-2.5 text-[14px] font-medium text-[var(--s-text)]">
                             <GoogleMark /> Google
                         </span>
                         <SmallToggle isOn={settings.allowGoogleLogin} isLoading={saving("allowGoogleLogin")} onClick={() => handleToggleSetting("allowGoogleLogin")} />
@@ -104,7 +104,7 @@ export default function Settings() {
 
                 {settings.allowGitHubLogin && settings.allowGoogleLogin && (
                     <div className="mt-4">
-                        <p className="mb-2 text-[12px] font-medium text-[#57544e]">Primary login method</p>
+                        <p className="mb-2 text-[12px] font-medium text-[var(--s-text2)]">Primary login method</p>
                         <div className="flex gap-2">
                             {(["github", "google"] as const).map((m) => (
                                 <button
@@ -112,7 +112,7 @@ export default function Settings() {
                                     type="button"
                                     onClick={() => handleUpdatePrimaryMethod(m)}
                                     disabled={mutation.isPending}
-                                    className={`h-9 rounded-full px-4 text-[12px] font-medium capitalize transition-colors disabled:opacity-50 ${settings.primaryLoginMethod === m ? "bg-[#26262B] text-white" : "border border-[#EEEAE2] bg-white text-[#57544e] hover:bg-[#F6F4EF]"}`}
+                                    className={`h-9 rounded-full px-4 text-[12px] font-medium capitalize transition-colors disabled:opacity-50 ${settings.primaryLoginMethod === m ? "bg-[var(--s-invert)] text-white" : "border border-[var(--s-border)] bg-[var(--s-card)] text-[var(--s-text2)] hover:bg-[var(--s-soft)]"}`}
                                 >
                                     {m}
                                 </button>
@@ -129,10 +129,10 @@ export default function Settings() {
             </section>
 
             {/* Notifications & Access */}
-            <section className="rounded-[24px] border border-[#EEEAE2] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+            <section className="rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
                 <SectionHeading icon={Megaphone} title="Notifications & Access" description="Emails, conversations, and public pages" />
 
-                <div className="mt-4 divide-y divide-[#f1ede5]">
+                <div className="mt-4 divide-y divide-[var(--s-border-soft)]">
                     <ToggleRow
                         icon={Mail}
                         title="Newsletter Notifications"
@@ -175,12 +175,12 @@ export default function Settings() {
 function SectionHeading({ icon: Icon, title, description }: { icon: typeof Mail; title: string; description: string }) {
     return (
         <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#F6F4EF]">
-                <Icon className="h-5 w-5 text-[#26262B]" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--s-soft)]">
+                <Icon className="h-5 w-5 text-[var(--s-text)]" />
             </div>
             <div>
-                <h3 className="text-[16px] font-semibold text-[#26262B]">{title}</h3>
-                <p className="text-[12px] text-[#9a978f]">{description}</p>
+                <h3 className="text-[16px] font-semibold text-[var(--s-text)]">{title}</h3>
+                <p className="text-[12px] text-[var(--s-muted)]">{description}</p>
             </div>
         </div>
     );
@@ -199,12 +199,12 @@ function ToggleRow({ icon: Icon, title, description, isOn, isLoading, onToggle, 
         <div className="py-4">
             <div className="flex items-center justify-between gap-4">
                 <div className="flex min-w-0 items-center gap-3">
-                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${isOn ? "bg-[#F6F4EF]" : "bg-[#F6F4EF]/60"}`}>
-                        <Icon className={`h-[18px] w-[18px] text-[#57544e] ${isOn ? "" : "opacity-60"}`} />
+                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${isOn ? "bg-[var(--s-soft)]" : "bg-[var(--s-soft)]/60"}`}>
+                        <Icon className={`h-[18px] w-[18px] text-[var(--s-text2)] ${isOn ? "" : "opacity-60"}`} />
                     </div>
                     <div className="min-w-0">
-                        <p className="text-[14px] font-medium text-[#26262B]">{title}</p>
-                        <p className="text-[12px] text-[#9a978f]">{description}</p>
+                        <p className="text-[14px] font-medium text-[var(--s-text)]">{title}</p>
+                        <p className="text-[12px] text-[var(--s-muted)]">{description}</p>
                     </div>
                 </div>
                 <ToggleButton isOn={isOn} isLoading={isLoading} onClick={onToggle} />
@@ -219,7 +219,7 @@ function ToggleRow({ icon: Icon, title, description, isOn, isLoading, onToggle, 
 
 function StatusNote({ ok, children }: { ok: boolean; children: React.ReactNode }) {
     return (
-        <div className={`mt-4 flex items-start gap-1.5 rounded-xl px-3 py-2 text-[12px] ${ok ? "bg-green-50 text-green-700 dark:bg-green-500/10 dark:text-green-400" : "bg-[#F6F4EF] text-[#57544e]"}`}>
+        <div className={`mt-4 flex items-start gap-1.5 rounded-xl px-3 py-2 text-[12px] ${ok ? "bg-green-50 text-green-700 dark:bg-green-500/10 dark:text-green-400" : "bg-[var(--s-soft)] text-[var(--s-text2)]"}`}>
             <span className="mt-px">{ok ? "✓" : "•"}</span>
             <span>{children}</span>
         </div>
@@ -228,8 +228,8 @@ function StatusNote({ ok, children }: { ok: boolean; children: React.ReactNode }
 
 function ToggleButton({ isOn, isLoading, onClick }: { isOn: boolean; isLoading: boolean; onClick: () => void }) {
     return (
-        <button onClick={onClick} disabled={isLoading} aria-pressed={isOn} className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#26262B]/30 focus:ring-offset-2 ${isOn ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600"} disabled:opacity-50`}>
-            {isLoading ? <span className="absolute inset-0 flex items-center justify-center"><Loader2 className="h-4 w-4 animate-spin text-white" /></span> : <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-all duration-300 ease-in-out ${isOn ? "translate-x-6" : "translate-x-1"}`} />}
+        <button onClick={onClick} disabled={isLoading} aria-pressed={isOn} className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--s-text)]/30 focus:ring-offset-2 ${isOn ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600"} disabled:opacity-50`}>
+            {isLoading ? <span className="absolute inset-0 flex items-center justify-center"><Loader2 className="h-4 w-4 animate-spin text-white" /></span> : <span className={`inline-block h-4 w-4 transform rounded-full bg-[var(--s-card)] shadow-md transition-all duration-300 ease-in-out ${isOn ? "translate-x-6" : "translate-x-1"}`} />}
         </button>
     );
 }
@@ -237,7 +237,7 @@ function ToggleButton({ isOn, isLoading, onClick }: { isOn: boolean; isLoading: 
 function SmallToggle({ isOn, isLoading, onClick }: { isOn: boolean; isLoading: boolean; onClick: () => void }) {
     return (
         <button type="button" onClick={onClick} disabled={isLoading} aria-pressed={isOn} className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 ${isOn ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600"} disabled:opacity-50`}>
-            {isLoading ? <Loader2 className="mx-auto h-3 w-3 animate-spin text-white" /> : <span className={`inline-block h-3 w-3 transform rounded-full bg-white shadow transition-transform ${isOn ? "translate-x-5" : "translate-x-1"}`} />}
+            {isLoading ? <Loader2 className="mx-auto h-3 w-3 animate-spin text-white" /> : <span className={`inline-block h-3 w-3 transform rounded-full bg-[var(--s-card)] shadow transition-transform ${isOn ? "translate-x-5" : "translate-x-1"}`} />}
         </button>
     );
 }
@@ -256,14 +256,14 @@ function GoogleMark() {
 function SettingsSkeleton() {
     return (
         <div className="space-y-5">
-            <div className="h-8 w-40 animate-pulse rounded bg-[#EFEBE3]" />
+            <div className="h-8 w-40 animate-pulse rounded bg-[var(--s-soft2)]" />
             {[0, 1].map((i) => (
-                <div key={i} className="rounded-[24px] border border-[#EEEAE2] bg-white p-6">
+                <div key={i} className="rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] p-6">
                     <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 animate-pulse rounded-2xl bg-[#EFEBE3]" />
-                        <div className="space-y-2"><div className="h-4 w-40 animate-pulse rounded bg-[#EFEBE3]" /><div className="h-3 w-56 animate-pulse rounded bg-[#EFEBE3]" /></div>
+                        <div className="h-10 w-10 animate-pulse rounded-2xl bg-[var(--s-soft2)]" />
+                        <div className="space-y-2"><div className="h-4 w-40 animate-pulse rounded bg-[var(--s-soft2)]" /><div className="h-3 w-56 animate-pulse rounded bg-[var(--s-soft2)]" /></div>
                     </div>
-                    <div className="mt-5 space-y-3">{[0, 1, 2].map((j) => <div key={j} className="h-14 animate-pulse rounded-2xl bg-[#F6F4EF]" />)}</div>
+                    <div className="mt-5 space-y-3">{[0, 1, 2].map((j) => <div key={j} className="h-14 animate-pulse rounded-2xl bg-[var(--s-soft)]" />)}</div>
                 </div>
             ))}
         </div>

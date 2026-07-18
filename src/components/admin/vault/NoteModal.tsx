@@ -113,24 +113,24 @@ export default function NoteModal({ open, onOpenChange, note, folderId }: Readon
         >
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label className="text-[13px] font-medium text-[#57544e]">Title</label>
+                    <label className="text-[13px] font-medium text-[var(--s-text2)]">Title</label>
                     <Input className="mt-1" placeholder="Note title" value={title} onChange={(e) => setTitle(e.target.value)} />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label className="text-[13px] font-medium text-[#57544e]">Category</label>
+                        <label className="text-[13px] font-medium text-[var(--s-text2)]">Category</label>
                         <Input className="mt-1" placeholder="e.g. Snippets" value={category} onChange={(e) => setCategory(e.target.value)} />
                     </div>
                     <div>
-                        <label className="text-[13px] font-medium text-[#57544e]">Type</label>
+                        <label className="text-[13px] font-medium text-[var(--s-text2)]">Type</label>
                         <div className="mt-1 flex gap-1.5">
                             {TYPE_OPTIONS.map((opt) => (
                                 <button
                                     key={opt.value}
                                     type="button"
                                     onClick={() => setType(opt.value)}
-                                    className={`px-3 py-1.5 text-xs rounded-md transition-colors ${type === opt.value ? "bg-[#26262B] text-white" : "bg-[#F6F4EF] text-[#9a978f] hover:text-[#26262B]"}`}
+                                    className={`px-3 py-1.5 text-xs rounded-md transition-colors ${type === opt.value ? "bg-[var(--s-invert)] text-white" : "bg-[var(--s-soft)] text-[var(--s-muted)] hover:text-[var(--s-text)]"}`}
                                 >
                                     {opt.label}
                                 </button>
@@ -141,7 +141,7 @@ export default function NoteModal({ open, onOpenChange, note, folderId }: Readon
 
                 {type === "rich" && (
                     <div>
-                        <label className="text-[13px] font-medium text-[#57544e]">Content</label>
+                        <label className="text-[13px] font-medium text-[var(--s-text2)]">Content</label>
                         <Textarea
                             className="mt-1 min-h-[200px]"
                             placeholder="Write your note... (Markdown supported)"
@@ -154,11 +154,11 @@ export default function NoteModal({ open, onOpenChange, note, folderId }: Readon
                 {type === "code" && (
                     <div className="space-y-2">
                         <div>
-                            <label className="text-[13px] font-medium text-[#57544e]">Language</label>
+                            <label className="text-[13px] font-medium text-[var(--s-text2)]">Language</label>
                             <Input className="mt-1" placeholder="e.g. typescript" value={language} onChange={(e) => setLanguage(e.target.value)} />
                         </div>
                         <div>
-                            <label className="text-[13px] font-medium text-[#57544e]">Code</label>
+                            <label className="text-[13px] font-medium text-[var(--s-text2)]">Code</label>
                             <Textarea className="mt-1 font-mono text-sm min-h-[200px]" placeholder="Paste your code..." value={content} onChange={(e) => setContent(e.target.value)} />
                         </div>
                     </div>
@@ -166,7 +166,7 @@ export default function NoteModal({ open, onOpenChange, note, folderId }: Readon
 
                 {type === "checklist" && (
                     <div className="space-y-2">
-                        <label className="text-[13px] font-medium text-[#57544e]">Checklist</label>
+                        <label className="text-[13px] font-medium text-[var(--s-text2)]">Checklist</label>
                         {checklist.map((item, i) => (
                             <div key={i} className="flex items-center gap-2">
                                 <input
@@ -180,28 +180,28 @@ export default function NoteModal({ open, onOpenChange, note, folderId }: Readon
                                     placeholder="Checklist item"
                                     onChange={(e) => updateChecklistItem(i, { text: e.target.value })}
                                 />
-                                <button type="button" onClick={() => setChecklist((prev) => prev.filter((_, idx) => idx !== i))} className="text-[#9a978f] hover:text-[#EE5D4A]">
+                                <button type="button" onClick={() => setChecklist((prev) => prev.filter((_, idx) => idx !== i))} className="text-[var(--s-muted)] hover:text-[#EE5D4A]">
                                     <Trash2 className="h-4 w-4" />
                                 </button>
                             </div>
                         ))}
-                        <button type="button" onClick={() => setChecklist((prev) => [...prev, { text: "", done: false }])} className="flex items-center gap-1 text-sm text-[#9a978f] hover:text-[#26262B]">
+                        <button type="button" onClick={() => setChecklist((prev) => [...prev, { text: "", done: false }])} className="flex items-center gap-1 text-sm text-[var(--s-muted)] hover:text-[var(--s-text)]">
                             <Plus className="h-4 w-4" /> Add item
                         </button>
                     </div>
                 )}
 
                 <div>
-                    <label className="text-[13px] font-medium text-[#57544e]">Tags</label>
+                    <label className="text-[13px] font-medium text-[var(--s-text2)]">Tags</label>
                     <Input className="mt-1" placeholder="Comma-separated tags" value={tags} onChange={(e) => setTags(e.target.value)} />
                 </div>
 
-                <div className="flex items-center justify-between rounded-xl border border-[#EEEAE2] bg-[#F6F4EF] p-3.5">
+                <div className="flex items-center justify-between rounded-xl border border-[var(--s-border)] bg-[var(--s-soft)] p-3.5">
                     <div className="flex items-center gap-2">
-                        <Lock className="h-4 w-4 text-[#9a978f]" />
+                        <Lock className="h-4 w-4 text-[var(--s-muted)]" />
                         <div>
-                            <p className="text-[13px] font-medium text-[#26262B]">Encrypt this note</p>
-                            <p className="text-xs text-[#9a978f]">Stored encrypted at rest with your vault key.</p>
+                            <p className="text-[13px] font-medium text-[var(--s-text)]">Encrypt this note</p>
+                            <p className="text-xs text-[var(--s-muted)]">Stored encrypted at rest with your vault key.</p>
                         </div>
                     </div>
                     <Switch checked={isEncrypted} onCheckedChange={setIsEncrypted} />

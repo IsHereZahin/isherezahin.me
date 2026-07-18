@@ -235,11 +235,11 @@ export default function ChatView({ conversation, onBack, onDelete }: ChatViewPro
     return (
         <div className="flex h-full w-full flex-col">
             {/* Header */}
-            <div className="flex flex-shrink-0 items-center justify-between gap-3 border-b border-[#EEEAE2] bg-white p-4">
+            <div className="flex flex-shrink-0 items-center justify-between gap-3 border-b border-[var(--s-border)] bg-[var(--s-card)] p-4">
                 <div className="flex min-w-0 items-center gap-3">
                     <button
                         onClick={onBack}
-                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[#26262B] transition-colors hover:bg-[#F6F4EF] md:hidden"
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[var(--s-text)] transition-colors hover:bg-[var(--s-soft)] md:hidden"
                         aria-label="Back to conversations"
                     >
                         <ArrowLeft className="h-5 w-5" />
@@ -252,7 +252,7 @@ export default function ChatView({ conversation, onBack, onDelete }: ChatViewPro
                         className="shrink-0 rounded-full"
                     />
                     <div className="min-w-0">
-                        <h3 className="truncate text-[15px] font-semibold text-[#26262B]">{conversation.participantName}</h3>
+                        <h3 className="truncate text-[15px] font-semibold text-[var(--s-text)]">{conversation.participantName}</h3>
                         {presence && (
                             <PresenceIndicator
                                 isOnline={presence.isOnline}
@@ -265,7 +265,7 @@ export default function ChatView({ conversation, onBack, onDelete }: ChatViewPro
                 <div className="relative shrink-0">
                     <button
                         onClick={() => setShowMenu(!showMenu)}
-                        className="flex h-9 w-9 items-center justify-center rounded-xl text-[#57544e] transition-colors hover:bg-[#F6F4EF]"
+                        className="flex h-9 w-9 items-center justify-center rounded-xl text-[var(--s-text2)] transition-colors hover:bg-[var(--s-soft)]"
                         aria-label="Conversation options"
                     >
                         <MoreVertical className="h-4 w-4" />
@@ -276,13 +276,13 @@ export default function ChatView({ conversation, onBack, onDelete }: ChatViewPro
                                 className="fixed inset-0 z-10"
                                 onClick={() => setShowMenu(false)}
                             />
-                            <div className="absolute right-0 top-full z-20 mt-1 w-52 rounded-2xl border border-[#EEEAE2] bg-white p-1 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+                            <div className="absolute right-0 top-full z-20 mt-1 w-52 rounded-2xl border border-[var(--s-border)] bg-[var(--s-card)] p-1 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
                                 <button
                                     onClick={() => {
                                         setShowMenu(false);
                                         setDeleteDialogOpen(true);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-[13px] font-medium text-[#EE5D4A] transition-colors hover:bg-[#F6F4EF]"
+                                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-[13px] font-medium text-[#EE5D4A] transition-colors hover:bg-[var(--s-soft)]"
                                 >
                                     <Trash2 className="h-4 w-4" />
                                     Delete Conversation
@@ -297,11 +297,11 @@ export default function ChatView({ conversation, onBack, onDelete }: ChatViewPro
             <div
                 ref={messagesContainerRef}
                 onScroll={handleScroll}
-                className="pretty-scroll min-h-0 flex-1 overflow-y-auto bg-[#F6F4EF]/40 p-4"
+                className="pretty-scroll min-h-0 flex-1 overflow-y-auto bg-[var(--s-soft)]/40 p-4"
             >
                 {loading ? (
                     <div className="flex h-full items-center justify-center">
-                        <Loader2 className="h-6 w-6 animate-spin text-[#9a978f]" />
+                        <Loader2 className="h-6 w-6 animate-spin text-[var(--s-muted)]" />
                     </div>
                 ) : (
                     <>

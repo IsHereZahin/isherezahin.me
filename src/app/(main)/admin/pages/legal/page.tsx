@@ -55,7 +55,7 @@ function StatusBadge({ data }: { data?: LegalPage }) {
 
     if (!isCreated) {
         return (
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#F6F4EF] px-2.5 py-1 text-[11px] font-medium text-[#9a978f]">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[var(--s-soft)] px-2.5 py-1 text-[11px] font-medium text-[var(--s-muted)]">
                 <XCircle className="h-3 w-3" /> Not created
             </span>
         );
@@ -128,14 +128,14 @@ export default function AdminLegalPagesPage() {
                 <div className="space-y-5">
                     <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
                         {[0, 1, 2].map((i) => (
-                            <div key={i} className="h-[72px] animate-pulse rounded-2xl bg-[#F6F4EF]" />
+                            <div key={i} className="h-[72px] animate-pulse rounded-2xl bg-[var(--s-soft)]" />
                         ))}
                     </div>
-                    <div className="rounded-[24px] border border-[#EEEAE2] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-                        <div className="h-5 w-40 animate-pulse rounded bg-[#EFEBE3]" />
+                    <div className="rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+                        <div className="h-5 w-40 animate-pulse rounded bg-[var(--s-soft2)]" />
                         <div className="mt-5 space-y-4">
                             {[0, 1].map((i) => (
-                                <div key={i} className="h-16 animate-pulse rounded-2xl bg-[#F6F4EF]" />
+                                <div key={i} className="h-16 animate-pulse rounded-2xl bg-[var(--s-soft)]" />
                             ))}
                         </div>
                     </div>
@@ -145,46 +145,46 @@ export default function AdminLegalPagesPage() {
                     {/* Summary tiles */}
                     <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
                         {stats.map((stat) => (
-                            <div key={stat.label} className="rounded-2xl bg-[#F6F4EF] px-4 py-3">
-                                <p className="text-[22px] font-semibold leading-none text-[#26262B]">{stat.value}</p>
-                                <p className="mt-1.5 text-[12px] text-[#9a978f]">{stat.label}</p>
+                            <div key={stat.label} className="rounded-2xl bg-[var(--s-soft)] px-4 py-3">
+                                <p className="text-[22px] font-semibold leading-none text-[var(--s-text)]">{stat.value}</p>
+                                <p className="mt-1.5 text-[12px] text-[var(--s-muted)]">{stat.label}</p>
                             </div>
                         ))}
                     </div>
 
                     {/* Pages list */}
-                    <section className="rounded-[24px] border border-[#EEEAE2] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+                    <section className="rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
                         <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#F6F4EF]">
-                                <FileText className="h-5 w-5 text-[#26262B]" />
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--s-soft)]">
+                                <FileText className="h-5 w-5 text-[var(--s-text)]" />
                             </div>
                             <div>
-                                <h3 className="text-[16px] font-semibold text-[#26262B]">Legal Pages</h3>
-                                <p className="text-[12px] text-[#9a978f]">
+                                <h3 className="text-[16px] font-semibold text-[var(--s-text)]">Legal Pages</h3>
+                                <p className="text-[12px] text-[var(--s-muted)]">
                                     Manage the privacy policy and terms of service shown across your site
                                 </p>
                             </div>
                         </div>
 
-                        <div className="mt-5 divide-y divide-[#f1ede5]">
+                        <div className="mt-5 divide-y divide-[var(--s-border-soft)]">
                             {pages.map(({ slug, defaultTitle, path, icon: Icon, description, data }) => (
                                 <div
                                     key={slug}
                                     className="flex flex-col gap-4 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
                                 >
                                     <div className="flex min-w-0 items-start gap-3.5">
-                                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#F6F4EF]">
-                                            <Icon className="h-[18px] w-[18px] text-[#57544e]" />
+                                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--s-soft)]">
+                                            <Icon className="h-[18px] w-[18px] text-[var(--s-text2)]" />
                                         </div>
                                         <div className="min-w-0">
-                                            <h4 className="text-[15px] font-semibold text-[#26262B]">
+                                            <h4 className="text-[15px] font-semibold text-[var(--s-text)]">
                                                 {data?.title || defaultTitle}
                                             </h4>
-                                            <p className="mt-0.5 text-[12px] text-[#9a978f]">{description}</p>
+                                            <p className="mt-0.5 text-[12px] text-[var(--s-muted)]">{description}</p>
                                             <div className="mt-2 flex flex-wrap items-center gap-2">
                                                 <StatusBadge data={data} />
                                                 {data?.updatedAt && (
-                                                    <span className="text-[11px] text-[#9a978f]">
+                                                    <span className="text-[11px] text-[var(--s-muted)]">
                                                         Updated {getFormattedDate(data.updatedAt)}
                                                     </span>
                                                 )}
@@ -196,7 +196,7 @@ export default function AdminLegalPagesPage() {
                                         <Link
                                             href={path}
                                             title="View page"
-                                            className="inline-flex h-10 items-center gap-2 rounded-full border border-[#EEEAE2] bg-white px-4 text-[13px] font-medium text-[#26262B] transition-colors hover:bg-[#F6F4EF]"
+                                            className="inline-flex h-10 items-center gap-2 rounded-full border border-[var(--s-border)] bg-[var(--s-card)] px-4 text-[13px] font-medium text-[var(--s-text)] transition-colors hover:bg-[var(--s-soft)]"
                                         >
                                             <ExternalLink className="h-4 w-4" />
                                             <span className="hidden sm:inline">View</span>
@@ -204,7 +204,7 @@ export default function AdminLegalPagesPage() {
                                         <button
                                             onClick={() => setEditingSlug(slug as "privacy-policy" | "terms-of-service")}
                                             title="Edit page"
-                                            className="inline-flex h-10 items-center gap-2 rounded-full border border-[#EEEAE2] bg-white px-4 text-[13px] font-medium text-[#26262B] transition-colors hover:bg-[#F6F4EF]"
+                                            className="inline-flex h-10 items-center gap-2 rounded-full border border-[var(--s-border)] bg-[var(--s-card)] px-4 text-[13px] font-medium text-[var(--s-text)] transition-colors hover:bg-[var(--s-soft)]"
                                         >
                                             <Pencil className="h-4 w-4" />
                                             <span className="hidden sm:inline">Edit</span>

@@ -36,24 +36,24 @@ function HabitRow({
             <Avatar name={habit.person} gradient={habit.gradient} size={38} />
 
             <div className="min-w-0 flex-1">
-                <p className="truncate text-[14px] font-semibold text-[#26262B]">
+                <p className="truncate text-[14px] font-semibold text-[var(--s-text)]">
                     {habit.name}
                 </p>
-                <p className="truncate text-[12px] text-[#9a978f]">
+                <p className="truncate text-[12px] text-[var(--s-muted)]">
                     {habit.role}: {habit.person}
                 </p>
             </div>
 
-            <p className="hidden shrink-0 text-[12px] whitespace-nowrap text-[#9a978f] lg:block">
+            <p className="hidden shrink-0 text-[12px] whitespace-nowrap text-[var(--s-muted)] lg:block">
                 {metricLabel}:{" "}
-                <span className="font-semibold text-[#26262B]">
+                <span className="font-semibold text-[var(--s-text)]">
                     {habit.completed}{showTotal ? `/${habit.total}` : ""}
                 </span>
             </p>
 
             <EqualizerBars completed={habit.completed} total={habit.total} />
 
-            <button aria-label="Options" className="shrink-0 text-[#c4c0b7] hover:text-[#26262B]">
+            <button aria-label="Options" className="shrink-0 text-[var(--s-faint)] hover:text-[var(--s-text)]">
                 <MoreHorizontal className="h-5 w-5" />
             </button>
         </div>
@@ -78,11 +78,11 @@ export default function MyHabits({
     emptyLabel = "Nothing to show yet.",
 }: MyHabitsProps) {
     return (
-        <div className="flex flex-1 flex-col rounded-[24px] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+        <div className="flex flex-1 flex-col rounded-[24px] bg-[var(--s-card)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
             {/* Header */}
             <div className="flex items-center justify-between">
-                <h3 className="text-[16px] font-semibold text-[#26262B]">{title}</h3>
-                <button className="flex items-center gap-2 text-[13px] font-medium text-[#26262B]">
+                <h3 className="text-[16px] font-semibold text-[var(--s-text)]">{title}</h3>
+                <button className="flex items-center gap-2 text-[13px] font-medium text-[var(--s-text)]">
                     Add New
                     <span
                         className="flex h-6 w-6 items-center justify-center rounded-full text-white"
@@ -95,11 +95,11 @@ export default function MyHabits({
 
             {/* Rows */}
             {habits.length === 0 ? (
-                <p className="flex flex-1 items-center justify-center py-10 text-center text-[13px] text-[#9a978f]">
+                <p className="flex flex-1 items-center justify-center py-10 text-center text-[13px] text-[var(--s-muted)]">
                     {emptyLabel}
                 </p>
             ) : (
-                <div className="mt-2 divide-y divide-[#f1ede5]">
+                <div className="mt-2 divide-y divide-[var(--s-border-soft)]">
                     {habits.map((habit) => (
                         <HabitRow
                             key={habit.id}

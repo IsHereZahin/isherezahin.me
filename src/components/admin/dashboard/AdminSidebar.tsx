@@ -56,14 +56,14 @@ function UserAvatar({ src, name, size = 38 }: { src?: string | null; name: strin
             <img
                 src={src}
                 alt={name}
-                className="shrink-0 rounded-full object-cover ring-2 ring-white"
+                className="shrink-0 rounded-full object-cover ring-2 ring-[var(--s-card)]"
                 style={{ width: size, height: size }}
             />
         );
     }
     return (
         <div
-            className="flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#F6B98A] to-[#E8735A] font-semibold text-white ring-2 ring-white"
+            className="flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#F6B98A] to-[#E8735A] font-semibold text-white ring-2 ring-[var(--s-card)]"
             style={{ width: size, height: size, fontSize: size * 0.34 }}
         >
             {initials}
@@ -101,7 +101,7 @@ function NavButton({
                 expanded ? "w-full gap-3 px-3" : "w-11 justify-center",
                 active
                     ? "text-[#F4C63D]"
-                    : "text-[#57544e] hover:bg-black/[0.05] hover:text-[#26262B]",
+                    : "text-[var(--s-text2)] hover:bg-[var(--s-soft)] hover:text-[var(--s-text)]",
             ].join(" ")}
             style={active ? { backgroundColor: C.dark } : undefined}
         >
@@ -129,7 +129,7 @@ function Pill({
 }) {
     return (
         <div
-            className={`flex flex-col gap-2 bg-white/70 p-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] ${expanded ? "items-stretch rounded-2xl" : "items-center rounded-full"}`}
+            className={`flex flex-col gap-2 bg-[var(--s-card)]/70 p-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] ${expanded ? "items-stretch rounded-2xl" : "items-center rounded-full"}`}
         >
             {items.map((item) => (
                 <NavButton key={item.id} item={item} expanded={expanded} onNavigate={onNavigate} />
@@ -144,7 +144,7 @@ function Logo({ showText }: { showText: boolean }) {
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl" style={{ backgroundColor: C.dark }}>
                 <LayoutGrid className="h-[18px] w-[18px] text-[#F4C63D]" />
             </div>
-            <span className={`font-semibold text-[#26262B] ${showText ? "text-[15px]" : "text-[10px] tracking-tight"}`}>
+            <span className={`font-semibold text-[var(--s-text)] ${showText ? "text-[15px]" : "text-[10px] tracking-tight"}`}>
                 Admin
             </span>
         </div>
@@ -167,15 +167,15 @@ function Footer({
                 <UserAvatar src={user?.image} name={name} />
                 {expanded && (
                     <div className="min-w-0 flex-1">
-                        <p className="truncate text-[13px] font-semibold text-[#26262B]">{name}</p>
-                        <p className="truncate text-[11px] text-[#9a978f]">Administrator</p>
+                        <p className="truncate text-[13px] font-semibold text-[var(--s-text)]">{name}</p>
+                        <p className="truncate text-[11px] text-[var(--s-muted)]">Administrator</p>
                     </div>
                 )}
                 <button
                     onClick={logout}
                     title="Logout"
                     aria-label="Logout"
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[#9a978f] transition-colors hover:bg-[#EE5D4A]/10 hover:text-[#EE5D4A]"
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[var(--s-muted)] transition-colors hover:bg-[#EE5D4A]/10 hover:text-[#EE5D4A]"
                 >
                     <LogOut className="h-[18px] w-[18px]" />
                 </button>
@@ -199,7 +199,7 @@ export default function AdminSidebar({
             aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
             title={expanded ? "Collapse sidebar" : "Expand sidebar"}
             className={[
-                "flex h-11 items-center rounded-2xl text-[#57544e] transition-colors hover:bg-black/[0.05] hover:text-[#26262B]",
+                "flex h-11 items-center rounded-2xl text-[var(--s-text2)] transition-colors hover:bg-[var(--s-soft)] hover:text-[var(--s-text)]",
                 expanded ? "w-full gap-3 px-3 text-[13px] font-medium" : "w-11 justify-center self-center",
             ].join(" ")}
         >
@@ -238,7 +238,7 @@ export default function AdminSidebar({
                             <button
                                 onClick={onCloseMobile}
                                 aria-label="Close menu"
-                                className="flex h-9 w-9 items-center justify-center rounded-lg text-[#57544e] hover:bg-black/[0.05]"
+                                className="flex h-9 w-9 items-center justify-center rounded-lg text-[var(--s-text2)] hover:bg-[var(--s-soft)]"
                             >
                                 <X className="h-5 w-5" />
                             </button>

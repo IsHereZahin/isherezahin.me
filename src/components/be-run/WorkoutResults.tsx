@@ -15,7 +15,7 @@ function LegendRow({ color, label }: { color: string; label: string }) {
                 className="h-1.5 w-6 rounded-full"
                 style={{ backgroundColor: color }}
             />
-            <span className="text-[13px] text-[#6f6c64]">{label}</span>
+            <span className="text-[13px] text-[var(--s-text2)]">{label}</span>
         </div>
     );
 }
@@ -48,7 +48,7 @@ export default function WorkoutResults({
         >
             {/* Header */}
             <div className="flex items-start justify-between">
-                <h2 className="max-w-[195px] text-[17px] font-semibold leading-snug text-[#2b2b30]">
+                <h2 className="max-w-[195px] text-[17px] font-semibold leading-snug text-[var(--s-text)]">
                     {title}
                 </h2>
                 <button

@@ -1,19 +1,21 @@
 // Static mock data + shared palette for the Be.run health dashboard recreation.
 
+// Neutral surfaces map to the theme-aware `--s-*` tokens (globals.css) so the
+// admin dashboard flips to dark mode; gold/coral/olive accents stay fixed.
 export const C = {
-    page: "#D9D4CC",       // warm greige behind the shell
-    shell: "#F6F4EF",      // cream app surface
-    workout: "#DCD6CA",    // tan workout-results card
-    dark: "#26262B",       // near-black (nav active, dark card, buttons)
-    darkSoft: "#3C3C43",   // lighter dark (current day)
-    yellow: "#F4C63D",     // primary gold (done)
+    page: "var(--s-page)",       // warm surface behind the shell
+    shell: "var(--s-soft)",      // app surface
+    workout: "var(--s-workout)", // workout-results card
+    dark: "var(--s-invert)",     // dark accent surface (nav active, dark card, buttons)
+    darkSoft: "var(--s-invert2)",// lighter dark (current day)
+    yellow: "#F4C63D",           // primary gold (done)
     blobYellow: "#FBD64E",
-    coral: "#EE5D4A",      // calories burned / progress bars
+    coral: "#EE5D4A",            // progress bars
     blobCoral: "#F0604D",
-    olive: "#7C7748",      // scheduled
-    trackLight: "#EFEAE1", // light gauge / slider track
-    barEmpty: "#E6E2DA",   // empty equalizer bar
-    muted: "#9A978F",      // muted text on cream
+    olive: "#7C7748",            // scheduled
+    trackLight: "var(--s-track)",// gauge / slider track
+    barEmpty: "var(--s-track)",  // empty equalizer bar
+    muted: "var(--s-muted)",     // muted text
 } as const;
 
 export type Habit = {

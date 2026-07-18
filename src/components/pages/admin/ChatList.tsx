@@ -73,7 +73,7 @@ export default function ChatList({
     if (loading) {
         return (
             <div className="flex items-center justify-center py-16">
-                <Loader2 className="h-6 w-6 animate-spin text-[#9a978f]" />
+                <Loader2 className="h-6 w-6 animate-spin text-[var(--s-muted)]" />
             </div>
         );
     }
@@ -91,10 +91,10 @@ export default function ChatList({
 
             {/* Conversations List */}
             {conversations.length === 0 ? (
-                <div className="flex flex-col items-center justify-center rounded-2xl bg-[#F6F4EF]/60 py-12 text-center">
-                    <MessageCircle className="mb-3 h-9 w-9 text-[#c4c0b7]" />
-                    <p className="text-[13px] font-medium text-[#57544e]">No conversations yet</p>
-                    <p className="mt-1 text-[12px] text-[#9a978f]">New messages will appear here</p>
+                <div className="flex flex-col items-center justify-center rounded-2xl bg-[var(--s-soft)]/60 py-12 text-center">
+                    <MessageCircle className="mb-3 h-9 w-9 text-[var(--s-faint)]" />
+                    <p className="text-[13px] font-medium text-[var(--s-text2)]">No conversations yet</p>
+                    <p className="mt-1 text-[12px] text-[var(--s-muted)]">New messages will appear here</p>
                 </div>
             ) : (
                 <div className="space-y-1.5">
@@ -113,8 +113,8 @@ export default function ChatList({
                                 className={cn(
                                     "flex w-full items-start gap-3 rounded-2xl p-3 text-left transition-colors",
                                     isSelected
-                                        ? "bg-[#F6F4EF] ring-1 ring-[#26262B]/10"
-                                        : "hover:bg-[#F6F4EF]"
+                                        ? "bg-[var(--s-soft)] ring-1 ring-[var(--s-text)]/10"
+                                        : "hover:bg-[var(--s-soft)]"
                                 )}
                             >
                                 <div className="relative shrink-0">
@@ -131,10 +131,10 @@ export default function ChatList({
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <div className="flex items-center justify-between gap-2">
-                                        <span className="truncate text-[14px] font-semibold text-[#26262B]">
+                                        <span className="truncate text-[14px] font-semibold text-[var(--s-text)]">
                                             {conv.participantName}
                                         </span>
-                                        <span className="shrink-0 text-[11px] text-[#9a978f]">
+                                        <span className="shrink-0 text-[11px] text-[var(--s-muted)]">
                                             {formatDistanceToNow(lastMessageAt, {
                                                 addSuffix: false,
                                             })}
@@ -144,8 +144,8 @@ export default function ChatList({
                                         className={cn(
                                             "mt-0.5 truncate text-[12px]",
                                             conv.unreadCountAdmin > 0
-                                                ? "font-medium text-[#57544e]"
-                                                : "text-[#9a978f]"
+                                                ? "font-medium text-[var(--s-text2)]"
+                                                : "text-[var(--s-muted)]"
                                         )}
                                     >
                                         {conv.lastMessageBy === "admin" && "You: "}
@@ -166,7 +166,7 @@ export default function ChatList({
                                     )}
                                 </div>
                                 {conv.unreadCountAdmin > 0 && (
-                                    <span className="mt-0.5 flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-[#26262B] px-1.5 text-[11px] font-medium text-white">
+                                    <span className="mt-0.5 flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-[var(--s-invert)] px-1.5 text-[11px] font-medium text-white">
                                         {conv.unreadCountAdmin}
                                     </span>
                                 )}
@@ -193,11 +193,11 @@ function StatTile({
             ? "text-green-600"
             : accent === "coral"
                 ? "text-[#EE5D4A]"
-                : "text-[#26262B]";
+                : "text-[var(--s-text)]";
     return (
-        <div className="rounded-2xl bg-[#F6F4EF] px-3 py-2.5 text-center">
+        <div className="rounded-2xl bg-[var(--s-soft)] px-3 py-2.5 text-center">
             <p className={cn("text-[18px] font-bold leading-none", color)}>{value}</p>
-            <p className="mt-1 text-[11px] text-[#9a978f]">{label}</p>
+            <p className="mt-1 text-[11px] text-[var(--s-muted)]">{label}</p>
         </div>
     );
 }

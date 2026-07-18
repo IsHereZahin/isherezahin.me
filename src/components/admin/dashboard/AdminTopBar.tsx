@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/lib/hooks/useAuth";
-import { ArrowUpRight, Menu, Search } from "lucide-react";
+import { ArrowUpRight, Menu, Moon, Search, Sun } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { D } from "./palette";
@@ -33,7 +33,15 @@ function getHeader(path: string, firstName: string): Header {
     return dashboard;
 }
 
-export default function AdminTopBar({ onOpenMenu }: { onOpenMenu: () => void }) {
+export default function AdminTopBar({
+    onOpenMenu,
+    mode,
+    onToggleMode,
+}: {
+    onOpenMenu: () => void;
+    mode: "light" | "dark";
+    onToggleMode: () => void;
+}) {
     const { user } = useAuth();
     const pathname = usePathname();
     const firstName = user?.name?.split(" ")[0] || "Admin";
@@ -45,29 +53,38 @@ export default function AdminTopBar({ onOpenMenu }: { onOpenMenu: () => void }) 
                 <button
                     onClick={onOpenMenu}
                     aria-label="Open menu"
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-[#26262B] shadow-[0_1px_3px_rgba(0,0,0,0.05)] md:hidden"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--s-card)] text-[var(--s-text)] shadow-[0_1px_3px_rgba(0,0,0,0.05)] md:hidden"
                 >
                     <Menu className="h-5 w-5" />
                 </button>
                 <div className="min-w-0">
-                    <h1 className="truncate text-[22px] font-bold leading-tight text-[#26262B] md:text-[26px]">
+                    <h1 className="truncate text-[22px] font-bold leading-tight text-[var(--s-text)] md:text-[26px]">
                         {title}
                     </h1>
-                    <p className="mt-0.5 truncate text-[13px] text-[#9a978f]">
+                    <p className="mt-0.5 truncate text-[13px] text-[var(--s-muted)]">
                         {subtitle}
                     </p>
                 </div>
             </div>
 
             <div className="flex shrink-0 items-center gap-3">
-                <label className="hidden h-11 items-center gap-2 rounded-full bg-white px-4 shadow-[0_1px_3px_rgba(0,0,0,0.05)] lg:flex lg:w-[240px]">
-                    <Search className="h-[17px] w-[17px] text-[#bdb9b0]" />
+                <label className="hidden h-11 items-center gap-2 rounded-full bg-[var(--s-card)] px-4 shadow-[0_1px_3px_rgba(0,0,0,0.05)] lg:flex lg:w-[240px]">
+                    <Search className="h-[17px] w-[17px] text-[var(--s-faint)]" />
                     <input
                         type="text"
                         placeholder="Search…"
-                        className="w-full bg-transparent text-[13px] text-[#26262B] outline-none placeholder:text-[#bdb9b0]"
+                        className="w-full bg-transparent text-[13px] text-[var(--s-text)] outline-none placeholder:text-[var(--s-faint)]"
                     />
                 </label>
+
+                <button
+                    onClick={onToggleMode}
+                    aria-label="Toggle dark mode"
+                    title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--s-card)] text-[var(--s-text)] shadow-[0_1px_3px_rgba(0,0,0,0.05)] transition-colors hover:bg-[var(--s-soft)]"
+                >
+                    {mode === "dark" ? <Sun className="h-[18px] w-[18px]" /> : <Moon className="h-[18px] w-[18px]" />}
+                </button>
 
                 <Link
                     href={action.href}

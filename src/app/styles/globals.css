@@ -524,3 +524,63 @@ html:has(a[href^="#"]:target) {
     background-color: #b7b1a4;
     background-clip: content-box;
 }
+/* =========================================================================
+   Admin dashboard surface tokens (warm cream in light, warm charcoal in dark).
+   Defined globally so values also resolve for Radix content portaled to <body>.
+   ========================================================================= */
+:root {
+    --s-page: #EDEBE5;
+    --s-card: #FFFFFF;
+    --s-soft: #F6F4EF;
+    --s-soft2: #EFEAE2;
+    --s-invert: #26262B;
+    --s-invert2: #3C3C43;
+    --s-workout: #DCD6CA;
+    --s-border: #EEEAE2;
+    --s-border-soft: #F1EDE5;
+    --s-track: #F1EDE5;
+    --s-text: #26262B;
+    --s-text2: #57544E;
+    --s-muted: #9A978F;
+    --s-faint: #C4C0B7;
+}
+
+:root.dark {
+    --s-page: #161518;
+    --s-card: #201F24;
+    --s-soft: #26252B;
+    --s-soft2: #2A2930;
+    --s-invert: #2E2D34;
+    --s-invert2: #3A3942;
+    --s-workout: #24232B;
+    --s-border: #302F36;
+    --s-border-soft: #29282F;
+    --s-track: #302F36;
+    --s-text: #F1EFE8;
+    --s-text2: #B7B3AA;
+    --s-muted: #9A968C;
+    --s-faint: #6B6862;
+}
+
+/* While inside the admin panel, remap shadcn/ui semantic tokens onto the warm
+   admin surface so Radix Selects, dialogs, and toasts match — in both modes.
+   The body-level scope also covers content Radix portals outside the layout. */
+body[data-admin] {
+    --background: var(--s-card);
+    --foreground: var(--s-text);
+    --card: var(--s-card);
+    --card-foreground: var(--s-text);
+    --popover: var(--s-card);
+    --popover-foreground: var(--s-text);
+    --muted: var(--s-soft);
+    --muted-foreground: var(--s-muted);
+    --secondary: var(--s-soft);
+    --secondary-foreground: var(--s-text);
+    --accent: var(--s-soft);
+    --accent-foreground: var(--s-text);
+    --border: var(--s-border);
+    --input: var(--s-border);
+    --primary: var(--s-text);
+    --primary-foreground: var(--s-card);
+    --ring: var(--s-muted);
+}

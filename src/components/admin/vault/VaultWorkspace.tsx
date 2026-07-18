@@ -223,11 +223,11 @@ export default function VaultWorkspace({ admin = false }: Readonly<{ admin?: boo
     const newMenu = (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <button type="button" className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-[#26262B] px-4 text-[13px] font-medium text-white transition-transform hover:scale-[1.02]">
+                <button type="button" className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-[var(--s-invert)] px-4 text-[13px] font-medium text-white transition-transform hover:scale-[1.02]">
                     New <ChevronDown className="h-4 w-4" />
                 </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-44 rounded-xl border-[#EEEAE2]">
+            <DropdownMenuContent align="end" className="w-44 rounded-xl border-[var(--s-border)]">
                 <DropdownMenuItem onClick={() => setLinkModal({ open: true, link: null })}><Link2 className="mr-2 h-4 w-4" /> New link</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setNoteModal({ open: true, note: null })}><FileText className="mr-2 h-4 w-4" /> New note</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setCredModal({ open: true, credential: null })}><KeyRound className="mr-2 h-4 w-4" /> New credential</DropdownMenuItem>
@@ -246,13 +246,13 @@ export default function VaultWorkspace({ admin = false }: Readonly<{ admin?: boo
     let listBody: React.ReactNode;
     if (allLoading) {
         listBody = (
-            <div className="animate-pulse divide-y divide-[#f1ede5]">
+            <div className="animate-pulse divide-y divide-[var(--s-border-soft)]">
                 {Array.from({ length: 5 }).map((_, i) => (
                     <div key={i} className="flex items-center gap-3 px-4 py-3.5">
-                        <div className="h-10 w-10 shrink-0 rounded-xl bg-[#F1EDE5]" />
+                        <div className="h-10 w-10 shrink-0 rounded-xl bg-[var(--s-track)]" />
                         <div className="flex-1 space-y-2">
-                            <div className="h-3 w-1/3 rounded bg-[#F1EDE5]" />
-                            <div className="h-2.5 w-1/2 rounded bg-[#EFEAE2]" />
+                            <div className="h-3 w-1/3 rounded bg-[var(--s-track)]" />
+                            <div className="h-2.5 w-1/2 rounded bg-[var(--s-soft2)]" />
                         </div>
                     </div>
                 ))}
@@ -260,7 +260,7 @@ export default function VaultWorkspace({ admin = false }: Readonly<{ admin?: boo
         );
     } else if (filtered.length > 0) {
         listBody = (
-            <div className="divide-y divide-[#f1ede5]">
+            <div className="divide-y divide-[var(--s-border-soft)]">
                 {filtered.map((it) => (
                     <VaultRow
                         key={`${it.kind}-${it.id}`}
@@ -277,22 +277,22 @@ export default function VaultWorkspace({ admin = false }: Readonly<{ admin?: boo
     } else if (searching) {
         listBody = (
             <div className="px-6 py-16 text-center">
-                <p className="text-[14px] font-medium text-[#26262B]">No matches for “{query.trim()}”</p>
-                <p className="mx-auto mt-1 max-w-xs text-[13px] text-[#9a978f]">Try a different term, or clear the search to browse.</p>
-                <button onClick={() => setQuery("")} className="mt-5 inline-flex h-10 items-center rounded-full border border-[#EEEAE2] bg-white px-5 text-[13px] font-medium text-[#26262B] hover:bg-[#F6F4EF]">Clear search</button>
+                <p className="text-[14px] font-medium text-[var(--s-text)]">No matches for “{query.trim()}”</p>
+                <p className="mx-auto mt-1 max-w-xs text-[13px] text-[var(--s-muted)]">Try a different term, or clear the search to browse.</p>
+                <button onClick={() => setQuery("")} className="mt-5 inline-flex h-10 items-center rounded-full border border-[var(--s-border)] bg-[var(--s-card)] px-5 text-[13px] font-medium text-[var(--s-text)] hover:bg-[var(--s-soft)]">Clear search</button>
             </div>
         );
     } else if (items.length === 0) {
         // First run — whole vault empty.
         listBody = (
             <div className="px-6 py-14 text-center">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F6F4EF]"><Star className="h-6 w-6 text-[#9a978f]" /></div>
-                <p className="text-[15px] font-semibold text-[#26262B]">Your vault is empty</p>
-                <p className="mx-auto mt-1 max-w-sm text-[13px] text-[#9a978f]">Save a link, jot a note, upload a file, or store a credential. Everything is encrypted at rest.</p>
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--s-soft)]"><Star className="h-6 w-6 text-[var(--s-muted)]" /></div>
+                <p className="text-[15px] font-semibold text-[var(--s-text)]">Your vault is empty</p>
+                <p className="mx-auto mt-1 max-w-sm text-[13px] text-[var(--s-muted)]">Save a link, jot a note, upload a file, or store a credential. Everything is encrypted at rest.</p>
                 <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
                     {quickAdd.map((q) => (
-                        <button key={q.label} onClick={q.onClick} className="inline-flex h-10 items-center gap-1.5 rounded-full border border-[#EEEAE2] bg-white px-4 text-[13px] font-medium text-[#26262B] hover:bg-[#F6F4EF]">
-                            <q.icon className="h-4 w-4 text-[#9a978f]" /> {q.label}
+                        <button key={q.label} onClick={q.onClick} className="inline-flex h-10 items-center gap-1.5 rounded-full border border-[var(--s-border)] bg-[var(--s-card)] px-4 text-[13px] font-medium text-[var(--s-text)] hover:bg-[var(--s-soft)]">
+                            <q.icon className="h-4 w-4 text-[var(--s-muted)]" /> {q.label}
                         </button>
                     ))}
                 </div>
@@ -302,8 +302,8 @@ export default function VaultWorkspace({ admin = false }: Readonly<{ admin?: boo
         // Scope is empty but the vault has items elsewhere.
         listBody = (
             <div className="px-6 py-16 text-center">
-                <p className="text-[14px] font-medium text-[#26262B]">Nothing here yet</p>
-                <p className="mx-auto mt-1 max-w-xs text-[13px] text-[#9a978f]">
+                <p className="text-[14px] font-medium text-[var(--s-text)]">Nothing here yet</p>
+                <p className="mx-auto mt-1 max-w-xs text-[13px] text-[var(--s-muted)]">
                     {scope === "favorites" ? "Star an item to pin it to your favorites." : scope === "credentials" ? "No credentials in this view. Secrets are encrypted at rest." : "This view has no items yet."}
                 </p>
             </div>
@@ -312,30 +312,30 @@ export default function VaultWorkspace({ admin = false }: Readonly<{ admin?: boo
 
     const listPanel = (
         <main
-            className="relative min-w-0 flex-1 overflow-hidden rounded-[24px] border border-[#EEEAE2] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
+            className="relative min-w-0 flex-1 overflow-hidden rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
             onDragOver={(e) => { e.preventDefault(); if (!dragOver) setDragOver(true); }}
             onDragLeave={(e) => { if (e.currentTarget === e.target) setDragOver(false); }}
             onDrop={(e) => { e.preventDefault(); setDragOver(false); if (e.dataTransfer.files?.length) uploadFiles(e.dataTransfer.files); }}
         >
             {/* Header */}
-            <div className="flex flex-col gap-3 border-b border-[#f1ede5] p-4 sm:flex-row sm:items-center">
+            <div className="flex flex-col gap-3 border-b border-[var(--s-border-soft)] p-4 sm:flex-row sm:items-center">
                 <div className="min-w-0">
-                    <h2 className="truncate text-[16px] font-semibold text-[#26262B]">{scopeTitle}</h2>
-                    <p className="mt-0.5 text-[12px] text-[#9a978f]">{filtered.length} {filtered.length === 1 ? "item" : "items"}{uploading ? " · uploading…" : ""}</p>
+                    <h2 className="truncate text-[16px] font-semibold text-[var(--s-text)]">{scopeTitle}</h2>
+                    <p className="mt-0.5 text-[12px] text-[var(--s-muted)]">{filtered.length} {filtered.length === 1 ? "item" : "items"}{uploading ? " · uploading…" : ""}</p>
                 </div>
                 <div className="flex items-center gap-2 sm:ml-auto">
                     <div className="relative flex-1 sm:w-60 sm:flex-none">
-                        <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#bdb9b0]" />
+                        <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--s-faint)]" />
                         <input
                             ref={searchRef}
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             onKeyDown={(e) => { if (e.key === "Escape") { setQuery(""); searchRef.current?.blur(); } }}
                             placeholder="Search vault…"
-                            className="h-10 w-full rounded-full border border-[#EEEAE2] bg-[#F6F4EF] pl-10 pr-9 text-[13px] text-[#26262B] outline-none transition-colors placeholder:text-[#bdb9b0] focus:border-[#26262B] focus:bg-white"
+                            className="h-10 w-full rounded-full border border-[var(--s-border)] bg-[var(--s-soft)] pl-10 pr-9 text-[13px] text-[var(--s-text)] outline-none transition-colors placeholder:text-[var(--s-faint)] focus:border-[var(--s-invert)] focus:bg-[var(--s-card)]"
                         />
                         {query && (
-                            <button type="button" onClick={() => setQuery("")} aria-label="Clear search" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9a978f] hover:text-[#26262B]"><X className="h-4 w-4" /></button>
+                            <button type="button" onClick={() => setQuery("")} aria-label="Clear search" className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--s-muted)] hover:text-[var(--s-text)]"><X className="h-4 w-4" /></button>
                         )}
                     </div>
                     {newMenu}
@@ -346,8 +346,8 @@ export default function VaultWorkspace({ admin = false }: Readonly<{ admin?: boo
 
             {/* Full-surface drag overlay, only while dragging. */}
             {dragOver && (
-                <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-[24px] border-2 border-dashed border-[#26262B] bg-[#F6F4EF]/90">
-                    <div className="text-center text-[#26262B]">
+                <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-[24px] border-2 border-dashed border-[var(--s-invert)] bg-[var(--s-soft)]/90">
+                    <div className="text-center text-[var(--s-text)]">
                         <HardDriveUpload className="mx-auto mb-2 h-7 w-7" />
                         <p className="text-[13px] font-medium">Drop files to upload</p>
                     </div>
@@ -389,7 +389,7 @@ export default function VaultWorkspace({ admin = false }: Readonly<{ admin?: boo
                         <img src={vault.files.fileUrl(filePreview._id)} alt={filePreview.name} className="max-w-full rounded-lg" />
                     )}
                     {filePreview && filePreview.extension === "pdf" && (
-                        <iframe src={vault.files.fileUrl(filePreview._id)} title={filePreview.name} className="h-[70vh] w-full rounded-lg border border-[#EEEAE2]" />
+                        <iframe src={vault.files.fileUrl(filePreview._id)} title={filePreview.name} className="h-[70vh] w-full rounded-lg border border-[var(--s-border)]" />
                     )}
                 </DialogContent>
             </Dialog>

@@ -33,9 +33,9 @@ function FileThumb({ file, onClick }: Readonly<{ file: VaultFile; onClick: () =>
             type="button"
             onClick={(e) => { e.stopPropagation(); onClick(); }}
             title="Preview"
-            className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-[#EEEAE2] bg-[#F6F4EF]"
+            className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-[var(--s-border)] bg-[var(--s-soft)]"
         >
-            {!loaded && <FileIcon className="absolute inset-0 m-auto h-4 w-4 text-[#9a978f]" />}
+            {!loaded && <FileIcon className="absolute inset-0 m-auto h-4 w-4 text-[var(--s-muted)]" />}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
                 src={vault.files.fileUrl(file._id)}
@@ -55,8 +55,8 @@ function IconTile({ item }: Readonly<{ item: UnifiedItem }>) {
     else if (item.kind === "file") Icon = FileIcon;
     else if (item.kind === "credential") Icon = KeyRound;
     return (
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#EEEAE2] bg-[#F6F4EF]">
-            <Icon className="h-[18px] w-[18px] text-[#57544e]" />
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--s-border)] bg-[var(--s-soft)]">
+            <Icon className="h-[18px] w-[18px] text-[var(--s-text2)]" />
         </div>
     );
 }
@@ -138,8 +138,8 @@ export default function VaultRow({ item, onEdit, onDelete, onToggleFavorite, onP
             role="button"
             tabIndex={0}
             onClick={handleOpen}
-            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleOpen(); } }}
-            className="group grid cursor-pointer grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-3 outline-none transition-colors hover:bg-[#F6F4EF] focus-visible:bg-[#F6F4EF]"
+            onKeyDown={(e) => { if (e.target !== e.currentTarget) return; if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleOpen(); } }}
+            className="group grid cursor-pointer grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-3 outline-none transition-colors hover:bg-[var(--s-soft)] focus-visible:bg-[var(--s-soft)]"
         >
             {file && isImageFile(file)
                 ? <FileThumb file={file} onClick={() => onPreviewFile(file)} />
@@ -147,22 +147,22 @@ export default function VaultRow({ item, onEdit, onDelete, onToggleFavorite, onP
 
             <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
-                    <p className="truncate text-[14px] font-medium text-[#26262B]">{item.title || "Untitled"}</p>
-                    {note?.isEncrypted && <Lock className="h-3 w-3 shrink-0 text-[#9a978f]" />}
+                    <p className="truncate text-[14px] font-medium text-[var(--s-text)]">{item.title || "Untitled"}</p>
+                    {note?.isEncrypted && <Lock className="h-3 w-3 shrink-0 text-[var(--s-muted)]" />}
                 </div>
-                <p className="truncate text-[12px] text-[#9a978f]">{secondaryText(item)}</p>
+                <p className="truncate text-[12px] text-[var(--s-muted)]">{secondaryText(item)}</p>
             </div>
 
             <div className="flex shrink-0 items-center gap-0.5">
-                <span className="mr-1 hidden text-[11px] tabular-nums text-[#9a978f] sm:inline">{relativeTime(item.updatedAt)}</span>
+                <span className="mr-1 hidden text-[11px] tabular-nums text-[var(--s-muted)] sm:inline">{relativeTime(item.updatedAt)}</span>
 
                 <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); onToggleFavorite(item); }}
-                    className="rounded-lg p-1.5 text-[#9a978f] transition-colors hover:bg-[#EEEAE2]"
+                    className="rounded-lg p-1.5 text-[var(--s-muted)] transition-colors hover:bg-[var(--s-border)]"
                     aria-label={item.isFavorite ? "Remove from favorites" : "Add to favorites"}
                 >
-                    <Star className={`h-4 w-4 ${item.isFavorite ? "fill-[#F4C63D] text-[#F4C63D]" : "hover:text-[#26262B]"}`} />
+                    <Star className={`h-4 w-4 ${item.isFavorite ? "fill-[#F4C63D] text-[#F4C63D]" : "hover:text-[var(--s-text)]"}`} />
                 </button>
 
                 <DropdownMenu>
@@ -171,13 +171,13 @@ export default function VaultRow({ item, onEdit, onDelete, onToggleFavorite, onP
                             type="button"
                             onClick={(e) => e.stopPropagation()}
                             onPointerDown={(e) => e.stopPropagation()}
-                            className="rounded-lg p-1.5 text-[#9a978f] transition-colors hover:bg-[#EEEAE2] hover:text-[#26262B] data-[state=open]:bg-[#EEEAE2] data-[state=open]:text-[#26262B]"
+                            className="rounded-lg p-1.5 text-[var(--s-muted)] transition-colors hover:bg-[var(--s-border)] hover:text-[var(--s-text)] data-[state=open]:bg-[var(--s-border)] data-[state=open]:text-[var(--s-text)]"
                             aria-label="More actions"
                         >
                             <MoreHorizontal className="h-4 w-4" />
                         </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-44 rounded-xl border-[#EEEAE2]">
+                    <DropdownMenuContent align="end" className="w-44 rounded-xl border-[var(--s-border)]">
                         {item.kind === "link" && (
                             <>
                                 <DropdownMenuItem onClick={openLink}><ExternalLink className="mr-2 h-4 w-4" /> Open link</DropdownMenuItem>

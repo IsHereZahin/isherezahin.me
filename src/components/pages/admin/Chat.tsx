@@ -26,24 +26,24 @@ function AdminChatContent() {
     }, [user?.id]);
 
     return (
-        <div className="flex h-full flex-col overflow-hidden rounded-[24px] border border-[#EEEAE2] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+        <div className="flex h-full flex-col overflow-hidden rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
             <div className="flex min-h-0 flex-1">
                 {/* Sidebar — conversation list */}
                 <div
-                    className={`flex w-full flex-col border-r border-[#EEEAE2] md:w-80 ${selectedConversation ? "hidden md:flex" : "flex"}`}
+                    className={`flex w-full flex-col border-r border-[var(--s-border)] md:w-80 ${selectedConversation ? "hidden md:flex" : "flex"}`}
                 >
                     {/* Sidebar header + settings */}
-                    <div className="flex flex-shrink-0 items-center justify-between gap-3 border-b border-[#EEEAE2] p-4">
+                    <div className="flex flex-shrink-0 items-center justify-between gap-3 border-b border-[var(--s-border)] p-4">
                         <div className="flex items-center gap-2.5">
                             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F4C63D]/15">
-                                <MessageCircle className="h-[18px] w-[18px] text-[#26262B]" />
+                                <MessageCircle className="h-[18px] w-[18px] text-[var(--s-text)]" />
                             </div>
-                            <h3 className="text-[15px] font-semibold text-[#26262B]">Conversations</h3>
+                            <h3 className="text-[15px] font-semibold text-[var(--s-text)]">Conversations</h3>
                         </div>
                         <div className="relative shrink-0">
                             <button
                                 onClick={() => setShowSettings(!showSettings)}
-                                className="flex h-9 w-9 items-center justify-center rounded-xl text-[#57544e] transition-colors hover:bg-[#F6F4EF]"
+                                className="flex h-9 w-9 items-center justify-center rounded-xl text-[var(--s-text2)] transition-colors hover:bg-[var(--s-soft)]"
                                 title="Chat Settings"
                                 aria-label="Chat Settings"
                             >
@@ -55,17 +55,17 @@ function AdminChatContent() {
                                         className="fixed inset-0 z-10"
                                         onClick={() => setShowSettings(false)}
                                     />
-                                    <div className="absolute right-0 top-full z-20 mt-1 w-72 rounded-2xl border border-[#EEEAE2] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-                                        <h4 className="mb-3 text-[14px] font-semibold text-[#26262B]">Chat Settings</h4>
+                                    <div className="absolute right-0 top-full z-20 mt-1 w-72 rounded-2xl border border-[var(--s-border)] bg-[var(--s-card)] p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+                                        <h4 className="mb-3 text-[14px] font-semibold text-[var(--s-text)]">Chat Settings</h4>
 
                                         {/* Status Visibility Toggle */}
-                                        <div className="rounded-2xl border border-[#EEEAE2] p-4">
+                                        <div className="rounded-2xl border border-[var(--s-border)] p-4">
                                             <div className="flex items-center justify-between gap-3">
                                                 <div className="min-w-0">
-                                                    <p className="text-[13px] font-medium text-[#26262B]">
+                                                    <p className="text-[13px] font-medium text-[var(--s-text)]">
                                                         Show active &amp; read status
                                                     </p>
-                                                    <p className="mt-0.5 text-[12px] text-[#9a978f]">
+                                                    <p className="mt-0.5 text-[12px] text-[var(--s-muted)]">
                                                         Let users see your online status and read receipts
                                                     </p>
                                                 </div>
@@ -73,7 +73,7 @@ function AdminChatContent() {
                                                     onClick={toggleGlobalStatus}
                                                     disabled={isLoading}
                                                     aria-pressed={!globalHideStatus}
-                                                    className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#26262B]/30 focus:ring-offset-2 ${!globalHideStatus
+                                                    className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--s-text)]/30 focus:ring-offset-2 ${!globalHideStatus
                                                         ? "bg-green-500"
                                                         : "bg-gray-300 dark:bg-gray-600"
                                                         } disabled:opacity-50`}
@@ -84,7 +84,7 @@ function AdminChatContent() {
                                                         </span>
                                                     ) : (
                                                         <span
-                                                            className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-all duration-300 ease-in-out ${!globalHideStatus
+                                                            className={`inline-block h-4 w-4 transform rounded-full bg-[var(--s-card)] shadow-md transition-all duration-300 ease-in-out ${!globalHideStatus
                                                                 ? "translate-x-6"
                                                                 : "translate-x-1"
                                                                 }`}
@@ -131,11 +131,11 @@ function AdminChatContent() {
                         />
                     ) : (
                         <div className="flex flex-1 flex-col items-center justify-center p-8 text-center">
-                            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#F6F4EF]">
-                                <MessageCircle className="h-8 w-8 text-[#c4c0b7]" />
+                            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--s-soft)]">
+                                <MessageCircle className="h-8 w-8 text-[var(--s-faint)]" />
                             </div>
-                            <p className="text-[15px] font-semibold text-[#26262B]">No conversation selected</p>
-                            <p className="mt-1 text-[13px] text-[#9a978f]">
+                            <p className="text-[15px] font-semibold text-[var(--s-text)]">No conversation selected</p>
+                            <p className="mt-1 text-[13px] text-[var(--s-muted)]">
                                 Choose a conversation from the list to start chatting
                             </p>
                         </div>

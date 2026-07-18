@@ -17,7 +17,7 @@ type Section = "security" | "activity";
 function Toggle({ isOn, onClick, isLoading }: Readonly<{ isOn: boolean; onClick: () => void; isLoading?: boolean }>) {
     return (
         <button type="button" onClick={onClick} disabled={isLoading} aria-pressed={isOn} className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${isOn ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600"} disabled:opacity-50`}>
-            {isLoading ? <Loader2 className="mx-auto h-4 w-4 animate-spin text-white" /> : <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-transform ${isOn ? "translate-x-6" : "translate-x-1"}`} />}
+            {isLoading ? <Loader2 className="mx-auto h-4 w-4 animate-spin text-white" /> : <span className={`inline-block h-4 w-4 transform rounded-full bg-[var(--s-card)] shadow-md transition-transform ${isOn ? "translate-x-6" : "translate-x-1"}`} />}
         </button>
     );
 }
@@ -103,12 +103,13 @@ export default function VaultSettingsPanel() {
         toast.success("Password reset. Encrypted items were purged.");
         setResetPassword("");
         queryClient.invalidateQueries({ queryKey: ["vault-status"] });
-        queryClient.invalidateQueries({ queryKey: ["vault-credentials"] });
-        queryClient.invalidateQueries({ queryKey: ["vault-notes"] });
+        // The reset purges all credentials + encrypted notes but keeps the vault
+        // unlocked, so the merged source of truth must refresh or it shows ghosts.
+        queryClient.invalidateQueries({ queryKey: ["vault-all"] });
     };
 
     if (isLoading || !settings) {
-        return <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-[#9a978f]" /></div>;
+        return <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-[var(--s-muted)]" /></div>;
     }
 
     const NAV: { id: Section; label: string; icon: LucideIcon }[] = [
@@ -119,22 +120,22 @@ export default function VaultSettingsPanel() {
     return (
         <div className="space-y-5">
             {/* Header card */}
-            <section className="rounded-[24px] border border-[#EEEAE2] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+            <section className="rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 items-center gap-4">
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#26262B]">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--s-invert)]">
                             <VaultIcon className="h-5 w-5 text-[#F4C63D]" />
                         </div>
                         <div className="min-w-0">
-                            <h1 className="text-[18px] font-bold leading-tight text-[#26262B]">Personal Vault</h1>
-                            <div className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[12px] text-[#9a978f]">
+                            <h1 className="text-[18px] font-bold leading-tight text-[var(--s-text)]">Personal Vault</h1>
+                            <div className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[12px] text-[var(--s-muted)]">
                                 <span className="inline-flex items-center gap-1.5">
                                     <span className={`h-2 w-2 rounded-full ${settings.enabled ? "bg-green-500" : "bg-gray-400"}`} />
                                     {settings.enabled ? "Enabled" : "Disabled"}
                                 </span>
-                                <span className="text-[#d9d4ca]">·</span>
+                                <span className="text-[var(--s-faint)]">·</span>
                                 <span>{settings.isConfigured ? "Password set" : "Not set up"}</span>
-                                <span className="text-[#d9d4ca]">·</span>
+                                <span className="text-[var(--s-faint)]">·</span>
                                 <span className="inline-flex items-center gap-1">
                                     {status?.unlocked ? <Unlock className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
                                     {status?.unlocked ? "Unlocked" : "Locked"}
@@ -143,14 +144,14 @@ export default function VaultSettingsPanel() {
                         </div>
                     </div>
 
-                    <div className="flex h-10 shrink-0 items-center gap-2 rounded-full border border-[#EEEAE2] bg-white px-3">
-                        <span className="w-6 text-center text-[13px] font-medium text-[#26262B]">{settings.enabled ? "On" : "Off"}</span>
+                    <div className="flex h-10 shrink-0 items-center gap-2 rounded-full border border-[var(--s-border)] bg-[var(--s-card)] px-3">
+                        <span className="w-6 text-center text-[13px] font-medium text-[var(--s-text)]">{settings.enabled ? "On" : "Off"}</span>
                         <Toggle isOn={settings.enabled} isLoading={savingField === "enabled"} onClick={() => update("enabled", { enabled: !settings.enabled })} />
                     </div>
                 </div>
 
                 {/* Static (non-configurable) limits */}
-                <div className="mt-5 grid grid-cols-1 gap-2.5 border-t border-[#f1ede5] pt-5 sm:grid-cols-3">
+                <div className="mt-5 grid grid-cols-1 gap-2.5 border-t border-[var(--s-border-soft)] pt-5 sm:grid-cols-3">
                     <Limit label="Auto-lock" value={`${VAULT_SESSION_TIMEOUT_MINUTES} min`} />
                     <Limit label="Max upload" value={`${VAULT_MAX_FILE_SIZE_MB} MB`} />
                     <Limit label="File types" value="All allowed" />
@@ -158,7 +159,7 @@ export default function VaultSettingsPanel() {
             </section>
 
             {/* Tabs */}
-            <div className="inline-flex rounded-full border border-[#EEEAE2] bg-white p-1">
+            <div className="inline-flex rounded-full border border-[var(--s-border)] bg-[var(--s-card)] p-1">
                 {NAV.map((item) => {
                     const Icon = item.icon;
                     const active = section === item.id;
@@ -166,7 +167,7 @@ export default function VaultSettingsPanel() {
                         <button
                             key={item.id}
                             onClick={() => setSection(item.id)}
-                            className={`inline-flex h-9 items-center gap-2 rounded-full px-4 text-[13px] font-medium transition-colors ${active ? "bg-[#26262B] text-white" : "text-[#57544e] hover:text-[#26262B]"}`}
+                            className={`inline-flex h-9 items-center gap-2 rounded-full px-4 text-[13px] font-medium transition-colors ${active ? "bg-[var(--s-invert)] text-white" : "text-[var(--s-text2)] hover:text-[var(--s-text)]"}`}
                         >
                             <Icon className="h-4 w-4" />
                             {item.label}
@@ -208,7 +209,7 @@ export default function VaultSettingsPanel() {
             )}
 
             {section === "activity" && (
-                <div className="overflow-hidden rounded-[24px] border border-[#EEEAE2] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+                <div className="overflow-hidden rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
                     <AccessLogs />
                 </div>
             )}
@@ -232,7 +233,7 @@ function PrimaryButton({ children, ...props }: React.ButtonHTMLAttributes<HTMLBu
     return (
         <button
             {...props}
-            className="inline-flex h-10 items-center rounded-full bg-[#26262B] px-5 text-[13px] font-medium text-white transition-transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
+            className="inline-flex h-10 items-center rounded-full bg-[var(--s-invert)] px-5 text-[13px] font-medium text-white transition-transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
         >
             {children}
         </button>
@@ -241,23 +242,23 @@ function PrimaryButton({ children, ...props }: React.ButtonHTMLAttributes<HTMLBu
 
 function Limit({ label, value }: Readonly<{ label: string; value: string }>) {
     return (
-        <div className="rounded-2xl bg-[#F6F4EF] px-4 py-3">
-            <p className="text-[11px] text-[#9a978f]">{label}</p>
-            <p className="mt-0.5 text-[15px] font-semibold text-[#26262B]">{value}</p>
+        <div className="rounded-2xl bg-[var(--s-soft)] px-4 py-3">
+            <p className="text-[11px] text-[var(--s-muted)]">{label}</p>
+            <p className="mt-0.5 text-[15px] font-semibold text-[var(--s-text)]">{value}</p>
         </div>
     );
 }
 
 function SecurityCard({ icon: Icon, title, desc, children, danger }: Readonly<{ icon: LucideIcon; title: string; desc: string; children: React.ReactNode; danger?: boolean }>) {
     return (
-        <div className={`rounded-[24px] border bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)] ${danger ? "border-[#EE5D4A]/30" : "border-[#EEEAE2]"}`}>
+        <div className={`rounded-[24px] border bg-[var(--s-card)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)] ${danger ? "border-[#EE5D4A]/30" : "border-[var(--s-border)]"}`}>
             <div className="mb-4 flex items-start gap-3">
-                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${danger ? "bg-[#EE5D4A]/10" : "bg-[#F6F4EF]"}`}>
-                    <Icon className={`h-[18px] w-[18px] ${danger ? "text-[#EE5D4A]" : "text-[#26262B]"}`} />
+                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${danger ? "bg-[#EE5D4A]/10" : "bg-[var(--s-soft)]"}`}>
+                    <Icon className={`h-[18px] w-[18px] ${danger ? "text-[#EE5D4A]" : "text-[var(--s-text)]"}`} />
                 </div>
                 <div className="min-w-0">
-                    <p className="text-[15px] font-semibold text-[#26262B]">{title}</p>
-                    <p className="mt-0.5 text-[12px] text-[#9a978f]">{desc}</p>
+                    <p className="text-[15px] font-semibold text-[var(--s-text)]">{title}</p>
+                    <p className="mt-0.5 text-[12px] text-[var(--s-muted)]">{desc}</p>
                 </div>
             </div>
             <div className="sm:pl-13">{children}</div>
@@ -298,31 +299,31 @@ function AccessLogs() {
 
     let body: React.ReactNode;
     if (isLoading) {
-        body = <div className="flex justify-center py-12"><Loader2 className="h-5 w-5 animate-spin text-[#9a978f]" /></div>;
+        body = <div className="flex justify-center py-12"><Loader2 className="h-5 w-5 animate-spin text-[var(--s-muted)]" /></div>;
     } else if (!data?.logs.length) {
-        body = <p className="py-12 text-center text-[13px] text-[#9a978f]">No activity logged yet.</p>;
+        body = <p className="py-12 text-center text-[13px] text-[var(--s-muted)]">No activity logged yet.</p>;
     } else {
         body = (
             <>
                 <div>
                     {data.logs.map((log) => (
-                        <div key={log._id} className="flex items-center justify-between gap-3 border-b border-[#f1ede5] px-5 py-3.5 last:border-0">
+                        <div key={log._id} className="flex items-center justify-between gap-3 border-b border-[var(--s-border-soft)] px-5 py-3.5 last:border-0">
                             <div className="flex min-w-0 items-center gap-2.5">
-                                <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${ACTION_COLORS[log.action] || "bg-[#c4c0b7]"}`} />
-                                <span className="text-[13px] font-medium capitalize text-[#26262B]">{log.action.replace(/_/g, " ")}</span>
-                                {log.detail && <span className="truncate text-[12px] text-[#9a978f]">· {log.detail}</span>}
+                                <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${ACTION_COLORS[log.action] || "bg-[var(--s-faint)]"}`} />
+                                <span className="text-[13px] font-medium capitalize text-[var(--s-text)]">{log.action.replace(/_/g, " ")}</span>
+                                {log.detail && <span className="truncate text-[12px] text-[var(--s-muted)]">· {log.detail}</span>}
                             </div>
-                            <div className="shrink-0 text-[11px] text-[#9a978f]">
+                            <div className="shrink-0 text-[11px] text-[var(--s-muted)]">
                                 {log.deviceType} · {new Date(log.createdAt).toLocaleString()}
                             </div>
                         </div>
                     ))}
                 </div>
                 {data.totalPages > 1 && (
-                    <div className="flex items-center justify-between gap-3 border-t border-[#f1ede5] p-4 text-[13px]">
-                        <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1} className="rounded-full border border-[#EEEAE2] bg-white px-4 h-9 font-medium text-[#26262B] hover:bg-[#F6F4EF] disabled:opacity-50">Previous</button>
-                        <span className="text-[#9a978f]">Page {page} of {data.totalPages}</span>
-                        <button onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))} disabled={page >= data.totalPages} className="rounded-full border border-[#EEEAE2] bg-white px-4 h-9 font-medium text-[#26262B] hover:bg-[#F6F4EF] disabled:opacity-50">Next</button>
+                    <div className="flex items-center justify-between gap-3 border-t border-[var(--s-border-soft)] p-4 text-[13px]">
+                        <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1} className="rounded-full border border-[var(--s-border)] bg-[var(--s-card)] px-4 h-9 font-medium text-[var(--s-text)] hover:bg-[var(--s-soft)] disabled:opacity-50">Previous</button>
+                        <span className="text-[var(--s-muted)]">Page {page} of {data.totalPages}</span>
+                        <button onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))} disabled={page >= data.totalPages} className="rounded-full border border-[var(--s-border)] bg-[var(--s-card)] px-4 h-9 font-medium text-[var(--s-text)] hover:bg-[var(--s-soft)] disabled:opacity-50">Next</button>
                     </div>
                 )}
             </>
@@ -331,19 +332,19 @@ function AccessLogs() {
 
     return (
         <div>
-            <div className="flex items-center justify-between gap-3 border-b border-[#f1ede5] p-5">
+            <div className="flex items-center justify-between gap-3 border-b border-[var(--s-border-soft)] p-5">
                 <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#F6F4EF]"><ScrollText className="h-[18px] w-[18px] text-[#26262B]" /></div>
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--s-soft)]"><ScrollText className="h-[18px] w-[18px] text-[var(--s-text)]" /></div>
                     <div className="min-w-0">
-                        <p className="text-[15px] font-semibold text-[#26262B]">Access logs</p>
-                        <p className="mt-0.5 text-[12px] text-[#9a978f]">Unlock attempts, uploads, downloads, and setting changes.</p>
+                        <p className="text-[15px] font-semibold text-[var(--s-text)]">Access logs</p>
+                        <p className="mt-0.5 text-[12px] text-[var(--s-muted)]">Unlock attempts, uploads, downloads, and setting changes.</p>
                     </div>
                 </div>
                 {!!data?.total && (
                     <button
                         type="button"
                         onClick={() => setConfirmClear(true)}
-                        className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-[#EE5D4A]/30 bg-white px-3.5 text-[12px] font-medium text-[#EE5D4A] transition-colors hover:bg-[#EE5D4A]/10"
+                        className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-[#EE5D4A]/30 bg-[var(--s-card)] px-3.5 text-[12px] font-medium text-[#EE5D4A] transition-colors hover:bg-[#EE5D4A]/10"
                     >
                         <Trash2 className="h-3.5 w-3.5" />
                         <span className="hidden sm:inline">Delete All Activity</span>

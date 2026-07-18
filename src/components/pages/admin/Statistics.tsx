@@ -89,8 +89,8 @@ export default function Statistics() {
     if (isLoading) return <StatisticsSkeleton />;
     if (!settings) {
         return (
-            <div className="rounded-[24px] border border-[#EEEAE2] bg-white p-10 text-center">
-                <p className="text-[13px] text-[#9a978f]">Failed to load settings</p>
+            <div className="rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] p-10 text-center">
+                <p className="text-[13px] text-[var(--s-muted)]">Failed to load settings</p>
             </div>
         );
     }
@@ -105,18 +105,18 @@ export default function Statistics() {
     return (
         <div className="space-y-5">
             {/* Master: public page access */}
-            <section className="rounded-[24px] border border-[#EEEAE2] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+            <section className="rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
-                        <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${settings.isPublic ? "bg-[#F4C63D]/15" : "bg-[#F6F4EF]"}`}>
-                            <BarChart3 className="h-5 w-5 text-[#26262B]" />
+                        <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${settings.isPublic ? "bg-[#F4C63D]/15" : "bg-[var(--s-soft)]"}`}>
+                            <BarChart3 className="h-5 w-5 text-[var(--s-text)]" />
                         </div>
                         <div className="min-w-0">
                             <div className="flex items-center gap-2">
-                                <h3 className="text-[16px] font-semibold text-[#26262B]">Public Statistics Page</h3>
+                                <h3 className="text-[16px] font-semibold text-[var(--s-text)]">Public Statistics Page</h3>
                                 <VisibilityBadge isPublic={settings.isPublic} />
                             </div>
-                            <p className="mt-0.5 text-[13px] text-[#9a978f]">
+                            <p className="mt-0.5 text-[13px] text-[var(--s-muted)]">
                                 {settings.isPublic
                                     ? "Anyone can view your statistics page"
                                     : "The statistics page is private (admins only)"}
@@ -128,29 +128,29 @@ export default function Statistics() {
             </section>
 
             {/* Section visibility */}
-            <section className="rounded-[24px] border border-[#EEEAE2] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+            <section className="rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
                 <div className="mb-2 flex items-center justify-between gap-3">
                     <div>
-                        <h3 className="text-[16px] font-semibold text-[#26262B]">Visible Sections</h3>
-                        <p className="mt-0.5 text-[13px] text-[#9a978f]">Choose which parts of the page the public can see</p>
+                        <h3 className="text-[16px] font-semibold text-[var(--s-text)]">Visible Sections</h3>
+                        <p className="mt-0.5 text-[13px] text-[var(--s-muted)]">Choose which parts of the page the public can see</p>
                     </div>
-                    <span className="shrink-0 rounded-full bg-[#F6F4EF] px-3 py-1.5 text-[12px] font-medium text-[#57544e]">
+                    <span className="shrink-0 rounded-full bg-[var(--s-soft)] px-3 py-1.5 text-[12px] font-medium text-[var(--s-text2)]">
                         {publicCount} of {SECTIONS.length} public
                     </span>
                 </div>
 
-                <div className="divide-y divide-[#f1ede5]">
+                <div className="divide-y divide-[var(--s-border-soft)]">
                     {SECTIONS.map(({ key, field, icon: Icon, title, description }) => {
                         const isPublic = settings[field];
                         return (
                             <div key={key} className="flex items-center justify-between gap-4 py-3.5">
                                 <div className="flex min-w-0 items-center gap-3">
-                                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${isPublic ? "bg-[#F6F4EF]" : "bg-[#F6F4EF]/60"}`}>
-                                        <Icon className="h-[18px] w-[18px] text-[#57544e]" />
+                                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${isPublic ? "bg-[var(--s-soft)]" : "bg-[var(--s-soft)]/60"}`}>
+                                        <Icon className="h-[18px] w-[18px] text-[var(--s-text2)]" />
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="truncate text-[14px] font-medium text-[#26262B]">{title}</p>
-                                        <p className="truncate text-[12px] text-[#9a978f]">{description}</p>
+                                        <p className="truncate text-[14px] font-medium text-[var(--s-text)]">{title}</p>
+                                        <p className="truncate text-[12px] text-[var(--s-muted)]">{description}</p>
                                     </div>
                                 </div>
                                 <div className="flex shrink-0 items-center gap-3">
@@ -174,7 +174,7 @@ function VisibilityBadge({ isPublic }: { isPublic: boolean }) {
             <Globe className="h-3 w-3" /> Public
         </span>
     ) : (
-        <span className="inline-flex items-center gap-1 rounded-full bg-[#F6F4EF] px-2.5 py-1 text-[11px] font-medium text-[#9a978f]">
+        <span className="inline-flex items-center gap-1 rounded-full bg-[var(--s-soft)] px-2.5 py-1 text-[11px] font-medium text-[var(--s-muted)]">
             <Lock className="h-3 w-3" /> Private
         </span>
     );
@@ -186,12 +186,12 @@ function Toggle({ isOn, isLoading, onClick }: { isOn: boolean; isLoading: boolea
             onClick={onClick}
             disabled={isLoading}
             aria-pressed={isOn}
-            className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#26262B]/30 focus:ring-offset-2 ${isOn ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600"} disabled:opacity-50`}
+            className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--s-text)]/30 focus:ring-offset-2 ${isOn ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600"} disabled:opacity-50`}
         >
             {isLoading ? (
                 <span className="absolute inset-0 flex items-center justify-center"><Loader2 className="h-4 w-4 animate-spin text-white" /></span>
             ) : (
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-all duration-300 ease-in-out ${isOn ? "translate-x-6" : "translate-x-1"}`} />
+                <span className={`inline-block h-4 w-4 transform rounded-full bg-[var(--s-card)] shadow-md transition-all duration-300 ease-in-out ${isOn ? "translate-x-6" : "translate-x-1"}`} />
             )}
         </button>
     );
@@ -201,13 +201,13 @@ function StatisticsSkeleton() {
     return (
         <div className="space-y-5">
             <Skeleton className="h-8 w-40" />
-            <section className="rounded-[24px] border border-[#EEEAE2] bg-white p-6">
+            <section className="rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] p-6">
                 <div className="flex items-center gap-4">
                     <Skeleton className="h-12 w-12 rounded-2xl" />
                     <div className="space-y-2"><Skeleton className="h-4 w-48" /><Skeleton className="h-3 w-64" /></div>
                 </div>
             </section>
-            <section className="rounded-[24px] border border-[#EEEAE2] bg-white p-6">
+            <section className="rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] p-6">
                 <Skeleton className="mb-4 h-5 w-40" />
                 {[...Array(6)].map((_, i) => (
                     <div key={i} className="flex items-center justify-between py-3.5">

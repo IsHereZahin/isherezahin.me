@@ -68,15 +68,15 @@ function SortableStatusItem({ item, onEdit, onDelete }: { item: CurrentStatusIte
     const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
 
     return (
-        <div ref={setNodeRef} style={style} className={`flex items-center gap-2.5 rounded-xl border border-[#EEEAE2] bg-white px-3 py-2.5 ${isDragging ? "shadow-lg ring-2 ring-[#F4C63D]/30" : ""}`}>
-            <button {...attributes} {...listeners} aria-label="Drag to reorder" className="shrink-0 cursor-grab touch-none rounded-lg p-1 text-[#c4c0b7] transition-colors hover:bg-[#F6F4EF] hover:text-[#26262B] active:cursor-grabbing">
+        <div ref={setNodeRef} style={style} className={`flex items-center gap-2.5 rounded-xl border border-[var(--s-border)] bg-[var(--s-card)] px-3 py-2.5 ${isDragging ? "shadow-lg ring-2 ring-[#F4C63D]/30" : ""}`}>
+            <button {...attributes} {...listeners} aria-label="Drag to reorder" className="shrink-0 cursor-grab touch-none rounded-lg p-1 text-[var(--s-faint)] transition-colors hover:bg-[var(--s-soft)] hover:text-[var(--s-text)] active:cursor-grabbing">
                 <GripVertical className="h-4 w-4" />
             </button>
-            <p className="min-w-0 flex-1 break-words text-[13px] text-[#57544e]">{item.text}</p>
+            <p className="min-w-0 flex-1 break-words text-[13px] text-[var(--s-text2)]">{item.text}</p>
             <div className="flex shrink-0 items-center gap-1">
                 {!item.isActive && <StatusBadge>Hidden</StatusBadge>}
-                <button onClick={onEdit} aria-label="Edit status" className="rounded-xl p-2 transition-colors hover:bg-[#F6F4EF]">
-                    <Pencil className="h-4 w-4 text-[#57544e]" />
+                <button onClick={onEdit} aria-label="Edit status" className="rounded-xl p-2 transition-colors hover:bg-[var(--s-soft)]">
+                    <Pencil className="h-4 w-4 text-[var(--s-text2)]" />
                 </button>
                 <button onClick={onDelete} aria-label="Delete status" className="rounded-xl p-2 transition-colors hover:bg-[#EE5D4A]/10">
                     <Trash2 className="h-4 w-4 text-[#EE5D4A]" />
@@ -152,7 +152,7 @@ export default function AboutPageAdmin() {
     return (
         <div className="space-y-5">
             {/* Summary tiles */}
-            <section className="rounded-[24px] border border-[#EEEAE2] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+            <section className="rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
                 <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
                     <StatTile label="Work Experience" value={experienceData.length} />
                     <StatTile label="Education" value={educationData.length} />
@@ -166,12 +166,12 @@ export default function AboutPageAdmin() {
                 icon={User}
                 title="Hero Section"
                 description="Profile details shown at the top of your About page"
-                action={<Button size="sm" onClick={() => setAboutHeroModal(true)} className="inline-flex items-center gap-2 rounded-full bg-[#26262B] px-5 h-10 text-[13px] font-medium text-white transition-transform hover:scale-[1.02]"><Pencil className="h-4 w-4" /> Edit</Button>}
+                action={<Button size="sm" onClick={() => setAboutHeroModal(true)} className="inline-flex items-center gap-2 rounded-full bg-[var(--s-invert)] px-5 h-10 text-[13px] font-medium text-white transition-transform hover:scale-[1.02]"><Pencil className="h-4 w-4" /> Edit</Button>}
             >
                 {aboutHeroData ? (
                     <div className="grid gap-2.5 md:grid-cols-2">
-                        <div className="rounded-2xl bg-[#F6F4EF] p-4">
-                            <p className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-[#9a978f]">Profile Info</p>
+                        <div className="rounded-2xl bg-[var(--s-soft)] p-4">
+                            <p className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-[var(--s-muted)]">Profile Info</p>
                             <dl className="space-y-2 text-[13px]">
                                 <InfoRow label="Name" value={aboutHeroData.name} />
                                 <InfoRow label="Title" value={aboutHeroData.title} />
@@ -179,8 +179,8 @@ export default function AboutPageAdmin() {
                                 <InfoRow label="Image" value={aboutHeroData.imageSrc ? "Set" : "Not set"} />
                             </dl>
                         </div>
-                        <div className="rounded-2xl bg-[#F6F4EF] p-4">
-                            <p className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-[#9a978f]">Page Content</p>
+                        <div className="rounded-2xl bg-[var(--s-soft)] p-4">
+                            <p className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-[var(--s-muted)]">Page Content</p>
                             <dl className="space-y-2 text-[13px]">
                                 <InfoRow label="Page Title" value={aboutHeroData.pageTitle || "About Me"} />
                                 <InfoRow label="Subtitle" value={aboutHeroData.pageSubtitle || "Not set"} />
@@ -198,7 +198,7 @@ export default function AboutPageAdmin() {
                 icon={CircleHelp}
                 title="What I'm Up To Now"
                 description="Drag to reorder what you're currently up to"
-                action={<Button size="sm" onClick={() => setStatusModal({ open: true, data: null })} className="inline-flex items-center gap-2 rounded-full bg-[#26262B] px-5 h-10 text-[13px] font-medium text-white transition-transform hover:scale-[1.02]"><Plus className="h-4 w-4" /> Add</Button>}
+                action={<Button size="sm" onClick={() => setStatusModal({ open: true, data: null })} className="inline-flex items-center gap-2 rounded-full bg-[var(--s-invert)] px-5 h-10 text-[13px] font-medium text-white transition-transform hover:scale-[1.02]"><Plus className="h-4 w-4" /> Add</Button>}
             >
                 {statusData.length === 0 ? (
                     <EmptyState icon={CircleHelp} text="No status items yet" />
@@ -218,26 +218,26 @@ export default function AboutPageAdmin() {
                 icon={Briefcase}
                 title="Work Experience"
                 description="Roles and positions listed on your About page"
-                action={<Button size="sm" onClick={() => setExperienceModal({ open: true, data: null })} className="inline-flex items-center gap-2 rounded-full bg-[#26262B] px-5 h-10 text-[13px] font-medium text-white transition-transform hover:scale-[1.02]"><Plus className="h-4 w-4" /> Add</Button>}
+                action={<Button size="sm" onClick={() => setExperienceModal({ open: true, data: null })} className="inline-flex items-center gap-2 rounded-full bg-[var(--s-invert)] px-5 h-10 text-[13px] font-medium text-white transition-transform hover:scale-[1.02]"><Plus className="h-4 w-4" /> Add</Button>}
             >
                 {experienceData.length === 0 ? (
                     <EmptyState icon={Briefcase} text="No work experience yet" />
                 ) : (
-                    <div className="divide-y divide-[#f1ede5]">
+                    <div className="divide-y divide-[var(--s-border-soft)]">
                         {experienceData.map((item) => (
                             <div key={item._id} className="flex items-center justify-between gap-4 py-3.5 first:pt-0 last:pb-0">
                                 <div className="flex min-w-0 items-center gap-3">
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#F6F4EF]">
-                                        <Briefcase className="h-[18px] w-[18px] text-[#57544e]" />
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--s-soft)]">
+                                        <Briefcase className="h-[18px] w-[18px] text-[var(--s-text2)]" />
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="truncate text-[14px] font-medium text-[#26262B]">{item.title}</p>
-                                        <p className="truncate text-[12px] text-[#9a978f]">{item.company} · {formatMonthYear(item.start)} - {formatMonthYear(item.end)}</p>
+                                        <p className="truncate text-[14px] font-medium text-[var(--s-text)]">{item.title}</p>
+                                        <p className="truncate text-[12px] text-[var(--s-muted)]">{item.company} · {formatMonthYear(item.start)} - {formatMonthYear(item.end)}</p>
                                     </div>
                                 </div>
                                 <div className="flex shrink-0 items-center gap-1">
                                     {!item.isActive && <StatusBadge>Hidden</StatusBadge>}
-                                    <button onClick={() => setExperienceModal({ open: true, data: item })} aria-label="Edit experience" className="rounded-xl p-2 transition-colors hover:bg-[#F6F4EF]"><Pencil className="h-4 w-4 text-[#57544e]" /></button>
+                                    <button onClick={() => setExperienceModal({ open: true, data: item })} aria-label="Edit experience" className="rounded-xl p-2 transition-colors hover:bg-[var(--s-soft)]"><Pencil className="h-4 w-4 text-[var(--s-text2)]" /></button>
                                     <button onClick={() => setDeleteExperience(item)} aria-label="Delete experience" className="rounded-xl p-2 transition-colors hover:bg-[#EE5D4A]/10"><Trash2 className="h-4 w-4 text-[#EE5D4A]" /></button>
                                 </div>
                             </div>
@@ -251,26 +251,26 @@ export default function AboutPageAdmin() {
                 icon={GraduationCap}
                 title="Education"
                 description="Schools and degrees listed on your About page"
-                action={<Button size="sm" onClick={() => setEducationModal({ open: true, data: null })} className="inline-flex items-center gap-2 rounded-full bg-[#26262B] px-5 h-10 text-[13px] font-medium text-white transition-transform hover:scale-[1.02]"><Plus className="h-4 w-4" /> Add</Button>}
+                action={<Button size="sm" onClick={() => setEducationModal({ open: true, data: null })} className="inline-flex items-center gap-2 rounded-full bg-[var(--s-invert)] px-5 h-10 text-[13px] font-medium text-white transition-transform hover:scale-[1.02]"><Plus className="h-4 w-4" /> Add</Button>}
             >
                 {educationData.length === 0 ? (
                     <EmptyState icon={GraduationCap} text="No education entries yet" />
                 ) : (
-                    <div className="divide-y divide-[#f1ede5]">
+                    <div className="divide-y divide-[var(--s-border-soft)]">
                         {educationData.map((item) => (
                             <div key={item._id} className="flex items-center justify-between gap-4 py-3.5 first:pt-0 last:pb-0">
                                 <div className="flex min-w-0 items-center gap-3">
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#F6F4EF]">
-                                        <GraduationCap className="h-[18px] w-[18px] text-[#57544e]" />
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--s-soft)]">
+                                        <GraduationCap className="h-[18px] w-[18px] text-[var(--s-text2)]" />
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="truncate text-[14px] font-medium text-[#26262B]">{item.institution}</p>
-                                        <p className="truncate text-[12px] text-[#9a978f]">{item.degree} · {formatMonthYear(item.start)} - {formatMonthYear(item.end)}</p>
+                                        <p className="truncate text-[14px] font-medium text-[var(--s-text)]">{item.institution}</p>
+                                        <p className="truncate text-[12px] text-[var(--s-muted)]">{item.degree} · {formatMonthYear(item.start)} - {formatMonthYear(item.end)}</p>
                                     </div>
                                 </div>
                                 <div className="flex shrink-0 items-center gap-1">
                                     {!item.isActive && <StatusBadge>Hidden</StatusBadge>}
-                                    <button onClick={() => setEducationModal({ open: true, data: item })} aria-label="Edit education" className="rounded-xl p-2 transition-colors hover:bg-[#F6F4EF]"><Pencil className="h-4 w-4 text-[#57544e]" /></button>
+                                    <button onClick={() => setEducationModal({ open: true, data: item })} aria-label="Edit education" className="rounded-xl p-2 transition-colors hover:bg-[var(--s-soft)]"><Pencil className="h-4 w-4 text-[var(--s-text2)]" /></button>
                                     <button onClick={() => setDeleteEducation(item)} aria-label="Delete education" className="rounded-xl p-2 transition-colors hover:bg-[#EE5D4A]/10"><Trash2 className="h-4 w-4 text-[#EE5D4A]" /></button>
                                 </div>
                             </div>
@@ -292,15 +292,15 @@ export default function AboutPageAdmin() {
 
 function SectionCard({ icon: Icon, title, description, action, children }: { icon: LucideIcon; title: string; description: string; action?: React.ReactNode; children: React.ReactNode }) {
     return (
-        <section className="rounded-[24px] border border-[#EEEAE2] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] sm:p-6">
+        <section className="rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] sm:p-6">
             <div className="mb-5 flex items-center justify-between gap-4">
                 <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#F6F4EF]">
-                        <Icon className="h-5 w-5 text-[#26262B]" />
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--s-soft)]">
+                        <Icon className="h-5 w-5 text-[var(--s-text)]" />
                     </div>
                     <div className="min-w-0">
-                        <h3 className="text-[16px] font-semibold text-[#26262B]">{title}</h3>
-                        <p className="text-[12px] text-[#9a978f]">{description}</p>
+                        <h3 className="text-[16px] font-semibold text-[var(--s-text)]">{title}</h3>
+                        <p className="text-[12px] text-[var(--s-muted)]">{description}</p>
                     </div>
                 </div>
                 {action && <div className="shrink-0">{action}</div>}
@@ -312,9 +312,9 @@ function SectionCard({ icon: Icon, title, description, action, children }: { ico
 
 function StatTile({ label, value }: { label: string; value: number | string }) {
     return (
-        <div className="rounded-2xl bg-[#F6F4EF] px-4 py-3">
-            <p className="text-[22px] font-bold leading-none text-[#26262B]">{value}</p>
-            <p className="mt-1.5 text-[12px] text-[#9a978f]">{label}</p>
+        <div className="rounded-2xl bg-[var(--s-soft)] px-4 py-3">
+            <p className="text-[22px] font-bold leading-none text-[var(--s-text)]">{value}</p>
+            <p className="mt-1.5 text-[12px] text-[var(--s-muted)]">{label}</p>
         </div>
     );
 }
@@ -322,23 +322,23 @@ function StatTile({ label, value }: { label: string; value: number | string }) {
 function InfoRow({ label, value }: { label: string; value: string }) {
     return (
         <div className="flex items-center justify-between gap-3">
-            <dt className="shrink-0 text-[#9a978f]">{label}</dt>
-            <dd className="min-w-0 truncate text-right font-medium text-[#26262B]">{value}</dd>
+            <dt className="shrink-0 text-[var(--s-muted)]">{label}</dt>
+            <dd className="min-w-0 truncate text-right font-medium text-[var(--s-text)]">{value}</dd>
         </div>
     );
 }
 
 function StatusBadge({ children }: { children: React.ReactNode }) {
     return (
-        <span className="mr-1 rounded-full bg-[#F6F4EF] px-2.5 py-1 text-[11px] font-medium text-[#9a978f]">{children}</span>
+        <span className="mr-1 rounded-full bg-[var(--s-soft)] px-2.5 py-1 text-[11px] font-medium text-[var(--s-muted)]">{children}</span>
     );
 }
 
 function EmptyState({ icon: Icon, text }: { icon: LucideIcon; text: string }) {
     return (
-        <div className="flex flex-col items-center justify-center gap-2 rounded-2xl bg-[#F6F4EF]/60 py-10 text-center">
-            <Icon className="h-6 w-6 text-[#c4c0b7]" />
-            <p className="text-[13px] text-[#9a978f]">{text}</p>
+        <div className="flex flex-col items-center justify-center gap-2 rounded-2xl bg-[var(--s-soft)]/60 py-10 text-center">
+            <Icon className="h-6 w-6 text-[var(--s-faint)]" />
+            <p className="text-[13px] text-[var(--s-muted)]">{text}</p>
         </div>
     );
 }

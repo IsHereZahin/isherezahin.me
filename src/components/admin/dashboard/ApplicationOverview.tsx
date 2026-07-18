@@ -9,7 +9,7 @@ import { useOverview, useStatistics } from "./useOverview";
 import VisitorTrendsCard from "./VisitorTrendsCard";
 
 function Block({ className = "" }: { className?: string }) {
-    return <div className={`animate-pulse rounded-[24px] bg-[#efeae2] ${className}`} />;
+    return <div className={`animate-pulse rounded-[24px] bg-[var(--s-soft2)] ${className}`} />;
 }
 
 function OverviewSkeleton() {
@@ -72,11 +72,11 @@ export default function ApplicationOverview() {
             ) : (
                 <>
                     <div className={`${CARD} flex flex-col items-center justify-center py-10 text-center`}>
-                        <p className="text-[14px] font-semibold text-[#26262B]">Visitor analytics unavailable</p>
-                        <p className="mt-1 text-[13px] text-[#9a978f]">Traffic, audience, and top pages couldn&apos;t be loaded.</p>
+                        <p className="text-[14px] font-semibold text-[var(--s-text)]">Visitor analytics unavailable</p>
+                        <p className="mt-1 text-[13px] text-[var(--s-muted)]">Traffic, audience, and top pages couldn&apos;t be loaded.</p>
                         <button
                             onClick={() => stats.refetch()}
-                            className="mt-4 rounded-full bg-[#26262B] px-5 py-2 text-[13px] font-medium text-white transition-transform hover:scale-[1.02]"
+                            className="mt-4 rounded-full bg-[var(--s-invert)] px-5 py-2 text-[13px] font-medium text-white transition-transform hover:scale-[1.02]"
                         >
                             Retry
                         </button>

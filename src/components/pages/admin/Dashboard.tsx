@@ -17,7 +17,7 @@ export default function Dashboard() {
                     action={
                         <Link
                             href="/admin/statistics"
-                            className="hidden shrink-0 items-center gap-1.5 rounded-full border border-[#EEEAE2] bg-white px-4 py-2 text-[12px] font-medium text-[#26262B] transition-colors hover:bg-[#F6F4EF] sm:inline-flex"
+                            className="hidden shrink-0 items-center gap-1.5 rounded-full border border-[var(--s-border)] bg-[var(--s-card)] px-4 py-2 text-[12px] font-medium text-[var(--s-text)] transition-colors hover:bg-[var(--s-soft)] sm:inline-flex"
                         >
                             Full statistics
                             <ArrowUpRight className="h-3.5 w-3.5" />
@@ -28,7 +28,7 @@ export default function Dashboard() {
             </section>
 
             {/* Divider between the two domains */}
-            <div className="border-t border-[#E4DFD6]" />
+            <div className="border-t border-[var(--s-border)]" />
 
             {/* Personal development activity (GitHub) */}
             <section>
@@ -36,7 +36,7 @@ export default function Dashboard() {
                     title="GitHub Activity"
                     subtitle="Your public development activity and open-source stats"
                     action={
-                        <span className="hidden shrink-0 items-center gap-1.5 rounded-full bg-[#26262B] px-4 py-2 text-[12px] font-medium text-white sm:inline-flex">
+                        <span className="hidden shrink-0 items-center gap-1.5 rounded-full bg-[var(--s-invert)] px-4 py-2 text-[12px] font-medium text-white sm:inline-flex">
                             <Github className="h-3.5 w-3.5 text-[#F4C63D]" />
                             Developer insights
                         </span>

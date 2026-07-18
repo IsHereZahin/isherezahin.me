@@ -63,8 +63,8 @@ function UserPresenceIndicator({ userId }: { userId: string }) {
 
     return (
         <span className="inline-flex items-center gap-1.5">
-            <span className={`h-2 w-2 shrink-0 rounded-full ${isOnline ? "bg-green-500" : "bg-[#c4c0b7]"}`} />
-            <span className={isOnline ? "text-green-600 dark:text-green-400" : "text-[#9a978f]"}>
+            <span className={`h-2 w-2 shrink-0 rounded-full ${isOnline ? "bg-green-500" : "bg-[var(--s-faint)]"}`} />
+            <span className={isOnline ? "text-green-600 dark:text-green-400" : "text-[var(--s-muted)]"}>
                 {isOnline ? "Online" : formatLastSeen(lastSeen)}
             </span>
         </span>
@@ -73,9 +73,9 @@ function UserPresenceIndicator({ userId }: { userId: string }) {
 
 function StatTile({ label, value }: { label: string; value: number }) {
     return (
-        <div className="rounded-2xl bg-[#F6F4EF] px-4 py-3">
-            <p className="text-[20px] font-bold leading-none text-[#26262B]">{value}</p>
-            <p className="mt-1.5 text-[11px] text-[#9a978f]">{label}</p>
+        <div className="rounded-2xl bg-[var(--s-soft)] px-4 py-3">
+            <p className="text-[20px] font-bold leading-none text-[var(--s-text)]">{value}</p>
+            <p className="mt-1.5 text-[11px] text-[var(--s-muted)]">{label}</p>
         </div>
     );
 }
@@ -134,7 +134,7 @@ export default function Users() {
     return (
         <div className="space-y-5">
             {/* Summary tiles (computed from the loaded page of users) */}
-            <section className="rounded-[24px] border border-[#EEEAE2] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+            <section className="rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
                 <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
                     <StatTile label="On this page" value={users.length} />
                     <StatTile label="Active" value={activeCount} />
@@ -144,16 +144,16 @@ export default function Users() {
             </section>
 
             {/* Search, filter, list & pagination */}
-            <section className="rounded-[24px] border border-[#EEEAE2] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+            <section className="rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
                 <div className="flex flex-col gap-3 sm:flex-row">
                     <div className="relative flex-1">
-                        <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9a978f]" />
+                        <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--s-muted)]" />
                         <input
                             type="text"
                             placeholder="Search by name, email, or username..."
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
-                            className="h-10 w-full rounded-full border border-[#EEEAE2] bg-white pl-10 pr-4 text-[13px] text-[#26262B] placeholder:text-[#9a978f] focus:outline-none focus:ring-2 focus:ring-[#26262B]/20"
+                            className="h-10 w-full rounded-full border border-[var(--s-border)] bg-[var(--s-card)] pl-10 pr-4 text-[13px] text-[var(--s-text)] placeholder:text-[var(--s-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--s-text)]/20"
                         />
                     </div>
                     <Select value={filter} onValueChange={(v) => { setFilter(v as "all" | "active" | "banned"); setPage(1); }}>
@@ -168,30 +168,30 @@ export default function Users() {
 
                 {isLoading ? (
                     <div className="flex items-center justify-center py-16">
-                        <Loader2 className="h-6 w-6 animate-spin text-[#9a978f]" />
+                        <Loader2 className="h-6 w-6 animate-spin text-[var(--s-muted)]" />
                     </div>
                 ) : users.length === 0 ? (
                     <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F6F4EF]">
-                            <UsersIcon className="h-5 w-5 text-[#9a978f]" />
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--s-soft)]">
+                            <UsersIcon className="h-5 w-5 text-[var(--s-muted)]" />
                         </div>
                         <div>
-                            <p className="text-[14px] font-medium text-[#26262B]">No users found</p>
-                            <p className="mt-0.5 text-[12px] text-[#9a978f]">Try adjusting your search or filter.</p>
+                            <p className="text-[14px] font-medium text-[var(--s-text)]">No users found</p>
+                            <p className="mt-0.5 text-[12px] text-[var(--s-muted)]">Try adjusting your search or filter.</p>
                         </div>
                     </div>
                 ) : (
                     <>
-                        <div className="mt-2 divide-y divide-[#f1ede5]">
+                        <div className="mt-2 divide-y divide-[var(--s-border-soft)]">
                             {users.map((user: User) => (
                                 <div key={user.id} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
                                     <div className="flex min-w-0 items-center gap-3">
                                         <BlurImage src={user.image || "/default-avatar.png"} alt={user.name || "User"} width={44} height={44} className="h-11 w-11 shrink-0 rounded-full object-cover" />
                                         <div className="min-w-0">
                                             <div className="flex flex-wrap items-center gap-2">
-                                                <p className="truncate text-[14px] font-medium text-[#26262B]">{user.name || "Unknown"}</p>
+                                                <p className="truncate text-[14px] font-medium text-[var(--s-text)]">{user.name || "Unknown"}</p>
                                                 {user.isAdmin && (
-                                                    <span className="inline-flex items-center gap-1 rounded-full bg-[#F4C63D]/15 px-2 py-0.5 text-[11px] font-medium text-[#26262B]">
+                                                    <span className="inline-flex items-center gap-1 rounded-full bg-[#F4C63D]/15 px-2 py-0.5 text-[11px] font-medium text-[var(--s-text)]">
                                                         <Crown className="h-3 w-3" /> Admin
                                                     </span>
                                                 )}
@@ -199,12 +199,12 @@ export default function Users() {
                                                     <span className="rounded-full bg-[#EE5D4A]/10 px-2 py-0.5 text-[11px] font-medium text-[#EE5D4A]">Banned</span>
                                                 )}
                                             </div>
-                                            <p className="mt-0.5 truncate text-[12px] text-[#9a978f]">{user.email}</p>
-                                            <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-[#9a978f]">
-                                                <span className="rounded-full bg-[#F6F4EF] px-2 py-0.5 text-[11px] font-medium capitalize text-[#57544e]">{user.provider}</span>
-                                                <span className="text-[#d9d4ca]">·</span>
+                                            <p className="mt-0.5 truncate text-[12px] text-[var(--s-muted)]">{user.email}</p>
+                                            <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-[var(--s-muted)]">
+                                                <span className="rounded-full bg-[var(--s-soft)] px-2 py-0.5 text-[11px] font-medium capitalize text-[var(--s-text2)]">{user.provider}</span>
+                                                <span className="text-[var(--s-faint)]">·</span>
                                                 <span>Joined {new Date(user.createdAt).toLocaleDateString()}</span>
-                                                <span className="text-[#d9d4ca]">·</span>
+                                                <span className="text-[var(--s-faint)]">·</span>
                                                 <UserPresenceIndicator userId={user.id} />
                                             </div>
                                         </div>
@@ -213,7 +213,7 @@ export default function Users() {
                                         {!user.isAdmin && (
                                             <button
                                                 onClick={() => setSelectedUser(user)}
-                                                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#EEEAE2] bg-white text-[#26262B] transition hover:bg-[#F6F4EF]"
+                                                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--s-border)] bg-[var(--s-card)] text-[var(--s-text)] transition hover:bg-[var(--s-soft)]"
                                                 title="Send message"
                                                 aria-label="Send message"
                                             >
@@ -221,7 +221,7 @@ export default function Users() {
                                             </button>
                                         )}
                                         {user.isAdmin ? (
-                                            <span className="rounded-full bg-[#F6F4EF] px-3 py-1.5 text-[11px] font-medium text-[#9a978f]">Protected</span>
+                                            <span className="rounded-full bg-[var(--s-soft)] px-3 py-1.5 text-[11px] font-medium text-[var(--s-muted)]">Protected</span>
                                         ) : (
                                             <button
                                                 onClick={() => banMutation.mutate({ userId: user.id, currentlyBanned: user.isBanned })}
@@ -243,11 +243,11 @@ export default function Users() {
                         </div>
 
                         {pagination.totalPages > 1 && (
-                            <div className="mt-4 flex items-center justify-between gap-3 border-t border-[#f1ede5] pt-4">
-                                <p className="text-[13px] text-[#9a978f]">Page {pagination.page} of {pagination.totalPages} ({pagination.total} users)</p>
+                            <div className="mt-4 flex items-center justify-between gap-3 border-t border-[var(--s-border-soft)] pt-4">
+                                <p className="text-[13px] text-[var(--s-muted)]">Page {pagination.page} of {pagination.totalPages} ({pagination.total} users)</p>
                                 <div className="flex gap-2">
-                                    <button onClick={() => setPage((p) => p - 1)} disabled={pagination.page === 1} className="rounded-xl border border-[#EEEAE2] bg-white p-2 text-[#26262B] transition hover:bg-[#F6F4EF] disabled:cursor-not-allowed disabled:opacity-50" aria-label="Previous page"><ChevronLeft className="h-4 w-4" /></button>
-                                    <button onClick={() => setPage((p) => p + 1)} disabled={pagination.page === pagination.totalPages} className="rounded-xl border border-[#EEEAE2] bg-white p-2 text-[#26262B] transition hover:bg-[#F6F4EF] disabled:cursor-not-allowed disabled:opacity-50" aria-label="Next page"><ChevronRight className="h-4 w-4" /></button>
+                                    <button onClick={() => setPage((p) => p - 1)} disabled={pagination.page === 1} className="rounded-xl border border-[var(--s-border)] bg-[var(--s-card)] p-2 text-[var(--s-text)] transition hover:bg-[var(--s-soft)] disabled:cursor-not-allowed disabled:opacity-50" aria-label="Previous page"><ChevronLeft className="h-4 w-4" /></button>
+                                    <button onClick={() => setPage((p) => p + 1)} disabled={pagination.page === pagination.totalPages} className="rounded-xl border border-[var(--s-border)] bg-[var(--s-card)] p-2 text-[var(--s-text)] transition hover:bg-[var(--s-soft)] disabled:cursor-not-allowed disabled:opacity-50" aria-label="Next page"><ChevronRight className="h-4 w-4" /></button>
                                 </div>
                             </div>
                         )}
