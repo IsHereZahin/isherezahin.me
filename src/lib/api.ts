@@ -1288,31 +1288,6 @@ const visitors = {
     },
 };
 
-// Legal Pages API
-const legal = {
-    async get(slug: string) {
-        const response = await fetch(`/api/legal/${slug}`);
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new ApiError(errorData.error || "Failed to fetch legal page", response.status);
-        }
-        return await response.json();
-    },
-
-    async update(slug: string, data: { title?: string; subtitle?: string; content?: string; published?: boolean }) {
-        const response = await fetch(`/api/legal/${slug}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-        });
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new ApiError(errorData.error || "Failed to update legal page", response.status);
-        }
-        return await response.json();
-    },
-};
-
 // Content Discussions API (for guestbook, blog comments, etc.)
 const contentDiscussions = {
     async get(contentType: string, identifier: string) {
@@ -1476,7 +1451,7 @@ const vault = {
 export {
     aboutHero, adminSettings, adminSubscribers, adminUsers, blogLikes, blogViews, bucketList, cloudinary, contactInfo, contactMessage,
     contentDiscussions, createBlog, createProject, currentStatus, deleteBlog, deleteProject, discussions, education, getBlog, getBlogs, getBlogTags, getProject,
-    getProjects, getProjectTags, legal, newsletter, profile, projectLikes, projectViews, publicSettings, quests, saylo, sessions, statistics, testimonials,
+    getProjects, getProjectTags, newsletter, profile, projectLikes, projectViews, publicSettings, quests, saylo, sessions, statistics, testimonials,
     updateBlog, updateProject, vault, visitors, workExperience
 };
 

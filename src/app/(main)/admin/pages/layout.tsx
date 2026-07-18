@@ -7,7 +7,6 @@ import { ReactNode } from "react";
 const TABS = [
     { href: "/admin/pages/home", label: "Home" },
     { href: "/admin/pages/about", label: "About" },
-    { href: "/admin/pages/legal", label: "Legal" },
 ];
 
 export default function PagesLayout({ children }: { readonly children: ReactNode }) {

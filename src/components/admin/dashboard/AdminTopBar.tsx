@@ -31,7 +31,6 @@ function getHeader(path: string, firstName: string): Header {
     if (path.startsWith("/admin/settings")) return { title: "Settings", subtitle: "Manage authentication, notifications, and access across your site", action: viewSite };
     if (path.startsWith("/admin/pages/home")) return { title: "Home Page", subtitle: "Edit the testimonials and contact info on your home page", action: { label: "View Home", href: "/" } };
     if (path.startsWith("/admin/pages/about")) return { title: "About Page", subtitle: "Manage your work experience, education, and skills", action: { label: "View About", href: "/about" } };
-    if (path.startsWith("/admin/pages/legal")) return { title: "Legal Pages", subtitle: "Manage your Privacy Policy and Terms of Service pages", action: viewSite };
     if (path.startsWith("/admin/pages")) return { title: "Pages", subtitle: "Edit the content of your site pages", action: viewSite };
     return dashboard;
 }
