@@ -1,23 +1,17 @@
 "use client";
 
 import Article from "@/components/Article";
-import AddBlogModal from "@/components/admin/AddBlogModal";
 import {
-    AdminEmptyState,
     BlogsLoading,
     Section,
     SectionHeader,
     SeeMore,
 } from "@/components/ui";
 import { getBlogs } from "@/lib/api";
-import { useAuth } from "@/lib/hooks/useAuth";
 import { Blog } from "@/utils/types";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 
 export default function Blogs() {
-    const { isAdmin } = useAuth();
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const page = 1;
     const limit = 2;
 
@@ -32,10 +26,8 @@ export default function Blogs() {
 
     const hasBlogs = !isLoading && data?.blogs && data.blogs.length > 0;
 
-    // Don't render if loading is complete and there are no blogs (for non-admins)
-    if (!isLoading && !hasBlogs && !isAdmin) {
-        return null;
-    }
+    // Nothing to show once loading completes with no blogs.
+    if (!isLoading && !hasBlogs) return null;
 
     return (
         <Section id="blogs" animate={true}>
@@ -43,7 +35,7 @@ export default function Blogs() {
 
             {isLoading ? (
                 <BlogsLoading count={2} />
-            ) : hasBlogs ? (
+            ) : (
                 <>
                     <div className="space-y-6 sm:space-y-8">
                         {data.blogs.map((blog: Blog) => (
@@ -54,12 +46,7 @@ export default function Blogs() {
                         <SeeMore href="/blogs" text="See all blogs" className="mt-16" />
                     </div>
                 </>
-            ) : isAdmin ? (
-                <AdminEmptyState type="blogs" onAdd={() => setIsAddModalOpen(true)} />
-            ) : null}
-
-            {/* Add Blog Modal */}
-            <AddBlogModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
+            )}
         </Section>
     );
 }

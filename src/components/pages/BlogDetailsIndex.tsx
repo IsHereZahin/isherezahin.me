@@ -1,15 +1,12 @@
 "use client";
 
-import { ApiError, blogViews, deleteBlog, getBlog } from "@/lib/api";
+import { ApiError, blogViews, getBlog } from "@/lib/api";
 import { extractTocItems, getFormattedDate } from "@/utils";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AlignLeftIcon, MoreVertical, Pencil, Trash2 } from "lucide-react";
-import { notFound, useRouter } from "next/navigation";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { AlignLeftIcon } from "lucide-react";
+import { notFound } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 
-import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
-import EditBlogModal from "@/components/admin/EditBlogModal";
 import ArticleInfo from "@/components/content/ArticleInfo";
 import BlogSubscribe from "@/components/content/BlogSubscribe";
 import MarkdownPreview from "@/components/content/discussions/MarkdownPreview";
@@ -18,27 +15,17 @@ import TableOfContents from "@/components/content/TableOfContents";
 import {
     BlogDetailsLoading,
     BlurImage,
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
     Heading,
     ImageZoom,
     LikeButton,
     Section,
     TextGradient,
 } from "@/components/ui";
-import { useAuth } from "@/lib/hooks/useAuth";
 import ContentDiscussions from "../content/discussions/ContentDiscussions";
 
 export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
     const [showTOC, setShowTOC] = useState(false);
     const [viewCount, setViewCount] = useState(0);
-    const [isEditOpen, setIsEditOpen] = useState(false);
-    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-    const { isAdmin } = useAuth();
-    const router = useRouter();
-    const queryClient = useQueryClient();
 
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ["blog", slug],
@@ -62,25 +49,6 @@ export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
         }
     }, [data]);
 
-    const handleDelete = async () => {
-        await toast.promise(
-            deleteBlog(slug),
-            {
-                loading: "Deleting blog...",
-                success: "Blog deleted successfully!",
-                error: "Failed to delete blog",
-            }
-        );
-        queryClient.invalidateQueries({ queryKey: ["blogs"] });
-        router.push("/blogs");
-    };
-
-    const handleEditSuccess = (newSlug: string) => {
-        if (newSlug !== slug) {
-            router.push(`/blogs/${newSlug}`);
-        }
-    };
-
     if (isLoading) return <BlogDetailsLoading />;
 
     if (isError) {
@@ -96,27 +64,6 @@ export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
         <>
             <Section id="blog_header" animate className="px-6 pt-16 max-w-[1000px]">
                 <div className="text-center mb-6 sm:mb-8 relative">
-                    {isAdmin && (
-                        <div className="absolute right-0 top-0">
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <button className="p-2 rounded-full hover:bg-muted transition-colors cursor-pointer">
-                                        <MoreVertical className="h-5 w-5 text-muted-foreground" />
-                                    </button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                    <DropdownMenuItem className="cursor-pointer" onClick={() => setIsEditOpen(true)}>
-                                        <Pencil className="h-4 w-4 mr-2" />
-                                        Edit Blog
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem variant="destructive" className="cursor-pointer" onClick={() => setIsDeleteOpen(true)}>
-                                        <Trash2 className="h-4 w-4 mr-2" />
-                                        Delete Blog
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
-                    )}
                     <span className="inline-block px-4 py-1 border border-foreground/10 rounded-full text-xs tracking-wider uppercase text-foreground/70">
                         {data.type}
                     </span>
@@ -161,25 +108,6 @@ export default function BlogDetailsIndex({ slug }: { readonly slug: string }) {
             <button onClick={() => setShowTOC(true)} className="group rounded-xl border border-transparent bg-neutral-800/40 backdrop-blur-sm fixed z-10 bottom-5 right-5 lg:hidden py-3 px-3 flex items-center gap-2 transition-opacity duration-300 opacity-50 hover:!opacity-100">
                 <AlignLeftIcon className="w-5 h-5" /> Table of Contents
             </button>
-
-            {/* Edit Modal */}
-            {isAdmin && data && (
-                <EditBlogModal
-                    open={isEditOpen}
-                    onOpenChange={setIsEditOpen}
-                    blog={{ ...data, id: data._id?.toString() || data.id, date: data.date?.toString() || data.date, published: data.published ?? true }}
-                    onSuccess={handleEditSuccess}
-                />
-            )}
-
-            {/* Delete Confirmation */}
-            <DeleteConfirmDialog
-                open={isDeleteOpen}
-                onOpenChange={setIsDeleteOpen}
-                title="Delete Blog"
-                description={`Are you sure you want to delete "${data.title}"? This action cannot be undone.`}
-                onConfirm={handleDelete}
-            />
         </>
     );
 }

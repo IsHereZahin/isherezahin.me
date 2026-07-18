@@ -1,11 +1,8 @@
 "use client";
 
-import AddProjectModal from "@/components/admin/AddProjectModal";
 import MotionWrapper from "@/components/motion/MotionWrapper";
 import Project from "@/components/Project";
 import {
-    AdminAddButton,
-    AdminEmptyState,
     EmptyState,
     ErrorState,
     PageTitle,
@@ -33,7 +30,6 @@ export default function ProjectsIndex() {
     const searchParams = useSearchParams();
 
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const searchQuery = searchParams.get("search") || "";
     const [searchInput, setSearchInput] = useState(searchQuery);
 
@@ -190,10 +186,6 @@ export default function ProjectsIndex() {
                 <PageTitle title="Projects I've worked on" subtitle="Nothing too fancy, just solid websites that do their job." />
             )}
 
-            {isAdmin && hasProjects && (
-                <AdminAddButton onClick={() => setIsModalOpen(true)} label="Add Project" className="mb-4" />
-            )}
-
             {/* Tags with inline search - only show when there are projects or active filters */}
             {(isLoading || hasProjects || hasFilters) && (
                 <div className="mb-6">
@@ -238,13 +230,9 @@ export default function ProjectsIndex() {
                 </div>
             ) : hasFilters ? (
                 <EmptyState type="projects" subtitle="No matching projects" description="No projects found matching your search or filters. Try adjusting your criteria." />
-            ) : isAdmin ? (
-                <AdminEmptyState type="projects" onAdd={() => setIsModalOpen(true)} />
             ) : (
                 <EmptyState type="projects" />
             )}
-
-            <AddProjectModal open={isModalOpen} onOpenChange={setIsModalOpen} />
         </Section>
     );
 }

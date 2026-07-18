@@ -12,6 +12,7 @@ import {
     LogOut,
     Mail,
     MessageSquareText,
+    Newspaper,
     PanelLeftClose,
     PanelLeftOpen,
     Settings,
@@ -43,6 +44,7 @@ const GROUP_1: NavItem[] = [
 ];
 const GROUP_2: NavItem[] = [
     { id: "statistics", label: "Statistics", href: "/admin/statistics", icon: BarChart3 },
+    { id: "content", label: "Content", href: "/admin/content/blogs", icon: Newspaper, match: "/admin/content" },
     { id: "pages", label: "Pages", href: "/admin/pages/home", icon: FileText, match: "/admin/pages" },
     { id: "vault", label: "Vault", href: "/admin/vault", icon: LockKeyhole },
     { id: "settings", label: "Settings", href: "/admin/settings", icon: Settings },

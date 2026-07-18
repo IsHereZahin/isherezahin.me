@@ -24,6 +24,9 @@ function getHeader(path: string, firstName: string): Header {
     if (path.startsWith("/admin/chat")) return { title: "Live Chat", subtitle: "Chat with your visitors in real time", action: viewSite };
     if (path.startsWith("/admin/subscribers")) return { title: "Subscribers", subtitle: "Your newsletter audience", action: viewSite };
     if (path.startsWith("/admin/statistics")) return { title: "Statistics", subtitle: "Control what visitors can see on your public statistics page", action: { label: "View Statistics", href: "/statistics" } };
+    if (path.startsWith("/admin/content/projects")) return { title: "Projects", subtitle: "Create, edit, publish, and delete your projects", action: { label: "View Projects", href: "/projects" } };
+    if (path.startsWith("/admin/content/quests")) return { title: "Side Quests", subtitle: "Create, edit, and manage your side quests", action: { label: "View Side Quests", href: "/side-quests" } };
+    if (path.startsWith("/admin/content")) return { title: "Blogs", subtitle: "Create, edit, publish, and delete your blog posts", action: { label: "View Blog", href: "/blogs" } };
     if (path.startsWith("/admin/vault")) return { title: "Vault", subtitle: "Your private links, notes, files, and credentials", action: viewSite };
     if (path.startsWith("/admin/settings")) return { title: "Settings", subtitle: "Manage authentication, notifications, and access across your site", action: viewSite };
     if (path.startsWith("/admin/pages/home")) return { title: "Home Page", subtitle: "Edit the testimonials and contact info on your home page", action: { label: "View Home", href: "/" } };

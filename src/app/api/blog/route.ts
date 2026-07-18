@@ -25,6 +25,11 @@ export async function GET(req: NextRequest) {
         // Build query - non-admin users only see published blogs
         const query: Record<string, unknown> = isAdmin ? {} : { published: true };
 
+        // Admin-only status filter (published / draft) for the dashboard manager
+        const statusParam = searchParams.get("status");
+        if (isAdmin && statusParam === "published") query.published = true;
+        else if (isAdmin && statusParam === "draft") query.published = false;
+
         // Add tag filtering if tags are provided
         if (tagsParam) {
             const tags = tagsParam.split(',').filter(Boolean);

@@ -69,7 +69,7 @@ export default function KpiStrip({ overview, stats }: { overview: OverviewData; 
             label: "Published Content",
             value: fmtFull(publishedContent),
             sub: `${fmtCompact(overview.content.totalViews)} views · ${draftContent} drafts`,
-            href: "/admin/statistics",
+            href: "/admin/content/blogs",
             icon: FileText,
             iconClass: "text-[var(--s-text2)]",
             chipClass: "bg-[var(--s-soft)]",

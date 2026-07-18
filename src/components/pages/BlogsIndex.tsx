@@ -1,12 +1,9 @@
 "use client";
 
-import AddBlogModal from "@/components/admin/AddBlogModal";
 import Article from "@/components/Article";
 import BlogSubscribe from "@/components/content/BlogSubscribe";
 import MotionWrapper from "@/components/motion/MotionWrapper";
 import {
-    AdminAddButton,
-    AdminEmptyState,
     BlogsLoading,
     EmptyState,
     ErrorState,
@@ -34,7 +31,6 @@ export default function BlogIndex() {
     const searchParams = useSearchParams();
 
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const searchQuery = searchParams.get("search") || "";
     const [searchInput, setSearchInput] = useState(searchQuery);
 
@@ -197,10 +193,6 @@ export default function BlogIndex() {
                 />
             )}
 
-            {isAdmin && hasBlogs && (
-                <AdminAddButton onClick={() => setIsModalOpen(true)} label="Add Blog" className="mb-4" />
-            )}
-
             {/* Tags with inline search - only show when there are blogs or active filters */}
             {(isLoading || hasBlogs || hasFilters) && (
                 <div className="mb-6">
@@ -243,14 +235,11 @@ export default function BlogIndex() {
                 </div>
             ) : hasFilters ? (
                 <EmptyState type="blogs" subtitle="No matching blogs" description="No blogs found matching your search or filters. Try adjusting your criteria." />
-            ) : isAdmin ? (
-                <AdminEmptyState type="blogs" onAdd={() => setIsModalOpen(true)} />
             ) : (
                 <EmptyState type="blogs" />
             )}
 
             <BlogSubscribe variant="blog" />
-            <AddBlogModal open={isModalOpen} onOpenChange={setIsModalOpen} />
         </Section>
     );
 }

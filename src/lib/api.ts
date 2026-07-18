@@ -217,7 +217,7 @@ const discussions = {
     },
 };
 
-const getBlogs = async (page = 1, limit = 10, tags: string[] = [], search = "") => {
+const getBlogs = async (page = 1, limit = 10, tags: string[] = [], search = "", status = "") => {
     const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
@@ -227,6 +227,9 @@ const getBlogs = async (page = 1, limit = 10, tags: string[] = [], search = "") 
     }
     if (search.trim()) {
         params.set('search', search.trim());
+    }
+    if (status) {
+        params.set('status', status);
     }
     const response = await fetch(`/api/blog?${params.toString()}`);
 
@@ -318,7 +321,7 @@ const blogLikes = {
     },
 };
 
-const getProjects = async (page = 1, limit = 10, tags: string[] = [], search = "") => {
+const getProjects = async (page = 1, limit = 10, tags: string[] = [], search = "", status = "") => {
     const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
@@ -328,6 +331,9 @@ const getProjects = async (page = 1, limit = 10, tags: string[] = [], search = "
     }
     if (search.trim()) {
         params.set('search', search.trim());
+    }
+    if (status) {
+        params.set('status', status);
     }
     const response = await fetch(`/api/project?${params.toString()}`);
 
