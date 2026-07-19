@@ -1,7 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, easeIn, easeOut } from "framer-motion";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 interface MotionPopupProps {
     isOpen: boolean;
@@ -10,41 +9,22 @@ interface MotionPopupProps {
     origin?: string;
 }
 
-const variants = {
-    open: { 
-        opacity: 1, 
-        scale: 1, 
-        y: 0,
-        transition: { duration: 0.15, ease: easeOut } 
-    },
-    closed: { 
-        opacity: 0, 
-        scale: 0.95, 
-        y: -10,
-        transition: { duration: 0.15, ease: easeIn } 
-    },
-};
-
-export default function MotionPopup({ 
-    isOpen, 
-    children, 
-    className = "", 
-    origin = "top-right" 
+/**
+ * Popup/dropdown wrapper. Animates its content in (fade + scale) on open via a
+ * pure-CSS keyframe (`.motion-popup` in globals.css). It unmounts on close, so
+ * there is no exit animation — no animation library needed.
+ */
+export default function MotionPopup({
+    isOpen,
+    children,
+    className = "",
+    origin = "top-right",
 }: Readonly<MotionPopupProps>) {
+    if (!isOpen) return null;
+
     return (
-        <AnimatePresence>
-            {isOpen && (
-                <motion.div
-                    className={className}
-                    initial="closed"
-                    animate="open"
-                    exit="closed"
-                    variants={variants}
-                    style={{ transformOrigin: origin }}
-                >
-                    {children}
-                </motion.div>
-            )}
-        </AnimatePresence>
+        <div className={`motion-popup ${className}`.trim()} style={{ transformOrigin: origin }}>
+            {children}
+        </div>
     );
 }

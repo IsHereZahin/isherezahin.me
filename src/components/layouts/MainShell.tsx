@@ -1,5 +1,6 @@
 "use client";
 
+import PageTransition from "@/components/motion/PageTransition";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
@@ -38,7 +39,9 @@ export default function MainShell({
             {extras}
             {header}
             {top}
-            <main className="relative z-10 flex-1">{children}</main>
+            <main className="relative z-10 flex-1">
+                <PageTransition>{children}</PageTransition>
+            </main>
             {bottom}
             {footer}
         </div>

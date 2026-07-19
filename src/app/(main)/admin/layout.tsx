@@ -3,6 +3,7 @@
 import AdminSidebar from "@/components/admin/dashboard/AdminSidebar";
 import AdminTopBar from "@/components/admin/dashboard/AdminTopBar";
 import PublicVaultShell from "@/components/admin/vault/PublicVaultShell";
+import PageTransition from "@/components/motion/PageTransition";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Poppins } from "next/font/google";
 import { ReactNode, useEffect, useState } from "react";
@@ -74,7 +75,7 @@ export default function AdminLayout({ children }: { readonly children: ReactNode
                         <AdminTopBar onOpenMenu={() => setMobileOpen(true)} mode={mode} onToggleMode={toggleMode} />
                     </div>
                     <div className="pretty-scroll min-h-0 flex-1 overflow-y-auto px-4 pb-5 md:px-8 md:pb-7">
-                        {children}
+                        <PageTransition>{children}</PageTransition>
                     </div>
                 </main>
             </div>

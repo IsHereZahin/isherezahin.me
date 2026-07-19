@@ -147,13 +147,7 @@ export const ImageCard: React.FC = () => (
 
 // AboutSection Component 
 const AboutSection: React.FC = () => (
-    <MotionWrapper
-        direction="top"
-        delay={0.2}
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-    >
+    <MotionWrapper direction="top" delay={0.2} duration={0.6}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
                 <ProfileCard />

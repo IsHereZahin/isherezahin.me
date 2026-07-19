@@ -85,9 +85,7 @@ export default function AboutContent() {
                     {/* Left Column - Profile */}
                     <MotionWrapper
                         delay={0.2}
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        duration={0.6}
                         className="md:w-2/5 flex justify-center md:justify-start"
                     >
                         <div className="space-y-8">

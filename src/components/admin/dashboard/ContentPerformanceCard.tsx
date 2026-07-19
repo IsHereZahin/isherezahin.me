@@ -48,7 +48,7 @@ export default function ContentPerformanceCard({ overview }: { overview: Overvie
             </div>
 
             {/* Stat grid */}
-            <div className="mt-4 grid grid-cols-2 gap-2.5 lg:grid-cols-4">
+            <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
                 <MiniStat icon={BookOpen} value={fmtFull(content.blogs.published)} label="Blogs" sub={`${content.blogs.draft} drafts`} />
                 <MiniStat icon={FolderKanban} value={fmtFull(content.projects.published)} label="Projects" sub={`${content.projects.draft} drafts`} />
                 <MiniStat icon={Eye} value={fmtCompact(content.totalViews)} label="Total views" />

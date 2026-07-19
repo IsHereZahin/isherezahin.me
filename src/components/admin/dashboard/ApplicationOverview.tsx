@@ -60,11 +60,11 @@ export default function ApplicationOverview() {
 
             {analyticsReady ? (
                 <>
-                    <div className="grid gap-4 lg:grid-cols-[1.6fr_1fr]">
+                    <div className="grid gap-4 xl:grid-cols-[1.6fr_1fr] [&>*]:min-w-0">
                         <VisitorTrendsCard trend={s!.visitorTrends ?? []} />
                         <AudienceCard stats={s!} />
                     </div>
-                    <div className="grid gap-4 lg:grid-cols-[1fr_1.3fr]">
+                    <div className="grid gap-4 xl:grid-cols-[1fr_1.3fr] [&>*]:min-w-0">
                         <TopPagesCard stats={s!} />
                         <ContentPerformanceCard overview={o} />
                     </div>

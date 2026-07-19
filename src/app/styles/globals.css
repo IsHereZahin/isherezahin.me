@@ -450,6 +450,81 @@ html:has(a[href^="#"]:target) {
     animation: fade-in 0.3s ease-out;
 }
 
+/* ============================================================
+   App-wide entrance animations (public site + admin dashboard)
+   ============================================================ */
+@keyframes page-enter {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Route content fades and rises in on mount and on every navigation
+   (the wrapper is keyed by pathname so it replays each time). */
+.page-transition {
+    animation: page-enter 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Opt-in entrance for individual elements. */
+.animate-fade-in-up {
+    animation: fade-in-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Popup / dropdown entrance (fade + scale from its transform-origin). */
+@keyframes popup-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+.motion-popup {
+    animation: popup-in 0.15s ease-out;
+}
+
+/* Cascade the direct children of a container into view, one after another. */
+.stagger-children > * {
+    animation: fade-in-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.stagger-children > *:nth-child(1) { animation-delay: 0.03s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.09s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.21s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.27s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.33s; }
+.stagger-children > *:nth-child(7) { animation-delay: 0.39s; }
+.stagger-children > *:nth-child(8) { animation-delay: 0.45s; }
+
+/* Accessibility: honor users who prefer reduced motion — content just appears. */
+@media (prefers-reduced-motion: reduce) {
+    .page-transition,
+    .animate-fade-in,
+    .animate-fade-in-up,
+    .motion-popup,
+    .stagger-children > * {
+        animation: none !important;
+    }
+}
+
 /* Icon styling for black/white (follows theme foreground) */
 .icon-bw {
     color: var(--foreground);

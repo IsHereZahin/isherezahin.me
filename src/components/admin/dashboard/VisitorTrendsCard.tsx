@@ -81,7 +81,7 @@ export default function VisitorTrendsCard({ trend }: { trend: TrendPoint[] }) {
             </div>
 
             {hasData ? (
-                <div className="mt-5 h-[220px] w-full">
+                <div className="mt-5 h-[220px] w-full min-w-0">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={trend} margin={{ top: 6, right: 6, left: -18, bottom: 0 }}>
                             <defs>

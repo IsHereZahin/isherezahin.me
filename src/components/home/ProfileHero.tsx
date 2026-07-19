@@ -9,12 +9,7 @@ export default function ProfileHero() {
             <div className="flex flex-col justify-center items-start text-left">
 
                 {/* Profile Picture: Zoom-in */}
-                <MotionWrapper
-                    delay={0.1}
-                    initial={{ scale: 0.5, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
-                >
+                <MotionWrapper delay={0.1} duration={0.6}>
                     {SITE_USER_LOGO && (
                         <div className="relative size-20 sm:size-25 rounded-full overflow-hidden shadow-lg mb-6 sm:mb-8">
                             <ImageZoom>
@@ -32,13 +27,7 @@ export default function ProfileHero() {
                 </MotionWrapper>
 
                 {/* Heading: Slide from top */}
-                <MotionWrapper
-                    direction="top"
-                    delay={0.2}
-                    initial={{ y: -20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
-                >
+                <MotionWrapper direction="top" delay={0.2} duration={0.6}>
                     <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-3 sm:mb-4">
                         Hey, I’m <span className="text-primary">{MY_NAME}</span>. <br />
                         Coder & Thinker
@@ -46,13 +35,7 @@ export default function ProfileHero() {
                 </MotionWrapper>
 
                 {/* Description: Fade + slight top */}
-                <MotionWrapper
-                    direction="top"
-                    delay={0.3}
-                    initial={{ y: -10, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
-                >
+                <MotionWrapper direction="top" delay={0.3} duration={0.6}>
                     <p className="max-w-xl text-sm sm:text-base text-muted-foreground hover:text-foreground/80 transition-colors mb-4 sm:mb-6 leading-relaxed">
                         I work with <b className="text-foreground">React</b> & <b className="text-foreground">Laravel</b> Ecosystem, and write to teach people
                         how to rebuild and redefine fundamental concepts through mental models.
@@ -60,13 +43,7 @@ export default function ProfileHero() {
                 </MotionWrapper>
 
                 {/* Buttons: Slide from bottom */}
-                <MotionWrapper
-                    direction="bottom"
-                    delay={0.4}
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
-                >
+                <MotionWrapper direction="bottom" delay={0.4} duration={0.6}>
                     <div className="mt-4 sm:mt-8 flex gap-2 sm:gap-4 flex-wrap">
                         <Button
                             href="#about-me"
