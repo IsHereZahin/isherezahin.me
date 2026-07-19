@@ -62,9 +62,13 @@ export default function MotionWrapper({
 
     const revealStyle: CSSProperties = {
         opacity: visible ? 1 : 0,
-        transform: visible ? "translate(0)" : hiddenTransform,
+        // Once revealed, reset to `none` — NOT `translate(0)` — and don't keep
+        // `will-change`. A lingering transform (or will-change: transform) makes
+        // this element the containing block/stacking context for `position: fixed`
+        // descendants, which would trap the fixed site header and make it
+        // unclickable. `none` avoids that entirely.
+        transform: visible ? "none" : hiddenTransform,
         transition: `opacity ${duration}s ease-out ${delay}s, transform ${duration}s ease-out ${delay}s`,
-        willChange: "opacity, transform",
         ...style,
     };
 

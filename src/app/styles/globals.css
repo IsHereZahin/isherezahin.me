@@ -478,7 +478,10 @@ html:has(a[href^="#"]:target) {
 /* Route content fades and rises in on mount and on every navigation
    (the wrapper is keyed by pathname so it replays each time). */
 .page-transition {
-    animation: page-enter 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+    /* `backwards` (not `both`): keep a clean entrance but do NOT retain the
+       end transform afterwards — a lingering transform would make this a
+       containing block for `position: fixed` descendants inside the page. */
+    animation: page-enter 0.42s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
 /* Opt-in entrance for individual elements. */
