@@ -1,26 +1,17 @@
 import ProjectsIndex from "@/components/pages/ProjectsIndex";
-import { ProjectsLoading, TagsLoading } from "@/components/ui";
 import { METADATA } from "@/config/seo.config";
 import { getPublishedProjectsPage } from "@/lib/cached-queries";
 import { Suspense } from "react";
 
 export const metadata = METADATA.projects;
 
-function ProjectsPageFallback() {
-  return (
-    <section className="px-6 py-16 max-w-5xl mx-auto">
-      <TagsLoading />
-      <div className="mt-8">
-        <ProjectsLoading count={4} />
-      </div>
-    </section>
-  );
-}
-
 export default async function ProjectsPage() {
   const initialData = await getPublishedProjectsPage(5);
+  // The visible loading skeleton is the route-level loading.tsx. This Suspense
+  // exists only to satisfy `useSearchParams` inside ProjectsIndex, so its
+  // fallback is empty — otherwise a second, duplicate loader would appear.
   return (
-    <Suspense fallback={<ProjectsPageFallback />}>
+    <Suspense fallback={null}>
       <ProjectsIndex initialData={initialData} />
     </Suspense>
   );

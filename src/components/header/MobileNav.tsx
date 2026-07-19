@@ -56,6 +56,7 @@ export default function MobileNav({ isOpen, onClose, buttonRef, links }: Readonl
                             <li key={link.href}>
                                 <Link
                                     href={link.href}
+                                    prefetch
                                     onClick={onClose}
                                     className={`relative cursor-pointer rounded-sm px-2 py-1.5 text-xs sm:text-sm flex items-center gap-3 sm:gap-4 w-full transition-colors ${isActive
                                         ? "text-primary bg-primary/10"
