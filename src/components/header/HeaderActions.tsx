@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useChatUnread } from "@/lib/hooks/useChat";
+import { applyMode, resolveInitialMode, setMode, subscribeToMode } from "@/lib/theme";
 import type { PopupState, ThemeMode } from "@/utils/types";
 import { Command, Moon, Palette, Sun, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -87,11 +88,10 @@ export default function HeaderActions() {
     };
 
     const handleModeToggle = () => {
-        const root = document.documentElement;
-        const newMode = state.mode === "light" ? "dark" : "light";
+        const newMode: ThemeMode = state.mode === "light" ? "dark" : "light";
         setState((prev) => ({ ...prev, mode: newMode }));
-        localStorage.setItem("mode", newMode);
-        root.classList.toggle("dark", newMode === "dark");
+        // Shared with the admin dashboard — see `src/lib/theme.ts`.
+        setMode(newMode);
     };
 
     const handleReset = () => {
@@ -109,10 +109,11 @@ export default function HeaderActions() {
 
     useEffect(() => {
         const root = document.documentElement;
-        const savedMode = (localStorage.getItem("mode") as ThemeMode) || null;
         const savedColor = localStorage.getItem("color-theme") || "black-white";
 
-        const initialMode = savedMode || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        // Same stored preference the admin dashboard uses, so returning from
+        // /admin keeps whatever mode was last chosen there.
+        const initialMode = resolveInitialMode();
 
         setState((prev) => ({
             ...prev,
@@ -121,9 +122,7 @@ export default function HeaderActions() {
             customColor: savedColor === "custom" ? localStorage.getItem("custom-primary") || defaultHex : defaultHex,
         }));
 
-        root.classList.toggle("dark", initialMode === "dark");
-
-        localStorage.setItem("mode", initialMode);
+        setMode(initialMode);
 
         if (savedColor === "custom") {
             const customColor = localStorage.getItem("custom-primary") || defaultHex;
@@ -131,6 +130,12 @@ export default function HeaderActions() {
         } else {
             root.setAttribute("data-theme", savedColor);
         }
+
+        // Keep the toggle in step if the mode changes elsewhere (another tab).
+        return subscribeToMode((mode) => {
+            applyMode(mode);
+            setState((prev) => (prev.mode === mode ? prev : { ...prev, mode }));
+        });
     }, []);
 
     useEffect(() => {

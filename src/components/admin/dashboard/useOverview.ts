@@ -52,7 +52,7 @@ export interface StatisticsData {
 
 export function useStatistics() {
     return useQuery<StatisticsData>({
-        queryKey: ["admin-dashboard-statistics"],
+        queryKey: ["statistics"],
         queryFn: statistics.get,
         staleTime: 1000 * 60 * 5,
         retry: 1,

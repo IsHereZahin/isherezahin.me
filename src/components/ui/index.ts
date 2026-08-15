@@ -113,6 +113,7 @@ export { default as FormActions } from "./FormActions";
 export { default as FormModal } from "./FormModal";
 export { default as Frame } from "./Frame";
 export { default as GitHubSignInButton } from "./GitHubSignInButton";
+export { default as GoogleIcon } from "./GoogleIcon";
 export { default as Heading } from "./Heading";
 export { default as Hello } from "./Hello";
 export { default as HighlightedWord } from "./HighlightedWord";

@@ -1,7 +1,8 @@
 "use client";
 
+import GoogleIcon from "@/components/ui/GoogleIcon";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { SiGithub, SiGoogle } from "@icons-pack/react-simple-icons";
+import { SiGithub } from "@icons-pack/react-simple-icons";
 import { X } from "lucide-react";
 import { useState } from "react";
 
@@ -74,7 +75,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         disabled={loadingProvider !== null}
                         className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white hover:bg-gray-50 text-gray-800 border border-gray-300 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <SiGoogle className="h-5 w-5" />
+                        <GoogleIcon className="h-5 w-5" />
                         <span className="font-medium">
                             {loadingProvider === "google" ? "Connecting..." : "Continue with Google"}
                         </span>
