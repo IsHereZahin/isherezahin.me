@@ -32,6 +32,11 @@ export default function MotionWrapper({
 }: Readonly<MotionWrapperProps>) {
     const ref = useRef<HTMLDivElement>(null);
     const [visible, setVisible] = useState(false);
+    // Content already on screen when the page mounted is "above the fold" for
+    // this navigation. It reveals straight away instead of sitting invisible
+    // through the stagger delay, which is what made a freshly navigated page
+    // look like it was still loading.
+    const [immediate, setImmediate] = useState(false);
 
     useEffect(() => {
         const el = ref.current;
@@ -39,16 +44,23 @@ export default function MotionWrapper({
 
         const prefersReduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
         if (prefersReduced || typeof IntersectionObserver === "undefined") {
+            setImmediate(true);
             setVisible(true);
             return;
         }
 
+        // The observer reports once as soon as it starts observing; if that first
+        // report already intersects, the element was on screen at mount.
+        let firstReport = true;
+
         const observer = new IntersectionObserver(
             (entries) => {
                 if (entries[0].isIntersecting) {
+                    if (firstReport) setImmediate(true);
                     setVisible(true);
                     observer.disconnect();
                 }
+                firstReport = false;
             },
             { threshold: 0.2 }
         );
@@ -60,6 +72,11 @@ export default function MotionWrapper({
     const sign = direction === "left" || direction === "top" ? -1 : 1;
     const hiddenTransform = `translate${horizontal ? "X" : "Y"}(${sign * distance}px)`;
 
+    // Scroll-revealed content keeps its authored timing; above-the-fold content
+    // drops the stagger delay and uses a shorter fade so a new page feels instant.
+    const revealDelay = immediate ? 0 : delay;
+    const revealDuration = immediate ? Math.min(duration, 0.3) : duration;
+
     const revealStyle: CSSProperties = {
         opacity: visible ? 1 : 0,
         // Once revealed, reset to `none` — NOT `translate(0)` — and don't keep
@@ -68,7 +85,7 @@ export default function MotionWrapper({
         // descendants, which would trap the fixed site header and make it
         // unclickable. `none` avoids that entirely.
         transform: visible ? "none" : hiddenTransform,
-        transition: `opacity ${duration}s ease-out ${delay}s, transform ${duration}s ease-out ${delay}s`,
+        transition: `opacity ${revealDuration}s ease-out ${revealDelay}s, transform ${revealDuration}s ease-out ${revealDelay}s`,
         ...style,
     };
 

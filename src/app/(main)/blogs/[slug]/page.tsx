@@ -1,12 +1,22 @@
 // src/app/(main)/blogs/[slug]/page.tsx
 import BlogDetailsIndex from "@/components/pages/blogs/BlogDetails";
 import { BlogJsonLd, BreadcrumbJsonLd } from "@/components/seo/JsonLd";
-import { getCachedBlog } from "@/lib/cached-queries";
+import { getCachedBlog, getPublishedBlogSlugs } from "@/lib/cached-queries";
 import { PERSON, TWITTER, getFullUrl, getBreadcrumbs } from "@/config/seo.config";
 import type { Metadata } from "next";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
+}
+
+/**
+ * Prerender every published post so navigating into an article serves a ready
+ * payload instead of rendering on demand. Posts added after the build still
+ * resolve — `dynamicParams` stays at its default (true).
+ */
+export async function generateStaticParams() {
+  const slugs = await getPublishedBlogSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({

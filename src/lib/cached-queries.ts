@@ -187,6 +187,24 @@ export async function getPublishedProjectsPage(limit = 5) {
 }
 
 /**
+ * Slugs of every published post, used by `generateStaticParams` so detail pages
+ * are prerendered instead of server-rendered on each visit. Slugs published
+ * after the build still work — they fall through to on-demand rendering.
+ */
+export async function getPublishedBlogSlugs(): Promise<string[]> {
+  await dbConnect();
+  const blogs = await BlogModel.find({ published: true }).select("slug").lean();
+  return blogs.map((blog) => blog.slug as string).filter(Boolean);
+}
+
+/** Slugs of every published project — see `getPublishedBlogSlugs`. */
+export async function getPublishedProjectSlugs(): Promise<string[]> {
+  await dbConnect();
+  const projects = await ProjectModel.find({ published: true }).select("slug").lean();
+  return projects.map((project) => project.slug as string).filter(Boolean);
+}
+
+/**
  * Get blog count
  */
 export async function getCachedBlogCount(): Promise<number> {

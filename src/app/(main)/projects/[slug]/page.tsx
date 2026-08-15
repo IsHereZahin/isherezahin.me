@@ -1,12 +1,21 @@
 // src/app/(main)/projects/[slug]/page.tsx
 import ProjectDetailsIndex from "@/components/pages/projects/ProjectDetails";
 import { ProjectJsonLd, BreadcrumbJsonLd } from "@/components/seo/JsonLd";
-import { getCachedProject } from "@/lib/cached-queries";
+import { getCachedProject, getPublishedProjectSlugs } from "@/lib/cached-queries";
 import { PERSON, TWITTER, getFullUrl, getBreadcrumbs } from "@/config/seo.config";
 import type { Metadata } from "next";
 
 interface ProjectDetailsPageProps {
   params: Promise<{ slug: string }>;
+}
+
+/**
+ * Prerender every published project — see the blog route for the rationale.
+ * Projects added after the build still resolve on demand.
+ */
+export async function generateStaticParams() {
+  const slugs = await getPublishedProjectSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({

@@ -4,30 +4,19 @@ import ContentDiscussions from "@/components/content/discussions/ContentDiscussi
 import { PageTitle, ReferralLink, Section } from "@/components/ui";
 import { contentDiscussions } from "@/lib/api";
 import { GITHUB_REPO_NAME, GITHUB_REPO_OWNER } from "@/lib/constants";
+import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
 
 export default function GuestbookIndex() {
-    const [discussionNumber, setDiscussionNumber] = useState<number | null>(null);
-    const [loading, setLoading] = useState(true);
+    // Cached by React Query, so coming back to the guestbook reuses the result
+    // instead of re-running the lookup and re-showing the spinner every visit.
+    const { data, isLoading: loading } = useQuery({
+        queryKey: ["contentDiscussion", "guestbook", "default"],
+        queryFn: () => contentDiscussions.get("guestbook", "default"),
+        staleTime: 1000 * 60 * 5,
+    });
 
-    // Fetch initial discussion number to show link if exists
-    useEffect(() => {
-        const fetchDiscussionNumber = async () => {
-            try {
-                const data = await contentDiscussions.get("guestbook", "default");
-                if (data.discussionNumber) {
-                    setDiscussionNumber(data.discussionNumber);
-                }
-            } catch (error) {
-                console.error("Error fetching guestbook discussion:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchDiscussionNumber();
-    }, []);
+    const discussionNumber: number | null = data?.discussionNumber ?? null;
 
     return (
         <Section id="guestbook" className="px-6 py-16 max-w-3xl">

@@ -22,22 +22,20 @@ export default function SayloIndex() {
     const [searchQuery, setSearchQuery] = useState("");
     const [openCommentId, setOpenCommentId] = useState<string | null>(null);
 
-    // Check if Saylo page is public
+    // Whether the Saylo page is public.
     const { data: settingsData, isLoading: isSettingsLoading } = useQuery({
         queryKey: ["publicSettings"],
         queryFn: publicSettings.get,
     });
 
-    // Only determine page visibility after settings are loaded
-    // Use undefined until settings are loaded to prevent premature API calls
     const isSayloPagePublic = settingsData ? (settingsData.settings?.sayloPagePublic ?? true) : undefined;
 
-    // Only fetch data if:
-    // 1. Settings are loaded (!isSettingsLoading)
-    // 2. Auth status is determined (!isAuthLoading)
-    // 3. AND (user is admin OR page is public)
-    // If isSayloPagePublic is undefined (still loading), don't fetch
-    const shouldFetchData = !isSettingsLoading && !isAuthLoading && (isAdmin === true || isSayloPagePublic === true);
+    // Load the feed unless we positively know the page is private, so the two
+    // requests run in parallel. Gating this on the settings *and* the session
+    // chained three round trips before anything could appear on screen — the
+    // visibility gate below still decides what actually renders, and the API
+    // enforces access on its own regardless of what the client asks for.
+    const shouldFetchData = isSayloPagePublic !== false || isAdmin === true;
 
     const { data: categoriesData } = useQuery({
         queryKey: ["sayloCategories"],
@@ -94,8 +92,9 @@ export default function SayloIndex() {
     const distinctCategoriesCount = data?.pages[0]?.distinctCategoriesCount || 0;
     const distinctVisibilitiesCount = data?.pages[0]?.distinctVisibilitiesCount || 0;
 
-    // Show loading while checking settings or auth status
-    if (isSettingsLoading || isAuthLoading) {
+    // Only block on the session when the page is private and we still need to
+    // know whether this visitor is the admin. Public visits never hit this.
+    if (isSettingsLoading || (isSayloPagePublic === false && isAuthLoading)) {
         return (
             <Section id="saylo" className="px-4 sm:px-6 py-12 sm:py-16 max-w-2xl">
                 <div className="flex justify-center py-12">

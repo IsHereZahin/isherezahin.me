@@ -1,33 +1,34 @@
 import { HERO_SECTION_ID } from "@/lib/constants";
-import { getPublishedBlogsPage, getPublishedProjectsPage } from "@/lib/cached-queries";
+import { Suspense } from "react";
 import AboutCards from "./sections/AboutCards";
-import Blogs from "./sections/Blogs";
+import BlogsSection, { BlogsSectionFallback } from "./sections/BlogsSection";
 import GetInTouch from "./sections/GetInTouch";
 import Hero from "./sections/Hero";
 import ProfileHero from "./sections/ProfileHero";
-import Projects from "./sections/Projects";
+import ProjectsSection, { ProjectsSectionFallback } from "./sections/ProjectsSection";
 import Testimonials from "./sections/Testimonials";
 
 /**
  * Home page composition.
  *
- * Every section renders from `src/data/pages/home.ts` except Blogs and
- * Projects, which stay database-driven. Those two are seeded on the server so
- * they render with content immediately instead of fetching after hydration.
+ * Everything renders from `src/data/pages/home.ts` except the Blogs and
+ * Projects strips, which stay database-driven. Those two are the only async
+ * parts, so they sit behind their own `<Suspense>` boundaries: the static
+ * content paints immediately and the database-backed strips stream in behind
+ * it, instead of the whole route waiting on Mongo before it can render.
  */
-export default async function HomeIndex() {
-    const [blogsInitial, projectsInitial] = await Promise.all([
-        getPublishedBlogsPage(2),
-        getPublishedProjectsPage(2),
-    ]);
-
+export default function HomeIndex() {
     return (
         <>
             {HERO_SECTION_ID === "1" && <ProfileHero />}
             {HERO_SECTION_ID === "2" && <Hero />}
             <AboutCards />
-            <Blogs initialData={blogsInitial} />
-            <Projects initialData={projectsInitial} />
+            <Suspense fallback={<BlogsSectionFallback />}>
+                <BlogsSection />
+            </Suspense>
+            <Suspense fallback={<ProjectsSectionFallback />}>
+                <ProjectsSection />
+            </Suspense>
             <Testimonials />
             <GetInTouch />
         </>

@@ -480,8 +480,11 @@ html:has(a[href^="#"]:target) {
 .page-transition {
     /* `backwards` (not `both`): keep a clean entrance but do NOT retain the
        end transform afterwards — a lingering transform would make this a
-       containing block for `position: fixed` descendants inside the page. */
-    animation: page-enter 0.42s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+       containing block for `position: fixed` descendants inside the page.
+
+       Kept short on purpose: this replays on every route change, so a long
+       entrance reads as navigation latency rather than polish. */
+    animation: page-enter 0.22s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
 /* Opt-in entrance for individual elements. */
