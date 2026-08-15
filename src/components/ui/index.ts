@@ -138,6 +138,7 @@ export { default as PublishToggle } from "./PublishToggle";
 export { default as ReferralLink } from "./ReferralLink";
 export { default as ReferralListItem } from "./ReferralListItem";
 export { default as ReferralText } from "./ReferralText";
+export { default as RichText } from "./RichText";
 export { default as Section } from "./Section";
 export type { SectionProps } from "./Section";
 export { default as SectionHeader } from "./SectionHeader";

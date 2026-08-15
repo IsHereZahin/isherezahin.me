@@ -1,3 +1,4 @@
+import { SITE_ASSETS } from "@/data/site";
 import nodemailer from "nodemailer";
 import {
     BASE_DOMAIN,
@@ -8,7 +9,6 @@ import {
     MAIL_USERNAME,
     MY_FULL_NAME,
     SITE_GITHUB_URL,
-    SITE_USER_LOGO,
     SITE_X_URL
 } from "../constants";
 
@@ -95,7 +95,7 @@ export function generateNewBlogEmailTemplate(data: NewBlogEmailData): string {
                             <table role="presentation" style="border-collapse: collapse;">
                                 <tr>
                                     <td style="vertical-align: middle; padding-right: 16px;">
-                                        <img src="${SITE_USER_LOGO}" alt="Logo" style="width: 48px; height: 48px; border-radius: 50%;" />
+                                        <img src="${SITE_ASSETS.logoUrl}" alt="Logo" style="width: 48px; height: 48px; border-radius: 50%;" />
                                     </td>
                                     <td style="vertical-align: middle;">
                                         <h1 style="margin: 0; font-size: 20px; font-weight: 700; color: #1a1a1a;">New Blog Post Published</h1>

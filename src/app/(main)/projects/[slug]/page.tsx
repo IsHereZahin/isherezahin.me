@@ -1,5 +1,5 @@
 // src/app/(main)/projects/[slug]/page.tsx
-import ProjectDetailsIndex from "@/components/pages/ProjectDetailsIndex";
+import ProjectDetailsIndex from "@/components/pages/projects/ProjectDetails";
 import { ProjectJsonLd, BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import { getCachedProject } from "@/lib/cached-queries";
 import { PERSON, TWITTER, getFullUrl, getBreadcrumbs } from "@/config/seo.config";

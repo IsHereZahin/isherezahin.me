@@ -1,4 +1,4 @@
-import GuestbookIndex from "@/components/pages/GuestbookIndex";
+import GuestbookIndex from "@/components/pages/guestbook";
 import { METADATA } from "@/config/seo.config";
 
 export const metadata = METADATA.guestbook;

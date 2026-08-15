@@ -1,4 +1,5 @@
-import { MY_FULL_NAME, SITE_USER_LOGO } from "../constants";
+import { SITE_ASSETS } from "@/data/site";
+import { MY_FULL_NAME } from "../constants";
 import { sendEmail } from "./new-blog-notification";
 
 interface OtpEmailData {
@@ -25,7 +26,7 @@ export function generateOtpEmailTemplate(data: OtpEmailData): string {
                     <!-- Header -->
                     <tr>
                         <td align="center" style="padding: 40px 40px 24px;">
-                            <img src="${SITE_USER_LOGO}" alt="Logo" style="width: 56px; height: 56px; border-radius: 50%; margin-bottom: 16px;" />
+                            <img src="${SITE_ASSETS.logoUrl}" alt="Logo" style="width: 56px; height: 56px; border-radius: 50%; margin-bottom: 16px;" />
                             <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #1a1a1a;">Verify Your Email</h1>
                             <p style="margin: 12px 0 0; font-size: 15px; color: #666666; line-height: 1.5;">Enter the code below to subscribe to our newsletter</p>
                         </td>

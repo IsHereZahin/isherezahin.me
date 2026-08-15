@@ -1,14 +1,10 @@
-import { availableThemes } from "@/data";
+import { availableThemes } from "@/data/site";
+import type { ThemeColor } from "@/data/types";
 import type { ReactionKey, Reactions, ReactionUser } from "@/lib/github/types";
 
-export interface ThemeColor {
-    name: string;
-    lightPrimary: string;
-    darkPrimary: string;
-    lightPrimaryRgb: string;
-    darkPrimaryRgb: string;
-    textColorClass: string;
-}
+// The canonical shape lives with the data it describes; re-exported here so the
+// long-standing `@/utils` import path keeps working.
+export type { ThemeColor };
 
 export interface TocItem {
     id: string

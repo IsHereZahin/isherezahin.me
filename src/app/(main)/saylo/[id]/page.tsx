@@ -1,4 +1,4 @@
-import SayloDetailsIndex from "@/components/pages/SayloDetailsIndex";
+import SayloDetailsIndex from "@/components/pages/saylo/SayloDetails";
 import { PERSON, TWITTER, getFullUrl } from "@/config/seo.config";
 import dbConnect from "@/database/services/mongo";
 import { SayloModel } from "@/database/models/saylo-model";

@@ -1,4 +1,4 @@
-import ProjectsIndex from "@/components/pages/ProjectsIndex";
+import ProjectsIndex from "@/components/pages/projects";
 import { METADATA } from "@/config/seo.config";
 import { getPublishedProjectsPage } from "@/lib/cached-queries";
 import { Suspense } from "react";

@@ -1,5 +1,5 @@
 // src/app/(main)/blogs/[slug]/page.tsx
-import BlogDetailsIndex from "@/components/pages/BlogDetailsIndex";
+import BlogDetailsIndex from "@/components/pages/blogs/BlogDetails";
 import { BlogJsonLd, BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import { getCachedBlog } from "@/lib/cached-queries";
 import { PERSON, TWITTER, getFullUrl, getBreadcrumbs } from "@/config/seo.config";

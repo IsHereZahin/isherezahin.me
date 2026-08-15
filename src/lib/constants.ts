@@ -8,7 +8,9 @@ export const MY_NAME = process.env.NEXT_PUBLIC_MY_NAME || "Zahin";
 export const MY_FULL_NAME = process.env.NEXT_PUBLIC_MY_FULL_NAME || "Zahin Mohammad";
 export const MY_USERNAME = process.env.NEXT_PUBLIC_MY_USERNAME || "isherezahin";
 export const MY_DESIGNATION = process.env.NEXT_PUBLIC_MY_DESIGNATION || "Software Developer";
-export const SITE_USER_LOGO = process.env.NEXT_PUBLIC_SITE_USER_LOGO || "https://res.cloudinary.com/dsh30sjju/image/upload/v1761056901/darklogo_eos1ps.png";
+
+// Branding artwork is not configured here — it ships with the repo.
+// See `SITE_ASSETS` in `src/data/site.ts`.
 
 export const MY_MAIL = `${MY_USERNAME}@gmail.com`;
 export const MY_LOCATION = "Cox's Bazar, Bangladesh";

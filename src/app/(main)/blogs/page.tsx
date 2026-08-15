@@ -1,4 +1,4 @@
-import BlogsIndex from "@/components/pages/BlogsIndex";
+import BlogsIndex from "@/components/pages/blogs";
 import { METADATA } from "@/config/seo.config";
 import { getPublishedBlogsPage } from "@/lib/cached-queries";
 import { Suspense } from "react";

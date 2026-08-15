@@ -5,6 +5,8 @@
  * Update your personal information here, and it will reflect across the entire portfolio.
  */
 
+import { SITE_ASSETS } from "@/data/site";
+
 // =============================================================================
 // PERSONAL INFORMATION
 // =============================================================================
@@ -27,9 +29,10 @@ export const PERSON = {
   },
   gender: "Male",
 
-  // Profile Image (Important for Knowledge Panel - use a clear, professional photo)
+  // Profile Image (Important for Knowledge Panel - use a clear, professional photo).
+  // Served from `public/assets/images` — see SITE_ASSETS in `src/data/site.ts`.
   image: {
-    url: process.env.NEXT_PUBLIC_PROFILE_IMAGE || "https://res.cloudinary.com/dsh30sjju/image/upload/v1761056901/darklogo_eos1ps.png",
+    url: SITE_ASSETS.profileImageUrl,
     width: 400,
     height: 400,
     altText: "Zahin Mohammad - Software Developer",
@@ -185,11 +188,9 @@ export const SITE = {
   name: `${PERSON.name.full} - ${PERSON.profession.title}`,
   shortName: PERSON.name.full,
 
-  // Logo & Images
-  logo:
-    process.env.NEXT_PUBLIC_SITE_USER_LOGO ||
-    "https://res.cloudinary.com/dsh30sjju/image/upload/v1761056901/darklogo_eos1ps.png",
-  favicon: "/assets/images/logoicon.png",
+  // Logo & Images — served from `public/assets/images`, never the environment.
+  logo: SITE_ASSETS.logoUrl,
+  favicon: SITE_ASSETS.logo,
   ogImage: {
     width: 1200,
     height: 630,

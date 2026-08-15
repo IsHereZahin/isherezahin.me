@@ -5,7 +5,8 @@
 // Modified by: Zahin Mohammad
 
 import { AnimatedNumber, BlurImage } from "@/components/ui";
-import { MY_NAME, SITE_GITHUB_URL, SITE_USER_LOGO } from "@/lib/constants";
+import { SITE_ASSETS } from "@/data/site";
+import { MY_NAME, SITE_GITHUB_URL } from "@/lib/constants";
 import Link from "next/link";
 
 interface ArticleInfoProps {
@@ -29,7 +30,7 @@ export default function ArticleInfo({ viewCount = 0, commentCount = 0, formatted
           className="flex items-center gap-2"
         >
           <BlurImage
-            src={SITE_USER_LOGO!}
+            src={SITE_ASSETS.logo}
             className="size-6 rounded-full"
             width={1024}
             height={1024}
