@@ -1,6 +1,7 @@
 "use client";
 
 import ContentDiscussions from "@/components/content/discussions/ContentDiscussions";
+import { useI18n } from "@/i18n/DictionaryProvider";
 import { PageTitle, ReferralLink, Section } from "@/components/ui";
 import { contentDiscussions } from "@/lib/api";
 import { GITHUB_REPO_NAME, GITHUB_REPO_OWNER } from "@/lib/constants";
@@ -8,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 
 export default function GuestbookIndex() {
+    const { dict } = useI18n();
     // Cached by React Query, so coming back to the guestbook reuses the result
     // instead of re-running the lookup and re-showing the spinner every visit.
     const { data, isLoading: loading } = useQuery({
@@ -21,8 +23,8 @@ export default function GuestbookIndex() {
     return (
         <Section id="guestbook" className="px-6 py-16 max-w-3xl">
             <PageTitle
-                title="GuestBook"
-                subtitle="Leave whatever you want to say, message, appreciation, suggestions or feedback."
+                title={dict.pages.guestbook.title}
+                subtitle={dict.pages.guestbook.subtitle}
             />
             <div className="mt-6 sm:mt-8">
                 {loading ? (

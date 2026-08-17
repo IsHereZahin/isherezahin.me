@@ -99,6 +99,8 @@ export const es: Dictionary = {
             searchLabel: "Buscar entradas",
             error: "No se pudieron cargar las entradas",
             errorMessage: "No pudimos cargar las entradas del blog. Revisa tu conexión e inténtalo de nuevo.",
+            noMatchTitle: "No hay entradas que coincidan",
+            noMatchDescription: "Ninguna entrada coincide con tu búsqueda o tus filtros. Prueba con otros criterios.",
         },
         projects: {
             title: "Proyectos en los que he trabajado",
@@ -106,6 +108,8 @@ export const es: Dictionary = {
             searchLabel: "Buscar proyectos",
             error: "No se pudieron cargar los proyectos",
             errorMessage: "No pudimos cargar los proyectos. Revisa tu conexión e inténtalo de nuevo.",
+            noMatchTitle: "No hay proyectos que coincidan",
+            noMatchDescription: "Ningún proyecto coincide con tu búsqueda o tus filtros. Prueba con otros criterios.",
         },
         guestbook: {
             title: "Libro de visitas",

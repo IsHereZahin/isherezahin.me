@@ -4,7 +4,7 @@
 //
 // Everything under `src/data` is plain, source-controlled data: no database and
 // no runtime fetching. To change what a static page renders, edit the matching
-// file in `src/data/pages/` — the components only lay the content out.
+// file in `src/data/pages/`, the components only lay the content out.
 
 import type { StaticImageData } from "next/image";
 import type { ComponentType, SVGProps } from "react";
@@ -73,7 +73,7 @@ export interface TestimonialItem {
 export interface WorkExperienceItem {
     /** Human-readable, e.g. "Sep 2023". Rendered verbatim. */
     start: string;
-    /** Omit for a role you still hold — renders as "Present". */
+    /** Omit for a role you still hold, renders as "Present". */
     end?: string;
     title: string;
     company: string;
@@ -88,7 +88,7 @@ export interface WorkExperienceItem {
 export interface EducationItem {
     /** Human-readable, e.g. "Jan 2023". Omit to hide the date range. */
     start?: string;
-    /** Omit for an ongoing degree — renders as "Present". */
+    /** Omit for an ongoing degree, renders as "Present". */
     end?: string;
     degree: string;
     institution: string;

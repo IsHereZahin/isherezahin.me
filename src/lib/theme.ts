@@ -63,7 +63,7 @@ export function setMode(mode: ThemeMode): void {
 }
 
 /**
- * Listen for mode changes — both from this tab (custom event) and from other
+ * Listen for mode changes, both from this tab (custom event) and from other
  * tabs (storage event). Returns an unsubscribe function.
  */
 export function subscribeToMode(onChange: (mode: ThemeMode) => void): () => void {

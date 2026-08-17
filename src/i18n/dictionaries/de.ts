@@ -99,6 +99,8 @@ export const de: Dictionary = {
             searchLabel: "Beiträge durchsuchen",
             error: "Beiträge konnten nicht geladen werden",
             errorMessage: "Die Beiträge konnten nicht geladen werden. Prüfe deine Verbindung und versuch es erneut.",
+            noMatchTitle: "Keine passenden Beiträge",
+            noMatchDescription: "Keine Beiträge passen zu deiner Suche oder deinen Filtern. Versuch es mit anderen Kriterien.",
         },
         projects: {
             title: "Projekte, an denen ich gearbeitet habe",
@@ -106,6 +108,8 @@ export const de: Dictionary = {
             searchLabel: "Projekte durchsuchen",
             error: "Projekte konnten nicht geladen werden",
             errorMessage: "Die Projekte konnten nicht geladen werden. Prüfe deine Verbindung und versuch es erneut.",
+            noMatchTitle: "Keine passenden Projekte",
+            noMatchDescription: "Keine Projekte passen zu deiner Suche oder deinen Filtern. Versuch es mit anderen Kriterien.",
         },
         guestbook: {
             title: "Gästebuch",

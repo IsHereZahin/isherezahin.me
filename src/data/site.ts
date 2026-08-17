@@ -8,7 +8,7 @@ import type { ThemeColor } from "./types";
 /**
  * Branding artwork, served from `public/assets/images`.
  *
- * These are checked into the repo on purpose — swap the files (or these paths)
+ * These are checked into the repo on purpose, swap the files (or these paths)
  * to rebrand. Nothing here reads from the environment.
  *
  * The `*Url` variants are absolute because email clients, Open Graph tags and

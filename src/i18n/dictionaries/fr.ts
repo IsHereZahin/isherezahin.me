@@ -99,6 +99,8 @@ export const fr: Dictionary = {
             searchLabel: "Rechercher un article",
             error: "Impossible de charger les articles",
             errorMessage: "Les articles n’ont pas pu être chargés. Vérifiez votre connexion et réessayez.",
+            noMatchTitle: "Aucun article correspondant",
+            noMatchDescription: "Aucun article ne correspond à votre recherche ou à vos filtres. Essayez d’autres critères.",
         },
         projects: {
             title: "Projets sur lesquels j’ai travaillé",
@@ -106,6 +108,8 @@ export const fr: Dictionary = {
             searchLabel: "Rechercher un projet",
             error: "Impossible de charger les projets",
             errorMessage: "Les projets n’ont pas pu être chargés. Vérifiez votre connexion et réessayez.",
+            noMatchTitle: "Aucun projet correspondant",
+            noMatchDescription: "Aucun projet ne correspond à votre recherche ou à vos filtres. Essayez d’autres critères.",
         },
         guestbook: {
             title: "Livre d’or",

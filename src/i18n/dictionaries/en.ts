@@ -111,6 +111,8 @@ export const en = {
             searchLabel: "Search blogs",
             error: "Failed to load blogs",
             errorMessage: "We couldn't load the blog posts. Please check your connection and try again.",
+            noMatchTitle: "No matching blogs",
+            noMatchDescription: "No blogs found matching your search or filters. Try adjusting your criteria.",
         },
         projects: {
             title: "Projects I've worked on",
@@ -118,6 +120,8 @@ export const en = {
             searchLabel: "Search projects",
             error: "Failed to load projects",
             errorMessage: "We couldn't load the projects. Please check your connection and try again.",
+            noMatchTitle: "No matching projects",
+            noMatchDescription: "No projects found matching your search or filters. Try adjusting your criteria.",
         },
         guestbook: {
             title: "GuestBook",

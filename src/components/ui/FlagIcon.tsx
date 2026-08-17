@@ -1,13 +1,7 @@
 import type { Locale } from "@/i18n/config";
 import type { SVGProps } from "react";
 
-/**
- * Flags as inline SVG rather than emoji.
- *
- * Windows has no glyphs for regional-indicator emoji (🇺🇸), so those render as
- * the bare letter pair — "US", "FR" — instead of a flag. Drawing them keeps the
- * switcher looking the same on every platform.
- */
+/** Flags as inline SVG. Windows has no glyphs for the emoji ones. */
 
 type FlagProps = SVGProps<SVGSVGElement> & { className?: string };
 
@@ -20,7 +14,7 @@ function Flag({ children, ...props }: FlagProps) {
 }
 
 const FLAGS: Record<Locale, (props: FlagProps) => React.ReactElement> = {
-    // Stars omitted — they turn to mush at 20px; stripes plus canton read clearly.
+    // Stars omitted: unreadable at this size.
     en: (props) => (
         <Flag {...props}>
             <rect width="640" height="480" fill="#fff" />

@@ -11,19 +11,12 @@ interface LanguagePickerProps {
     onSelect?: () => void;
 }
 
-/**
- * Language list for the header popup. Each entry is a real link to the same
- * page in that locale, so switching language is a normal navigation that can be
- * bookmarked, shared and crawled — and because `<html>` sits above the
- * `[locale]` segment, it happens client-side without reloading the page.
- */
+/** Language list for the header popup. */
 export default function LanguagePicker({ onSelect }: Readonly<LanguagePickerProps>) {
     const pathname = usePathname() || "/";
     const { locale: current, path } = stripLocale(pathname);
 
     const choose = (locale: string) => {
-        // Pin the choice for a year so location-based detection does not
-        // override it on the next visit.
         document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=31536000; samesite=lax`;
         onSelect?.();
     };
@@ -40,6 +33,7 @@ export default function LanguagePicker({ onSelect }: Readonly<LanguagePickerProp
                             href={localePath(path, locale)}
                             onClick={() => choose(locale)}
                             scroll={false}
+                            prefetch={false}
                             hrefLang={locale}
                             aria-current={isActive ? "true" : undefined}
                             className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition-colors ${isActive

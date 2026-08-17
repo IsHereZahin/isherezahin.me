@@ -5,10 +5,7 @@ import { NextResponse } from "next/server";
 /** Remembers an explicit choice from the language switcher. */
 const LOCALE_COOKIE = "NEXT_LOCALE";
 
-/**
- * Country → language, for visitors whose browser sends no useful
- * Accept-Language. Only countries whose main language we actually ship.
- */
+/** Country to language, used when Accept-Language gives us nothing. */
 const COUNTRY_LOCALE: Record<string, Locale> = {
     FR: "fr", BE: "fr", MC: "fr", SN: "fr", CI: "fr",
     ES: "es", MX: "es", AR: "es", CO: "es", CL: "es", PE: "es", VE: "es",
@@ -42,10 +39,7 @@ function fromCountry(request: NextRequest): Locale | null {
     return country ? COUNTRY_LOCALE[country.toUpperCase()] ?? null : null;
 }
 
-/**
- * Locale for a visitor who has not picked one: their browser's language first,
- * then the country they are browsing from, then English.
- */
+/** Browser language first, then country, then English. */
 function detectLocale(request: NextRequest): Locale {
     return (
         fromAcceptLanguage(request.headers.get("accept-language")) ??
@@ -90,26 +84,27 @@ export function proxy(request: NextRequest) {
     const isAdminRoute = route.startsWith("/admin");
 
     if (!hasPrefix) {
-        const chosen = request.cookies.get(LOCALE_COOKIE)?.value;
-        // An explicit choice from the switcher wins; otherwise detect once.
-        const locale = isLocale(chosen) ? chosen : detectLocale(request);
+        // With a stored preference the URL wins: unprefixed means English.
+        const hasChosen = isLocale(request.cookies.get(LOCALE_COOKIE)?.value);
 
-        // Send non-English visitors to their prefixed URL so the language they
-        // land on is reflected in the address bar and can be shared.
-        if (locale !== DEFAULT_LOCALE && !isAdminRoute) {
-            const url = nextUrl.clone();
-            url.pathname = `/${locale}${pathname === "/" ? "" : pathname}`;
-            return NextResponse.redirect(url);
+        // First visit: follow the browser or location.
+        if (!hasChosen && !isAdminRoute) {
+            const detected = detectLocale(request);
+
+            if (detected !== DEFAULT_LOCALE) {
+                const url = nextUrl.clone();
+                url.pathname = `/${detected}${pathname === "/" ? "" : pathname}`;
+                return NextResponse.redirect(url);
+            }
         }
 
-        // English is served unprefixed: `/about` is rewritten to `/en/about`
-        // behind the scenes so the URL the visitor sees never changes.
+        // English is served unprefixed, so rewrite it onto the [locale] segment.
         const url = nextUrl.clone();
         url.pathname = `/${DEFAULT_LOCALE}${pathname === "/" ? "" : pathname}`;
         return NextResponse.rewrite(url);
     }
 
-    // `/en/about` is the same page as `/about` — redirect so each page has one
+    // `/en/about` is the same page as `/about`, redirect so each page has one
     // canonical URL rather than two that both resolve.
     if (prefix === DEFAULT_LOCALE) {
         const url = nextUrl.clone();

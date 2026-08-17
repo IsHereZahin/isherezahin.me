@@ -1,10 +1,6 @@
 /**
- * Applies the stored theme before the first paint.
- *
- * Without this the document paints with the default (light) palette and only
- * flips once React has hydrated — a visible flash on every full page load,
- * including every language switch. The logic mirrors `HeaderActions`; keep the
- * two in step.
+ * Applies the stored theme before the first paint, so the page never flashes
+ * the default palette. Mirrors `HeaderActions`; keep the two in step.
  */
 const script = `(function(){try{
 var d=document.documentElement,s=localStorage;

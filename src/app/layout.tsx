@@ -7,14 +7,8 @@ export { VIEWPORT_CONFIG as viewport, ROOT_METADATA as metadata } from "@/config
 dbConnect();
 
 /**
- * The real root layout — deliberately free of the `[locale]` param.
- *
- * Next.js can only swap a root layout with a full document navigation, so if
- * `<html>` lived under `[locale]` every language switch would reload the page
- * and remount everything, providers and all. Keeping the document shell here
- * makes a locale change an ordinary client-side navigation; `[locale]/layout`
- * below only swaps the dictionary. The `lang` attribute is kept in step by
- * `DictionaryProvider`.
+ * Document shell. Kept free of the `[locale]` param so switching language is a
+ * client-side navigation. `lang` is set by `DictionaryProvider`.
  */
 export default function RootLayout({ children }: { readonly children: React.ReactNode }) {
     return (

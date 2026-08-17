@@ -1,6 +1,7 @@
 "use client";
 
 import MotionWrapper from "@/components/motion/MotionWrapper";
+import { useI18n } from "@/i18n/DictionaryProvider";
 import Project from "@/components/Project";
 import {
     EmptyState,
@@ -29,6 +30,8 @@ interface ProjectsPageData {
 }
 
 export default function ProjectsIndex({ initialData }: { readonly initialData?: ProjectsPageData }) {
+    const { dict } = useI18n();
+    const t = dict.pages.projects;
     const { isAdmin } = useAuth();
     const isInitialRender = useRef(true);
     const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -148,10 +151,10 @@ export default function ProjectsIndex({ initialData }: { readonly initialData?: 
     if (isError) {
         return (
             <Section id="projects">
-                <PageTitle title="Projects I've worked on" subtitle="Nothing too fancy, just solid websites that do their job." />
+                <PageTitle title={t.title} subtitle={t.subtitle} />
                 <ErrorState
-                    title="Failed to load projects"
-                    message={error instanceof Error ? error.message : "We couldn't load the projects. Please check your connection and try again."}
+                    title={t.error}
+                    message={error instanceof Error ? error.message : t.errorMessage}
                     onRetry={() => refetch()}
                 />
             </Section>
@@ -172,7 +175,7 @@ export default function ProjectsIndex({ initialData }: { readonly initialData?: 
             <input
                 ref={searchInputRef}
                 type="text"
-                placeholder="Search..."
+                placeholder={dict.common.search}
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 className="w-32 sm:w-40 h-7 pl-7 pr-6 text-sm rounded-md bg-muted border-none text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 transition-colors"
@@ -185,7 +188,7 @@ export default function ProjectsIndex({ initialData }: { readonly initialData?: 
         <button
             onClick={() => setIsSearchOpen(true)}
             className="inline-flex items-center justify-center h-7 w-7 rounded-md bg-muted text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Search projects"
+            aria-label={t.searchLabel}
             data-tag="search"
         >
             <Search className="w-3.5 h-3.5" />
@@ -195,7 +198,7 @@ export default function ProjectsIndex({ initialData }: { readonly initialData?: 
     return (
         <Section id="projects">
             {(isLoading || hasProjects || hasFilters) && (
-                <PageTitle title="Projects I've worked on" subtitle="Nothing too fancy, just solid websites that do their job." />
+                <PageTitle title={t.title} subtitle={t.subtitle} />
             )}
 
             {/* Tags with inline search - only show when there are projects or active filters */}
@@ -241,7 +244,7 @@ export default function ProjectsIndex({ initialData }: { readonly initialData?: 
                     </div>
                 </div>
             ) : hasFilters ? (
-                <EmptyState type="projects" subtitle="No matching projects" description="No projects found matching your search or filters. Try adjusting your criteria." />
+                <EmptyState type="projects" subtitle={t.noMatchTitle} description={t.noMatchDescription} />
             ) : (
                 <EmptyState type="projects" />
             )}

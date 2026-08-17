@@ -63,7 +63,6 @@ export default function EmptyState({ type, title, subtitle, description }: Reado
     const { dict } = useI18n();
     const fallback = defaultContent[type];
     const Icon = fallback.icon;
-    // The legal placeholders have no translated copy of their own.
     const translated = type in dict.empty ? dict.empty[type as keyof typeof dict.empty] : null;
     const content = translated ? { ...fallback, ...translated } : fallback;
 

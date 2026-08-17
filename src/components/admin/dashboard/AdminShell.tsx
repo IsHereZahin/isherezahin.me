@@ -32,27 +32,19 @@ export default function AdminShell({
 }) {
     const auth = useAuth();
     const [mobileOpen, setMobileOpen] = useState(false);
-    // Mirrors the shared preference for the top-bar toggle icon; the effect
-    // below syncs it on mount and whenever the mode changes elsewhere.
+    // Mirrors the shared preference for the top-bar toggle icon.
     const [mode, setLocalMode] = useState<Mode>("light");
 
-    // Trust the server's answer until the client session resolves, then let the
-    // client take over (it also handles sign-out and revoked sessions).
+    // Server answer until the client session resolves.
     const isAdmin = auth.status === "loading" ? initialIsAdmin : auth.isAdmin;
 
-    // Hand the resolved flag down through the same context the rest of the app
-    // reads, so `enabled: isAdmin` queries start on mount. Only `isAdmin` is
-    // overridden — `user` and `status` still reflect the client session.
+    // Re-provide isAdmin so admin queries can start on mount.
     const authValue = useMemo(
         () => (auth.isAdmin === isAdmin ? auth : { ...auth, isAdmin }),
         [auth, isAdmin]
     );
 
-    // The panel shares the public site's dark/light preference (see
-    // `src/lib/theme.ts`), so toggling here also changes the public site and
-    // vice versa. We also mark <body data-admin> so the surface tokens
-    // (globals.css) reach the panel *and* Radix content that portals outside
-    // this layout (Selects, dialogs, toasts).
+    // Shares the public dark/light preference. data-admin scopes the surface tokens.
     useEffect(() => {
         const initial = resolveInitialMode();
         applyMode(initial);
@@ -77,9 +69,7 @@ export default function AdminShell({
         setMode(next);
     };
 
-    // Not the admin: the entire admin dashboard is blocked. Non-admins (and
-    // anonymous visitors) only ever see the Personal Vault access screen, and
-    // — once unlocked — the vault contents. No admin routes, layout, or nav.
+    // Non-admins only ever see the Personal Vault screen.
     const content = isAdmin ? (
         <div className="flex h-full w-full">
             <AdminSidebar mobileOpen={mobileOpen} onCloseMobile={() => setMobileOpen(false)} />

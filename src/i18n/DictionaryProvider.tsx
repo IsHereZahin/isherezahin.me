@@ -13,12 +13,7 @@ interface I18nValue {
 
 const I18nContext = createContext<I18nValue | null>(null);
 
-/**
- * Makes the active locale's copy available to client components — the header,
- * footer and empty states, which sit outside any page and so cannot receive it
- * as a prop. The dictionary is plain data, so passing it across the server
- * boundary is just serialisation.
- */
+/** Gives client components the active locale's copy. */
 export default function DictionaryProvider({
     locale,
     dict,
@@ -33,8 +28,7 @@ export default function DictionaryProvider({
         [locale, dict]
     );
 
-    // `<html>` lives in the param-less root layout so language switches stay
-    // client-side, which means its `lang` has to follow the locale from here.
+    // <html> lives in the root layout, so keep its lang in step here.
     useEffect(() => {
         document.documentElement.lang = locale;
     }, [locale]);

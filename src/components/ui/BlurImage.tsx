@@ -33,10 +33,7 @@ export default function BlurImage(props: Readonly<ImageProps>) {
   const [didError, setDidError] = useState(false)
   const imgRef = useRef<HTMLImageElement>(null)
 
-  // An already-cached image fires no `load` event, so a remount would sit in the
-  // blurred placeholder state until something else re-rendered it. Clear it as
-  // soon as the browser reports the image is complete — this is what makes the
-  // logo flash when the header remounts (for example on a language switch).
+  // A cached image fires no load event, so clear the placeholder up front.
   useEffect(() => {
     if (imgRef.current?.complete) setIsLoading(false)
   }, [])

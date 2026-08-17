@@ -92,7 +92,6 @@ export default function HeaderActions() {
     const handleModeToggle = () => {
         const newMode: ThemeMode = state.mode === "light" ? "dark" : "light";
         setState((prev) => ({ ...prev, mode: newMode }));
-        // Shared with the admin dashboard — see `src/lib/theme.ts`.
         setMode(newMode);
     };
 
@@ -113,8 +112,6 @@ export default function HeaderActions() {
         const root = document.documentElement;
         const savedColor = localStorage.getItem("color-theme") || "black-white";
 
-        // Same stored preference the admin dashboard uses, so returning from
-        // /admin keeps whatever mode was last chosen there.
         const initialMode = resolveInitialMode();
 
         setState((prev) => ({
@@ -146,8 +143,7 @@ export default function HeaderActions() {
         }
     }, [state.mode, state.colorTheme, state.customColor]);
 
-    // Dismissal for whichever popup is open. Driven by a lookup rather than one
-    // branch per popup, so a new popup only has to register its ref here.
+    // Close the open popup on outside click or Escape.
     useEffect(() => {
         const active = state.activePopup;
         if (!active) return;
