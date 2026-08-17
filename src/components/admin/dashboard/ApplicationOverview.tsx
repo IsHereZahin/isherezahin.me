@@ -32,9 +32,8 @@ export default function ApplicationOverview() {
     const overview = useOverview();
     const stats = useStatistics();
 
-    // `isPending`, not `isLoading`: the latter is `isPending && isFetching`, so it
-    // is false during the server render (nothing fetches there) and the panel
-    // would fall through to the error state instead of showing this skeleton.
+    // isPending (not isLoading) so the skeleton also covers the server render,
+    // where nothing fetches and isLoading is therefore false.
     if (overview.isPending || stats.isPending) return <OverviewSkeleton />;
 
     if (overview.isError || !overview.data) {

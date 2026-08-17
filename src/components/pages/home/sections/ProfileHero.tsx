@@ -15,12 +15,17 @@ export default function ProfileHero() {
                     {avatar && (
                         <div className="relative size-20 sm:size-25 rounded-full overflow-hidden shadow-lg mb-6 sm:mb-8">
                             <ImageZoom>
+                                {/* Above the fold and usually the LCP element:
+                                    load it eagerly, and cap the fetched size to
+                                    what the 80–100px frame actually needs. */}
                                 <BlurImage
                                     src={avatar}
                                     alt="Profile Photo"
                                     className="w-full h-full object-cover"
-                                    width={500}
-                                    height={500}
+                                    width={200}
+                                    height={200}
+                                    sizes="100px"
+                                    lazy={false}
                                 />
                             </ImageZoom>
                         </div>

@@ -3,14 +3,11 @@ import { checkIsAdmin } from "@/lib/auth-utils";
 import { ReactNode } from "react";
 
 /**
- * Resolves the session on the server so the dashboard can render on its first
- * paint. Previously this layout was a client component that showed a spinner —
- * and kept every admin query disabled — until `/api/auth/session` answered,
- * which put a round trip in front of *all* admin content.
+ * Resolves the session on the server so the dashboard renders on its first
+ * paint, with no client round trip in front of the admin content.
  *
  * Reading the session makes these routes server-rendered rather than static
- * shells. That is the right trade for an authenticated dashboard: the render
- * costs a few milliseconds, the round trip it replaces cost ~100ms.
+ * shells, which is the right shape for an authenticated dashboard.
  */
 export default async function AdminLayout({ children }: { readonly children: ReactNode }) {
     const isAdmin = await checkIsAdmin();

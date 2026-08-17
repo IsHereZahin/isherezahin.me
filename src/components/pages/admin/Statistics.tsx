@@ -86,8 +86,8 @@ export default function Statistics() {
         return null;
     }
 
-    // `isPending`, not `isLoading`: the latter is false during the server render,
-    // where nothing fetches, so the page would render "Failed to load settings".
+    // isPending (not isLoading) so the skeleton also covers the server render,
+    // where nothing fetches and isLoading is therefore false.
     if (isPending) return <StatisticsSkeleton />;
     if (!settings) {
         return (

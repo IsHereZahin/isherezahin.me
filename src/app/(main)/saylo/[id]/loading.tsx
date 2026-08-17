@@ -1,7 +1,6 @@
 import { Section, Skeleton } from "@/components/ui";
 
-// Shown instantly while a saylo is fetched on the server, so clicking through
-// from the list navigates straight away instead of waiting on the database.
+// Shown while the saylo is fetched on the server.
 export default function Loading() {
     return (
         <Section id="saylo-detail" className="px-4 sm:px-6 py-12 sm:py-16 max-w-2xl">

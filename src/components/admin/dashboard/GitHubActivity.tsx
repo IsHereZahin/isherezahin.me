@@ -47,9 +47,8 @@ function GitHubError({ onRetry }: { onRetry: () => void }) {
 export default function GitHubActivity() {
     const { data, isPending, isError, refetch } = useGitHub();
 
-    // `isPending`, not `isLoading`: the latter is `isPending && isFetching`, so it
-    // is false during the server render (nothing fetches there) and the panel
-    // would fall through to the error state instead of showing this skeleton.
+    // isPending (not isLoading) so the skeleton also covers the server render,
+    // where nothing fetches and isLoading is therefore false.
     if (isPending) return <GitHubSkeleton />;
     if (isError || !data) return <GitHubError onRetry={() => refetch()} />;
 

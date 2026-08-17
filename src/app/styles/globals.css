@@ -482,8 +482,7 @@ html:has(a[href^="#"]:target) {
        end transform afterwards — a lingering transform would make this a
        containing block for `position: fixed` descendants inside the page.
 
-       Kept short on purpose: this replays on every route change, so a long
-       entrance reads as navigation latency rather than polish. */
+       Short on purpose: it replays on every route change. */
     animation: page-enter 0.22s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 

@@ -1,7 +1,8 @@
 "use client";
 
 import MotionWrapper from "@/components/motion/MotionWrapper";
-import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent, ErrorState, PageTitle, Section, Skeleton } from "@/components/ui";
+import { ErrorState, PageTitle, Section, Skeleton } from "@/components/ui";
+import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { statistics } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { BarChart3, BookOpen, Eye, FileText, FolderKanban, Globe, Link2, Lock, Monitor, Users } from "lucide-react";

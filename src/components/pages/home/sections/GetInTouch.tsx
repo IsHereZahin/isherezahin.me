@@ -1,7 +1,7 @@
 'use client'
 
-import { SendMessageModal } from '@/components/chat'
 import { Logo, Section } from "@/components/ui"
+import dynamic from 'next/dynamic'
 import { HOME_CONTACT } from '@/data'
 import { publicSettings } from '@/lib/api'
 import { useAuth } from '@/lib/hooks/useAuth'
@@ -10,6 +10,11 @@ import { MessageCircle } from 'lucide-react'
 import { useAnimate } from 'motion/react'
 import { signIn } from 'next-auth/react'
 import { useEffect, useMemo, useState } from 'react'
+
+// Loaded on demand — this modal pulls in the Firebase realtime SDK.
+const SendMessageModal = dynamic(() => import('@/components/chat/SendMessageModal'), {
+    ssr: false,
+})
 
 interface PublicSettings {
     allowGitHubLogin: boolean;
@@ -40,6 +45,8 @@ export default function GetInTouch() {
     const [scope, animate] = useAnimate()
     const { user, status, openLoginModal, isAdmin } = useAuth()
     const [isMessageModalOpen, setIsMessageModalOpen] = useState(false)
+    // Keeps the modal mounted after its first open so closing still animates.
+    const [messageModalRequested, setMessageModalRequested] = useState(false)
 
     // Auth configuration — which sign-in providers are enabled. This is account
     // settings, not page content: the copy above renders without any fetching.
@@ -53,6 +60,7 @@ export default function GetInTouch() {
         if (isAdmin) return;
 
         if (status === 'authenticated' && user) {
+            setMessageModalRequested(true)
             setIsMessageModalOpen(true)
             return
         }
@@ -170,7 +178,7 @@ export default function GetInTouch() {
                 </div>
             </div>
 
-            {!isAdmin && (
+            {!isAdmin && messageModalRequested && (
                 <SendMessageModal
                     open={isMessageModalOpen}
                     onOpenChange={setIsMessageModalOpen}

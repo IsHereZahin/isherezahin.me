@@ -9,11 +9,9 @@ export const CARD = "rounded-[24px] border border-[var(--s-border)] bg-[var(--s-
 /**
  * Placeholder shaped like a real dashboard card.
  *
- * It deliberately uses the card surface rather than filling the block with
- * `--s-soft2`: against the page background those two tokens are a couple of
- * values apart (#EFEAE2 on #EDEBE5), so a solid fill reads as empty space.
- * Sitting the pulsing bars *inside* a card gives the loading state the same
- * silhouette as the content that replaces it.
+ * Uses the card surface, not a `--s-soft2` fill: that token sits a couple of
+ * values from the page background (#EFEAE2 on #EDEBE5) and is invisible against
+ * it. The pulsing bars go inside the card instead.
  */
 export function SkeletonCard({ className = "" }: { className?: string }) {
     return (

@@ -18,10 +18,7 @@ export function ProjectsSectionFallback() {
     );
 }
 
-/**
- * Server half of the home page project strip — see `BlogsSection` for why the
- * database read is isolated in its own streamed component.
- */
+/** Server half of the home page project strip — see `BlogsSection`. */
 export default async function ProjectsSection() {
     const initialData = await getPublishedProjectsPage(2);
     return <Projects initialData={initialData} />;

@@ -26,8 +26,7 @@ export default function AdminShell({
     readonly children: ReactNode;
     /**
      * Resolved on the server from the session cookie, so the panel knows which
-     * surface to render on its very first paint instead of waiting for
-     * `/api/auth/session` to come back.
+     * surface to render on its first paint.
      */
     readonly initialIsAdmin: boolean;
 }) {
@@ -42,9 +41,8 @@ export default function AdminShell({
     const isAdmin = auth.status === "loading" ? initialIsAdmin : auth.isAdmin;
 
     // Hand the resolved flag down through the same context the rest of the app
-    // reads, so every admin page's `enabled: isAdmin` query starts fetching on
-    // mount rather than after the session round trip. Only `isAdmin` is
-    // overridden — `user` and `status` still reflect the real client session.
+    // reads, so `enabled: isAdmin` queries start on mount. Only `isAdmin` is
+    // overridden — `user` and `status` still reflect the client session.
     const authValue = useMemo(
         () => (auth.isAdmin === isAdmin ? auth : { ...auth, isAdmin }),
         [auth, isAdmin]

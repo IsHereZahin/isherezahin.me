@@ -30,11 +30,9 @@ export default function SayloIndex() {
 
     const isSayloPagePublic = settingsData ? (settingsData.settings?.sayloPagePublic ?? true) : undefined;
 
-    // Load the feed unless we positively know the page is private, so the two
-    // requests run in parallel. Gating this on the settings *and* the session
-    // chained three round trips before anything could appear on screen — the
-    // visibility gate below still decides what actually renders, and the API
-    // enforces access on its own regardless of what the client asks for.
+    // Load the feed unless we positively know the page is private, so this runs
+    // in parallel with the settings request. The gate below still decides what
+    // renders, and the API enforces access on its own.
     const shouldFetchData = isSayloPagePublic !== false || isAdmin === true;
 
     const { data: categoriesData } = useQuery({
@@ -93,7 +91,7 @@ export default function SayloIndex() {
     const distinctVisibilitiesCount = data?.pages[0]?.distinctVisibilitiesCount || 0;
 
     // Only block on the session when the page is private and we still need to
-    // know whether this visitor is the admin. Public visits never hit this.
+    // know whether this visitor is the admin.
     if (isSettingsLoading || (isSayloPagePublic === false && isAuthLoading)) {
         return (
             <Section id="saylo" className="px-4 sm:px-6 py-12 sm:py-16 max-w-2xl">

@@ -1,4 +1,11 @@
 // UI Components
+//
+// chart.tsx (recharts), calendar.tsx (react-day-picker) and date-picker.tsx
+// (date-fns) are intentionally not re-exported here — going through this barrel
+// puts them in the bundle of every page that imports any UI component. Import
+// them from their own module:
+//   import { ChartContainer } from "@/components/ui/chart";
+//   import { DatePicker } from "@/components/ui/date-picker";
 export {
     AlertDialog,
     AlertDialogAction,
@@ -13,7 +20,6 @@ export {
     AlertDialogTrigger
 } from "./alert-dialog";
 export { Badge, badgeVariants } from "./badge";
-export { Calendar, CalendarDayButton } from "./calendar";
 export {
     Card,
     CardAction,
@@ -23,16 +29,6 @@ export {
     CardHeader,
     CardTitle
 } from "./card";
-export {
-    ChartContainer,
-    ChartLegend,
-    ChartLegendContent,
-    ChartStyle,
-    ChartTooltip,
-    ChartTooltipContent
-} from "./chart";
-export type { ChartConfig } from "./chart";
-export { DatePicker } from "./date-picker";
 export {
     Dialog,
     DialogClose,

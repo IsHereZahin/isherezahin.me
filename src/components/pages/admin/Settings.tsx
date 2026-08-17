@@ -79,8 +79,8 @@ export default function Settings() {
 
     const saving = (key: string) => mutation.isPending && mutation.variables?.key === key;
 
-    // `isPending`, not `isLoading`: the latter is false during the server render,
-    // where nothing fetches, so the page would flash its loaded layout with empty data.
+    // isPending (not isLoading) so the skeleton also covers the server render,
+    // where nothing fetches and isLoading is therefore false.
     if (isPending) return <SettingsSkeleton />;
 
     return (

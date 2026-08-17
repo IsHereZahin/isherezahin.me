@@ -70,7 +70,8 @@ export default function BlurImage(props: Readonly<ImageProps>) {
         alt={alt || (didError ? 'Image failed to load' : '')}
         loading={lazy ? 'lazy' : undefined}
         priority={!lazy}
-        quality={100}
+        fetchPriority={lazy ? undefined : 'high'}
+        quality={85}
         onLoad={() => setIsLoading(false)}
         onError={() => {
           setDidError(true)

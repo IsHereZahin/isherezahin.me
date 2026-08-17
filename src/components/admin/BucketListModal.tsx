@@ -9,10 +9,11 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import {
-    DatePicker, Form, FormActions, FormControl, FormField, FormItem, FormLabel, FormMessage,
+    Form, FormActions, FormControl, FormField, FormItem, FormLabel, FormMessage,
     FormModal, Input, PublishToggle, Select, SelectContent,
     SelectItem, SelectTrigger, SelectValue, Textarea
 } from "@/components/ui";
+import { DatePicker } from "@/components/ui/date-picker";
 import { bucketList as bucketListApi } from "@/lib/api";
 
 const bucketListFormSchema = z.object({
@@ -276,7 +277,7 @@ export default function BucketListModal({ open, onOpenChange, item }: Readonly<B
                                 <FormControl>
                                     <Textarea
                                         placeholder="Describe your dream or goal..."
-                                        className="resize-none min-h-[100px]"
+                                        className="resize-none min-h-25"
                                         {...field}
                                     />
                                 </FormControl>
