@@ -7,6 +7,7 @@ import {
     SectionHeader,
     SeeMore,
 } from "@/components/ui";
+import type { HomeContent } from "@/data/pages/home";
 import { getBlogs } from "@/lib/api";
 import { Blog } from "@/utils/types";
 import { useQuery } from "@tanstack/react-query";
@@ -18,7 +19,13 @@ interface BlogsPage {
     blogs: Blog[];
 }
 
-export default function Blogs({ initialData }: { readonly initialData?: BlogsPage }) {
+export default function Blogs({
+    initialData,
+    heading,
+}: {
+    readonly initialData?: BlogsPage;
+    readonly heading: HomeContent["blogs"];
+}) {
     const page = 1;
     const limit = 2;
 
@@ -39,7 +46,7 @@ export default function Blogs({ initialData }: { readonly initialData?: BlogsPag
 
     return (
         <Section id="blogs" animate={true}>
-            <SectionHeader tag="02" title="Blogs" subtitle="Thoughts on what I'm learning and building in web development" />
+            <SectionHeader tag={heading.tag} title={heading.title} subtitle={heading.subtitle} />
 
             {isLoading ? (
                 <BlogsLoading count={2} />
@@ -51,7 +58,7 @@ export default function Blogs({ initialData }: { readonly initialData?: BlogsPag
                         ))}
                     </div>
                     <div className="flex justify-center">
-                        <SeeMore href="/blogs" text="See all blogs" className="mt-16" />
+                        <SeeMore href="/blogs" text={heading.seeAll} className="mt-16" />
                     </div>
                 </>
             )}

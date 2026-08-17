@@ -1,6 +1,6 @@
 'use client'
 
-import { HOME_ABOUT_CARDS } from '@/data'
+import type { HomeContent } from '@/data/pages/home'
 import { MapPinIcon } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { useEffect, useRef, useState } from 'react'
@@ -9,8 +9,10 @@ import { useEffect, useRef, useState } from 'react'
 // the card is scrolled near, keeping it out of the initial JS.
 const Globe = dynamic(() => import('./Globe'), { ssr: false })
 
-export default function LocationCard() {
-    const { location } = HOME_ABOUT_CARDS
+export default function LocationCard({
+    label,
+    marker,
+}: Readonly<HomeContent["cards"]["location"]>) {
     const ref = useRef<HTMLDivElement>(null)
     const [showGlobe, setShowGlobe] = useState(false)
 
@@ -42,7 +44,7 @@ export default function LocationCard() {
         >
             <div className='flex items-center gap-2'>
                 <MapPinIcon className='size-4 sm:size-[18px]' />
-                <h2 className='text-xs sm:text-sm font-medium text-muted-foreground'>{location.label}</h2>
+                <h2 className='text-xs sm:text-sm font-medium text-muted-foreground'>{label}</h2>
             </div>
             {/* Fixed-size slot: reserved whether or not the globe has loaded, so
                 nothing shifts when it appears. */}
@@ -57,7 +59,7 @@ export default function LocationCard() {
                         overflow: 'visible'
                     }}
                 >
-                    {showGlobe && <Globe marker={location.marker} />}
+                    {showGlobe && <Globe marker={marker} />}
                 </div>
             </div>
         </div>

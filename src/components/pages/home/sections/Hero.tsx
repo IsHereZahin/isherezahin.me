@@ -8,11 +8,18 @@ import {
     RichText,
     Section,
 } from "@/components/ui";
-import { HOME_HERO } from "@/data";
+import type { HomeContent } from "@/data/pages/home";
 import { ArrowDown } from "lucide-react";
 
-export default function Hero() {
-    const { badge, headingLead, name, paragraphs, portrait, portraitAlt, actions } = HOME_HERO;
+export default function Hero({
+    badge,
+    headingLead,
+    name,
+    paragraphs,
+    portrait,
+    portraitAlt,
+    actions,
+}: Readonly<HomeContent["hero"]>) {
 
     return (
         <Section id="hero" animate={true}>

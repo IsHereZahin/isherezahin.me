@@ -1,6 +1,7 @@
 "use client";
 
 import { Compass, FileText, FolderOpen, type LucideIcon, Scale, Send, Shield } from "lucide-react";
+import { useI18n } from "@/i18n/DictionaryProvider";
 import MotionWrapper from "../motion/MotionWrapper";
 
 export type EmptyStateType = "blogs" | "projects" | "quests" | "saylo" | "privacy-policy" | "terms-of-service";
@@ -59,8 +60,12 @@ const defaultContent: Record<EmptyStateType, EmptyStateConfig> = {
 };
 
 export default function EmptyState({ type, title, subtitle, description }: Readonly<EmptyStateProps>) {
-    const content = defaultContent[type];
-    const Icon = content.icon;
+    const { dict } = useI18n();
+    const fallback = defaultContent[type];
+    const Icon = fallback.icon;
+    // The legal placeholders have no translated copy of their own.
+    const translated = type in dict.empty ? dict.empty[type as keyof typeof dict.empty] : null;
+    const content = translated ? { ...fallback, ...translated } : fallback;
 
     return (
         <MotionWrapper direction="bottom" delay={0.3}>
@@ -73,9 +78,9 @@ export default function EmptyState({ type, title, subtitle, description }: Reado
                     {title || content.title}
                 </h3>
 
-                {subtitle && (
+                {(subtitle ?? content.subtitle) && (
                     <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">
-                        {subtitle}
+                        {subtitle ?? content.subtitle}
                     </p>
                 )}
 

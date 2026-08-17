@@ -1,9 +1,8 @@
 import { Section, SectionHeader } from "@/components/ui";
-import { ABOUT_WORK_EXPERIENCE } from "@/data";
+import type { AboutContent } from "@/data/pages/about";
 import ExperienceItem from "../components/ExperienceItem";
 
-export default function WorkExperience() {
-    const { heading, items } = ABOUT_WORK_EXPERIENCE;
+export default function WorkExperience({ heading, items }: Readonly<AboutContent["workExperience"]>) {
 
     if (items.length === 0) return null;
 

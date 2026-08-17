@@ -1,4 +1,4 @@
-import { HOME_ABOUT_CARDS } from '@/data'
+import type { HomeContent } from '@/data/pages/home'
 import type { StackIcon } from '@/data/types'
 import { ZapIcon } from 'lucide-react'
 import Marquee from 'react-fast-marquee'
@@ -32,17 +32,15 @@ function StackRow({ items, direction }: Readonly<{ items: StackIcon[]; direction
   )
 }
 
-export default function StacksCard() {
-  const { stacks } = HOME_ABOUT_CARDS
-
+export default function StacksCard({ label, rowOne, rowTwo }: Readonly<HomeContent["cards"]["stacks"]>) {
   return (
     <div className='flex h-56 sm:h-64 flex-col gap-3 sm:gap-4 overflow-hidden rounded-xl p-4 shadow-feature-card lg:p-6'>
       <div className='flex items-center gap-2'>
         <ZapIcon className='h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0' />
-        <h2 className='text-sm sm:text-base font-medium text-foreground'>{stacks.label}</h2>
+        <h2 className='text-sm sm:text-base font-medium text-foreground'>{label}</h2>
       </div>
-      <StackRow items={stacks.rowOne} />
-      <StackRow items={stacks.rowTwo} direction='right' />
+      <StackRow items={rowOne} />
+      <StackRow items={rowTwo} direction='right' />
     </div>
   )
 }

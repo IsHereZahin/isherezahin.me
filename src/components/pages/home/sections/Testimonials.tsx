@@ -1,10 +1,11 @@
 import { Section, SectionHeader } from "@/components/ui";
-import { HOME_TESTIMONIALS } from "@/data";
+import type { HomeContent } from "@/data/pages/home";
 import Testimonial from "../components/Testimonial";
 
-export default function Testimonials() {
-    const { heading, items } = HOME_TESTIMONIALS;
-
+export default function Testimonials({
+    heading,
+    items,
+}: Readonly<HomeContent["testimonials"]>) {
     if (items.length === 0) return null;
 
     return (

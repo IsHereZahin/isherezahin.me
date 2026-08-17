@@ -3,7 +3,7 @@
 // Site-wide data that is not tied to a single page.
 
 import { BASE_URL } from "@/lib/constants";
-import type { Language, ThemeColor } from "./types";
+import type { ThemeColor } from "./types";
 
 /**
  * Branding artwork, served from `public/assets/images`.
@@ -38,9 +38,3 @@ export const availableThemes: ThemeColor[] = [
     { name: "black-white", lightPrimary: "#000000", darkPrimary: "#FFFFFF", lightPrimaryRgb: "0,0,0", darkPrimaryRgb: "255,255,255", textColorClass: "text-black dark:text-white" },
 ];
 
-export const languages: Language[] = [
-    { code: "en", name: "English", flag: "🇺🇸" },
-    { code: "fr", name: "Français", flag: "🇫🇷" },
-    { code: "es", name: "Español", flag: "🇪🇸" },
-    { code: "de", name: "Deutsch", flag: "🇩🇪" },
-];

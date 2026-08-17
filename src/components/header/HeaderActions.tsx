@@ -4,9 +4,10 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { useChatUnread } from "@/lib/hooks/useChat";
 import { applyMode, resolveInitialMode, setMode, subscribeToMode } from "@/lib/theme";
 import type { PopupState, ThemeMode } from "@/utils/types";
-import { Command, Moon, Palette, Sun, User } from "lucide-react";
+import { Command, Languages, Moon, Palette, Sun, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import CommandPopup from "./CommandPopup";
+import LanguagePicker from "./LanguagePicker";
 import ProfileDropdown from "./ProfileDropdown";
 import ThemeColorPicker from "./ThemeColorPicker";
 
@@ -47,6 +48,7 @@ export default function HeaderActions() {
     });
 
     const colorRef = useRef<HTMLDivElement>(null);
+    const languageRef = useRef<HTMLDivElement>(null);
     const commandRef = useRef<HTMLDivElement>(null);
     const profileRef = useRef<HTMLDivElement>(null);
 
@@ -144,36 +146,39 @@ export default function HeaderActions() {
         }
     }, [state.mode, state.colorTheme, state.customColor]);
 
+    // Dismissal for whichever popup is open. Driven by a lookup rather than one
+    // branch per popup, so a new popup only has to register its ref here.
     useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            const target = e.target as Node;
-            if (
-                state.activePopup === "color" &&
-                colorRef.current &&
-                !colorRef.current.contains(target)
-            ) {
-                setState((prev) => ({ ...prev, activePopup: null }));
-            }
-            if (
-                state.activePopup === "command" &&
-                commandRef.current &&
-                !commandRef.current.contains(target)
-            ) {
-                setState((prev) => ({ ...prev, activePopup: null }));
-            }
-            if (
-                state.activePopup === "profile" &&
-                profileRef.current &&
-                !profileRef.current.contains(target)
-            ) {
-                setState((prev) => ({ ...prev, activePopup: null }));
-            }
+        const active = state.activePopup;
+        if (!active) return;
+
+        const containers: Record<string, React.RefObject<HTMLDivElement | null>> = {
+            color: colorRef,
+            command: commandRef,
+            profile: profileRef,
+            language: languageRef,
         };
 
-        if (state.activePopup) {
-            document.addEventListener("mousedown", handleClickOutside);
-            return () => document.removeEventListener("mousedown", handleClickOutside);
-        }
+        const close = () => setState((prev) => ({ ...prev, activePopup: null }));
+
+        const handlePointerDown = (e: MouseEvent | TouchEvent) => {
+            const container = containers[active]?.current;
+            if (container && !container.contains(e.target as Node)) close();
+        };
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") close();
+        };
+
+        document.addEventListener("mousedown", handlePointerDown);
+        document.addEventListener("touchstart", handlePointerDown);
+        document.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            document.removeEventListener("mousedown", handlePointerDown);
+            document.removeEventListener("touchstart", handlePointerDown);
+            document.removeEventListener("keydown", handleKeyDown);
+        };
     }, [state.activePopup]);
 
     const buttonBaseClass =
@@ -192,6 +197,22 @@ export default function HeaderActions() {
                 {state.mode === "light" ? <Moon className="size-4" /> : <Sun className="size-4" />}
             </button>
 
+            <div className="relative" ref={languageRef}>
+                <button
+                    onClick={() => togglePopup("language")}
+                    className={`${buttonBaseClass} ${hoverGradientClass} ${state.activePopup === "language" ? "bg-primary/10" : ""}`}
+                    aria-label="Change language"
+                    aria-expanded={state.activePopup === "language"}
+                >
+                    <Languages className="size-4" />
+                </button>
+                {state.activePopup === "language" && (
+                    <div className="absolute right-0 top-full mt-5 min-w-44 bg-background/95 supports-[backdrop-filter]:bg-background/85 backdrop-blur-xl backdrop-saturate-150 border border-border/70 rounded-xl shadow-xl shadow-black/10 z-50 p-1.5 animate-in fade-in-0 zoom-in-95">
+                        <LanguagePicker onSelect={() => setState((prev) => ({ ...prev, activePopup: null }))} />
+                    </div>
+                )}
+            </div>
+
             <div className="relative" ref={colorRef}>
                 <button
                     onClick={() => togglePopup("color")}
@@ -203,7 +224,7 @@ export default function HeaderActions() {
                     <Palette className="size-4" />
                 </button>
                 {state.activePopup === "color" && (
-                    <div className="absolute right-0 top-full mt-2 bg-background border border-border rounded-lg shadow-lg z-50 animate-in fade-in-0 zoom-in-95">
+                    <div className="absolute right-0 top-full mt-5 bg-background/95 supports-[backdrop-filter]:bg-background/85 backdrop-blur-xl backdrop-saturate-150 border border-border/70 rounded-xl shadow-xl shadow-black/10 z-50 animate-in fade-in-0 zoom-in-95">
                         <ThemeColorPicker
                             colorTheme={state.colorTheme}
                             mode={state.mode}
@@ -228,7 +249,7 @@ export default function HeaderActions() {
                     <Command className="size-4" />
                 </button>
                 {state.activePopup === "command" && (
-                    <div className="fixed inset-x-0 top-[84px] z-50 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2">
+                    <div className="fixed inset-x-0 top-[96px] z-50 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2">
                         <div className="max-w-5xl mx-auto px-4 sm:px-8">
                             <CommandPopup onClose={() => setState((prev) => ({ ...prev, activePopup: null }))} />
                         </div>
@@ -253,7 +274,7 @@ export default function HeaderActions() {
                     </button>
 
                     {state.activePopup === "profile" && (
-                        <div className="absolute right-0 top-full mt-2 bg-background border border-border rounded-lg shadow-lg z-50 animate-in fade-in-0 zoom-in-95 w-48">
+                        <div className="absolute right-0 top-full mt-5 bg-background/95 supports-[backdrop-filter]:bg-background/85 backdrop-blur-xl backdrop-saturate-150 border border-border/70 rounded-xl shadow-xl shadow-black/10 z-50 animate-in fade-in-0 zoom-in-95 w-48">
                             <ProfileDropdown onClose={() => setState((prev) => ({ ...prev, activePopup: null }))} />
                         </div>
                     )}

@@ -1,25 +1,20 @@
 import { ProjectsLoading, Section, SectionHeader } from "@/components/ui";
+import type { HomeContent } from "@/data/pages/home";
 import { getPublishedProjectsPage } from "@/lib/cached-queries";
 import Projects from "./Projects";
 
-const HEADING = {
-    tag: "03",
-    title: "Projects",
-    subtitle: "A select few that I've shipped in the past few months",
-};
-
 /** Skeleton shown while the project strip streams in. */
-export function ProjectsSectionFallback() {
+export function ProjectsSectionFallback({ heading }: { readonly heading: HomeContent["projects"] }) {
     return (
         <Section id="projects">
-            <SectionHeader {...HEADING} />
+            <SectionHeader tag={heading.tag} title={heading.title} subtitle={heading.subtitle} />
             <ProjectsLoading count={2} />
         </Section>
     );
 }
 
 /** Server half of the home page project strip — see `BlogsSection`. */
-export default async function ProjectsSection() {
+export default async function ProjectsSection({ heading }: { readonly heading: HomeContent["projects"] }) {
     const initialData = await getPublishedProjectsPage(2);
-    return <Projects initialData={initialData} />;
+    return <Projects initialData={initialData} heading={heading} />;
 }

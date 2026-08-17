@@ -1,8 +1,9 @@
 // src/data/pages/about.ts
 //
-// Content for the about page (`/about`). Edit here — the sections in
-// `src/components/pages/about` only lay this out.
+// Structure for the about page: images, links and logos. All copy lives in
+// `src/i18n/dictionaries` — `getAboutContent(dict)` merges the two.
 
+import type { Dictionary } from "@/i18n/dictionaries/en";
 import {
     MY_FULL_NAME,
     SITE_GITHUB_URL,
@@ -21,11 +22,6 @@ import type {
     WorkExperienceItem,
 } from "../types";
 
-export const ABOUT_PAGE_HEADING: PageHeading = {
-    title: "About Me",
-    subtitle: "How I explored, learned, and finally found my place in tech",
-};
-
 /** Social badges overlaid on the profile photo. */
 const PROFILE_SOCIALS: { href: string; label: string; icon: IconComponent }[] = [
     { href: SITE_LINKEDIN_URL, label: "LinkedIn", icon: LinkedinIcon },
@@ -33,105 +29,71 @@ const PROFILE_SOCIALS: { href: string; label: string; icon: IconComponent }[] = 
     { href: SITE_YOUTUBE_URL, label: "YouTube", icon: YoutubeIcon },
 ];
 
-/**
- * The intro block: portrait on the left, prose on the right.
- * `paragraphs` accept inline markdown — see `RichText`.
- */
-export const ABOUT_PROFILE = {
+const PROFILE = {
     name: MY_FULL_NAME,
-    title: "Software Developer | Frontend Focused",
-    location: "Khulshi, Chittagong, BD (UTC+6)",
     /** Small badge on the photo. Leave empty to hide it. */
     age: "23Y",
     imageSrc: profileImage as ImageSource,
     socials: PROFILE_SOCIALS,
-    paragraphs: [
-        "I work with the **React & Laravel ecosystem**, building robust web applications, dashboards, and internal tools. I focus on creating intuitive user experiences, clean interfaces, and maintainable code that performs reliably in real-world scenarios.",
-        "Beyond coding, I write to teach and help others rethink fundamental concepts through mental models. My goal is to simplify complex ideas, inspire new ways of thinking, and empower developers to build smarter solutions.",
-        "With **2+ years** of experience, I leverage tools like **TypeScript**, **Tailwind CSS**, **Bootstrap**, **Figma**, **Postman**, **Docker**, and **Git** to deliver scalable and high-quality software. I pay attention to details because even small improvements can make a significant difference in usability and performance.",
-    ],
 };
 
-/** The "What I'm up to now" card. Bullets accept inline markdown links. */
-export const ABOUT_CURRENT_STATUS: { title: string; items: RichListItem[] } = {
-    title: "What I'm up to now",
-    items: [
-        {
-            text: "Currently employed as a Frontend Developer and SQA at [Iconic](http://www.iconicsolutionsbd.com), working on a File Manager web application.",
-        },
-        {
-            text: "BSE in CSE student at [East Delta University](https://www.eastdelta.edu.bd).",
-        },
-        {
-            text: "Occasionally work on outsourcing & freelance projects.",
-        },
-        {
-            text: "Continuously learning modern technologies to stay up to date.",
-        },
-    ],
-};
-
-export const ABOUT_WORK_EXPERIENCE: {
-    heading: SectionHeading;
-    items: WorkExperienceItem[];
-} = {
-    heading: {
-        tag: "02",
-        title: "Work Experience",
-        subtitle: "A little bit about my work experience",
+const WORK_EXPERIENCE = [
+    {
+        start: "Sep 2023",
+        end: "Present",
+        company: "Iconic Solutions (Pvt) Ltd",
+        companyUrl: "http://www.iconicsolutionsbd.com",
+        logo: "/assets/images/iconic.png" as ImageSource,
     },
-    items: [
-        {
-            start: "Sep 2023",
-            end: "Present",
-            title: "Frontend Developer & SQA",
-            company: "Iconic Solutions (Pvt) Ltd",
-            companyUrl: "http://www.iconicsolutionsbd.com",
-            location: "Chittagong, BD (On Site)",
-            type: "On Site",
-            logo: "/assets/images/iconic.png",
-            description:
-                "Progressed from Web Developer Intern to Software Quality Assurance Engineer, and now Frontend Developer, contributing to SaaS applications and real-world projects by combining development and testing expertise.",
-            highlights: [
-                {
-                    text: "Developed responsive frontend interfaces using React.js, Next.js, Vue.js, and integrated APIs via Postman and Inertia.js.",
-                },
-                {
-                    text: "Collaborated with backend teams on Laravel for API development, CRUD operations, and feature integration.",
-                },
-                {
-                    text: "Performed manual and automated testing using Postman, Puppeteer, Selenium, and Pest.",
-                },
-                {
-                    text: "Reviewed and enhanced UI/UX in Figma to improve user experience across platforms.",
-                },
-                {
-                    text: "Built dynamic web projects during internship, practiced API integration, responsive design, and version control (Git).",
-                },
-                {
-                    text: "Contributed to deploying production-ready SaaS applications and gained full-stack development experience.",
-                },
-            ],
-        },
-    ],
-};
+];
 
-export const ABOUT_EDUCATION: {
-    heading: SectionHeading;
-    items: EducationItem[];
-} = {
-    heading: {
-        tag: "03",
-        title: "Education",
-        subtitle: "Where I studied and grew academically",
+const EDUCATION = [
+    {
+        // TODO: fill in `start` — the date range only renders once it is set.
+        institution: "East Delta University",
+        institutionUrl: "https://www.eastdelta.edu.bd",
+        logo: "/assets/images/east-delta-university.jpg" as ImageSource,
     },
-    items: [
-        {
-            // TODO: fill in `start` — the date range only renders once it is set.
-            degree: "BSc in Computer Science & Engineering",
-            institution: "East Delta University",
-            institutionUrl: "https://www.eastdelta.edu.bd",
-            logo: "/assets/images/east-delta-university.jpg",
+];
+
+export interface AboutContent {
+    heading: PageHeading;
+    profile: typeof PROFILE & { title: string; location: string; paragraphs: string[] };
+    currentStatus: { title: string; items: RichListItem[] };
+    workExperience: { heading: SectionHeading; items: WorkExperienceItem[] };
+    education: { heading: SectionHeading; items: EducationItem[] };
+}
+
+export function getAboutContent(dict: Dictionary): AboutContent {
+    const t = dict.about;
+
+    return {
+        heading: t.heading,
+        profile: { ...PROFILE, ...t.profile, paragraphs: [...t.profile.paragraphs] },
+        currentStatus: {
+            title: t.currentStatus.title,
+            items: t.currentStatus.items.map((text) => ({ text })),
         },
-    ],
-};
+        workExperience: {
+            heading: { tag: "02", title: t.workExperience.title, subtitle: t.workExperience.subtitle },
+            items: WORK_EXPERIENCE.map((role, index) => {
+                const copy = t.workExperience.items[index];
+                return {
+                    ...role,
+                    title: copy.title,
+                    location: copy.location,
+                    type: copy.type,
+                    description: copy.description,
+                    highlights: copy.highlights.map((text) => ({ text })),
+                };
+            }),
+        },
+        education: {
+            heading: { tag: "03", title: t.education.title, subtitle: t.education.subtitle },
+            items: EDUCATION.map((school, index) => ({
+                ...school,
+                degree: t.education.items[index].degree,
+            })),
+        },
+    };
+}

@@ -1,19 +1,13 @@
 import { PageTitle, Section } from "@/components/ui";
-import { ATTRIBUTION_PAGE_HEADING } from "@/data";
+import type { AttributionContent } from "@/data/pages/attribution";
 import Credits from "./sections/Credits";
 
-/**
- * Attribution page composition. Every section renders from
- * `src/data/pages/attribution.ts` — nothing here touches the database.
- */
-export default function AttributionIndex() {
+/** Attribution page composition. Copy comes from the active locale's dictionary. */
+export default function AttributionIndex({ content }: { readonly content: AttributionContent }) {
     return (
         <Section id="attribution">
-            <PageTitle
-                title={ATTRIBUTION_PAGE_HEADING.title}
-                subtitle={ATTRIBUTION_PAGE_HEADING.subtitle}
-            />
-            <Credits />
+            <PageTitle title={content.heading.title} subtitle={content.heading.subtitle} />
+            <Credits {...content} />
         </Section>
     );
 }

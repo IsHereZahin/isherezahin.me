@@ -1,5 +1,5 @@
 import { SectionHeader } from "@/components/ui";
-import { USES_PERIPHERALS } from "@/data";
+import type { UsesContent } from "@/data/pages/uses";
 import type { PeripheralEntry } from "@/data/types";
 
 function PeripheralCard({
@@ -24,8 +24,7 @@ function PeripheralCard({
     );
 }
 
-export default function Peripherals() {
-    const { heading, items } = USES_PERIPHERALS;
+export default function Peripherals({ heading, items }: Readonly<UsesContent["peripherals"]>) {
 
     return (
         <section id="peripherals" className="mb-16 sm:mb-24 scroll-mt-24">

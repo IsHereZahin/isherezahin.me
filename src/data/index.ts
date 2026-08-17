@@ -3,7 +3,7 @@
 // The site's static content layer.
 //
 //   types.ts   shared shapes for everything below
-//   site.ts    site-wide data (themes, languages)
+//   site.ts    site-wide data (themes, branding assets)
 //   pages/     one module per static page — see `pages/index.ts`
 //
 // These values are compiled into the build: no database, no client fetching.

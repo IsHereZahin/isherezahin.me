@@ -1,20 +1,26 @@
 import { Badge, BlurImage, ImageZoom, PageTitle } from "@/components/ui";
-import { USES_HERO, USES_PAGE_HEADING } from "@/data";
+import type { UsesContent } from "@/data/pages/uses";
 
 /** Page title plus the wide workspace photo. */
-export default function Hero() {
+export default function Hero({
+    heading,
+    hero,
+}: {
+    readonly heading: UsesContent["heading"];
+    readonly hero: UsesContent["hero"];
+}) {
     return (
         <section className="mb-12 sm:mb-20">
-            <PageTitle title={USES_PAGE_HEADING.title} subtitle={USES_PAGE_HEADING.subtitle} />
+            <PageTitle title={heading.title} subtitle={heading.subtitle} />
 
             <ImageZoom>
                 <div className="group relative aspect-video w-full rounded-2xl md:rounded-3xl bg-secondary cursor-zoom-in">
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 pointer-events-none rounded-2xl" />
 
-                    <BlurImage src={USES_HERO.image} alt={USES_HERO.alt} className="rounded-2xl" />
+                    <BlurImage src={hero.image} alt={hero.alt} className="rounded-2xl" />
 
                     <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 z-20 flex flex-wrap gap-1 sm:gap-2">
-                        {USES_HERO.badges.map((badge) => (
+                        {hero.badges.map((badge) => (
                             <Badge
                                 key={badge}
                                 variant="secondary"

@@ -1,4 +1,4 @@
-import { USES_SUBSCRIPTIONS } from "@/data";
+import type { UsesContent } from "@/data/pages/uses";
 import type { SubscriptionEntry } from "@/data/types";
 
 function SubCard({ icon: Icon, name, plan }: Readonly<SubscriptionEntry>) {
@@ -15,8 +15,7 @@ function SubCard({ icon: Icon, name, plan }: Readonly<SubscriptionEntry>) {
     );
 }
 
-export default function Subscriptions() {
-    const { title, items } = USES_SUBSCRIPTIONS;
+export default function Subscriptions({ title, items }: Readonly<UsesContent["subscriptions"]>) {
 
     return (
         <section className="mb-8 sm:mb-12">

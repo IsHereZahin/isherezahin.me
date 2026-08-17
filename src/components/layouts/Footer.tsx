@@ -1,22 +1,27 @@
+"use client";
+
 import { Button, ReferralLink, Section } from '@/components/ui';
 import { FOOTER_MENU_ITEMS, SOCIAL_LINKS } from '@/config/links';
+import { useI18n } from '@/i18n/DictionaryProvider';
 import { MY_NAME } from '@/lib/constants';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 
 export function SimpleFooter() {
+    const { dict } = useI18n();
+
     return (
         <Section id="footer" animate={true} delay={0.2}>
             <footer className="border-t border-border pt-12 pb-8 text-center md:text-left">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-sm text-muted-foreground">
-                        &copy; {new Date().getFullYear()} Designed & Built with Typescript, React, Tailwind and Next.js ❤
+                        &copy; {new Date().getFullYear()} {dict.footer.builtWith}
                     </p>
                     <a
                         href="#"
                         className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
                     >
-                        Back to top <ArrowUpRight className="h-3 w-3" />
+                        {dict.footer.backToTop} <ArrowUpRight className="h-3 w-3" />
                     </a>
                 </div>
             </footer>
@@ -25,6 +30,7 @@ export function SimpleFooter() {
 }
 
 export default function Footer() {
+    const { dict, path: localeHref } = useI18n();
     const currentYear = new Date().getFullYear();
     return (
         <Section id="footer" animate={true}>
@@ -55,15 +61,15 @@ export default function Footer() {
                     <div className="lg:col-span-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-8">
                         {FOOTER_MENU_ITEMS.map((menuItem) => (
                             <div key={menuItem.category}>
-                                <h3 className="text-base font-medium mb-4">{menuItem.category}</h3>
+                                <h3 className="text-base font-medium mb-4">{dict.nav[menuItem.category]}</h3>
                                 <ul className="space-y-2 text-sm">
                                     {menuItem.items.map((item) => (
                                         <li key={item.href}>
                                             <Link
-                                                href={item.href}
+                                                href={localeHref(item.href)}
                                                 className="text-secondary-foreground hover:text-foreground transition-colors block"
                                             >
-                                                {item.label}
+                                                {dict.nav[item.key]}
                                             </Link>
                                         </li>
                                     ))}
@@ -78,7 +84,7 @@ export default function Footer() {
                         <p className="text-sm text-secondary-foreground">
                             Get the latest news and updates delivered straight to your inbox.
                         </p>
-                        <Button href="#" text="Subscribe" icon={<ArrowRight className="w-4 h-4" />} />
+                        <Button href="#" text={dict.nav.subscribe} icon={<ArrowRight className="w-4 h-4" />} />
                     </div>
                 </div>
 
@@ -86,8 +92,8 @@ export default function Footer() {
                 <div className="border-t border-border pt-6 text-center flex flex-col md:flex-row justify-between items-center text-sm text-secondary-foreground">
                     <p>&copy; {currentYear} {MY_NAME}, all rights reserved.</p>
                     <div className="flex space-x-6 mt-4 md:mt-0">
-                        <Link href="#" className="hover:text-foreground transition-colors">Privacy Policy</Link>
-                        <Link href="#" className="hover:text-foreground transition-colors">Terms of Service</Link>
+                        <Link href={localeHref("/privacy-policy")} className="hover:text-foreground transition-colors">{dict.nav.privacyPolicy}</Link>
+                        <Link href={localeHref("/terms-of-service")} className="hover:text-foreground transition-colors">{dict.nav.termsOfService}</Link>
                     </div>
                 </div>
             </footer>

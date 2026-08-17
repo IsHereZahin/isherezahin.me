@@ -2,7 +2,7 @@
 
 import { Logo, Section } from "@/components/ui"
 import dynamic from 'next/dynamic'
-import { HOME_CONTACT } from '@/data'
+import type { HomeContent } from '@/data/pages/home'
 import { publicSettings } from '@/lib/api'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useQuery } from '@tanstack/react-query'
@@ -37,10 +37,17 @@ const POINTER_STOPS = [
     { left: 88, top: 198 },
 ];
 
-export default function GetInTouch() {
-    const { headline, subheadline, highlightText, email, pointerLabel } = HOME_CONTACT;
+export default function GetInTouch({
+    headline,
+    subheadline,
+    highlightText,
+    email,
+    pointerLabel,
+    sendMessage,
+    skills: allSkills,
+}: Readonly<HomeContent["contact"]>) {
     // Stable reference — the reveal animation below re-runs when it changes.
-    const skills = useMemo(() => HOME_CONTACT.skills.slice(0, SKILL_POSITIONS.length), []);
+    const skills = useMemo(() => allSkills.slice(0, SKILL_POSITIONS.length), [allSkills]);
 
     const [scope, animate] = useAnimate()
     const { user, status, openLoginModal, isAdmin } = useAuth()
@@ -170,7 +177,7 @@ export default function GetInTouch() {
                                     className="inline-flex items-center gap-2 text-white px-4 py-2 rounded-full text-sm bg-gradient-to-b from-red-600 to-red-400 hover:from-red-700 hover:to-red-400 transition-all duration-300"
                                 >
                                     <MessageCircle className="h-4 w-4" />
-                                    Send Message
+                                    {sendMessage}
                                 </button>
                             ) : null}
                         </div>

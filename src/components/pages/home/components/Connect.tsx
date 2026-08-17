@@ -1,16 +1,13 @@
 import { ReferralLink } from "@/components/ui"
 import { SOCIAL_LINKS } from '@/config/links'
-import { HOME_ABOUT_CARDS } from '@/data'
 import { LinkIcon } from 'lucide-react'
 
-export default function Connect() {
+export default function Connect({ label }: { readonly label: string }) {
   return (
     <div className='flex flex-col gap-4 sm:gap-6 rounded-xl p-4 shadow-feature-card lg:p-6'>
       <div className='flex items-center gap-2'>
         <LinkIcon className='size-4 sm:size-[18px]' />
-        <h2 className='text-xs sm:text-sm font-medium text-muted-foreground'>
-          {HOME_ABOUT_CARDS.connect.label}
-        </h2>
+        <h2 className='text-xs sm:text-sm font-medium text-muted-foreground'>{label}</h2>
       </div>
       <div className='flex flex-col gap-3 sm:gap-4 px-2'>
         {SOCIAL_LINKS.map((link) => {

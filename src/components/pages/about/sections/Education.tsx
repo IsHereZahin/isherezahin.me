@@ -1,9 +1,8 @@
 import { Section, SectionHeader } from "@/components/ui";
-import { ABOUT_EDUCATION } from "@/data";
+import type { AboutContent } from "@/data/pages/about";
 import EducationItem from "../components/EducationItem";
 
-export default function Education() {
-    const { heading, items } = ABOUT_EDUCATION;
+export default function Education({ heading, items }: Readonly<AboutContent["education"]>) {
 
     if (items.length === 0) return null;
 

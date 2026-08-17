@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import MotionPopup from "@/components/motion/MotionPopup";
+import { useI18n } from "@/i18n/DictionaryProvider";
 import { BlurImage } from "@/components/ui";
 import AdventureImg from "../../../public/assets/images/CommandPopup/Adventure.jpg";
 import StudyImg from "../../../public/assets/images/CommandPopup/Desktop Setup.jpg";
@@ -15,9 +16,10 @@ interface CommandPopupProps {
 }
 
 export default function CommandPopup({ onClose }: Readonly<CommandPopupProps>) {
+    const { dict, path: localeHref } = useI18n();
     const pathname = usePathname();
 
-    const isActive = (href: string) => pathname.startsWith(href);
+    const isActive = (href: string) => pathname.startsWith(localeHref(href));
 
     const ActiveTag = () => (
         <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-primary/20 text-primary">
@@ -28,7 +30,7 @@ export default function CommandPopup({ onClose }: Readonly<CommandPopupProps>) {
         <MotionPopup isOpen={true} className="z-50 rounded-xl bg-background/85 shadow-2xl outline-none backdrop-blur-sm border border-border p-3 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2">
             <Link
                 className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden md:col-span-1 lg:col-span-1"
-                href="/saylo"
+                href={localeHref("/saylo")}
                 onClick={onClose}
             >
                 <div className="absolute inset-0 z-[-1] rounded-xl overflow-hidden">
@@ -43,15 +45,15 @@ export default function CommandPopup({ onClose }: Readonly<CommandPopupProps>) {
                 <div className="rounded-[11px] bg-gradient-to-b from-black/30 to-black/50 absolute inset-0 z-[-1] group-hover/header-link:opacity-0 opacity-100 transition-opacity duration-300"></div>
                 <div className="rounded-md p-2 transition-all duration-300 z-10 relative">
                     <div className="flex items-center gap-2">
-                        <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-white/50 transition-colors text-white">Saylo</p>
+                        <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-white/50 transition-colors text-white">{dict.menu.saylo.title}</p>
                         {isActive("/saylo") && <ActiveTag />}
                     </div>
-                    <p className="text-xs text-white/80">Thoughts and updates</p>
+                    <p className="text-xs text-white/80">{dict.menu.saylo.description}</p>
                 </div>
             </Link>
             <Link
                 className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden md:col-span-1 lg:col-span-1"
-                href="/uses"
+                href={localeHref("/uses")}
                 onClick={onClose}
             >
                 <div className="absolute inset-0 z-[-1] rounded-xl overflow-hidden">
@@ -66,16 +68,16 @@ export default function CommandPopup({ onClose }: Readonly<CommandPopupProps>) {
                 <div className="rounded-[11px] bg-gradient-to-b from-black/30 to-black/50 absolute inset-0 z-[-1] group-hover/header-link:opacity-0 opacity-100 transition-opacity duration-300"></div>
                 <div className="rounded-md p-2 transition-all duration-300 z-10 relative">
                     <div className="flex items-center gap-2">
-                        <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-white/50 transition-colors text-white">Uses</p>
+                        <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-white/50 transition-colors text-white">{dict.menu.uses.title}</p>
                         {isActive("/uses") && <ActiveTag />}
                     </div>
-                    <p className="text-xs text-white/80">A peek into my digital workspace</p>
+                    <p className="text-xs text-white/80">{dict.menu.uses.description}</p>
                 </div>
             </Link>
             <div className="md:col-span-1 lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <Link
                     className="group/header-link flex flex-col justify-end p-5 rounded-xl relative overflow-hidden"
-                    href="/side-quests"
+                    href={localeHref("/side-quests")}
                     onClick={onClose}
                 >
                     <div className="absolute inset-0 z-[-1] rounded-xl overflow-hidden">
@@ -90,16 +92,16 @@ export default function CommandPopup({ onClose }: Readonly<CommandPopupProps>) {
                     <div className="rounded-[11px] bg-gradient-to-b from-black/30 to-black/50 absolute inset-0 z-[-1] group-hover/header-link:opacity-0 opacity-100 transition-opacity duration-300"></div>
                     <div className="rounded-md p-2 transition-all duration-300 z-10 relative">
                         <div className="flex items-center gap-2">
-                            <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-white/50 transition-colors text-white">Side Quests</p>
+                            <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-white/50 transition-colors text-white">{dict.menu.sideQuests.title}</p>
                             {isActive("/side-quests") && <ActiveTag />}
                         </div>
-                        <p className="text-xs text-white/80">New skills and adventures</p>
+                        <p className="text-xs text-white/80">{dict.menu.sideQuests.description}</p>
                     </div>
                 </Link>
                 <div className="flex flex-col gap-2 justify-between h-full">
                     <Link
                         className="group/header-link p-3 rounded-xl bg-muted/70 w-full flex items-start gap-3 transition-colors hover:bg-muted flex-1"
-                        href="/guestbook"
+                        href={localeHref("/guestbook")}
                         onClick={onClose}
                     >
                         <div className="mt-0.5 p-3 bg-muted text-muted-foreground rounded-xl [&>svg]:size-4 [&>svg]:stroke-1">
@@ -107,15 +109,15 @@ export default function CommandPopup({ onClose }: Readonly<CommandPopupProps>) {
                         </div>
                         <div className="grow">
                             <div className="flex items-center gap-2 justify-between">
-                                <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-foreground/50 transition-colors text-foreground">Guest Book</p>
+                                <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-foreground/50 transition-colors text-foreground">{dict.nav.guestbook}</p>
                                 {isActive("/guestbook") && <ActiveTag />}
                             </div>
-                            <p className="text-xs text-muted-foreground mt-0.5">Leave me a message</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">{dict.menu.guestbook.description}</p>
                         </div>
                     </Link>
                     <Link
                         className="group/header-link p-3 rounded-xl bg-muted/70 w-full flex items-start gap-3 transition-colors hover:bg-muted flex-1"
-                        href="/statistics"
+                        href={localeHref("/statistics")}
                         onClick={onClose}
                     >
                         <div className="mt-0.5 p-3 bg-muted text-muted-foreground rounded-xl [&>svg]:size-4 [&>svg]:stroke-1">
@@ -123,15 +125,15 @@ export default function CommandPopup({ onClose }: Readonly<CommandPopupProps>) {
                         </div>
                         <div className="grow">
                             <div className="flex items-center gap-2 justify-between">
-                                <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-foreground/50 transition-colors text-foreground">Statistics</p>
+                                <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-foreground/50 transition-colors text-foreground">{dict.menu.statistics.title}</p>
                                 {isActive("/statistics") && <ActiveTag />}
                             </div>
-                            <p className="text-xs text-muted-foreground mt-0.5">Crunched up numbers</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">{dict.menu.statistics.description}</p>
                         </div>
                     </Link>
                     <Link
                         className="group/header-link p-3 rounded-xl bg-muted/70 w-full flex items-start gap-3 transition-colors hover:bg-muted flex-1"
-                        href="/attribution"
+                        href={localeHref("/attribution")}
                         onClick={onClose}
                     >
                         <div className="mt-0.5 p-3 bg-muted text-muted-foreground rounded-xl [&>svg]:size-4 [&>svg]:stroke-1">
@@ -139,10 +141,10 @@ export default function CommandPopup({ onClose }: Readonly<CommandPopupProps>) {
                         </div>
                         <div className="grow">
                             <div className="flex items-center gap-2 justify-between">
-                                <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-foreground/50 transition-colors text-foreground">Attribution</p>
+                                <p className="text-sm font-semibold underline decoration-transparent group-hover/header-link:decoration-foreground/50 transition-colors text-foreground">{dict.nav.attribution}</p>
                                 {isActive("/attribution") && <ActiveTag />}
                             </div>
-                            <p className="text-xs text-muted-foreground mt-0.5">Journey to create this site</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">{dict.menu.attribution.description}</p>
                         </div>
                     </Link>
                 </div>

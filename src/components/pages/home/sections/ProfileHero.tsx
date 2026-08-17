@@ -1,11 +1,16 @@
 import MotionWrapper from "@/components/motion/MotionWrapper";
 import { BlurImage, Button, ImageZoom, RichText, Section } from "@/components/ui";
-import { HOME_PROFILE_HERO } from "@/data";
+import type { HomeContent } from "@/data/pages/home";
 import { ArrowDown } from "lucide-react";
 
-export default function ProfileHero() {
-    const { avatar, headingLead, name, headingTrail, description, actions } = HOME_PROFILE_HERO;
-
+export default function ProfileHero({
+    avatar,
+    headingLead,
+    name,
+    headingTrail,
+    description,
+    actions,
+}: Readonly<HomeContent["profileHero"]>) {
     return (
         <Section id="profile" animate={true}>
             <div className="flex flex-col justify-center items-start text-left">

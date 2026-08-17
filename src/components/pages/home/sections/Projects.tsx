@@ -7,6 +7,7 @@ import {
     SectionHeader,
     SeeMore,
 } from "@/components/ui";
+import type { HomeContent } from "@/data/pages/home";
 import { getProjects } from "@/lib/api";
 import { Project as ProjectType } from "@/utils/types";
 import { useQuery } from "@tanstack/react-query";
@@ -18,7 +19,13 @@ interface ProjectsPage {
     projects: ProjectType[];
 }
 
-export default function Projects({ initialData }: { readonly initialData?: ProjectsPage }) {
+export default function Projects({
+    initialData,
+    heading,
+}: {
+    readonly initialData?: ProjectsPage;
+    readonly heading: HomeContent["projects"];
+}) {
     const page = 1;
     const limit = 2;
 
@@ -39,7 +46,7 @@ export default function Projects({ initialData }: { readonly initialData?: Proje
 
     return (
         <Section id="projects" animate={true}>
-            <SectionHeader tag="03" title="Projects" subtitle="A select few that I&apos;ve shipped in the past few months" />
+            <SectionHeader tag={heading.tag} title={heading.title} subtitle={heading.subtitle} />
 
             {isLoading ? (
                 <ProjectsLoading count={2} />
@@ -51,7 +58,7 @@ export default function Projects({ initialData }: { readonly initialData?: Proje
                         ))}
                     </div>
                     <div className="flex justify-center">
-                        <SeeMore href="/projects" text="See all projects" className="mt-16" />
+                        <SeeMore href="/projects" text={heading.seeAll} className="mt-16" />
                     </div>
                 </>
             )}

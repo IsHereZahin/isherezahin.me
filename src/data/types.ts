@@ -65,8 +65,9 @@ export interface Language {
 export interface TestimonialItem {
     id: number;
     quote: string;
-    name: string;
-    role: string;
+    /** Attribution is optional: with no name the quote renders without a byline. */
+    name?: string;
+    role?: string;
 }
 
 export interface WorkExperienceItem {

@@ -1,11 +1,12 @@
 // src/data/pages/home.ts
 //
-// Content for the home page (`/`). Edit here — the sections in
-// `src/components/pages/home` only lay this out.
+// Structure for the home page: images, icons, links and coordinates. All copy
+// lives in `src/i18n/dictionaries` — `getHomeContent(dict)` merges the two.
 //
-// The Blogs and Projects strips are the one exception: they stay
-// database-driven and are not configured from this file.
+// The Blogs and Projects strips stay database-driven; only their headings come
+// from here.
 
+import type { Dictionary } from "@/i18n/dictionaries/en";
 import { MY_NAME, MY_USERNAME } from "@/lib/constants";
 import {
     SiBootstrap,
@@ -34,153 +35,136 @@ import {
 } from "@icons-pack/react-simple-icons";
 import iconicLogo from "../../../public/assets/images/iconic.png";
 import profileImage from "../../../public/assets/images/profile.png";
-import type {
-    ImageSource,
-    PageAction,
-    SectionHeading,
-    StackIcon,
-    TestimonialItem,
-} from "../types";
+import type { ImageSource, SectionHeading, StackIcon, TestimonialItem } from "../types";
 
-/** Shared by both hero variants. */
-const HERO_ACTIONS: PageAction[] = [
-    { href: "#about-me", text: "Learn More", arrow: true },
-    { href: "/about", text: "More about me" },
-];
+const HERO_ACTION_HREFS = { learnMore: "#about-me", moreAboutMe: "/about" };
 
-/**
- * Hero variant 1 — the avatar + heading layout.
- * Selected with `NEXT_PUBLIC_HERO_SECTION_ID=1` (the default).
- */
-export const HOME_PROFILE_HERO = {
-    avatar: profileImage as ImageSource,
-    /** Rendered on two lines; `{name}` is replaced with the primary-coloured name. */
-    headingLead: "Hey, I’m",
-    name: MY_NAME,
-    headingTrail: "Coder & Thinker",
-    description:
-        "I work with **React** & **Laravel** Ecosystem, and write to teach people how to rebuild and redefine fundamental concepts through mental models.",
-    actions: HERO_ACTIONS,
+const STACKS = {
+    /** Scrolls left. */
+    rowOne: [
+        { icon: SiReact, title: "React" },
+        { icon: SiRedux, title: "Redux" },
+        { icon: SiNextdotjs, title: "Next.js" },
+        { icon: SiMongodb, title: "MongoDB" },
+        { icon: SiLaravel, title: "Laravel" },
+        { icon: SiVuedotjs, title: "Vue.js" },
+        { icon: SiJavascript, title: "JavaScript" },
+        { icon: SiTypescript, title: "TypeScript" },
+        { icon: SiDocker, title: "Docker" },
+        { icon: SiLinux, title: "Linux" },
+        { icon: SiGit, title: "Git" },
+        { icon: SiFigma, title: "Figma" },
+    ] as StackIcon[],
+    /** Scrolls right. */
+    rowTwo: [
+        { icon: SiTailwindcss, title: "Tailwind CSS" },
+        { icon: SiBootstrap, title: "Bootstrap" },
+        { icon: SiPython, title: "Python" },
+        { icon: SiPhp, title: "PHP" },
+        { icon: SiMysql, title: "MySQL" },
+        { icon: SiFirebase, title: "Firebase" },
+        { icon: SiVite, title: "Vite" },
+        { icon: SiCloudflare, title: "Cloudflare" },
+        { icon: SiMarkdown, title: "Markdown" },
+        { icon: SiPostman, title: "Postman" },
+        { icon: SiNodedotjs, title: "Node.js" },
+    ] as StackIcon[],
 };
 
-/**
- * Hero variant 2 — the badge + side portrait layout.
- * Selected with `NEXT_PUBLIC_HERO_SECTION_ID=2`.
- */
-export const HOME_HERO = {
-    badge: {
-        label: "Crafting Experiences at",
-        company: "Iconic",
-        companyUrl: "http://www.iconicsolutionsbd.com",
-        logo: iconicLogo as ImageSource,
-    },
-    headingLead: "Hi! I'm",
-    name: MY_NAME,
-    paragraphs: [
-        "I work with **React** & **Laravel** Ecosystem, and write to teach people how to rebuild and redefine fundamental concepts through mental models.",
-        "Need a modern web app that stands out? [Hire me?](/contact)",
-    ],
-    portrait: profileImage as ImageSource,
-    portraitAlt: "Zahin",
-    actions: HERO_ACTIONS,
-};
+export interface HomeContent {
+    profileHero: {
+        avatar: ImageSource;
+        headingLead: string;
+        name: string;
+        headingTrail: string;
+        description: string;
+        actions: { href: string; text: string; arrow?: boolean }[];
+    };
+    hero: {
+        badge: { label: string; company: string; companyUrl: string; logo: ImageSource };
+        headingLead: string;
+        name: string;
+        paragraphs: string[];
+        portrait: ImageSource;
+        portraitAlt: string;
+        actions: { href: string; text: string; arrow?: boolean }[];
+    };
+    cards: {
+        location: { label: string; marker: [number, number] };
+        codingHours: { label: string; value: string };
+        favoriteFramework: { label: string; title: string };
+        connect: { label: string };
+        stacks: { label: string; rowOne: StackIcon[]; rowTwo: StackIcon[] };
+        seeMore: { href: string; text: string };
+    };
+    blogs: SectionHeading & { seeAll: string };
+    projects: SectionHeading & { seeAll: string };
+    testimonials: { heading: SectionHeading; items: TestimonialItem[] };
+    contact: {
+        headline: string;
+        subheadline: string;
+        highlightText: string;
+        sendMessage: string;
+        /** Leave empty to keep the in-site message composer. */
+        email: string;
+        pointerLabel: string;
+        skills: string[];
+    };
+}
 
-/** The bento grid under the hero. */
-export const HOME_ABOUT_CARDS = {
-    location: {
-        label: "Cox's Bazar, Bangladesh",
-        /** [latitude, longitude] of the globe marker. */
-        marker: [22.3384, 91.8317] as [number, number],
-    },
-    codingHours: {
-        label: "Coding Hours",
-        value: "15,600 hrs",
-    },
-    favoriteFramework: {
-        label: "Favorite Framework",
-        /** Shown by default; swaps to `hovered` on pointer-over. */
-        title: "Next.js & Laravel",
-        resting: SiNextdotjs,
-        hovered: SiLaravel,
-    },
-    connect: {
-        label: "Connect",
-    },
-    stacks: {
-        label: "Languages and Tools",
-        /** Scrolls left. */
-        rowOne: [
-            { icon: SiReact, title: "React" },
-            { icon: SiRedux, title: "Redux" },
-            { icon: SiNextdotjs, title: "Next.js" },
-            { icon: SiMongodb, title: "MongoDB" },
-            { icon: SiLaravel, title: "Laravel" },
-            { icon: SiVuedotjs, title: "Vue.js" },
-            { icon: SiJavascript, title: "JavaScript" },
-            { icon: SiTypescript, title: "TypeScript" },
-            { icon: SiDocker, title: "Docker" },
-            { icon: SiLinux, title: "Linux" },
-            { icon: SiGit, title: "Git" },
-            { icon: SiFigma, title: "Figma" },
-        ] as StackIcon[],
-        /** Scrolls right. */
-        rowTwo: [
-            { icon: SiTailwindcss, title: "Tailwind CSS" },
-            { icon: SiBootstrap, title: "Bootstrap" },
-            { icon: SiPython, title: "Python" },
-            { icon: SiPhp, title: "PHP" },
-            { icon: SiMysql, title: "MySQL" },
-            { icon: SiFirebase, title: "Firebase" },
-            { icon: SiVite, title: "Vite" },
-            { icon: SiCloudflare, title: "Cloudflare" },
-            { icon: SiMarkdown, title: "Markdown" },
-            { icon: SiPostman, title: "Postman" },
-            { icon: SiNodedotjs, title: "Node.js" },
-        ] as StackIcon[],
-    },
-    seeMore: { href: "/about", text: "Know more about me" },
-};
+export function getHomeContent(dict: Dictionary): HomeContent {
+    const t = dict.home;
 
-export const HOME_TESTIMONIALS: {
-    heading: SectionHeading;
-    items: TestimonialItem[];
-} = {
-    heading: {
-        tag: "04",
-        title: "Nice words",
-        subtitle: "Some feedback from people that I've had the privilege of working with.",
-    },
-    items: [
-        {
-            id: 1,
-            quote:
-                "I had no college of watching more web posts today while trying to sift to I create progress with the biggest of digital content. It was horrible and totally messy, and it worked so well I could move from one end of the web to the other in hours rather than days...Instead, it was fine all the year. Is there an info or filter on these tags? I see she has more time than to see at lower tier once there has compensated me ever since I signed up with here how is there good and how I like it. Oh such good time is truly more than the time just to be sure. How much it to good there has more.",
-            name: "Aaron Beck",
-            role: "Teacher | UGA",
+    const actions = [
+        { href: HERO_ACTION_HREFS.learnMore, text: t.actions.learnMore, arrow: true },
+        { href: HERO_ACTION_HREFS.moreAboutMe, text: t.actions.moreAboutMe },
+    ];
+
+    return {
+        profileHero: {
+            avatar: profileImage as ImageSource,
+            headingLead: t.profileHero.headingLead,
+            name: MY_NAME,
+            headingTrail: t.profileHero.headingTrail,
+            description: t.profileHero.description,
+            actions,
         },
-        {
-            id: 2,
-            quote:
-                "I think with the joy of the best part for Javascript and blogs, providing knowledge to my first package of the project. She went a really have got started.Or like these much more motivation having to be about as well. Definitely how a student does now and I am so glad they created an amazing support and incredible and her students does making the way again the great.",
-            name: "Aaron Beck",
-            role: "Teacher | UGA",
+        hero: {
+            badge: {
+                label: t.hero.badgeLabel,
+                company: "Iconic",
+                companyUrl: "http://www.iconicsolutionsbd.com",
+                logo: iconicLogo as ImageSource,
+            },
+            headingLead: t.hero.headingLead,
+            name: MY_NAME,
+            paragraphs: [...t.hero.paragraphs],
+            portrait: profileImage as ImageSource,
+            portraitAlt: MY_NAME,
+            actions,
         },
-    ],
-};
-
-/**
- * The closing "get in touch" card.
- *
- * Set `email` to show a mailto button instead of the in-site message composer.
- * `skills` drives the orbiting pointer animation — the first four are used.
- */
-export const HOME_CONTACT = {
-    headline: "Any questions about software?",
-    subheadline: "Feel free to reach out to me!",
-    /** Optional accent appended after the subheadline. */
-    highlightText: "",
-    /** Leave empty to keep the "Send Message" button. */
-    email: "",
-    pointerLabel: MY_USERNAME,
-    skills: ["Next.js", "React.js", "TypeScript", "Laravel"],
-};
+        cards: {
+            location: { label: t.cards.location, marker: [22.3384, 91.8317] },
+            codingHours: { label: t.cards.codingHours, value: t.cards.codingHoursValue },
+            favoriteFramework: { label: t.cards.favoriteFramework, title: "Next.js & Laravel" },
+            connect: { label: t.cards.connect },
+            stacks: { label: t.cards.stacks, ...STACKS },
+            seeMore: { href: "/about", text: t.cards.seeMore },
+        },
+        blogs: { tag: "02", title: t.blogs.title, subtitle: t.blogs.subtitle, seeAll: t.blogs.seeAll },
+        projects: { tag: "03", title: t.projects.title, subtitle: t.projects.subtitle, seeAll: t.projects.seeAll },
+        testimonials: {
+            heading: { tag: "04", title: t.testimonials.title, subtitle: t.testimonials.subtitle },
+            items: t.testimonials.items.map((item, index) => ({ id: index + 1, ...item })),
+        },
+        contact: {
+            headline: t.contact.headline,
+            subheadline: t.contact.subheadline,
+            highlightText: t.contact.highlightText,
+            sendMessage: t.contact.sendMessage,
+            email: "",
+            pointerLabel: MY_USERNAME,
+            skills: ["Next.js", "React.js", "TypeScript", "Laravel"],
+        },
+    };
+}

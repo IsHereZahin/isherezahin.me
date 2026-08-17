@@ -18,11 +18,12 @@ export default function Testimonial({ quote, name, role }: Readonly<TestimonialI
                 <p className="text-sm sm:text-base text-muted-foreground group-hover:text-foreground/80 transition-colors leading-relaxed">{quote}</p>
             </div>
 
-            {/* Footer */}
-            <footer className="mt-2 sm:mt-3 text-sm sm:text-base">
-                <span className="font-semibold text-foreground">{name}</span>{" "}
-                <span className="font-normal text-muted-foreground">· {role}</span>
-            </footer>
+            {name && (
+                <footer className="mt-2 sm:mt-3 text-sm sm:text-base">
+                    <span className="font-semibold text-foreground">{name}</span>
+                    {role && <span className="font-normal text-muted-foreground"> · {role}</span>}
+                </footer>
+            )}
         </blockquote>
     );
 }

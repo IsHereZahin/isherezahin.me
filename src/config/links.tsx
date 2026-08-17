@@ -1,6 +1,7 @@
 import { SITE_GITHUB_URL, SITE_INSTAGRAM_URL, SITE_LINKEDIN_URL, SITE_X_URL, SITE_YOUTUBE_URL } from '@/lib/constants';
 import { SiGithub, SiInstagram, SiX, SiYoutube } from '@icons-pack/react-simple-icons';
 import { FlameIcon, LinkedinIcon, PencilIcon, UserCircleIcon } from 'lucide-react';
+import type { Dictionary } from '@/i18n/dictionaries/en';
 import { ComponentType, SVGProps } from 'react';
 
 type SocialLinks = Array<{
@@ -9,9 +10,12 @@ type SocialLinks = Array<{
   icon: ComponentType<SVGProps<SVGSVGElement>>;
 }>
 
+/** Key into `dict.nav` — the visible text comes from the active locale. */
+type NavKey = keyof Dictionary['nav']
+
 type FooterMenuItems = Array<{
-  category: string
-  items: Array<{ href: string; label: string }>
+  category: NavKey
+  items: ReadonlyArray<{ href: string; key: NavKey }>
 }>
 
 export const HEADER_LINKS = [
@@ -34,37 +38,37 @@ export const HEADER_LINKS = [
 
 export const FOOTER_MENU_ITEMS: FooterMenuItems = [
   {
-    category: 'General',
+    category: 'general',
     items: [
-      { href: '/home', label: 'Home' },
-      { href: '/blog', label: 'Blog' },
-      { href: '/projects', label: 'Projects' },
-      { href: '/about', label: 'About' },
+      { href: '/', key: 'home' },
+      { href: '/blogs', key: 'blogs' },
+      { href: '/projects', key: 'projects' },
+      { href: '/about', key: 'about' },
     ],
   },
   {
-    category: 'The Website',
+    category: 'theWebsite',
     items: [
-      { href: '/bucket-list', label: 'Bucket List' },
-      { href: '/uses', label: 'Uses' },
-      { href: '/attribution', label: 'Attribution' },
-      { href: '/guest-book', label: 'Guest Book' },
+      { href: '/bucket-list', key: 'bucketList' },
+      { href: '/uses', key: 'uses' },
+      { href: '/attribution', key: 'attribution' },
+      { href: '/guestbook', key: 'guestbook' },
     ],
   },
   {
-    category: 'Resources',
+    category: 'resources',
     items: [
-      { href: '/book-notes', label: 'Book Notes' },
-      { href: '/analytics', label: 'Analytics' },
-      { href: '/resume', label: 'Resume' },
-      { href: '/tools', label: 'Tools' },
+      { href: '/book-notes', key: 'bookNotes' },
+      { href: '/analytics', key: 'analytics' },
+      { href: '/resume', key: 'resume' },
+      { href: '/tools', key: 'tools' },
     ],
   },
   {
-    category: 'Legal',
+    category: 'legal',
     items: [
-      { href: '/privacy-policy', label: 'Privacy Policy' },
-      { href: '/terms-of-service', label: 'Terms of Service' },
+      { href: '/privacy-policy', key: 'privacyPolicy' },
+      { href: '/terms-of-service', key: 'termsOfService' },
     ],
   },
 ] as const

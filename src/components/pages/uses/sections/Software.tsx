@@ -1,5 +1,5 @@
 import { SectionHeader } from "@/components/ui";
-import { USES_SOFTWARE } from "@/data";
+import type { UsesContent } from "@/data/pages/uses";
 import type { SoftwareEntry } from "@/data/types";
 
 function SoftwareItem({ icon: Icon, name, category, description }: Readonly<SoftwareEntry>) {
@@ -21,8 +21,7 @@ function SoftwareItem({ icon: Icon, name, category, description }: Readonly<Soft
     );
 }
 
-export default function Software() {
-    const { heading, items } = USES_SOFTWARE;
+export default function Software({ heading, items }: Readonly<UsesContent["software"]>) {
 
     return (
         <section id="stack" className="mb-16 sm:mb-24 scroll-mt-24">

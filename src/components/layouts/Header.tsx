@@ -11,6 +11,7 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { HEADER_LINKS } from "@/config/links";
+import { useI18n } from "@/i18n/DictionaryProvider";
 
 import HeaderActions from "@/components/header/HeaderActions";
 import MobileNav from "@/components/header/MobileNav";
@@ -18,6 +19,7 @@ import MotionWrapper from "@/components/motion/MotionWrapper";
 import { Logo } from "@/components/ui";
 
 export default function Header() {
+    const { dict, path: localeHref } = useI18n();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isVisible, setIsVisible] = useState(true);
     const lastScrollY = useRef(0);
@@ -27,8 +29,9 @@ export default function Header() {
     const links = HEADER_LINKS;
 
     const isActiveLink = (href: string) => {
-        if (href === "/") return pathname === "/";
-        return pathname.startsWith(href);
+        const target = localeHref(href);
+        if (href === "/") return pathname === target;
+        return pathname.startsWith(target);
     };
 
     const controlHeader = useCallback(() => {
@@ -54,7 +57,7 @@ export default function Header() {
                 className={`fixed inset-x-0 top-4 z-40 mx-auto flex h-[60px] max-w-5xl items-center justify-between rounded-2xl bg-background/30 px-4 sm:px-8 shadow-xs saturate-100 backdrop-blur-[10px] transition-all duration-300 ease-in-out ${isVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
                     }`}
             >
-                <Link href="/" className="flex items-center justify-center gap-1 text-foreground font-medium" aria-label="Home">
+                <Link href={localeHref("/")} className="flex items-center justify-center gap-1 text-foreground font-medium" aria-label={dict.nav.home}>
                     <Logo size={20} type="header" />
                 </Link>
 
@@ -66,14 +69,14 @@ export default function Header() {
                                 return (
                                     <li key={link.href} className="relative flex items-center justify-center">
                                         <Link
-                                            href={link.href}
+                                            href={localeHref(link.href)}
                                             prefetch
                                             className={`rounded-sm px-3 py-2 text-sm font-medium transition-colors capitalize ${isActive
                                                 ? "text-foreground"
                                                 : "text-muted-foreground hover:text-foreground"
                                                 }`}
                                         >
-                                            {link.key}
+                                            {dict.nav[link.key]}
                                         </Link>
                                     </li>
                                 );

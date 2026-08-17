@@ -1,9 +1,8 @@
 import { ReferralListItem, Section } from "@/components/ui";
-import { ABOUT_CURRENT_STATUS } from "@/data";
+import type { AboutContent } from "@/data/pages/about";
 import { CircleHelp } from "lucide-react";
 
-export default function CurrentStatus() {
-    const { title, items } = ABOUT_CURRENT_STATUS;
+export default function CurrentStatus({ title, items }: Readonly<AboutContent["currentStatus"]>) {
 
     if (items.length === 0) return null;
 

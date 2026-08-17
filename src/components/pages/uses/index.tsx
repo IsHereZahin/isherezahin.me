@@ -1,22 +1,20 @@
 import { Section } from "@/components/ui";
+import type { UsesContent } from "@/data/pages/uses";
 import Hardware from "./sections/Hardware";
 import Hero from "./sections/Hero";
 import Peripherals from "./sections/Peripherals";
 import Software from "./sections/Software";
 import Subscriptions from "./sections/Subscriptions";
 
-/**
- * Uses page composition. Every section renders from
- * `src/data/pages/uses.ts` — nothing here touches the database.
- */
-export default function UsesIndex() {
+/** Uses page composition. Copy comes from the active locale's dictionary. */
+export default function UsesIndex({ content }: { readonly content: UsesContent }) {
     return (
         <Section id="uses" animate delay={0.1}>
-            <Hero />
-            <Hardware />
-            <Peripherals />
-            <Software />
-            <Subscriptions />
+            <Hero heading={content.heading} hero={content.hero} />
+            <Hardware {...content.hardware} />
+            <Peripherals {...content.peripherals} />
+            <Software {...content.software} />
+            <Subscriptions {...content.subscriptions} />
         </Section>
     );
 }

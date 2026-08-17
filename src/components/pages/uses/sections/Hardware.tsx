@@ -1,5 +1,5 @@
 import { BlurImage, ImageZoom, SectionHeader } from "@/components/ui";
-import { USES_HARDWARE } from "@/data";
+import type { UsesContent } from "@/data/pages/uses";
 import type { IconComponent } from "@/data/types";
 
 function SpecBadge({ icon: Icon, label }: Readonly<{ icon: IconComponent; label: string }>) {
@@ -12,8 +12,12 @@ function SpecBadge({ icon: Icon, label }: Readonly<{ icon: IconComponent; label:
 }
 
 /** Bento grid: primary machine, display, and the smaller devices. */
-export default function Hardware() {
-    const { heading, primary, display, secondary } = USES_HARDWARE;
+export default function Hardware({
+    heading,
+    primary,
+    display,
+    secondary,
+}: Readonly<UsesContent["hardware"]>) {
     const PrimaryIcon = primary.icon;
     const DisplayIcon = display.icon;
 

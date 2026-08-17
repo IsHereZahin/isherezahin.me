@@ -8,16 +8,22 @@ import {
     Section,
     Signature,
 } from "@/components/ui";
-import { ABOUT_PAGE_HEADING, ABOUT_PROFILE } from "@/data";
+import type { AboutContent } from "@/data/pages/about";
 
-export default function Profile() {
-    const { name, title, location, age, imageSrc, socials, paragraphs } = ABOUT_PROFILE;
+export default function Profile({
+    heading,
+    profile,
+}: {
+    readonly heading: AboutContent["heading"];
+    readonly profile: AboutContent["profile"];
+}) {
+    const { name, title, location, age, imageSrc, socials, paragraphs } = profile;
 
     return (
         <Section id="about">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
-                <PageTitle title={ABOUT_PAGE_HEADING.title} subtitle={ABOUT_PAGE_HEADING.subtitle} />
+                <PageTitle title={heading.title} subtitle={heading.subtitle} />
 
                 <div className="flex flex-col md:flex-row gap-6 md:gap-10">
                     {/* Left Column - Profile */}
