@@ -3,30 +3,26 @@
 import AudienceCard from "./AudienceCard";
 import ContentPerformanceCard from "./ContentPerformanceCard";
 import KpiStrip from "./KpiStrip";
-import { CARD, SectionError } from "./primitives";
+import { CARD, SectionError, SkeletonCard } from "./primitives";
 import TopPagesCard from "./TopPagesCard";
 import { useOverview, useStatistics } from "./useOverview";
 import VisitorTrendsCard from "./VisitorTrendsCard";
-
-function Block({ className = "" }: { className?: string }) {
-    return <div className={`animate-pulse rounded-[24px] bg-[var(--s-soft2)] ${className}`} />;
-}
 
 function OverviewSkeleton() {
     return (
         <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
                 {[...Array(4)].map((_, i) => (
-                    <Block key={i} className="h-[132px]" />
+                    <SkeletonCard key={i} className="h-[132px]" />
                 ))}
             </div>
             <div className="grid gap-4 lg:grid-cols-[1.6fr_1fr]">
-                <Block className="h-[360px]" />
-                <Block className="h-[360px]" />
+                <SkeletonCard className="h-[360px]" />
+                <SkeletonCard className="h-[360px]" />
             </div>
             <div className="grid gap-4 lg:grid-cols-[1fr_1.3fr]">
-                <Block className="h-[300px]" />
-                <Block className="h-[300px]" />
+                <SkeletonCard className="h-[300px]" />
+                <SkeletonCard className="h-[300px]" />
             </div>
         </div>
     );
@@ -36,7 +32,10 @@ export default function ApplicationOverview() {
     const overview = useOverview();
     const stats = useStatistics();
 
-    if (overview.isLoading || stats.isLoading) return <OverviewSkeleton />;
+    // `isPending`, not `isLoading`: the latter is `isPending && isFetching`, so it
+    // is false during the server render (nothing fetches there) and the panel
+    // would fall through to the error state instead of showing this skeleton.
+    if (overview.isPending || stats.isPending) return <OverviewSkeleton />;
 
     if (overview.isError || !overview.data) {
         return (

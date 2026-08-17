@@ -29,7 +29,7 @@ export default function Subscribers() {
         return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
     }, [searchInput]);
 
-    const { data, isLoading, error } = useQuery({
+    const { data, isPending, error } = useQuery({
         queryKey: ["admin-subscribers", debouncedSearch, filter, page],
         queryFn: () => adminSubscribers.getAll(debouncedSearch, filter, page),
         enabled: isAdmin,
@@ -107,7 +107,7 @@ export default function Subscribers() {
 
                 {/* Rows */}
                 <div className="mt-4">
-                    {isLoading ? (
+                    {isPending ? (
                         <div className="flex items-center justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-[var(--s-muted)]" /></div>
                     ) : subscribers.length === 0 ? (
                         <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">

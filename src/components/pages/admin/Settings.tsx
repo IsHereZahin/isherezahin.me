@@ -21,7 +21,7 @@ export default function Settings() {
     const router = useRouter();
     const queryClient = useQueryClient();
 
-    const { data, isLoading, error } = useQuery({
+    const { data, isPending, error } = useQuery({
         queryKey: ["admin-settings"],
         queryFn: adminSettings.get,
         enabled: isAdmin,
@@ -79,7 +79,9 @@ export default function Settings() {
 
     const saving = (key: string) => mutation.isPending && mutation.variables?.key === key;
 
-    if (isLoading) return <SettingsSkeleton />;
+    // `isPending`, not `isLoading`: the latter is false during the server render,
+    // where nothing fetches, so the page would flash its loaded layout with empty data.
+    if (isPending) return <SettingsSkeleton />;
 
     return (
         <div className="space-y-5">

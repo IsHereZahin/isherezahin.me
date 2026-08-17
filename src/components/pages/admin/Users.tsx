@@ -100,7 +100,7 @@ export default function Users() {
         return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
     }, [searchInput]);
 
-    const { data, isLoading, error } = useQuery({
+    const { data, isPending, error } = useQuery({
         queryKey: ["admin-users", debouncedSearch, filter, page],
         queryFn: () => adminUsers.getAll(debouncedSearch, filter, page),
         enabled: isAdmin,
@@ -166,7 +166,7 @@ export default function Users() {
                     </Select>
                 </div>
 
-                {isLoading ? (
+                {isPending ? (
                     <div className="flex items-center justify-center py-16">
                         <Loader2 className="h-6 w-6 animate-spin text-[var(--s-muted)]" />
                     </div>

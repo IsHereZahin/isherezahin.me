@@ -89,7 +89,7 @@ export default function ContentManager({ type }: { type: ContentType }) {
         return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
     }, [searchInput]);
 
-    const { data, isLoading } = useQuery({
+    const { data, isPending } = useQuery({
         // Keyed under the shared "blogs"/"projects" prefix so the add/edit modals'
         // invalidateQueries(["blogs"|"projects"]) refetch this list automatically.
         queryKey: [cfg.listKey, "admin-manage", search, status, page],
@@ -164,7 +164,7 @@ export default function ContentManager({ type }: { type: ContentType }) {
 
             {/* List */}
             <section className="rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-                {isLoading ? (
+                {isPending ? (
                     <div className="flex items-center justify-center py-16">
                         <Loader2 className="h-6 w-6 animate-spin text-[var(--s-muted)]" />
                     </div>

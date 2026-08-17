@@ -8,18 +8,19 @@ import { useGitHub } from "@/components/admin/dashboard/useGitHub";
 import MyHabits from "@/components/be-run/MyHabits";
 import WorkoutResults from "@/components/be-run/WorkoutResults";
 import { Github, RefreshCw } from "lucide-react";
+import { SkeletonCard } from "./primitives";
 
 function GitHubSkeleton() {
     return (
-        <div className="grid animate-pulse grid-cols-1 gap-4 lg:grid-cols-[1.5fr_1fr]">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.5fr_1fr]">
             <div className="flex flex-col gap-4">
-                <div className="h-[336px] rounded-[26px] bg-[var(--s-soft2)]" />
-                <div className="h-[210px] rounded-[24px] bg-[var(--s-soft2)]" />
-                <div className="h-[240px] rounded-[24px] bg-[var(--s-soft2)]" />
+                <SkeletonCard className="h-[336px]" />
+                <SkeletonCard className="h-[210px]" />
+                <SkeletonCard className="h-[240px]" />
             </div>
             <div className="flex flex-col gap-4">
-                <div className="h-[430px] rounded-[26px] bg-[var(--s-invert)]" />
-                <div className="h-[360px] rounded-[24px] bg-[var(--s-soft2)]" />
+                <SkeletonCard className="h-[430px]" />
+                <SkeletonCard className="h-[360px]" />
             </div>
         </div>
     );
@@ -44,9 +45,12 @@ function GitHubError({ onRetry }: { onRetry: () => void }) {
 }
 
 export default function GitHubActivity() {
-    const { data, isLoading, isError, refetch } = useGitHub();
+    const { data, isPending, isError, refetch } = useGitHub();
 
-    if (isLoading) return <GitHubSkeleton />;
+    // `isPending`, not `isLoading`: the latter is `isPending && isFetching`, so it
+    // is false during the server render (nothing fetches there) and the panel
+    // would fall through to the error state instead of showing this skeleton.
+    if (isPending) return <GitHubSkeleton />;
     if (isError || !data) return <GitHubError onRetry={() => refetch()} />;
 
     const workoutProps = { ...buildWorkout(data), icon: Github };

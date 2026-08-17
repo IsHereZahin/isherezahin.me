@@ -51,7 +51,7 @@ export default function Statistics() {
     const router = useRouter();
     const queryClient = useQueryClient();
 
-    const { data: settings, isLoading, error } = useQuery({
+    const { data: settings, isPending, error } = useQuery({
         queryKey: ["admin-statistics-settings"],
         queryFn: fetchSettings,
         enabled: isAdmin,
@@ -86,7 +86,9 @@ export default function Statistics() {
         return null;
     }
 
-    if (isLoading) return <StatisticsSkeleton />;
+    // `isPending`, not `isLoading`: the latter is false during the server render,
+    // where nothing fetches, so the page would render "Failed to load settings".
+    if (isPending) return <StatisticsSkeleton />;
     if (!settings) {
         return (
             <div className="rounded-[24px] border border-[var(--s-border)] bg-[var(--s-card)] p-10 text-center">
